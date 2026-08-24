@@ -4,111 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 54C8EC5DF81
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 10:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1FE2C5DF94
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 10:34:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LDAg5xR4nyXzOz3Ii2MD08Noeufpe96kxBZ6NnSQCq8=; b=g0bJeM9Yb4bTtxxMZZQQhQoF/P
-	6eoydlf2NW/7B4vTrocCBjTpKoDVTLrgAHNn3DWIX8riH60Eir9fr1/RUK3TtT6ytSURdRAyzM/rM
-	OAf1xRHzwXUO8+oSqXCKwkfyofBwagzWG4alj9r8zuMPPzAf0E4UvLFgTPDCZV1UPFJ4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=e2PRkPKjra/sI8YQ1AM3A7V8BYfzqr61ILdkO+9j70s=; b=YGkw3I68aCiseDsMIZCwDHOLcx
+	NEvT9z3F62DSY1fmubSUXHwzST6nvUF8FoTl+Z0D/fWiIKHvNOe4dLUaFTg95Jc/1UJsMb74FM7/j
+	toKAckkM9YHJc6ygCbV+zHK7rEUYZ9H5jnZBc0bVw2+uT+/gA0WwuNYek2euFieDbrts=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wyRbC-0002Zv-Sp;
-	Mon, 24 Aug 2026 10:08:12 +0000
+	id 1wyS0A-0007eC-J0;
+	Mon, 24 Aug 2026 10:34:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wyRbB-0002Zi-DN
+ (envelope-from <qwjhust@gmail.com>) id 1wyS09-0007e5-LN
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 10:08:10 +0000
+ Mon, 24 Aug 2026 10:34:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cQht530mieFUeugmQqlDH51hivGpkoJbD3uSg8tM2y8=; b=TLyWNrEAtcwdQXwfK7/WFB5FV5
- uhgAXdU5vuW7YPMQUgRdT8HFFf8WikbtuW7VNWZ7YEIbTI8SlKeA16Wf2kOgUUTDX6byjtpkul8SF
- EjgYbmStphnc3F4ceqnUzCmfdW0NNm9wgQG0f6BufGj03P4ko22p8aeD1IohtLU4WNFk=;
+ bh=SiENGpsX2j0F/tjaU2o6XIRs97I21bYZzZ0hoz2JLa8=; b=CrSo7jd2vQpLN84lDvJ8Iww3XS
+ a0Mz3o6ipmFgYuqF0AX9MTQgvcg2L+tuoG+PyRGrt4X4JKnVqRNnQe8uTZRIT7qEZrYwMt0eFqZyF
+ mhqYJkiTr91+BB93V1036mnb1CHXOCPx8WST79SwvUztiywXp2rspT/Lh6CA58dV+23k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cQht530mieFUeugmQqlDH51hivGpkoJbD3uSg8tM2y8=; b=XWw9qCay2/DXyqEpPu4LZwE40u
- 7DA9wb+CK5hdkjb6R1+VJk3qGTuDnt5ADS3zSZogOUQgGRjPgY7uQv+pYrfm/HKwzwNm/S5OcxRBD
- HEQ3BmaXy9s0vhGOCqeAl3uoc9dhmhN24BcvcOfedB7DKXtLruwdww/05OBjCMOowLdY=;
-Received: from mail-pj1-f50.google.com ([209.85.216.50])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=SiENGpsX2j0F/tjaU2o6XIRs97I21bYZzZ0hoz2JLa8=; b=mT/8WXo/BHhz/czo56IJGR/8+1
+ uE1vGne5vEICxv3DejguH5ofRvqhBM1Z+VV0nR2YlGr1hylY7r6FeiTOrKq6fE4WHU60/ADhko7+v
+ TS30YzCXSjzoClLliX2MB9rEdnIbOGbePagNo9rKnjogkEQrQ2W97pGP5pCjZSmdX4Hc=;
+Received: from mail-pf1-f173.google.com ([209.85.210.173])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wyRb7-0003sF-Dj for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 10:08:10 +0000
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-381b831d535so4670867a91.0
+ id 1wyS08-0001a4-TA for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Aug 2026 10:34:02 +0000
+Received: by mail-pf1-f173.google.com with SMTP id
+ d2e1a72fcca58-8486672f03cso3325028b3a.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Aug 2026 03:08:09 -0700 (PDT)
+ Mon, 24 Aug 2026 03:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787566084; x=1788170884; darn=lists.sourceforge.net;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=cQht530mieFUeugmQqlDH51hivGpkoJbD3uSg8tM2y8=;
- b=qGNVg6tV6CI1X1lLtM/3d8361G+Q17hCekXoK9Qn4az+lQa4+xQh+OFDPJXL8uitt1
- H5Zc4aDIlf/LgvPsXlQFwxVqH6mSj8YBgSkRFpZ+ho8OYa6VkW/l//yJBeog49XP5iUr
- tLOKARSXAICajgaTFapZt5z64HisIEubC9Q8QfVoAHiv/Q5i6LZHqG7ydzPWZgYerSRQ
- P18QdMtsjC3Y8HmRHZVtU0TKxmAj1EyJZT+yO8f76Xj1iCCmYE8AdbQwkBvURT3FuDBb
- 9ZAS15RvHwHoDkO0nAvuWzVOzqBRhlXAHyUIuizoiZ5fFgJAgBK0z2KmDaQHAiDQN21w
- hh1g==
+ d=gmail.com; s=20251104; t=1787567635; x=1788172435; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=SiENGpsX2j0F/tjaU2o6XIRs97I21bYZzZ0hoz2JLa8=;
+ b=cIOvab4dALzsKhnlxUjxabWd9zfbUYzlSgFRyXM1tqVJwUpSholU4m4m2zufK8/DxO
+ gLdnv2LPrdK5uF5NcSCxGMle2EpzwaRTLdm+UOjgnfelkPaAzY/DLulsQ2tiXdLcdRZC
+ jAuDOrwSq/6vtyjWr3o1utMCsFsQiy7k/qugJzEZ4lY+4mHgdrvSOebYVcAkZ4l8fcdn
+ Ed4UpoqAQ/PmlGgPOmptufmPZuaTllN0YyST0krypRKm4vFJA62p+Sujkr58X+AGvYi2
+ dRmcMMPJMxI0yMp7cGzXI6cbT/kBNqUZIfdcrIJNwtPZmTAkqV+OOGcPJSBICk2z9Okd
+ 2SfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787566084; x=1788170884;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=cQht530mieFUeugmQqlDH51hivGpkoJbD3uSg8tM2y8=;
- b=G0rw3aPaXWJjItqHF9R3Eap1Y0P/LOjEQIdwOTZL69JSwDtoruXgf+s6lIxjfdkEMf
- ZYGd2d7GMrHj7QuITnEiyB8AxustSJjIMkb7De7tH8MFuSkKy0AkpzLJVnId5zbMRjZj
- yE0Y5E4VC+JwraJGrlLTJsUgGINdnPORw3HWj6K8JLxz2c43y/x6TpiwgYrl8GqGwd2x
- CdZa3X5fcWL05kynFNuv6CX60JR1Op0wVubvJpiFczRlMk9rVMzCJyCKY5B/40n5w7Ry
- kp3RfZ46tSPEEXYL7aMK3x86sxGKikcsDgsnDEc9P1WwtrW+de8JMXL56yBGESyzhUnd
- ldow==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rq3rgPVJRMgg579C3OMeKSO6bUKAxJz5IXMu+f788Li12tSSf+W4fzZykWul1QVl7bDSBoU0/GonZCkasEPI1H2@lists.sourceforge.net
-X-Gm-Message-State: AFuF++n83NCYmkHfc5ViNEeKGG2fB5LkDXmSTCQmtb+vUw4asRLEZoOT
- tZr/WQg7G0wqSuq/NiRy648eKqOiEctgAeHzPKbsNY9VmlG8G+HMBaqK
-X-Gm-Gg: AR+sD10RICJjh/VH/UXmlNb4aaeDYGm7iKqEYAJ7rs7tGhilLg6d3fSNu/5WGDr4sXq
- dfHcEzca3ltitMAz57xoKFT2RIakdYZOv0zwlTQzRMuxDJJ5eKon8JAUgAZEMSLYPjYrsBpDeEc
- 1aBLAQhQaMyBq6DHlwDrGpyRF0hQvG7ew4m0DZ+gYF045IEEjVpXfxePJgHcshpia38MuWtmmN7
- YgAp0s3GrInjhtoN+wW+e0WXg0bFcWtsrNa6azhytKp1QqdLxhy2ApbVJLUCf7nkQ1iUAExsyjF
- ZzIrHXYs1GAAQGe6bncycD+WDyNUNuM27xKM4gSjHQmvoHAF29jkpU+qghoRJU06yiNOK8B0BPb
- UAn4ZU1D0Ruh77EKnFjgraCTpmA2fX4QRqKuACr72oSepa51uO7TtMXqUdorUu6hCH8nIl7pUjp
- ceTnagG4kWsPJ3qPb0JsPyFcB3emfW5b4PanGM8wRGqy2ZAKv9keVehtJjc+SwnC4dA5dY4r1vI
- rH4zcgeq3sFbexY6BvyYw==
-X-Received: by 2002:a17:90b:2712:b0:395:543a:cf3b with SMTP id
- 98e67ed59e1d1-395c3518185mr49198167a91.2.1787566083683; 
- Mon, 24 Aug 2026 03:08:03 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1787567635; x=1788172435;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=SiENGpsX2j0F/tjaU2o6XIRs97I21bYZzZ0hoz2JLa8=;
+ b=Z1Cv7kksf+9uWfBsbG4G03xhbOWA59YiHT3pj3z0Vd2GdKEsaqEB/JuF9DHkmmHdi0
+ jLrIB5KUsm32KYoq+VRSpCHwuxxZYqImbcSGV/CKihKqZqEheEknC1/7XdCbeqNoBLXv
+ 0XMZR3PWFeEkZPY8mligFhESRgCg8SP0+jEN/VpMtj+gb1BhKV3qScrZCaT4ab4ajg3C
+ bWlLer5R36nuwMqMedUu8+DznS6YHBriwvh5GAdvGiRll/HOSMXW+5ioVHf7+7fS+q7B
+ MvFdK/ZN59wHXcrP71+WdQ5B3JWxMxxOybkUC1T/4KjLgiovRLjYuT2MCI9GD07fpoVV
+ Glag==
+X-Gm-Message-State: AFuF++n72LMsOYiQZkqhGuy5IiAfnfLXVRXKXGTQYUFYEOxe0s2HF3S+
+ Tz1l/p8oKd4W9KAttWzj/J+XlU28CfVdPb7Va8JdGw4FOf2eQh3vp4zPwRyTxmlW
+X-Gm-Gg: AR+sD13hQOsaeh3sik+e3z8Mgds0zjQRVJYj8mIrD8bLGRXA1+iEzn9pozLlnYu6Y8q
+ kdbYio0NS2Ph67jWrW8gAML07L+GS8Yyhl9cLtTQDIrH1VtxFkvzqW90xAg28ANl9ooihQNChio
+ 0PxTKx76QyRZz5unz36SVdX7fzyeYWRMooNbaGFUkF9bYeL5/j4qnhnEZKtA1PdDEPv6QmK8VqW
+ /2ox/YeDSW6ZR4qqBOd2+Nb8nVrErSz6ojboKvOxDItMkA+A/TtvsGi5qu/niX/rtT72EeOv2a0
+ dqJ25TLDMfZbnG6k2orQxESwHtZJK3UTMIYzWT+2ESWzWO/l8aG8AaQLTveH8d/PgFVf2F4XtjU
+ IfjbacpBZmNM92DJQeqyFbbFLqULfJEIlX63ZVTXzpemKp1B3OTjmclnmguhzWeDoh2PB7cPkE9
+ UFVKuud0f1dBr49lq8OKC6bxWhfs+R3aj+1FBnPNfeQ61hn+ygCvtKZrbao8zCaTJZYecfhz/Pn
+ 20j2S9r3McFNa9tEDbp+2u3
+X-Received: by 2002:a05:6a00:2e0f:b0:842:7296:dba with SMTP id
+ d2e1a72fcca58-8520b983fdbmr26075032b3a.7.1787567635125; 
+ Mon, 24 Aug 2026 03:33:55 -0700 (PDT)
 Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-395e4999471sm9433393a91.8.2026.08.24.03.08.01
+ d2e1a72fcca58-8520f14abb3sm1805081b3a.45.2026.08.24.03.33.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Aug 2026 03:08:03 -0700 (PDT)
+ Mon, 24 Aug 2026 03:33:54 -0700 (PDT)
 From: Wenjie Qi <qwjhust@gmail.com>
-To: Chao Yu <chao@kernel.org>
-Date: Mon, 24 Aug 2026 18:07:52 +0800
-Message-ID: <20260824100752.3890850-1-qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Mon, 24 Aug 2026 18:33:45 +0800
+Message-ID: <cover.1787564706.git.qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260820031721.12218-1-chao@kernel.org>
-References: <20260820031721.12218-1-chao@kernel.org>
+In-Reply-To: <20260820071438.695893-1-qiwenjie@xiaomi.com>
+References: <20260820071438.695893-1-qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1wyRb7-0003sF-Dj
-Subject: Re: [f2fs-dev] [PATCH v1 00/12] f2fs: introduce metadata cache
+X-Headers-End: 1wyS08-0001a4-TA
+Subject: [f2fs-dev] [PATCH v3 0/2] f2fs: enable buffered RWF_DONTCACHE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,47 +119,138 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Wenjie Qi <qwjhust@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com,
- linux-kernel@vger.kernel.org
+Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+This series enables buffered RWF_DONTCACHE on F2FS for sustained one-pass
+streaming writes, where retaining the written data can displace more useful
+cache.
 
-At Xiaomi, we have an out-of-tree F2FS node-cache prototype for mobile
-workloads that retains clean node contents in compressed memory after
-page-cache reclaim.  This is different from this series:
-F2FS_NODE_CACHE is the primary cache and can hold dirty authoritative
-data, while our compressed contents are clean and disposable.
+Patch 1 records whether an F2FS write bio contains dropbehind folios, keeps
+normal and dropbehind folios in separate bios in the IPU and OPU paths, and
+defers unsafe dropbehind completion through the existing sbi->wq.
 
-In our mobile workloads, clean F2FS node pages can represent roughly
-100 MB of uncompressed working-set memory.  We have observed an LZ4
-payload-to-original ratio of about 0.1 for these pages, excluding
-zsmalloc fragmentation, entry metadata, and workspaces.  Node reads are
-also on latency-sensitive paths, while memory pressure can repeatedly
-reclaim and later reread the same node pages from storage.
+Patch 2 passes FGP_DONTCACHE to the F2FS buffered write folio lookup and
+advertises FOP_DONTCACHE.
 
-These are observations from our out-of-tree mobile workloads, not
-benchmark results from this series or current upstream Linux.
+Tests were run on a Xiaomi phone with 10.7 GiB of kernel-visible memory,
+running Android 16 and Linux 6.12.69 with 4 KiB pages.  /data used F2FS.
 
-If the primary metadata-cache model moves forward, the direction we
-would like to explore is one F2FS_NODE_CACHE slot per NID with mutually
-exclusive clean representations:
+The performance test wrote exactly 64 GiB per run at 4 KiB,
+8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, 256 KiB, 512 KiB, and 1 MiB.
+Two counterbalanced rounds ran ascending normal-first and descending
+dontcache-first.  Values below are equal-weight means of both runs; N=2.
+The pwritev2() writer models the streaming workload; it does not show that
+an unchanged Android application already issues RWF_DONTCACHE.
 
-    UNCOMPRESSED_CLEAN <-> COMPRESSED_CLEAN
+Android remained active with displays off.  Each run started after a cache
+reset and at least 120 seconds of cooldown.  Throughput and one-second
+kswapd0/global-memory samples cover the write loop.
 
-Active, dirty, and writeback entries would stay uncompressed, and a
-slot would not retain stable copies in both forms.  Compression would be
-prepared outside the shrinker and direct-reclaim paths.  Shrinker reclaim
-would continue to discard clean entries without compression, allocation,
-or I/O.
+Write-loop throughput was:
 
-If an optional compressed representation for clean, idle F2FS_NODE_CACHE
-entries fits your intended metadata-cache roadmap, would it make sense to
-discuss the clean-entry state and lifetime contract first, and prototype
-it on top of v2 once the base cache is ready?
+          normal MiB/s              dontcache MiB/s
+ I/O      r1       r2      mean      r1       r2      mean     change
+ 4K      946.28   935.74   941.01   291.36   309.31   300.33   -68.08%
+ 8K     1077.05  1105.84  1091.45   477.79   479.79   478.79   -56.13%
+ 16K    1126.84  1118.49  1122.67   643.40   652.06   647.73   -42.30%
+ 32K    1150.62  1036.33  1093.48   762.24   751.45   756.84   -30.79%
+ 64K    1144.80  1163.82  1154.31   852.11   851.19   851.65   -26.22%
+ 128K   1166.29  1162.84  1164.57   867.47   865.05   866.26   -25.61%
+ 256K   1153.61  1172.78  1163.19   895.53   885.33   890.43   -23.45%
+ 512K   1173.61  1197.34  1185.48   903.09   903.01   903.05   -23.82%
+ 1M     1126.22  1154.59  1140.41   850.74   894.60   872.67   -23.48%
+
+Average kswapd0 CPU and average global Cached were:
+
+ I/O      kswapd0 CPU, normal/DC        Cached MiB, normal/DC
+ 4K             18.45% / 0%                 4830.15 / 686.56
+ 8K             21.60% / 0%                 4862.35 / 591.48
+ 16K            22.75% / 0%                 4905.47 / 625.07
+ 32K            22.05% / 0%                 4945.82 / 561.59
+ 64K            23.46% / 0%                 4920.77 / 639.78
+ 128K           23.16% / 0%                 4971.37 / 693.26
+ 256K           23.68% / 0%                 4956.93 / 668.60
+ 512K           24.25% / 0%                 4972.22 / 663.92
+ 1M             22.01% / 0%                 5001.09 / 705.30
+
+Other global memory means were:
+
+          MemAvailable MiB       Dirty MiB          Writeback MiB
+ I/O       normal / DC          normal / DC          normal / DC
+ 4K      6513.08 / 6382.31     640.48 / 33.93       37.94 / 0.09
+ 8K      6560.77 / 6529.33     690.89 / 43.57       40.84 / 0.54
+ 16K     6587.46 / 6519.94     789.16 / 62.67       61.58 / 4.64
+ 32K     6571.95 / 6566.74     850.48 / 69.14       67.69 / 9.24
+ 64K     6600.64 / 6559.89    856.97 / 134.28      59.60 / 16.19
+ 128K    6627.03 / 6465.10    873.68 / 137.57      60.57 / 41.50
+ 256K    6615.58 / 6541.09    885.98 / 158.15      61.25 / 29.57
+ 512K    6625.52 / 6534.41    900.65 / 139.07      63.65 / 30.35
+ 1M      6677.09 / 6539.89    909.70 / 187.56      51.58 / 33.46
+
+          Active(file) MiB      Inactive(file) MiB
+ I/O       normal / DC             normal / DC
+ 4K       279.57 / 264.13         4426.38 / 183.12
+ 8K       262.32 / 260.97         4472.62 / 182.19
+ 16K      392.09 / 252.95         4392.78 / 195.82
+ 32K      254.30 / 248.44         4554.18 / 187.34
+ 64K      252.73 / 244.94         4545.40 / 267.28
+ 128K     322.02 / 243.95         4530.63 / 298.91
+ 256K     245.47 / 240.02         4586.64 / 303.92
+ 512K     254.75 / 232.05         4591.17 / 288.27
+ 1M       238.88 / 233.64         4638.81 / 341.00
+
+Dontcache left zero target-file pages resident at every size.  Normal
+retained about 1.19--1.24 million pages.  Normal runs incurred roughly
+15.6 million kswapd page scans and steals per run, while dontcache recorded
+zero.  Direct scan and allocation-stall deltas were zero in both modes.
+
+A controlled explicit-dontcache model issued 64 KiB writes for 120 seconds
+at 64, 128, and 256 MiB/s.  Both modes sustained all three rates in both
+rounds with no final schedule overrun.  The late-write ratio was
+0.02%--0.41%, and maximum schedule lag was 3.3--6.0 ms.
+Dontcache left zero target pages resident.  This was a controlled model,
+not an unchanged Xiaomi application.
+
+Read tests were unpaced.  Each run started with zero source pages resident
+and read the same 64 GiB file sequentially at full speed with preadv2().
+Results from two counterbalanced rounds were:
+
+ I/O       normal MiB/s   dontcache MiB/s   change
+ 4K          1825.50          1695.10        -7.14%
+ 8K          1901.46          1847.96        -2.81%
+ 16K         1941.60          1872.55        -3.56%
+ 32K         1960.95          1905.92        -2.81%
+ 64K         1951.35          1886.54        -3.32%
+ 128K        1960.03          1915.82        -2.26%
+ 256K        1976.01          1900.41        -3.83%
+ 512K        1973.31          1911.24        -3.15%
+ 1M          2230.91          2007.82       -10.00%
+
+Dontcache left zero source pages resident in all measured read runs.
+
+The normal-I/O control showed read-throughput differences of +0.67%,
+-0.90%, and -2.58%, and write-throughput differences of -1.75%, +0.33%,
+and +2.33%, at 4 KiB, 64 KiB, and 1 MiB respectively.
+
+Changes since v2:
+
+- keep the implementation unchanged;
+- add paced-write, unpaced-read, and normal-I/O control results.
+
+Wenjie Qi (2):
+  f2fs: complete dropbehind write bios in safe task context
+  f2fs: enable buffered RWF_DONTCACHE
+
+ fs/f2fs/data.c | 59 ++++++++++++++++++++++++++++++++++++++++----------
+ fs/f2fs/file.c |  2 +-
+ 2 files changed, 49 insertions(+), 12 deletions(-)
+
+-- 
+2.43.0
 
 
 _______________________________________________
