@@ -4,135 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C4181C5DF9C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 16:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2971BC5DF9C
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 19:14:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ElrNtCv6F/kljAnWhIijq1FbVcdRJ9mumBaeg+KiAr4=; b=YYO6HyRMyJd+ZxkOKA7lIFgu1Q
-	X6fhiqNxSkYe2tEEzfnI5ADZvjmlGIB6gRT5YF2vfbK+/0JRuXkt1O5NZu+2cUcB9J0lEI0+egYkJ
-	WA2ZKntLqO2MVnyuBWwfAMMXNeZJh92OeAvcmmKXfOEdfplUeaPm+wNc0dVsk2Ib1yWo=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=sIjEczSHKuk2aJ5d2ZwLNuPQEgo4/Kf3/6ReVZsgvVI=; b=lr/F1kjGrHYEK/MFq3iaIObjeR
+	xVMbWczd+DkpKBM9R9bBw2oa+xRDsFNlhFEuZHd7kUFfrHxgti9tl25D8yGiCXAx9oJ+8xUEaoA5p
+	prXeG8qPlnGwXE/p9ped8tw6sMgxQB5xMsL5CHeviQ8uD5666MDeAcy0GN4jZ8LIor0M=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wyXrd-0003l4-4i;
-	Mon, 24 Aug 2026 16:49:37 +0000
+	id 1wya7e-0006e9-JG;
+	Mon, 24 Aug 2026 19:14:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1wyXrb-0003ky-Bu
+ (envelope-from <daeho43@gmail.com>) id 1wya7d-0006e1-EN
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 16:49:36 +0000
+ Mon, 24 Aug 2026 19:14:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5IxYb15YsKUEvi9kRZXC/hY4YJYpTUe5inPgn00h8WE=; b=eqod9oOC3rMKO735qpTL4UgHog
- NzYIyrKFfXNCr1Rm4L80gT1muX+1AJbXmmyXbYd/x5gGIvUygpnqiANNSs1YOyNawd9dlUBeMCl9j
- iGbzgkVKgPEn2ePI1KQFwEgY3afTxiyL0o+vMmvqJNCpFNJjfHRjAYnQY/Se60yf5lPg=;
+ bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=; b=ED6mrFDwWnvROl06q44chySIzH
+ uHHlnFVe3YwJ4P5htAPJ0a9Jb2FoV87+07HARxY1gSEnuC0CeBjdwFjDV6iKePTTXei3MN978BmDx
+ 8cZgu1hbyYR0sZdXZQIlcLfRfbPwNb9wEuKztsr29RrAtBBsCyEt4yXkH+dzo6mRlITg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=5IxYb15YsKUEvi9kRZXC/hY4YJYpTUe5inPgn00h8WE=; b=SZHZNd961ViNTZGSzMw7cF4ILa
- lDJCXKIUhZn08HnNwVRmBu2q4O4oXR4t35wyZm+kksT9jGNl9B3zuPokCnRwsXv6uZnGrn41OLuCK
- xqyUDrYxxb/YuZoezxkvQurf8zB7pWZFMFd7kpL04w5Sd6TXNTa+8NnlMrEeQFea25Lk=;
-Received: from mail-lf1-f51.google.com ([209.85.167.51])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=; b=M
+ KuVZHI3Y+gddJAD7CYrTPXrL5YxyiqIKqiKYaua9jgyuz0tH8n+U/Ya9+mAq52oBCaIX94dFzcb2m
+ YODa6sLowS8eflhrHCULcGW63junClJXIqrsw9bI5gDdx02I5FQWti3xMCslpIT/wCrtmOTY+wfm9
+ 8tJK0DFw2+IG7ovc=;
+Received: from mail-pj1-f44.google.com ([209.85.216.44])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wyXra-0002rE-FD for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 16:49:36 +0000
-Received: by mail-lf1-f51.google.com with SMTP id
- 2adb3069b0e04-5b01cb18515so3210820e87.2
+ id 1wya7b-0000aO-Sm for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Aug 2026 19:14:17 +0000
+Received: by mail-pj1-f44.google.com with SMTP id
+ 98e67ed59e1d1-382ef647e20so4154799a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Aug 2026 09:49:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787590168; cv=none;
- d=google.com; s=arc-20260327;
- b=rPGj2sY+nrSwunzcYDISaaQxsZyEHLA7DS7o1ZfR5PybWb6a0ExC3L4aS2Sl3Bbghl
- 1I4L4LsM6bbhySe3MSxJmfSP8ViIASl5IXGUkx3Slcc+dBOJnDdPwPojlKyjfdxQVH6Q
- sNXe3W8wk7bj0g93jjMMu/Sm+gf930IKaTfe3QC4Db/So4l9cUscYF1tj56M7mZGnBf2
- yqxrZ9afsLlHeRTpNMmKQ1hnDPxuAyZbz4wMeY0H7pfkVrL8XogRLVEXxi4bETdI0kWu
- JD/oHw/t6gYMkzM2fuzMh0IqLV/IBlXP+M90ZFs7xTQoxM0pGmg7uCthcs+0xdmTpYO3
- 54qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=5IxYb15YsKUEvi9kRZXC/hY4YJYpTUe5inPgn00h8WE=;
- fh=XuGkzqQAmKWE6TahIUiLbhNtSqkkHXHqHKdCiEiEUQk=;
- b=r3hgLvoOiu/QL9aJ60dNI3fUiCSdZJ9ktHOHJO1d0Riku2Ayr54CtNNJC8AzFlF2pl
- dzmbF6pcYG63qHEjv4cD4Tc62Ud6xif6DLk/19IwdWiOngvgn4BHLVeq+ijEQGrE3BEx
- xNjbkJicqsSCUiyzEp99/CKf+4TUCpDtb53d4CvpP1BjPpAk7Gu16+0pWjPEpLlprTnv
- MbaVNAX3FdWQVF7xsbjaVtKKjNpI53gqrKOlyqX9ZIcemsyHO4PkOEaEOdHG2rrKJ4mF
- 4qNGYG8gCVyphU+ApP+vIkFBmgffMAzdimzHAUbp85OdsnPA7Y7Hg3wSNZlpJAKJVNGR
- qaWg==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ Mon, 24 Aug 2026 12:14:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787590168; x=1788194968; darn=lists.sourceforge.net;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=5IxYb15YsKUEvi9kRZXC/hY4YJYpTUe5inPgn00h8WE=;
- b=TQiPmD77sUe+KiUX6B76HA8iy0/QEZDXJti/rRcRo0faui/6GdVvCABhSg3g7EWybz
- ZirQmyDSZR/3gqT21AHalPukS+ja6KrVKMeVPZEUhnBXJCKZk5FbN4SYX2cRYoQ4Zd0R
- gYD51oFO5tC/FFpcZUhLprJT/JrSos0k2hF7XZUHOFAU8giDRSeC/191AqkgvDuIXi/N
- +RDf0beGrAtjpXKjTnHWsbtB+6kykDPqAPl4qjwqaBuSQz2oI391qR/mvJ2tj/Wm5fAs
- 4LB/UlCrSR1J34r6cwJodFjhjW/PzofnAUt3dNw9zK7GCSsv4Ey7DFAN9RIzsmunpir5
- zQ3g==
+ d=gmail.com; s=20251104; t=1787598850; x=1788203650; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=;
+ b=ic9naQ3bmloIM6dW4ltK6iD9pSfCjteSJnHe/o4QIjOnC8X8Z/mTV8GpvC+piWJw4L
+ fwO7n9cJzCGyZnmXWNAJsOzA4SaEvg41Zldr9gFqORbrBgKQDuMWrhiGK/1PjdM4uCMa
+ zyo1aKepSN1XCkjJbzaBUJ7dcWvzMVQ5dqk+we9UwSro7FRYU6387VniWNfaUmZHKqk9
+ zBFKGjTd2PT/v1zMh+Uo5hqfVmxKT4T5+bT+fibHLy/BajAmVceay/H83vqasv7BRB8p
+ UHgE4tBiEfZ+bTU13VOLygcWpKwvyWy/D0Pv9DCZisXmWquknmpA2xuWjeCJ3SbElR9z
+ lYIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787590168; x=1788194968;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=5IxYb15YsKUEvi9kRZXC/hY4YJYpTUe5inPgn00h8WE=;
- b=OuvbOVC2zOUSsS5foPj4UgZFhjLcoIV4CZ6I5IHG7xsIGa9MOOjreM74Ytg5ZF5pXQ
- 53qi1rWUXtBf3f5vZJ295ra8bDDHAhbOwiNrVD+xXti5MW2BPV5qNLFCumqLBnjYbWPt
- IB+I+T1FexjgVSNXeey3C5hGxr5Mkpf1JzuvLaKjTFYYCaxCHZWrfECbiL32wd+zdCNF
- P5WFHLomIjixredXxQaz5cKIa+RfooCXwKSvji8whJPfz3k6EXS/VBprirr+ZKfR/3+9
- ggTT/f8Df3VkYE0chUZQg6shgw+gH8hzUDG46S/SLeZCM9bDM8g1QfJRVNFj6V/bKb1I
- L08A==
+ d=1e100.net; s=20251104; t=1787598850; x=1788203650;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=;
+ b=O38IcQXFPs4vI1saCN/+IID+UYXfNBE7fSLBF5V+4eW5C46E6U793RHZgOfIB5o/kH
+ M+D8A7rYFkUWFYqpKsoyi1RN/ZMzhnnRf85x6K8nS4hPX0G5itrzeT+mpECfglnr51Do
+ 6RdZ5X2fHpbw7DElG9cRM6SDmlV2fW02PmvWfu0t/rOHdEgT3hGcmicuwaUxm6yJfqBc
+ hp9zfRPY+JnM/ZL/1OTuhcHH46c36lWrmnKBN5ZhAfHiNPKQ7cY7Rnh2TY6MyXfuJPZa
+ Dhv9OMQv8aUZW2wGC5smpKrDEOJamGqDTwe12vrbY+DPFz6sgivYbH2galvt3UADn8Rf
+ MCqQ==
 X-Forwarded-Encrypted: i=1;
- AHgh+Rrr9UnfdyPU0ezEOE5CDrMbCfmP6f+8VR5qwjl19yV4HfnGnw3kp/5AUevASBqgSUV5WjhfaeAxwS49flZ7ldXG@lists.sourceforge.net
-X-Gm-Message-State: AFuF++nRJl7P450cZKdal7g4R0SDLxOFxT28CWJwiOUzswkBItTKUOWu
- Su762tGIzsnv+KvEdlKnmgBIHy54Ob01Rkxbi9rZiEHYoknK8GqGgXoFKm4Mzt5je/cG18eVGwW
- /2Sm0WS6070iMZ5DlKWm9OWXS73BEitQ=
-X-Gm-Gg: AR+sD13LEaIuOBzj8Dg3mjWbC8pbeojUHee1982Y36nCsPmvqlQ8hdIc8UCBr0Wxwn6
- LKbAATib9oAlfpxZOPUzKpMqZLesZ49Uejkrotp+MMN+N1JiWtadc0+/2iIJeWqBxYK+1JNFAxr
- FN7kgb4UMD8UKL+/F64mGYg6t3WEcoCH2l4d1IEYplnyptfDdV7syKAZfBUMPqC8biwC7/Zo4Ay
- 8x15ziMmf8vYBSsZBANgfz6J668OHzVD8XeJrj9T5sJBP5tOr7IwQ2Hovfu23MOcqIAnGEj8V3Y
- PtX5+8kxlAKDztBQPVAzxPOPUaDEzjwdOyP/T0mzDbOklsZM7R0tqlSzMKtu0eD5QPjurQb+k4V
- iARzq8YcwK5q80vw/j16xxRxczqmRk8FC8Q==
-X-Received: by 2002:a05:6512:b98:b0:5b3:e02:b3a3 with SMTP id
- 2adb3069b0e04-5b48424ba8cmr9422575e87.13.1787590167289; Mon, 24 Aug 2026
- 09:49:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260818171412.3201082-1-daeho43@gmail.com>
- <0e1162de-1ad4-4c24-a5c9-cd05c5b08cc0@kernel.org>
- <CACOAw_zQNVUtoPat0v1KFD5hkqBF1d=+3FwiGAf0bLma=xdq8g@mail.gmail.com>
- <8c21e8cb-00ba-497b-94a8-55219e14653f@kernel.org>
- <CGME20260820161308epcas1p4a14d03c7418eb82241f42d668a0e3d45@epcas1p4.samsung.com>
- <CACOAw_xdzvksT=C-ZgSEo1gXXyqYF_-CYXWbn-3ZRZkFYGJCKw@mail.gmail.com>
- <001401dd3147$17b1f300$4715d900$@samsung.com>
- <CACOAw_yokUZGys6JBNp-8YvJVACX8vOURo5gTHAuhLj0qo2_fw@mail.gmail.com>
- <55ce8604-aa44-4e77-ba07-80689567fcf2@kernel.org>
-In-Reply-To: <55ce8604-aa44-4e77-ba07-80689567fcf2@kernel.org>
+ AHgh+RqjwsenpFPOo2/YxfUjzkwsVs+O1dvZ8061gVWWoPzaUqMJEw7Vkyvivc4Vufn5ncaXvWvHEwItbX7Th9ZnbwV3@lists.sourceforge.net
+X-Gm-Message-State: AFuF++mY1u8VyF9ido6DUfpX4VHyCM4IuMYQpoOVCRddTrhhcT9k+kp2
+ 5EgDFY8YN3B4spt4q0peh7/UZ2r2N8rBLC/diWATXRKoynsWhW4ozIr5EDrXMjik
+X-Gm-Gg: AR+sD12Q2Xp39rOvcnxNJWy91E3uJ0z3w0YS6ziOjMrD6ZrgS4wg9Rv6X7K0LhsQw9q
+ 0QRyDzAd471uGWHcGJ5hZU75u8w2LTFVaxeiaheyUE2UWZ7IsmRHswK9Sk8dKEjq7GMDnSMVmdG
+ twHpXlQ+4ZnBiuXJoYFMrNpraZIOSBVSoJKyXaW1znSxaQU4Ub6U1n+RcOEQPwNfdCmeBKb6wXL
+ R77NgKqemsV4pu3bn5gCihsXi0gy7sUHEoxgmQgHiwvbxgAmFenSgywOSqp7QN5Eh4lHIVEW/4h
+ baZhCtJgEssN3nua1ff2qBOcbrapr67fAroBu8PE+gjlVtvUnpPqjUyzHwIhwCdK/jEAlPSHgfK
+ frhrtiWTVJa0ir4HX2PYWQhLbovp5vgI7FW1W7fMH5QkD9tajCwLn5EQZ2VjJhfmD0mLI4B+FzP
+ NJf0IwOjxIajBBWtTHPagUyKhXybOEqRfwMahtgWY6G1KqA9Ch4L0at1HOu1ovQ0RYAPfPGO+o9
+ Z5NUUt/vPX8nlSL6i3vTJfC9z2y4Zakb3dIAApyipGdEmkx6g6JvXUUfjU2PiFWKSwRFEHDVjTc
+ rXiFtzEoFeaq
+X-Received: by 2002:a17:90b:3811:b0:393:288:29e3 with SMTP id
+ 98e67ed59e1d1-395df24f20cmr35413670a91.10.1787598849834; 
+ Mon, 24 Aug 2026 12:14:09 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2a00:79e0:2e7c:8:c953:f8f9:5ea5:a893])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-32801d7f812sm25813698eec.1.2026.08.24.12.14.08
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 24 Aug 2026 12:14:08 -0700 (PDT)
 From: Daeho Jeong <daeho43@gmail.com>
-Date: Mon, 24 Aug 2026 09:49:14 -0700
-X-Gm-Features: AcwNN1XFXjYpN7gDf1VNi_GieEPluZmEgZZDRaegzyl5eGQffM4Zf8xbTfXAIvY
-Message-ID: <CACOAw_z20rC5ZLBE6B8RRcX-irixtCtB2+pWqTXyPpyHoTNV4w@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wyXra-0002rE-FD
-Subject: Re: [f2fs-dev] [PATCH] f2fs: accurately adjust free_sections during
- free_segment_range
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Mon, 24 Aug 2026 12:14:04 -0700
+Message-ID: <20260824191404.2558269-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.55.0.860.g4b6b3295ed-goog
+MIME-Version: 1.0
+X-Headers-End: 1wya7b-0000aO-Sm
+Subject: [f2fs-dev] [PATCH] f2fs: support resizable tail section and unify
+ pinned allocation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -144,165 +120,326 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Daeho Jeong <daehojeong@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gU2F0LCBBdWcgMjIsIDIwMjYgYXQgMTI6MzHigK9BTSBDaGFvIFl1IDxjaGFvQGtlcm5lbC5v
-cmc+IHdyb3RlOgo+Cj4gT24gOC8yMi8yNiAwMDo0OSwgRGFlaG8gSmVvbmcgd3JvdGU6Cj4gPiBP
-biBGcmksIEF1ZyAyMSwgMjAyNiBhdCAxOjI54oCvQU0gWWVvbmdqaW4gR2lsIDx5b3VuZ2ppbi5n
-aWxAc2Ftc3VuZy5jb20+IHdyb3RlOgo+ID4+Cj4gPj4+IE9uIFRodSwgQXVnIDIwLCAyMDI2IGF0
-IDY6MTnigK9BTSBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4+Pj4KPiA+Pj4+
-IE9uIDgvMjAvMjYgMDI6MjYsIERhZWhvIEplb25nIHdyb3RlOgo+ID4+Pj4+IE9uIFR1ZSwgQXVn
-IDE4LCAyMDI2IGF0IDg6NTfigK9QTSBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+IHdyb3RlOgo+
-ID4+Pj4+Pgo+ID4+Pj4+PiBPbiA4LzE5LzI2IDAxOjE0LCBEYWVobyBKZW9uZyB3cm90ZToKPiA+
-Pj4+Pj4+IEZyb206IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4gPj4+Pj4+
-Pgo+ID4+Pj4+Pj4gSW4gZnJlZV9zZWdtZW50X3JhbmdlKCksIE1BSU5fU0VDUyhzYmkpIGlzIHRl
-bXBvcmFyaWx5IHJlZHVjZWQgYnkKPiA+Pj4+Pj4+IGBzZWNzYCB3aGlsZSB2YWxpZCBibG9ja3Mg
-aW4gdGhlIHRydW5jYXRlZCByYW5nZSBhcmUgZXZhY3VhdGVkIGJ5IEdDLgo+ID4+Pj4+Pj4KPiA+
-Pj4+Pj4+IEhvd2V2ZXIsIGlmIGFueSBzZWN0aW9ucyB3aXRoaW4gdGhlIHRydW5jYXRlZCByYW5n
-ZSB3ZXJlIGFscmVhZHkKPiA+Pj4+Pj4+IGZyZWUsIGZhaWxpbmcgdG8gZGVkdWN0IHRoZW0gZnJv
-bSBGUkVFX0koc2JpKS0+ZnJlZV9zZWN0aW9ucyBsZWFkcwo+ID4+Pj4+Pj4gdG8gYW4gb3Zlci1l
-c3RpbWF0aW9uIG9mIGF2YWlsYWJsZSBzcGFjZSBpbiB0aGUgcmVkdWNlZCBtYWluIGFyZWEsCj4g
-Pj4+Pj4+PiBjYXVzaW5nIGluY29uc2lzdGVudCBmcmVlIHNlY3Rpb24gYWNjb3VudGluZy4KPiA+
-Pj4+Pj4KPiA+Pj4+Pj4gQ2FuIHlvdSBwbGVhc2Ugc2hvdyBtZSBhbiBleGFtcGxlIGZvciBhYm92
-ZSBjYXNlPyBJIGRpZG4ndCBnZXQgaXQuCj4gPj4+Pj4KPiA+Pj4+PiBIZXJlIGlzIGEgY29uY3Jl
-dGUgZXhhbXBsZSBleHBsYWluaW5nIHdoeSB0aGlzIGFkanVzdG1lbnQgaXMgbmVlZGVkOgo+ID4+
-Pj4KPiA+Pj4+IFRoYW5rcyBmb3IgdGhlIGRldGFpbGVkIGV4cGxhbmF0aW9uLgo+ID4+Pj4KPiA+
-Pj4+Pgo+ID4+Pj4+IFN1cHBvc2U6Cj4gPj4+Pj4gLSBUb3RhbCBtYWluIHNlY3Rpb25zOiBNQUlO
-X1NFQ1MgPSAxMDAgKHNlY3Rpb25zIDAgLi4gOTkpCj4gPj4+Pj4gLSBUb3RhbCBmcmVlIHNlY3Rp
-b25zOiBmcmVlX3NlY3Rpb25zID0gMzAKPiA+Pj4+PiAtIFdlIHdhbnQgdG8gc2hyaW5rIHRoZSBm
-aWxlc3lzdGVtIGJ5IDEwIHNlY3Rpb25zIChzZWNzID0gMTAsIHJhbmdlCj4gPj4+IDkwIC4uIDk5
-KS4KPiA+Pj4+PiAtIFdpdGhpbiB0aGUgdHJ1bmNhdGVkIHJhbmdlIChzZWN0aW9ucyA5MCAuLiA5
-OSk6Cj4gPj4+Pj4gICAgICogNiBzZWN0aW9ucyBhcmUgYWxyZWFkeSBmcmVlIChmcmVlX3NlY21h
-cCBiaXQgaXMgMCkKPiA+Pj4+PiAgICAgKiA0IHNlY3Rpb25zIGFyZSBpbi11c2Ugd2l0aCB2YWxp
-ZCBibG9ja3MgdGhhdCBuZWVkIHRvIGJlIG1pZ3JhdGVkCj4gPj4+IGJ5IEdDLgo+ID4+Pj4+IFdo
-ZW4gZnJlZV9zZWdtZW50X3JhbmdlKCkgZW50ZXJzOgo+ID4+Pj4+IDEuIE1BSU5fU0VDUyBpcyB0
-ZW1wb3JhcmlseSByZWR1Y2VkIGZyb20gMTAwIHRvIDkwIHNvIHRoYXQgbmV3IGJsb2NrCj4gPj4+
-Pj4gICAgICBhbGxvY2F0aW9ucyBhcmUgY29uc3RyYWluZWQgdG8gc2VjdGlvbnMgMCAuLiA4OS4K
-PiA+Pj4+PiAyLiBUaGUgYWN0dWFsIG51bWJlciBvZiBmcmVlIHNlY3Rpb25zIGF2YWlsYWJsZSBp
-biB0aGUgcmVkdWNlZCByYW5nZQo+ID4+Pj4+ICAgICAgKDAgLi4gODkpIGlzIG9ubHkgMjQgKDMw
-IC0gNiA9IDI0KS4KPiA+Pj4+PiAzLiBXaXRob3V0IHRoaXMgcGF0Y2g6Cj4gPj4+Pj4gICAgICAt
-IGZyZWVfc2VjdGlvbnMgcmVtYWlucyAzMCB3aGlsZSBNQUlOX1NFQ1MgaXMgOTAuCj4gPj4+Pj4g
-ICAgICAtIER1cmluZyB0aGUgc3Vic2VxdWVudCBHQyBtaWdyYXRpb25zLCBmcmVlIHNlY3Rpb24g
-Y2hlY2tzIChzdWNoIGFzCj4gPj4+Pj4gICAgICAgIGhhc19ub3RfZW5vdWdoX2ZyZWVfc2Vjcygp
-KSB3aWxsIG92ZXItZXN0aW1hdGUgYXZhaWxhYmxlIHNwYWNlCj4gPj4+Pj4gYnkgNgo+ID4+Pj4K
-PiA+Pj4+IEJ1dCBmcmVlX3NlZ21lbnRfcmFuZ2UoKSB3b24ndCBjYWxsIGludG8gaGFzX25vdF9l
-bm91Z2hfZnJlZV9zZWNzKCksCj4gPj4+PiBpZiBJJ20gbm90IG1pc3NpbmcgYW55dGhpbmcuCj4g
-Pj4+Cj4gPj4+IE9oLCByaWdodC4gSSBtaXNzZWQgaXQncyBGR19HQy4KPiA+Pj4gSSB0aGluayB3
-ZSBjYW4gZHJvcCB0aGlzIHBhdGNoLgo+ID4+Pgo+ID4+PiBUaGFua3MuCj4gPj4+Cj4gPj4gSSB3
-b25kZXIgaWYgdGhlIGZyZWUtc2VjdGlvbiBhZGp1c3RtZW50IGNvdWxkIHN0aWxsIGJlIHJlbGV2
-YW50Cj4gPj4gdG8gdGhlIFNTUi9MRlMgYWxsb2NhdGlvbiBkZWNpc2lvbiBkdXJpbmcgcmVzaXpl
-Lgo+ID4+Cj4gPj4gQ291bGQgeW91IHBsZWFzZSBhbHNvIGNoZWNrIHdoZXRoZXIgZnJlZV9zZWN0
-aW9ucyBtYXkgYWZmZWN0Cj4gPj4gYWxsb2NhdGlvbiB0aHJvdWdoIHRoZSBmb2xsb3dpbmcgcGF0
-aHM/Cj4gPj4KPiA+PiAgICBmcmVlX3NlZ21lbnRfcmFuZ2UoKQo+ID4+ICAgICAgLT4gZjJmc19h
-bGxvY2F0ZV9zZWdtZW50X2Zvcl9yZXNpemUoKQo+ID4+ICAgICAgICAtPiBmMmZzX25lZWRfU1NS
-KCkKPiA+PiAgICAgICAgLT4gbmV3X2N1cnNlZygpCj4gPj4gICAgICAgICAgLT4gZ2V0X25ld19z
-ZWdtZW50KCkKPiA+Pgo+ID4+IEFsc28sIHdoZW4gYSBjdXJyZW50IHNlZ21lbnQgYmVjb21lcyBm
-dWxsIGR1cmluZyBibG9jayBtaWdyYXRpb246Cj4gPj4KPiA+PiAgICBmcmVlX3NlZ21lbnRfcmFu
-Z2UoKQo+ID4+ICAgICAgLT4gZjJmc19nY19yYW5nZSgpCj4gPj4gICAgICAgIC0+IGRvX2dhcmJh
-Z2VfY29sbGVjdCgpCj4gPj4gICAgICAgICAgLT4gZjJmc19hbGxvY2F0ZV9kYXRhX2Jsb2NrKCkK
-PiA+PiAgICAgICAgICAgIC0+IG5lZWRfbmV3X3NlZygpCj4gPj4gICAgICAgICAgICAgIC0+IGYy
-ZnNfbmVlZF9TU1IoKQo+ID4+ICAgICAgICAgICAgICAtPiBuZXdfY3Vyc2VnKCkKPiA+PiAgICAg
-ICAgICAgICAgICAtPiBnZXRfbmV3X3NlZ21lbnQoKQo+ID4+Cj4gPj4gSWYgZnJlZV9zZWN0aW9u
-cyBzdGlsbCBpbmNsdWRlIGZyZWUgc2VjdGlvbnMgaW4gdGhlIHJhbmdlIGJlaW5nCj4gPj4gcmVt
-b3ZlZCwgZjJmc19uZWVkX1NTUigpIG1heSBjaG9vc2UgTEZTIGFsbG9jYXRpb24gaW5zdGVhZCBv
-ZiBTU1IuCj4gPj4gU2luY2UgZ2V0X25ld19zZWdtZW50KCkgc2VhcmNoZXMgb25seSB3aXRoaW4g
-dGhlIHRlbXBvcmFyaWx5IHJlZHVjZWQKPiA+PiBNQUlOX1NFQ1MgcmFuZ2UsIGl0IG1heSBmYWls
-IHRvIGZpbmQgYSBmcmVlIHNlY3Rpb24uCj4gPj4KPiA+PiBDb3VsZCB5b3UgcGxlYXNlIGNvbmZp
-cm0gd2hldGhlciB0aGlzIGNhc2UgYWxzbyBuZWVkcyB0byBiZSBoYW5kbGVkPwo+ID4KPiA+IFRo
-YW5rIHlvdSBmb3IgcG9pbnRpbmcgdGhpcyBvdXQg4oCUIHRoaXMgaXMgYSB2ZXJ5IHNoYXJwIGFu
-ZCB2YWxpZCBvYnNlcnZhdGlvbiEKPiA+Cj4gPiBJdCBtYWtlcyBzZW5zZSB0byBtZS4gQ2hhbywg
-V0RZVD8KPgo+IERhZWhvLCB5ZWFoLCBJIHRoaW5rIGl0J3MgYSBnb29kIGNhdGNoIGZyb20gWWVv
-bmdqaW4uCj4KPiBJIHN1c3BlY3QgdGhpcyBpcyBhIGJ1ZywgcmlnaHQ/Cj4KPiBGb3IgZXhhbXBs
-ZSwgZjJmcyBoYXMgaGlnaCBCREYgdmFsdWU6Cj4gMC4uODUgYXJlIGRpcnR5IHNlY3Rpb25zLCBh
-bmQgaGFzIGZldyB2YWxpZCBibG9ja3MgaW4gZWFjaCBzZWN0aW9uCj4gODYuLjg5IGFyZSBmcmVl
-IHNlY3Rpb25zCj4gOTAuLjk5IGFyZSBmdWxsIHNlY3Rpb25zCj4KPiBXaGVuIHdlIG1pZ3JhdGUg
-OTAuLjk5IHRvIDAuLjg5LCBpZiBTU1IgY2FuIG5vdCB1c2VkIGZvciBzdWNoIGNhc2UsCj4gZ2V0
-X25ld19zZWdtZW50KCkgbWF5IHJldHVybiAtRU5PU1BDLCBhbmQgdHJpZ2dlciB0aGUgcGFuaWM/
-CgpZZXMsIHNvIEkgdGhpbmsgdGhpcyBwYXRjaCBpcyBzdGlsbCB2YWxpZCBmb3IgdGhlIGNhc2Uu
-LgoKVGhhbmtzLAoKPgo+IFRoYW5rcywKPgo+ID4KPiA+Pgo+ID4+IFRoYW5rcywKPiA+Pj4+Cj4g
-Pj4+PiBOb3Qgc3VyZSwgbWF5YmUgeW91IG1lYW4gb3RoZXIgdGhyZWFkcyB3aWxsIGNhbGwKPiA+
-Pj4+IGhhc19ub3RfZW5vdWdoX2ZyZWVfc2VjcygpLCBhcmUgeW91IHdvcnJpZWQgYWJvdXQgdGhh
-dCB3ZSBtYXkgbWlzcwo+ID4+PiBjaGFuY2VzIHRvIGNhbGwgZmdnYyBlYXJsaWVyIGluIGJlbG93
-IGNhc2VzOgo+ID4+Pj4KPiA+Pj4+IGYyZnNfYmFsYW5jZV9mcyAtPiBoYXNfZW5vdWdoX2ZyZWVf
-c2VjcyAtPiBmMmZzX2djPyBJIGd1ZXNzIGl0IHdpbGwKPiA+Pj4+IGJsb2NrZWQgb24gZ2NfbG9j
-ay4KPiA+Pj4KPiA+Pj4+Cj4gPj4+Pj4gICAgICAgIHNlY3Rpb25zIGluIHRoZSBhY3RpdmUgMCAu
-LiA4OSByYW5nZS4KPiA+Pj4+PiAgICAgIC0gSWYgZnJlZV9zZWdtZW50X3JhbmdlKCkgZmFpbHMg
-bWlkd2F5IChlLmcuIC1FQUdBSU4pLAo+ID4+PiBmcmVlX3NlY3Rpb25zCj4gPj4+Pj4gICAgICAg
-IGFjY291bnRpbmcgYmVjb21lcyBpbmNvbnNpc3RlbnQuCj4gPj4+Pgo+ID4+Pj4gV2h5IGZyZWVf
-c2VjdGlvbnMgYWNjb3VudGluZyBiZWNvbWVzIGluY29uc2lzdGVudCBpZgo+ID4+Pj4gZnJlZV9z
-ZWdtZW50X3JhbmdlKCkgZmFpbHMgbWlkd2F5Pwo+ID4+Pj4KPiA+Pj4+IFRoYW5rcywKPiA+Pj4+
-Cj4gPj4+Pj4gV2l0aCB0aGlzIHBhdGNoOgo+ID4+Pj4+IC0gV2UgY291bnQgdGhlIDYgYWxyZWFk
-eS1mcmVlIHNlY3Rpb25zIGluIHRoZSB0cnVuY2F0ZWQgcmFuZ2UgKDkwIC4uCj4gPj4+IDk5KSBh
-bmQKPiA+Pj4+PiAgICAgZGVkdWN0IHRoZW0gZnJvbSBmcmVlX3NlY3Rpb25zIHVwb24gZW50ZXJp
-bmcgKDMwIC0gNiA9IDI0KSwKPiA+Pj4gcGVyZmVjdGx5Cj4gPj4+Pj4gICAgIG1hdGNoaW5nIHRo
-ZSBhY3R1YWwgZnJlZSBzZWN0aW9ucyBpbiB0aGUgYWN0aXZlIHJhbmdlIDAgLi4gODkuCj4gPj4+
-Pj4gLSBPbiBleGl0LCB0aGUgZGVkdWN0ZWQgYW1vdW50IGlzIHJlc3RvcmVkLCBrZWVwaW5nIGZy
-ZWVfc2VjdGlvbnMKPiA+Pj4gY29uc2lzdGVudAo+ID4+Pj4+ICAgICB0aHJvdWdob3V0IHRoZSBl
-bnRpcmUgcmVzaXplIGxpZmVjeWNsZS4KPiA+Pj4+Pgo+ID4+Pj4+IEhvcGUgdGhpcyBjbGFyaWZp
-ZXMgdGhlIHNjZW5hcmlvIQo+ID4+Pj4+Cj4gPj4+Pj4gVGhhbmtzLAo+ID4+Pj4+Cj4gPj4+Pj4+
-Cj4gPj4+Pj4+IEJUVywgaXQgbmVlZHMgdG8gcmViYXNlIHRoaXMgcGF0Y2ggb24gZGV2LXRlc3Qg
-YnJhbmNoLgo+ID4+Pj4+Pgo+ID4+Pj4+PiBUaGFua3MsCj4gPj4+Pj4+Cj4gPj4+Pj4+Pgo+ID4+
-Pj4+Pj4gRml4IHRoaXMgYnkgY2FsY3VsYXRpbmcgdGhlIG51bWJlciBvZiBhbHJlYWR5LWZyZWUg
-c2VjdGlvbnMgaW4gdGhlCj4gPj4+Pj4+PiB0cnVuY2F0ZWQgcmFuZ2UgdW5kZXIgc2VnbWFwX2xv
-Y2ssIGRlZHVjdGluZyB0aGVtIGZyb20KPiA+Pj4+Pj4+IGZyZWVfc2VjdGlvbnMgdXBvbiBlbnRl
-cmluZyBmcmVlX3NlZ21lbnRfcmFuZ2UoKSwgYW5kIHJlc3RvcmluZyB0aGVtCj4gPj4+IHVuZGVy
-IHNlZ21hcF9sb2NrIG9uIGV4aXQuCj4gPj4+Pj4+Pgo+ID4+Pj4+Pj4gU2lnbmVkLW9mZi1ieTog
-RGFlaG8gSmVvbmcgPGRhZWhvamVvbmdAZ29vZ2xlLmNvbT4KPiA+Pj4+Pj4+IFNpZ25lZC1vZmYt
-Ynk6IFN1bm1pbiBKZW9uZyA8c19taW4uamVvbmdAc2Ftc3VuZy5jb20+Cj4gPj4+Pj4+PiAtLS0K
-PiA+Pj4+Pj4+ICAgIGZzL2YyZnMvZ2MuYyB8IDE1ICsrKysrKysrKysrKysrLQo+ID4+Pj4+Pj4g
-ICAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiA+Pj4+
-Pj4+Cj4gPj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9nYy5jIGIvZnMvZjJmcy9nYy5jIGlu
-ZGV4Cj4gPj4+Pj4+PiA3ODcxMzNlZTJlYjIuLmYzYTZmYzZkMDhhZSAxMDA2NDQKPiA+Pj4+Pj4+
-IC0tLSBhL2ZzL2YyZnMvZ2MuYwo+ID4+Pj4+Pj4gKysrIGIvZnMvZjJmcy9nYy5jCj4gPj4+Pj4+
-PiBAQCAtMjIwMCw4ICsyMjAwLDkgQEAgaW50IGYyZnNfZ2NfcmFuZ2Uoc3RydWN0IGYyZnNfc2Jf
-aW5mbyAqc2JpLAo+ID4+Pj4+Pj4gICAgc3RhdGljIGludCBmcmVlX3NlZ21lbnRfcmFuZ2Uoc3Ry
-dWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4+Pj4+Pj4gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICB1bnNpZ25lZCBpbnQgc2VjcywgYm9vbCBkcnlfcnVuKQo+ID4+Pj4+Pj4gICAgewo+
-ID4+Pj4+Pj4gLSAgICAgdW5zaWduZWQgaW50IG5leHRfaW51c2UsIHN0YXJ0LCBlbmQ7Cj4gPj4+
-Pj4+PiArICAgICB1bnNpZ25lZCBpbnQgc2Vjbm8sIG5leHRfaW51c2UsIHN0YXJ0LCBlbmQsIGVu
-ZF9zZWNubzsKPiA+Pj4+Pj4+ICAgICAgICAgc3RydWN0IGNwX2NvbnRyb2wgY3BjID0geyBDUF9S
-RVNJWkUsIDAsIDAsIDAgfTsKPiA+Pj4+Pj4+ICsgICAgIHVuc2lnbmVkIGludCBmcmVlZF9zZWNz
-ID0gMDsKPiA+Pj4+Pj4+ICAgICAgICAgaW50IGdjX21vZGUsIGdjX3R5cGU7Cj4gPj4+Pj4+PiAg
-ICAgICAgIGludCBlcnIgPSAwOwo+ID4+Pj4+Pj4gICAgICAgICBpbnQgdHlwZTsKPiA+Pj4+Pj4+
-IEBAIC0yMjEwLDYgKzIyMTEsNyBAQCBzdGF0aWMgaW50IGZyZWVfc2VnbWVudF9yYW5nZShzdHJ1
-Y3QKPiA+Pj4gZjJmc19zYl9pbmZvICpzYmksCj4gPj4+Pj4+PiAgICAgICAgIE1BSU5fU0VDUyhz
-YmkpIC09IHNlY3M7Cj4gPj4+Pj4+PiAgICAgICAgIHN0YXJ0ID0gTUFJTl9TRUNTKHNiaSkgKiBT
-RUdTX1BFUl9TRUMoc2JpKTsKPiA+Pj4+Pj4+ICAgICAgICAgZW5kID0gTUFJTl9TRUdTKHNiaSkg
-LSAxOwo+ID4+Pj4+Pj4gKyAgICAgZW5kX3NlY25vID0gR0VUX1NFQ19GUk9NX1NFRyhzYmksIGVu
-ZCk7Cj4gPj4+Pj4+Pgo+ID4+Pj4+Pj4gICAgICAgICBtdXRleF9sb2NrKCZESVJUWV9JKHNiaSkt
-PnNlZ2xpc3RfbG9jayk7Cj4gPj4+Pj4+PiAgICAgICAgIGZvciAoZ2NfbW9kZSA9IDA7IGdjX21v
-ZGUgPCBNQVhfR0NfUE9MSUNZOyBnY19tb2RlKyspIEBACj4gPj4+Pj4+PiAtMjIyMSw2ICsyMjIz
-LDE0IEBAIHN0YXRpYyBpbnQgZnJlZV9zZWdtZW50X3JhbmdlKHN0cnVjdAo+ID4+PiBmMmZzX3Ni
-X2luZm8gKnNiaSwKPiA+Pj4+Pj4+ICAgICAgICAgICAgICAgICAgICAgICAgIHNiaS0+bmV4dF92
-aWN0aW1fc2VnW2djX3R5cGVdID0gTlVMTF9TRUdOTzsKPiA+Pj4+Pj4+ICAgICAgICAgbXV0ZXhf
-dW5sb2NrKCZESVJUWV9JKHNiaSktPnNlZ2xpc3RfbG9jayk7Cj4gPj4+Pj4+Pgo+ID4+Pj4+Pj4g
-KyAgICAgc3Bpbl9sb2NrKCZGUkVFX0koc2JpKS0+c2VnbWFwX2xvY2spOwo+ID4+Pj4+Pj4gKyAg
-ICAgZm9yIChzZWNubyA9IE1BSU5fU0VDUyhzYmkpOyBzZWNubyA8PSBlbmRfc2Vjbm87IHNlY25v
-KyspIHsKPiA+Pj4+Pj4+ICsgICAgICAgICAgICAgaWYgKCF0ZXN0X2JpdChzZWNubywgRlJFRV9J
-KHNiaSktPmZyZWVfc2VjbWFwKSkKPiA+Pj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBmcmVl
-ZF9zZWNzKys7Cj4gPj4+Pj4+PiArICAgICB9Cj4gPj4+Pj4+PiArICAgICBGUkVFX0koc2JpKS0+
-ZnJlZV9zZWN0aW9ucyAtPSBmcmVlZF9zZWNzOwo+ID4+Pj4+Pj4gKyAgICAgc3Bpbl91bmxvY2so
-JkZSRUVfSShzYmkpLT5zZWdtYXBfbG9jayk7Cj4gPj4+Pj4+PiArCj4gPj4+Pj4+PiAgICAgICAg
-IC8qIE1vdmUgb3V0IGN1cnNlZ3MgZnJvbSB0aGUgdGFyZ2V0IHJhbmdlICovCj4gPj4+Pj4+PiAg
-ICAgICAgIGZvciAodHlwZSA9IENVUlNFR19IT1RfREFUQTsgdHlwZSA8IE5SX0NVUlNFR19UWVBF
-OyB0eXBlKyspIHsKPiA+Pj4+Pj4+ICAgICAgICAgICAgICAgICBlcnIgPSBmMmZzX2FsbG9jYXRl
-X3NlZ21lbnRfZm9yX3Jlc2l6ZShzYmksIHR5cGUsCj4gPj4+Pj4+PiBzdGFydCwgZW5kKTsgQEAg
-LTIyNDUsNiArMjI1NSw5IEBAIHN0YXRpYyBpbnQKPiA+Pj4gZnJlZV9zZWdtZW50X3JhbmdlKHN0
-cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiA+Pj4+Pj4+ICAgICAgICAgICAgICAgICBmMmZzX2J1
-Z19vbihzYmksIDEpOwo+ID4+Pj4+Pj4gICAgICAgICB9Cj4gPj4+Pj4+PiAgICBvdXQ6Cj4gPj4+
-Pj4+PiArICAgICBzcGluX2xvY2soJkZSRUVfSShzYmkpLT5zZWdtYXBfbG9jayk7Cj4gPj4+Pj4+
-PiArICAgICBGUkVFX0koc2JpKS0+ZnJlZV9zZWN0aW9ucyArPSBmcmVlZF9zZWNzOwo+ID4+Pj4+
-Pj4gKyAgICAgc3Bpbl91bmxvY2soJkZSRUVfSShzYmkpLT5zZWdtYXBfbG9jayk7Cj4gPj4+Pj4+
-PiAgICAgICAgIE1BSU5fU0VDUyhzYmkpICs9IHNlY3M7Cj4gPj4+Pj4+PiAgICAgICAgIHJldHVy
-biBlcnI7Cj4gPj4+Pj4+PiAgICB9Cj4gPj4+Pj4+Cj4gPj4+Pgo+ID4+Pgo+ID4+Pgo+ID4+PiBf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+ID4+PiBMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+ID4+PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNv
-dXJjZWZvcmdlLm5ldAo+ID4+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
-aXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4gPj4KPiA+Pgo+CgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Daeho Jeong <daehojeong@google.com>
+
+Currently, zoned block devices restrict pinned file allocations to
+conventional zones at the beginning of the storage (before
+first_seq_zone_segno), triggering range GC when conventional space is
+exhausted.
+
+On regular block devices, when preparing for future online filesystem
+resizing (e.g. partition shrinking), pinned files must not be allocated
+in the tail area that will be truncated, as pinned files cannot be
+relocated by GC. Specifying the resizable tail area size (in sections)
+allows uniform mount configuration across devices of different storage
+capacities.
+
+To support this, introduce a unified `pinned_area_max_secno` boundary
+abstraction in `f2fs_sb_info`:
+1. Add `-o resizable_tail_secno=%u` mount option to specify the number
+   of sections at the tail of the filesystem reserved for resizing.
+2. In `f2fs_fill_super()`, initialize `sbi->pinned_area_max_secno` as:
+   min(MAIN_SECS(sbi) - resizable_tail_sec, zoned_max_sec).
+3. In `get_new_segment()`, restrict segment allocation for pinned files
+   (`pinning == true`) to `0 .. sbi->pinned_area_max_secno - 1`. If no
+   free section is available in the pinned area, return -EAGAIN.
+4. In `f2fs_allocate_pinning_section()`, unify the range GC trigger to
+   run `f2fs_gc_range()` up to `sbi->pinned_area_max_secno` whenever
+   `sbi->pinned_area_max_secno < MAIN_SECS(sbi)` and allocation
+   returns -EAGAIN.
+5. Expose `/sys/fs/f2fs/<dev>/pinned_area_max_secno` as a read-only
+   sysfs node.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++
+ Documentation/filesystems/f2fs.rst      |  8 +++++-
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/segment.c                       | 33 ++++++++++++-----------
+ fs/f2fs/segment.h                       |  1 +
+ fs/f2fs/super.c                         | 36 +++++++++++++++++++++++++
+ fs/f2fs/sysfs.c                         |  2 ++
+ 7 files changed, 72 insertions(+), 17 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 85194e4c7f01..0cebc89799dd 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -1013,3 +1013,10 @@ Description:	Every time a write operation completes f2fs_write_end_io() is
+ 		the maximum size of a write bio that is completed in atomic
+ 		(atc) context. The default value for this attribute is UINT_MAX
+ 		which means that this functionality is disabled by default.
++
++What:		/sys/fs/f2fs/<disk>/pinned_area_max_secno
++Date:		August 2026
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	This is a read-only entry to show the upper bound section number
++		for pinned files. Pinned files will only be allocated within
++		sections 0 to pinned_area_max_secno - 1.
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 1a5fd4afe609..a3c3b6948734 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -417,7 +417,13 @@ lookup_mode=%s		 Control the directory lookup behavior for casefolded
+ 			     auto               F2FS determines the mode based on the
+ 					        on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
+ 					        flag.
+-			     ================== ========================================
++resizable_tail_secno=%u  Control the number of sections at the tail of the
++			 filesystem reserved for online resizing. Pinned files
++			 will only be allocated within sections 0 to
++			 (MAIN_SECS - resizable_tail_secno) - 1. If set to 0
++			 (default), there is no tail restriction unless running
++			 on a zoned block device where conventional zones are
++			 used.
+ ======================== ============================================================
+ 
+ Debugfs Entries
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b0a9c14de595..16720f1f0a9c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -255,6 +255,7 @@ struct f2fs_mount_info {
+ 	block_t unusable_cap;		/* Amount of space allowed to be
+ 					 * unusable when disabling checkpoint
+ 					 */
++	unsigned int resizable_tail_secno;	/* number of resizable tail sections */
+ 
+ 	/* For compression */
+ 	unsigned char compress_algorithm;	/* algorithm type */
+@@ -2005,6 +2006,7 @@ struct f2fs_sb_info {
+ 	spinlock_t dev_lock;			/* protect dirty_device */
+ 	bool aligned_blksize;			/* all devices has the same logical blksize */
+ 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
++	unsigned int pinned_area_max_secno;	/* upper bound section for pinned files */
+ 	unsigned int bggc_io_aware;		/* For adjust the BG_GC priority when pending IO */
+ 	unsigned int allocate_section_hint;	/* the boundary position between devices */
+ 	unsigned int allocate_section_policy;	/* determine the section writing priority */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 56decf9c691c..ed6f2947210b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2877,6 +2877,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+ 	unsigned int alloc_policy = sbi->allocate_section_policy;
+ 	unsigned int alloc_hint = sbi->allocate_section_hint;
++	unsigned int max_secno = MAIN_SECS(sbi);
+ 	bool init = true;
+ 	bool looped = false;
+ 	int i, devi;
+@@ -2908,7 +2909,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+ 		/* Prioritize writing to conventional zones */
+-		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV || pinning)
++		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV)
+ 			segno = 0;
+ 		else
+ 			segno = max(sbi->first_seq_zone_segno, *newseg);
+@@ -2924,19 +2925,24 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 		alloc_hint > MAIN_SECS(sbi))
+ 		alloc_hint = MAIN_SECS(sbi);
+ 
+-	if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
+-		hint < alloc_hint)
++	if (pinning) {
++		max_secno = sbi->pinned_area_max_secno;
++		hint = 0;
++	} else if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
++		hint < alloc_hint) {
+ 		hint = alloc_hint;
+-	else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
+-			hint >= alloc_hint)
++	} else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
++			hint >= alloc_hint) {
+ 		hint = 0;
++	}
+ 
+ find_other_zone:
+-	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++	secno = find_next_zero_bit(free_i->free_secmap, max_secno, hint);
+ 
+-	if (secno >= MAIN_SECS(sbi)) {
++	if (secno >= max_secno) {
+ 		if (looped) {
+-			ret = -ENOSPC;
++			ret = (pinning && has_pinned_area(sbi)) ?
++					-EAGAIN : -ENOSPC;
+ 			f2fs_bug_on(sbi, !pinning);
+ 			goto out_unlock;
+ 		}
+@@ -3001,12 +3007,6 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 		goto out_unlock;
+ 	}
+ 
+-	/* no free section in conventional device or conventional zone */
+-	if (new_sec && pinning &&
+-		f2fs_is_sequential_zone_area(sbi, START_BLOCK(sbi, segno))) {
+-		ret = -EAGAIN;
+-		goto out_unlock;
+-	}
+ 	__set_inuse(sbi, segno);
+ 	*newseg = segno;
+ out_unlock:
+@@ -3472,8 +3472,9 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
+ 	err = f2fs_allocate_new_section(sbi, CURSEG_COLD_DATA_PINNED, false);
+ 	f2fs_unlock_op(sbi, &lc);
+ 
+-	if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
+-		err = f2fs_gc_range(sbi, 0, sbi->first_seq_zone_segno - 1,
++	if (has_pinned_area(sbi) && err == -EAGAIN && gc_required) {
++		err = f2fs_gc_range(sbi, 0,
++				sbi->pinned_area_max_secno * SEGS_PER_SEC(sbi) - 1,
+ 				true, ZONED_PIN_SEC_REQUIRED_COUNT, true);
+ 		if (err)
+ 			return err;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index db1079169a23..1dd8a2fa929d 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -43,6 +43,7 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
+ 
+ #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define MAIN_SECS(sbi)	((sbi)->total_sections)
++#define has_pinned_area(sbi)	((sbi)->pinned_area_max_secno < MAIN_SECS(sbi))
+ 
+ #define TOTAL_SEGS(sbi)							\
+ 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3bdb0f891c35..c1e315282ec6 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -235,6 +235,7 @@ enum {
+ 	Opt_jqfmt,
+ 	Opt_checkpoint,
+ 	Opt_lookup_mode,
++	Opt_resizable_tail_secno,
+ 	Opt_err,
+ };
+ 
+@@ -366,6 +367,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
+ 	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
+ 	fsparam_enum("lookup_mode", Opt_lookup_mode, f2fs_param_lookup_mode),
++	fsparam_u32("resizable_tail_secno", Opt_resizable_tail_secno),
+ 	{}
+ };
+ 
+@@ -551,6 +553,17 @@ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
+ 			F2FS_OPTION(sbi).unusable_cap_perc);
+ }
+ 
++static inline void adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
++{
++	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
++	if (f2fs_sb_has_blkzoned(sbi) && sbi->first_seq_zone_segno != NULL_SEGNO)
++		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
++				GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno));
++	if (F2FS_OPTION(sbi).resizable_tail_secno)
++		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
++				MAIN_SECS(sbi) - F2FS_OPTION(sbi).resizable_tail_secno);
++}
++
+ static void init_once(void *foo)
+ {
+ 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
+@@ -1235,6 +1248,9 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		F2FS_CTX_INFO(ctx).lookup_mode = result.uint_32;
+ 		ctx->spec_mask |= F2FS_SPEC_lookup_mode;
+ 		break;
++	case Opt_resizable_tail_secno:
++		F2FS_CTX_INFO(ctx).resizable_tail_secno = result.uint_32;
++		break;
+ 	}
+ 	return 0;
+ }
+@@ -1771,6 +1787,12 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 
+ static int f2fs_sanity_check_options(struct f2fs_sb_info *sbi, bool remount)
+ {
++	if (remount &&
++	    F2FS_OPTION(sbi).resizable_tail_secno >= MAIN_SECS(sbi)) {
++		f2fs_err(sbi, "Option resizable_tail_secno is larger than or equal to total sections (%u >= %u)",
++				F2FS_OPTION(sbi).resizable_tail_secno, MAIN_SECS(sbi));
++		return -EINVAL;
++	}
+ 	if (f2fs_sb_has_device_alias(sbi) &&
+ 	    !test_opt(sbi, READ_EXTENT_CACHE)) {
+ 		f2fs_err(sbi, "device aliasing requires extent cache");
+@@ -2544,6 +2566,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	else if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_AUTO)
+ 		seq_show_option(seq, "lookup_mode", "auto");
+ 
++	if (F2FS_OPTION(sbi).resizable_tail_secno)
++		seq_printf(seq, ",resizable_tail_secno=%u",
++				F2FS_OPTION(sbi).resizable_tail_secno);
++
+ 	return 0;
+ }
+ 
+@@ -2586,6 +2612,7 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
+ 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+ 	F2FS_OPTION(sbi).memory_mode = MEMORY_MODE_NORMAL;
+ 	F2FS_OPTION(sbi).errors = MOUNT_ERRORS_CONTINUE;
++	F2FS_OPTION(sbi).resizable_tail_secno = 0;
+ 
+ 	set_opt(sbi, INLINE_XATTR);
+ 	set_opt(sbi, INLINE_DATA);
+@@ -3045,6 +3072,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 
++	adjust_pinned_area_boundary(sbi);
+ 	limit_reserve_root(sbi);
+ 	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+ 
+@@ -5287,6 +5315,14 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	/* get segno of first zoned block device */
+ 	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
+ 
++	if (F2FS_OPTION(sbi).resizable_tail_secno >= MAIN_SECS(sbi)) {
++		f2fs_err(sbi, "Option resizable_tail_secno is larger than or equal to total sections (%u >= %u)",
++				F2FS_OPTION(sbi).resizable_tail_secno, MAIN_SECS(sbi));
++		err = -EINVAL;
++		goto free_nm;
++	}
++	adjust_pinned_area_boundary(sbi);
++
+ 	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
+ 			ZONED_PIN_SEC_REQUIRED_COUNT :
+ 			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi));
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 3201e2185fea..811e350a1430 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1313,6 +1313,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ F2FS_SBI_GENERAL_RW_ATTR(carve_out);
+ F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
++F2FS_SBI_GENERAL_RO_ATTR(pinned_area_max_secno);
+ F2FS_SBI_GENERAL_RW_ATTR(bggc_io_aware);
+ F2FS_SBI_GENERAL_RW_ATTR(max_lock_elapsed_time);
+ F2FS_SBI_GENERAL_RW_ATTR(lock_duration_priority);
+@@ -1525,6 +1526,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(max_read_extent_count),
+ 	ATTR_LIST(carve_out),
+ 	ATTR_LIST(reserved_pin_section),
++	ATTR_LIST(pinned_area_max_secno),
+ 	ATTR_LIST(allocate_section_hint),
+ 	ATTR_LIST(allocate_section_policy),
+ 	ATTR_LIST(max_lock_elapsed_time),
+-- 
+2.55.0.860.g4b6b3295ed-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
