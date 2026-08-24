@@ -4,111 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2971BC5DF9C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 19:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44036C5DF81
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 20:12:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=sIjEczSHKuk2aJ5d2ZwLNuPQEgo4/Kf3/6ReVZsgvVI=; b=lr/F1kjGrHYEK/MFq3iaIObjeR
-	xVMbWczd+DkpKBM9R9bBw2oa+xRDsFNlhFEuZHd7kUFfrHxgti9tl25D8yGiCXAx9oJ+8xUEaoA5p
-	prXeG8qPlnGwXE/p9ped8tw6sMgxQB5xMsL5CHeviQ8uD5666MDeAcy0GN4jZ8LIor0M=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=aQM6pkz+xuHqgafe463oBVrPrjReUz7kD1xVIl6TlTE=; b=WtB3p9CJfU2/5NqyToBGuhoBrr
+	WoOwgobKxGtIQVTM7igRmRatQqMeVgP8/HqUJndpuKzGtO+FVMfEerSw2gbO83psA1+CfGCYRZoJs
+	ofq1tAr561sSX2BRSWJ0ASFgnFY1KOqOmM6CVlZaQtMsT/wvs41CEe62pHGJWSxhUXV4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wya7e-0006e9-JG;
-	Mon, 24 Aug 2026 19:14:18 +0000
+	id 1wyb24-0004nz-7q;
+	Mon, 24 Aug 2026 20:12:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1wya7d-0006e1-EN
+ (envelope-from <jaegeuk@kernel.org>) id 1wyb22-0004ns-QW
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 19:14:17 +0000
+ Mon, 24 Aug 2026 20:12:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=; b=ED6mrFDwWnvROl06q44chySIzH
- uHHlnFVe3YwJ4P5htAPJ0a9Jb2FoV87+07HARxY1gSEnuC0CeBjdwFjDV6iKePTTXei3MN978BmDx
- 8cZgu1hbyYR0sZdXZQIlcLfRfbPwNb9wEuKztsr29RrAtBBsCyEt4yXkH+dzo6mRlITg=;
+ bh=ky29sd1tU4Mo8f3IGiS1LJyTCNhCh8FTNFqRlfXhQjA=; b=Q4fo9pgDQDL8r1EBZc9zcHviA4
+ YRTAcAQPgcqGQoU0mjFzA0g04TV9Hrf+0kYGGSbBIGI15P+zud4uV04zDtONvnXUQN/Jwm6C9yjC/
+ Wb8qQg6lbprYnBUNffW7B+sGT3Zi+CcitUBMgCI0bg/F5N/hR+zzAZN+A7rAdtyl1Uu8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=; b=M
- KuVZHI3Y+gddJAD7CYrTPXrL5YxyiqIKqiKYaua9jgyuz0tH8n+U/Ya9+mAq52oBCaIX94dFzcb2m
- YODa6sLowS8eflhrHCULcGW63junClJXIqrsw9bI5gDdx02I5FQWti3xMCslpIT/wCrtmOTY+wfm9
- 8tJK0DFw2+IG7ovc=;
-Received: from mail-pj1-f44.google.com ([209.85.216.44])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ky29sd1tU4Mo8f3IGiS1LJyTCNhCh8FTNFqRlfXhQjA=; b=VgOszrOsPay0Or1XiP4x8rhhou
+ cdfXWXh1wvOI7i0sYqbYcosuNt0t/gHelv07whgYcukfP5WM+K3I6sJkcXVrnZrNTtlCSJ3p5te7J
+ j07S8VaidbPE8E/MD++SpQbHX/XqWaytuc7GDB5kuMqsUk65/CvtUsvelRptKEJ0fwWI=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wya7b-0000aO-Sm for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 19:14:17 +0000
-Received: by mail-pj1-f44.google.com with SMTP id
- 98e67ed59e1d1-382ef647e20so4154799a91.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wyb1z-0002ny-I4 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Aug 2026 20:12:32 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id E4E046011F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Aug 2026 12:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787598850; x=1788203650; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=;
- b=ic9naQ3bmloIM6dW4ltK6iD9pSfCjteSJnHe/o4QIjOnC8X8Z/mTV8GpvC+piWJw4L
- fwO7n9cJzCGyZnmXWNAJsOzA4SaEvg41Zldr9gFqORbrBgKQDuMWrhiGK/1PjdM4uCMa
- zyo1aKepSN1XCkjJbzaBUJ7dcWvzMVQ5dqk+we9UwSro7FRYU6387VniWNfaUmZHKqk9
- zBFKGjTd2PT/v1zMh+Uo5hqfVmxKT4T5+bT+fibHLy/BajAmVceay/H83vqasv7BRB8p
- UHgE4tBiEfZ+bTU13VOLygcWpKwvyWy/D0Pv9DCZisXmWquknmpA2xuWjeCJ3SbElR9z
- lYIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787598850; x=1788203650;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=0HwEmGpNnubULZ/Imu8B0ivaUrl++1sf5ko/a4GxI6c=;
- b=O38IcQXFPs4vI1saCN/+IID+UYXfNBE7fSLBF5V+4eW5C46E6U793RHZgOfIB5o/kH
- M+D8A7rYFkUWFYqpKsoyi1RN/ZMzhnnRf85x6K8nS4hPX0G5itrzeT+mpECfglnr51Do
- 6RdZ5X2fHpbw7DElG9cRM6SDmlV2fW02PmvWfu0t/rOHdEgT3hGcmicuwaUxm6yJfqBc
- hp9zfRPY+JnM/ZL/1OTuhcHH46c36lWrmnKBN5ZhAfHiNPKQ7cY7Rnh2TY6MyXfuJPZa
- Dhv9OMQv8aUZW2wGC5smpKrDEOJamGqDTwe12vrbY+DPFz6sgivYbH2galvt3UADn8Rf
- MCqQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RqjwsenpFPOo2/YxfUjzkwsVs+O1dvZ8061gVWWoPzaUqMJEw7Vkyvivc4Vufn5ncaXvWvHEwItbX7Th9ZnbwV3@lists.sourceforge.net
-X-Gm-Message-State: AFuF++mY1u8VyF9ido6DUfpX4VHyCM4IuMYQpoOVCRddTrhhcT9k+kp2
- 5EgDFY8YN3B4spt4q0peh7/UZ2r2N8rBLC/diWATXRKoynsWhW4ozIr5EDrXMjik
-X-Gm-Gg: AR+sD12Q2Xp39rOvcnxNJWy91E3uJ0z3w0YS6ziOjMrD6ZrgS4wg9Rv6X7K0LhsQw9q
- 0QRyDzAd471uGWHcGJ5hZU75u8w2LTFVaxeiaheyUE2UWZ7IsmRHswK9Sk8dKEjq7GMDnSMVmdG
- twHpXlQ+4ZnBiuXJoYFMrNpraZIOSBVSoJKyXaW1znSxaQU4Ub6U1n+RcOEQPwNfdCmeBKb6wXL
- R77NgKqemsV4pu3bn5gCihsXi0gy7sUHEoxgmQgHiwvbxgAmFenSgywOSqp7QN5Eh4lHIVEW/4h
- baZhCtJgEssN3nua1ff2qBOcbrapr67fAroBu8PE+gjlVtvUnpPqjUyzHwIhwCdK/jEAlPSHgfK
- frhrtiWTVJa0ir4HX2PYWQhLbovp5vgI7FW1W7fMH5QkD9tajCwLn5EQZ2VjJhfmD0mLI4B+FzP
- NJf0IwOjxIajBBWtTHPagUyKhXybOEqRfwMahtgWY6G1KqA9Ch4L0at1HOu1ovQ0RYAPfPGO+o9
- Z5NUUt/vPX8nlSL6i3vTJfC9z2y4Zakb3dIAApyipGdEmkx6g6JvXUUfjU2PiFWKSwRFEHDVjTc
- rXiFtzEoFeaq
-X-Received: by 2002:a17:90b:3811:b0:393:288:29e3 with SMTP id
- 98e67ed59e1d1-395df24f20cmr35413670a91.10.1787598849834; 
- Mon, 24 Aug 2026 12:14:09 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com
- ([2a00:79e0:2e7c:8:c953:f8f9:5ea5:a893])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-32801d7f812sm25813698eec.1.2026.08.24.12.14.08
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Aug 2026 12:14:08 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Mon, 24 Aug 2026 12:14:04 -0700
-Message-ID: <20260824191404.2558269-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.55.0.860.g4b6b3295ed-goog
+ Mon, 24 Aug 2026 20:12:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8599C1F000E9;
+ Mon, 24 Aug 2026 20:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1787602345;
+ bh=ky29sd1tU4Mo8f3IGiS1LJyTCNhCh8FTNFqRlfXhQjA=;
+ h=Date:From:To:Subject:References:In-Reply-To;
+ b=YQi6huas4tPrAl6xuVJEAb5hxcTNdQxX0SeoizeFulgjp4v0QMmX/lU65xerDmLWk
+ nl6ErWWJ6YFNN0iXTi4W1dDrVExSHE1T9/n4BwRSoJwhnhnMV+9l30onhvFqB9VdU4
+ ZmsvKbspjX0zXR0dZPk7A8DLvvW+fub6h/4TDpYRlLQoWnNGz3HAOnmY5N6Xv3lllL
+ JCsdquVanBpzj8/bjqpTP1zC8TZTGbPJC6JpNf8IpPB/IVQplapNmzEqQS4Cw3i1Dg
+ GsmdlLtpPhdwfZ3p3I0y4G9vYF750WHKDNVoBrrInwg5Ew+Jb7Wgvq1fGNt+0M2oJX
+ naBmc8Ss7bAcA==
+Date: Mon, 24 Aug 2026 20:12:23 +0000
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <aoylp9llX9zlKm-g@google.com>
+References: <20260818200121.2684318-1-jaegeuk@kernel.org>
+ <aohtWfHNbUwxoQg2@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1wya7b-0000aO-Sm
-Subject: [f2fs-dev] [PATCH] f2fs: support resizable tail section and unify
- pinned allocation
+Content-Disposition: inline
+In-Reply-To: <aohtWfHNbUwxoQg2@google.com>
+X-Headers-End: 1wyb1z-0002ny-I4
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: don't leave the hashed inode while
+ it's unlinked
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,323 +88,297 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+f2fs_symlink()
+1. f2fs_new_inode
+2. f2fs_add_link
+3. write_being|end to fill the symlink path
+4. flush dirty pages and or checkpoint
 
-Currently, zoned block devices restrict pinned file allocations to
-conventional zones at the beginning of the storage (before
-first_seq_zone_segno), triggering range GC when conventional space is
-exhausted.
+Step 4 is nice to succeed, which doesn't become a reason to roll back
+the created symlink. OTOH, if we get an error till step 3, don't leave
+its dentry and its inode.
 
-On regular block devices, when preparing for future online filesystem
-resizing (e.g. partition shrinking), pinned files must not be allocated
-in the tail area that will be truncated, as pinned files cannot be
-relocated by GC. Specifying the resizable tail area size (in sections)
-allows uniform mount configuration across devices of different storage
-capacities.
-
-To support this, introduce a unified `pinned_area_max_secno` boundary
-abstraction in `f2fs_sb_info`:
-1. Add `-o resizable_tail_secno=%u` mount option to specify the number
-   of sections at the tail of the filesystem reserved for resizing.
-2. In `f2fs_fill_super()`, initialize `sbi->pinned_area_max_secno` as:
-   min(MAIN_SECS(sbi) - resizable_tail_sec, zoned_max_sec).
-3. In `get_new_segment()`, restrict segment allocation for pinned files
-   (`pinning == true`) to `0 .. sbi->pinned_area_max_secno - 1`. If no
-   free section is available in the pinned area, return -EAGAIN.
-4. In `f2fs_allocate_pinning_section()`, unify the range GC trigger to
-   run `f2fs_gc_range()` up to `sbi->pinned_area_max_secno` whenever
-   `sbi->pinned_area_max_secno < MAIN_SECS(sbi)` and allocation
-   returns -EAGAIN.
-5. Expose `/sys/fs/f2fs/<dev>/pinned_area_max_secno` as a read-only
-   sysfs node.
-
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++
- Documentation/filesystems/f2fs.rst      |  8 +++++-
- fs/f2fs/f2fs.h                          |  2 ++
- fs/f2fs/segment.c                       | 33 ++++++++++++-----------
- fs/f2fs/segment.h                       |  1 +
- fs/f2fs/super.c                         | 36 +++++++++++++++++++++++++
- fs/f2fs/sysfs.c                         |  2 ++
- 7 files changed, 72 insertions(+), 17 deletions(-)
+  - Change log from v2:
+    : handle the returning errors
+  - Change log from v1:
+    : fix bugs
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 85194e4c7f01..0cebc89799dd 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -1013,3 +1013,10 @@ Description:	Every time a write operation completes f2fs_write_end_io() is
- 		the maximum size of a write bio that is completed in atomic
- 		(atc) context. The default value for this attribute is UINT_MAX
- 		which means that this functionality is disabled by default.
-+
-+What:		/sys/fs/f2fs/<disk>/pinned_area_max_secno
-+Date:		August 2026
-+Contact:	"Daeho Jeong" <daehojeong@google.com>
-+Description:	This is a read-only entry to show the upper bound section number
-+		for pinned files. Pinned files will only be allocated within
-+		sections 0 to pinned_area_max_secno - 1.
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 1a5fd4afe609..a3c3b6948734 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -417,7 +417,13 @@ lookup_mode=%s		 Control the directory lookup behavior for casefolded
- 			     auto               F2FS determines the mode based on the
- 					        on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
- 					        flag.
--			     ================== ========================================
-+resizable_tail_secno=%u  Control the number of sections at the tail of the
-+			 filesystem reserved for online resizing. Pinned files
-+			 will only be allocated within sections 0 to
-+			 (MAIN_SECS - resizable_tail_secno) - 1. If set to 0
-+			 (default), there is no tail restriction unless running
-+			 on a zoned block device where conventional zones are
-+			 used.
- ======================== ============================================================
- 
- Debugfs Entries
+ fs/f2fs/f2fs.h  |   3 +-
+ fs/f2fs/inode.c |   6 ++-
+ fs/f2fs/namei.c | 118 +++++++++++++++++++++++++-----------------------
+ 3 files changed, 69 insertions(+), 58 deletions(-)
+
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b0a9c14de595..16720f1f0a9c 100644
+index a1f5f375045a..b0a9c14de595 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -255,6 +255,7 @@ struct f2fs_mount_info {
- 	block_t unusable_cap;		/* Amount of space allowed to be
- 					 * unusable when disabling checkpoint
- 					 */
-+	unsigned int resizable_tail_secno;	/* number of resizable tail sections */
+@@ -3878,7 +3878,8 @@ void f2fs_update_inode_page(struct inode *inode);
+ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc);
+ void f2fs_remove_donate_inode(struct inode *inode);
+ void f2fs_evict_inode(struct inode *inode);
+-void f2fs_handle_failed_inode(struct inode *inode, struct f2fs_lock_context *lc);
++void f2fs_handle_failed_inode(struct inode *inode,
++		struct f2fs_lock_context *lc, bool add_orphan);
+ int f2fs_init_evict_inode_work(void);
+ void f2fs_destroy_evict_inode_work(void);
  
- 	/* For compression */
- 	unsigned char compress_algorithm;	/* algorithm type */
-@@ -2005,6 +2006,7 @@ struct f2fs_sb_info {
- 	spinlock_t dev_lock;			/* protect dirty_device */
- 	bool aligned_blksize;			/* all devices has the same logical blksize */
- 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
-+	unsigned int pinned_area_max_secno;	/* upper bound section for pinned files */
- 	unsigned int bggc_io_aware;		/* For adjust the BG_GC priority when pending IO */
- 	unsigned int allocate_section_hint;	/* the boundary position between devices */
- 	unsigned int allocate_section_policy;	/* determine the section writing priority */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 56decf9c691c..ed6f2947210b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2877,6 +2877,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
- 	unsigned int alloc_policy = sbi->allocate_section_policy;
- 	unsigned int alloc_hint = sbi->allocate_section_hint;
-+	unsigned int max_secno = MAIN_SECS(sbi);
- 	bool init = true;
- 	bool looped = false;
- 	int i, devi;
-@@ -2908,7 +2909,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 	 */
- 	if (f2fs_sb_has_blkzoned(sbi)) {
- 		/* Prioritize writing to conventional zones */
--		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV || pinning)
-+		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV)
- 			segno = 0;
- 		else
- 			segno = max(sbi->first_seq_zone_segno, *newseg);
-@@ -2924,19 +2925,24 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 		alloc_hint > MAIN_SECS(sbi))
- 		alloc_hint = MAIN_SECS(sbi);
- 
--	if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
--		hint < alloc_hint)
-+	if (pinning) {
-+		max_secno = sbi->pinned_area_max_secno;
-+		hint = 0;
-+	} else if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
-+		hint < alloc_hint) {
- 		hint = alloc_hint;
--	else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
--			hint >= alloc_hint)
-+	} else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
-+			hint >= alloc_hint) {
- 		hint = 0;
-+	}
- 
- find_other_zone:
--	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-+	secno = find_next_zero_bit(free_i->free_secmap, max_secno, hint);
- 
--	if (secno >= MAIN_SECS(sbi)) {
-+	if (secno >= max_secno) {
- 		if (looped) {
--			ret = -ENOSPC;
-+			ret = (pinning && has_pinned_area(sbi)) ?
-+					-EAGAIN : -ENOSPC;
- 			f2fs_bug_on(sbi, !pinning);
- 			goto out_unlock;
- 		}
-@@ -3001,12 +3007,6 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 		goto out_unlock;
- 	}
- 
--	/* no free section in conventional device or conventional zone */
--	if (new_sec && pinning &&
--		f2fs_is_sequential_zone_area(sbi, START_BLOCK(sbi, segno))) {
--		ret = -EAGAIN;
--		goto out_unlock;
--	}
- 	__set_inuse(sbi, segno);
- 	*newseg = segno;
- out_unlock:
-@@ -3472,8 +3472,9 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
- 	err = f2fs_allocate_new_section(sbi, CURSEG_COLD_DATA_PINNED, false);
- 	f2fs_unlock_op(sbi, &lc);
- 
--	if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
--		err = f2fs_gc_range(sbi, 0, sbi->first_seq_zone_segno - 1,
-+	if (has_pinned_area(sbi) && err == -EAGAIN && gc_required) {
-+		err = f2fs_gc_range(sbi, 0,
-+				sbi->pinned_area_max_secno * SEGS_PER_SEC(sbi) - 1,
- 				true, ZONED_PIN_SEC_REQUIRED_COUNT, true);
- 		if (err)
- 			return err;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index db1079169a23..1dd8a2fa929d 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -43,6 +43,7 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
- 
- #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
- #define MAIN_SECS(sbi)	((sbi)->total_sections)
-+#define has_pinned_area(sbi)	((sbi)->pinned_area_max_secno < MAIN_SECS(sbi))
- 
- #define TOTAL_SEGS(sbi)							\
- 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3bdb0f891c35..c1e315282ec6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -235,6 +235,7 @@ enum {
- 	Opt_jqfmt,
- 	Opt_checkpoint,
- 	Opt_lookup_mode,
-+	Opt_resizable_tail_secno,
- 	Opt_err,
- };
- 
-@@ -366,6 +367,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
- 	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
- 	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
- 	fsparam_enum("lookup_mode", Opt_lookup_mode, f2fs_param_lookup_mode),
-+	fsparam_u32("resizable_tail_secno", Opt_resizable_tail_secno),
- 	{}
- };
- 
-@@ -551,6 +553,17 @@ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
- 			F2FS_OPTION(sbi).unusable_cap_perc);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index bac1e360d966..96cc0e777567 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -1107,7 +1107,8 @@ void f2fs_evict_inode(struct inode *inode)
  }
  
-+static inline void adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
-+{
-+	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
-+	if (f2fs_sb_has_blkzoned(sbi) && sbi->first_seq_zone_segno != NULL_SEGNO)
-+		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
-+				GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno));
-+	if (F2FS_OPTION(sbi).resizable_tail_secno)
-+		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
-+				MAIN_SECS(sbi) - F2FS_OPTION(sbi).resizable_tail_secno);
+ /* caller should call f2fs_lock_op() */
+-void f2fs_handle_failed_inode(struct inode *inode, struct f2fs_lock_context *lc)
++void f2fs_handle_failed_inode(struct inode *inode,
++		struct f2fs_lock_context *lc, bool orphan_free)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct node_info ni;
+@@ -1129,6 +1130,9 @@ void f2fs_handle_failed_inode(struct inode *inode, struct f2fs_lock_context *lc)
+ 	/* don't make bad inode, since it becomes a regular file. */
+ 	unlock_new_inode(inode);
+ 
++	if (!orphan_free)
++		goto out;
++
+ 	/*
+ 	 * Note: we should add inode to orphan list before f2fs_unlock_op()
+ 	 * so we can prevent losing this orphan when encoutering checkpoint
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 7d9f8e92de06..afaab7739283 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -411,7 +411,7 @@ static int f2fs_create(struct mnt_idmap *idmap, struct inode *dir,
+ 	f2fs_balance_fs(sbi, true);
+ 	return 0;
+ out:
+-	f2fs_handle_failed_inode(inode, &lc);
++	f2fs_handle_failed_inode(inode, &lc, true);
+ 	return err;
+ }
+ 
+@@ -566,40 +566,31 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	return ERR_PTR(err);
+ }
+ 
+-static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
++static int __do_unlink(struct inode *dir, struct inode *inode,
++			const struct qstr *name)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+-	struct inode *inode = d_inode(dentry);
+ 	struct f2fs_dir_entry *de;
+ 	struct f2fs_lock_context lc;
+ 	struct folio *folio;
+ 	int err;
+ 
+-	trace_f2fs_unlink_enter(dir, dentry);
+-
+-	if (IS_DEVICE_ALIASING(inode)) {
+-		err = -EPERM;
+-		goto out;
+-	}
++	if (IS_DEVICE_ALIASING(inode))
++		return -EPERM;
+ 
+-	if (unlikely(f2fs_cp_error(sbi))) {
+-		err = -EIO;
+-		goto out;
+-	}
++	if (unlikely(f2fs_cp_error(sbi)))
++		return -EIO;
+ 
+ 	err = f2fs_dquot_initialize(dir);
+ 	if (err)
+-		goto out;
++		return err;
+ 	err = f2fs_dquot_initialize(inode);
+ 	if (err)
+-		goto out;
++		return err;
+ 
+-	de = f2fs_find_entry(dir, &dentry->d_name, &folio);
+-	if (!de) {
+-		if (IS_ERR(folio))
+-			err = PTR_ERR(folio);
+-		goto out;
+-	}
++	de = f2fs_find_entry(dir, name, &folio);
++	if (!de)
++		return IS_ERR(folio) ? PTR_ERR(folio) : 0;
+ 
+ 	if (unlikely(inode->i_nlink == 0)) {
+ 		f2fs_warn(sbi, "%s: inode (ino=%llx) has zero i_nlink",
+@@ -617,11 +608,28 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	err = f2fs_acquire_orphan_inode(sbi);
+ 	if (err) {
+ 		f2fs_unlock_op(sbi, &lc);
+-		f2fs_folio_put(folio, false);
+-		goto out;
++		goto err_out;
+ 	}
+ 	f2fs_delete_entry(de, folio, dir, inode);
+ 	f2fs_unlock_op(sbi, &lc);
++	return 0;
++
++corrupted:
++	err = -EFSCORRUPTED;
++	set_sbi_flag(sbi, SBI_NEED_FSCK);
++err_out:
++	f2fs_folio_put(folio, false);
++	return err;
 +}
 +
- static void init_once(void *foo)
- {
- 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
-@@ -1235,6 +1248,9 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		F2FS_CTX_INFO(ctx).lookup_mode = result.uint_32;
- 		ctx->spec_mask |= F2FS_SPEC_lookup_mode;
- 		break;
-+	case Opt_resizable_tail_secno:
-+		F2FS_CTX_INFO(ctx).resizable_tail_secno = result.uint_32;
-+		break;
- 	}
- 	return 0;
- }
-@@ -1771,6 +1787,12 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
- 
- static int f2fs_sanity_check_options(struct f2fs_sb_info *sbi, bool remount)
- {
-+	if (remount &&
-+	    F2FS_OPTION(sbi).resizable_tail_secno >= MAIN_SECS(sbi)) {
-+		f2fs_err(sbi, "Option resizable_tail_secno is larger than or equal to total sections (%u >= %u)",
-+				F2FS_OPTION(sbi).resizable_tail_secno, MAIN_SECS(sbi));
-+		return -EINVAL;
-+	}
- 	if (f2fs_sb_has_device_alias(sbi) &&
- 	    !test_opt(sbi, READ_EXTENT_CACHE)) {
- 		f2fs_err(sbi, "device aliasing requires extent cache");
-@@ -2544,6 +2566,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_AUTO)
- 		seq_show_option(seq, "lookup_mode", "auto");
- 
-+	if (F2FS_OPTION(sbi).resizable_tail_secno)
-+		seq_printf(seq, ",resizable_tail_secno=%u",
-+				F2FS_OPTION(sbi).resizable_tail_secno);
++static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
++{
++	int err;
 +
- 	return 0;
++	trace_f2fs_unlink_enter(dir, dentry);
++	err = __do_unlink(dir, d_inode(dentry), &dentry->d_name);
++	if (err)
++		goto out;
+ 
+ 	/* VFS negative dentries are incompatible with Encoding and
+ 	 * Case-insensitiveness. Eventually we'll want avoid
+@@ -632,19 +640,10 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+ 		d_invalidate(dentry);
+ 
+-	if (IS_DIRSYNC(dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			goto out;
+-	}
+-
+-	goto out;
+-corrupted:
+-	err = -EFSCORRUPTED;
+-	set_sbi_flag(sbi, SBI_NEED_FSCK);
+-	f2fs_folio_put(folio, false);
++	if (IS_DIRSYNC(dir))
++		err = f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
+ out:
+-	trace_f2fs_unlink_exit(inode, err);
++	trace_f2fs_unlink_exit(d_inode(dentry), err);
+ 	return err;
  }
  
-@@ -2586,6 +2612,7 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
- 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
- 	F2FS_OPTION(sbi).memory_mode = MEMORY_MODE_NORMAL;
- 	F2FS_OPTION(sbi).errors = MOUNT_ERRORS_CONTINUE;
-+	F2FS_OPTION(sbi).resizable_tail_secno = 0;
+@@ -671,6 +670,8 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct inode *inode;
+ 	size_t len = strlen(symname);
+ 	struct fscrypt_str disk_link;
++	bool orphan_free = true;
++	int ret = -EAGAIN;
+ 	int err;
  
- 	set_opt(sbi, INLINE_XATTR);
- 	set_opt(sbi, INLINE_DATA);
-@@ -3045,6 +3072,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
- 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
- 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 	if (unlikely(f2fs_cp_error(sbi)))
+@@ -701,17 +702,19 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	f2fs_lock_op(sbi, &lc);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+-		goto out_f2fs_handle_failed_inode;
++		goto free_inode;
+ 	f2fs_unlock_op(sbi, &lc);
+ 	f2fs_alloc_nid_done(sbi, inode->i_ino);
  
-+	adjust_pinned_area_boundary(sbi);
- 	limit_reserve_root(sbi);
- 	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
++	/* Write the symlink path to the new inode. */
+ 	err = fscrypt_encrypt_symlink(inode, symname, len, &disk_link);
+ 	if (err)
+-		goto err_out;
++		goto unlink_free_inode;
  
-@@ -5287,6 +5315,14 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	/* get segno of first zoned block device */
- 	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
+ 	err = page_symlink(inode, disk_link.name, disk_link.len);
++	if (err)
++		goto unlink_free_inode;
  
-+	if (F2FS_OPTION(sbi).resizable_tail_secno >= MAIN_SECS(sbi)) {
-+		f2fs_err(sbi, "Option resizable_tail_secno is larger than or equal to total sections (%u >= %u)",
-+				F2FS_OPTION(sbi).resizable_tail_secno, MAIN_SECS(sbi));
-+		err = -EINVAL;
-+		goto free_nm;
-+	}
-+	adjust_pinned_area_boundary(sbi);
+-err_out:
+ 	d_instantiate_new(dentry, inode);
+ 
+ 	/*
+@@ -723,26 +726,29 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	 * If the symlink path is stored into inline_data, there is no
+ 	 * performance regression.
+ 	 */
+-	if (!err) {
+-		err = filemap_write_and_wait_range(inode->i_mapping, 0,
+-						   disk_link.len - 1);
+-
+-		if (!err && IS_DIRSYNC(dir))
+-			err = f2fs_sync_fs(sbi->sb, 1);
+-	}
+-
+-	if (err)
+-		f2fs_unlink(dir, dentry);
++	ret = filemap_write_and_wait_range(inode->i_mapping, 0,
++					   disk_link.len - 1);
++	if (!ret && IS_DIRSYNC(dir))
++		err = f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_balance_fs(sbi, true);
+-	goto out_free_encrypted_link;
+-
+-out_f2fs_handle_failed_inode:
+-	f2fs_handle_failed_inode(inode, &lc);
+-out_free_encrypted_link:
++out:
+ 	if (disk_link.name != (unsigned char *)symname)
+ 		kfree(disk_link.name);
+ 	return err;
 +
- 	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
- 			ZONED_PIN_SEC_REQUIRED_COUNT :
- 			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi));
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 3201e2185fea..811e350a1430 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1313,6 +1313,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
- #endif
- F2FS_SBI_GENERAL_RW_ATTR(carve_out);
- F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
-+F2FS_SBI_GENERAL_RO_ATTR(pinned_area_max_secno);
- F2FS_SBI_GENERAL_RW_ATTR(bggc_io_aware);
- F2FS_SBI_GENERAL_RW_ATTR(max_lock_elapsed_time);
- F2FS_SBI_GENERAL_RW_ATTR(lock_duration_priority);
-@@ -1525,6 +1526,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(max_read_extent_count),
- 	ATTR_LIST(carve_out),
- 	ATTR_LIST(reserved_pin_section),
-+	ATTR_LIST(pinned_area_max_secno),
- 	ATTR_LIST(allocate_section_hint),
- 	ATTR_LIST(allocate_section_policy),
- 	ATTR_LIST(max_lock_elapsed_time),
++unlink_free_inode:
++	ret = __do_unlink(dir, inode, &dentry->d_name);
++	if (ret) {
++		/* Give up and leave a broken symlink. */
++		d_instantiate_new(dentry, inode);
++		goto out;
++	}
++	orphan_free = false;
++	f2fs_lock_op(sbi, &lc);
++free_inode:
++	f2fs_handle_failed_inode(inode, &lc, orphan_free);
++	goto out;
+ }
+ 
+ static struct dentry *f2fs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+@@ -791,7 +797,7 @@ static struct dentry *f2fs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ out_fail:
+ 	clear_inode_flag(inode, FI_INC_LINK);
+-	f2fs_handle_failed_inode(inode, &lc);
++	f2fs_handle_failed_inode(inode, &lc, true);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -847,7 +853,7 @@ static int f2fs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	f2fs_balance_fs(sbi, true);
+ 	return 0;
+ out:
+-	f2fs_handle_failed_inode(inode, &lc);
++	f2fs_handle_failed_inode(inode, &lc, true);
+ 	return err;
+ }
+ 
+@@ -918,7 +924,7 @@ static int __f2fs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+ release_out:
+ 	f2fs_release_orphan_inode(sbi);
+ out:
+-	f2fs_handle_failed_inode(inode, &lc);
++	f2fs_handle_failed_inode(inode, &lc, true);
+ 	return err;
+ }
+ 
 -- 
 2.55.0.860.g4b6b3295ed-goog
-
 
 
 _______________________________________________
