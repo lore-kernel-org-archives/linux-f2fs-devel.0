@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 244C5C5DF94
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 06:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BA55C61CE3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 06:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=JUxLFEOCUBg4mgKCUlsiiLKLVvBcG0qTWV6ye0nj7eQ=; b=hRN3A87kg+/rnMJdQKwBIa4MAC
-	7+oIYdevThqLVOj7MOzD/Lau4HP0Tqtwv6gpeKgnq7qP9AhJlyw0AcRokDE6MrSKgTxOHgzLIMO6g
-	rNOBpZCjNgxzFmXlz2uizo78lbzl4LaXaCrLNtrE6z7GKD1/fW+ddCePQr/XMHWELsAw=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=STXKtCRm8LRDLYeazgTaVEUsVfbwqqNzfMDqu1PmvME=; b=j7OuwmYYkKz/JAgbX9URARpT1b
+	j0Rtte5nNvoPKgVMLuBQ7YvsPClm/trNBxNhPCghHwXsuNbg+2djb6dPG/sJhWceq/vvGi+6EB40d
+	4D1RbPkC3fV4W6GawMZxZ5DwrMkAYoP7V1s9dPVWSdWwxEaBc12wtKYUQLfMD6+WXyB4=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wyko9-0002yQ-32;
-	Tue, 25 Aug 2026 06:38:53 +0000
+	id 1wykq3-0006kY-Hr;
+	Tue, 25 Aug 2026 06:40:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wyko7-0002yG-A4
+ (envelope-from <chao@kernel.org>) id 1wykpa-0006id-G1
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 06:38:52 +0000
+ Tue, 25 Aug 2026 06:40:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PhnLXxGykIFhNbscdRmaimiCulgHoIJgLR4CORvL77A=; b=YlohiEn8lT6FZ8r14KgCBXCuHI
- vu9EBuPzJInRC0OSC6BGEEmVQxhMDBWmMC1NXnmKoU4RV33DM5BOWlalIwPdyAOhRxI7qH9G8TdMl
- i7eonor1hYjSkmabyejuT4ycgTenInuIELR/TUvfnwBGXsmxaiojX/CDBwzxrO5x8UFs=;
+ bh=/Q+NpiiFl2aNWbg70O8DFOTdkeOFE8QEIeXcleG8hUg=; b=ZT/jfLp0AHo7ZeLYTWxFGRU2VA
+ Gijcv3OVh/EU3P1iHnFs+TAnfFPyKu1vN41tkiZSkHGgkrk+LmoIMz0s9W0zPfiUo6rckg+VrdQCs
+ cbX/SGf7sPJDyjDkialJaCcHU4zIcSAlzlDmc768SEDR0ya6QS3u/a8QMsFYr5REwols=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=PhnLXxGykIFhNbscdRmaimiCulgHoIJgLR4CORvL77A=; b=hy80cZ2oNwc8NBHWjcec7yfOe2
- OmxiKd9pcw2UV2kKtLCgWZBDYxO91pgRk0+FEDb9kTIhbDpifk+cA9ztl654eQooHSux3UWzvUVt5
- wIP+59oNLrMm8WM5dliR94up3DvA1i27pUODakq/dY8iVvaMQzwdZhWPqB8Kbf43Hw50=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=/Q+NpiiFl2aNWbg70O8DFOTdkeOFE8QEIeXcleG8hUg=; b=f1Tg8/E2CaFO9aSoSLfEc23K3a
+ yXvjVH0p3ypecej95GyZpu8nKFdUWCEkxahqMinAjIbQge4o6z+FamhvGMx36C8oTbJLQjhd0LoKc
+ LaX31dRYgyiTJoWtAa7ZNhQES2lpofeKYk3LpeFwNVSbC0qFpQXZsjYmhK+1w0aOp7Lk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wyko6-0005Cc-Lq for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 06:38:51 +0000
+ id 1wykpa-0006sQ-R8 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Aug 2026 06:40:23 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 58C2041859;
- Tue, 25 Aug 2026 06:38:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207BC1F000E9;
- Tue, 25 Aug 2026 06:38:43 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 3C9116011F;
+ Tue, 25 Aug 2026 06:40:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA3F51F000E9;
+ Tue, 25 Aug 2026 06:40:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1787639925;
- bh=PhnLXxGykIFhNbscdRmaimiCulgHoIJgLR4CORvL77A=;
+ s=k20260515; t=1787640016;
+ bh=/Q+NpiiFl2aNWbg70O8DFOTdkeOFE8QEIeXcleG8hUg=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=Nsx3B7G/2k8YXy/kXtELJNzGJwi5GOyStXoOfkA3fAwA7FhGrw/bb+AaLQI8I2KH3
- 83PIHDzDjUFByvHX7ut6cGM0vpduUsa1WVw1oRps51iX3D0yKVetRIRQOWS2PejyEN
- vd3Hv4CuzCS9NKQid0H1CfCnN7969hHzqp8FgnSctLqcqeXFfWKffJ4EAERN+O65Ex
- yRSMcROdy58c7sl3OE+REQ150e6CQEyyc6b+7hQJLDvBTh44+eFD2UVLsx7t/S/mrb
- 4FLv2x8g+d4FOrU+8pPHurQkyR4Q/JkpFTaCddrtr2dayjcsmMKQeKVG1a5S3vKJ3B
- NE9ci8s5GZVig==
-Message-ID: <260d39d2-b619-4caa-b087-d165211b229a@kernel.org>
-Date: Tue, 25 Aug 2026 14:38:42 +0800
+ b=V4vFO5vY/JExdmr6VRZcAnu8Mp89x2jtpUxcjLweJyKa8W6PjFrWLxaPdF6tR6o07
+ lyKw6q1EQj2gMvNsb6f4H+RAB3iXdqriva4/UoVYDm1p8RHHjcgCpJU694EoUkGHcU
+ bIeVV1pRvDSaBwVlnhILgNUeO982jKlzRT7/c8P5W5xcgUEp/cb40rJRKVTmhEbv6M
+ YxTtsztwrHw/LTQ+d2dEmAa8/KApdy3bgqkP73yXc9TjEyjNQpWs6sCX6pFX926CAI
+ vP0mPoyL/7Nh0mWv/upQjsvPHZsHKD+4IoEZkssz1xwLpGsxWP2H7zW66K+xko4WGr
+ uSceC7hIV7uCg==
+Message-ID: <f9369204-aad5-499c-bad5-fb268ee0c2c5@kernel.org>
+Date: Tue, 25 Aug 2026 14:40:14 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>
 References: <20260824134731.3704352-1-chao@kernel.org>
  <20260824134731.3704352-8-chao@kernel.org>
- <20260825054309.400026-1-qiwenjie@xiaomi.com>
+ <20260825054331.400340-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260825054309.400026-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wyko6-0005Cc-Lq
+In-Reply-To: <20260825054331.400340-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wykpa-0006sQ-R8
 Subject: Re: [f2fs-dev] [PATCH v2 07/12] f2fs: cache: use node cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -99,21 +99,29 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 On 8/25/26 13:43, Wenjie Qi wrote:
 > Hi Chao,
 > 
->> entry = xa_load(&META_CACHE(sbi)->root, nid);
->> if (entry)
->> 	return;
+>> if (!f2fs_clear_cache_dirty(entry))
+>> 	goto continue_unlock;
 >>
->> entry = f2fs_grab_node_cache(sbi, nid);
+>> if (!__write_node_cache(entry, ...))
+>> 	...
 > 
-> The first lookup uses `nid` against `META_CACHE`, whose keys are physical
-> block addresses, while the subsequent cache operation uses the NID-keyed node
-> cache.
+> and in `__write_node_cache()`:
 > 
-> Is the lookup here intended to test the PBA-keyed meta cache or the NID-keyed
-> node cache?
+>> if (unlikely(ni.blk_addr == NULL_ADDR)) {
+>> 	f2fs_cache_clear_uptodate(entry);
+>> 	dec_page_count(sbi, F2FS_DIRTY_NODES);
+>> 	...
+>> 	return true;
+>> }
+> 
+> `f2fs_clear_cache_dirty()` clears the entry state bit but leaves the DIRTY
+> radix tag for the writeback transition.  The `NULL_ADDR` return does not reach
+> that transition, while it clears UPTODATE and decrements the dirty-node count.
+> 
+> What clears the DIRTY radix tag when this already-truncated path returns?
 
-Yeah, nice catch! I encountered a panic due to this issue, have fixed this
-locally, thanks for pointing it out anyway.
+Hmm, Actually, I don't change the logic here, just change the API, I can take
+a look original logic a bit later.
 
 Thanks,
 
