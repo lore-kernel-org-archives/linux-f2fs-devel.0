@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C6D4C5DF94
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 06:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 244C5C5DF94
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 06:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7vz6UQXbXlpPylK4Zo2yohArj7I/oCISWzEczfCszRE=; b=Vowbp1ek9+PV5oAPok01FUCvwv
-	WVXg4QFHhlCBqB0d9Sde3ll8yZt2z7h4sUhZQR7yEYlROspvQwcAkNqtloXNi8IxDGG7T/555nZyG
-	1Jtfmb+r/3ZsRHCvqvAmqqdzL8UZVl3Q/p67QlV2VGsmI3fO7lmVt9KUv2Hulc7SWV60=;
+	bh=JUxLFEOCUBg4mgKCUlsiiLKLVvBcG0qTWV6ye0nj7eQ=; b=hRN3A87kg+/rnMJdQKwBIa4MAC
+	7+oIYdevThqLVOj7MOzD/Lau4HP0Tqtwv6gpeKgnq7qP9AhJlyw0AcRokDE6MrSKgTxOHgzLIMO6g
+	rNOBpZCjNgxzFmXlz2uizo78lbzl4LaXaCrLNtrE6z7GKD1/fW+ddCePQr/XMHWELsAw=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wykn2-0002tp-LE;
-	Tue, 25 Aug 2026 06:37:45 +0000
+	id 1wyko9-0002yQ-32;
+	Tue, 25 Aug 2026 06:38:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wykn0-0002tg-Qu
+ (envelope-from <chao@kernel.org>) id 1wyko7-0002yG-A4
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 06:37:43 +0000
+ Tue, 25 Aug 2026 06:38:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l7Ee1JZBIyLORgFg9NlUUL8nKnpoMSsHscV834uYwoQ=; b=ZVqgBRfaAsxfqnCr+5lNzX3Ip8
- KhCzYQbsR2mzI3T6gzc+b5PQXIrxsh0cv9WMvme0OYcXTtpcZ2Y1lnSoA5CWQWCGkMRe36jhLc9DB
- lM+JJntxphfjUZ7QiFcks2fTCq1/3j7BL0V6uU3D4NZg3ZsGiqKLQMfoeX9WcV5WiEP8=;
+ bh=PhnLXxGykIFhNbscdRmaimiCulgHoIJgLR4CORvL77A=; b=YlohiEn8lT6FZ8r14KgCBXCuHI
+ vu9EBuPzJInRC0OSC6BGEEmVQxhMDBWmMC1NXnmKoU4RV33DM5BOWlalIwPdyAOhRxI7qH9G8TdMl
+ i7eonor1hYjSkmabyejuT4ycgTenInuIELR/TUvfnwBGXsmxaiojX/CDBwzxrO5x8UFs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l7Ee1JZBIyLORgFg9NlUUL8nKnpoMSsHscV834uYwoQ=; b=D+gKBaz+kw1OeBmHMdbbDnBUYq
- i/XBYnzjJYU0vuZFu0eKAGxw2FMGEcycNgO2sIfbEcyyNMFQqJrVC4Wzn3tPCF5aqCbnS90u6wKRj
- 1DxkhO2TaYjH9wzq4zV9J3PNaiVEShVJIH9he/VfySYn5NHrJzqmczosBxVBetZrDbeo=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=PhnLXxGykIFhNbscdRmaimiCulgHoIJgLR4CORvL77A=; b=hy80cZ2oNwc8NBHWjcec7yfOe2
+ OmxiKd9pcw2UV2kKtLCgWZBDYxO91pgRk0+FEDb9kTIhbDpifk+cA9ztl654eQooHSux3UWzvUVt5
+ wIP+59oNLrMm8WM5dliR94up3DvA1i27pUODakq/dY8iVvaMQzwdZhWPqB8Kbf43Hw50=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wykmz-0006jf-Uw for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 06:37:43 +0000
+ id 1wyko6-0005Cc-Lq for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Aug 2026 06:38:51 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 65E9B6011F;
- Tue, 25 Aug 2026 06:37:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD751F000E9;
- Tue, 25 Aug 2026 06:37:34 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 58C2041859;
+ Tue, 25 Aug 2026 06:38:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207BC1F000E9;
+ Tue, 25 Aug 2026 06:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1787639856;
- bh=l7Ee1JZBIyLORgFg9NlUUL8nKnpoMSsHscV834uYwoQ=;
+ s=k20260515; t=1787639925;
+ bh=PhnLXxGykIFhNbscdRmaimiCulgHoIJgLR4CORvL77A=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=Bs0/2QPFaU34Sfa4ENEzHuF/Qo0HzPHEuY24758V52CHUR7GmGE9cjt0qBpQAg7Pr
- bTXjx5m9Gww0rQK4uNh6rd1sTlqxfOuqc2d/+wNb9AznKN/Z60wuqqPYdPbHW3X9kK
- DyMRas2guM3dDHst8S9PxDuW5Ie4K2q2UJllg4RUDlpcYwRmehBbceZN61eUoUQto8
- GM4lM9QvQTyew4GCnvQ61P/yboRc7TKPv43qzs4pUfUekNH9ndWbfGsXcEIKmzmsf0
- ukmYyDapwa/w7TyJA4XLftL7/mrfN2VI8W5AIQBEVYp12lPSzx4d7AJhaqoBCJ2n+H
- COwh0gbvlMqww==
-Message-ID: <970e87b6-23e1-4d34-9a13-68567692294e@kernel.org>
-Date: Tue, 25 Aug 2026 14:37:33 +0800
+ b=Nsx3B7G/2k8YXy/kXtELJNzGJwi5GOyStXoOfkA3fAwA7FhGrw/bb+AaLQI8I2KH3
+ 83PIHDzDjUFByvHX7ut6cGM0vpduUsa1WVw1oRps51iX3D0yKVetRIRQOWS2PejyEN
+ vd3Hv4CuzCS9NKQid0H1CfCnN7969hHzqp8FgnSctLqcqeXFfWKffJ4EAERN+O65Ex
+ yRSMcROdy58c7sl3OE+REQ150e6CQEyyc6b+7hQJLDvBTh44+eFD2UVLsx7t/S/mrb
+ 4FLv2x8g+d4FOrU+8pPHurQkyR4Q/JkpFTaCddrtr2dayjcsmMKQeKVG1a5S3vKJ3B
+ NE9ci8s5GZVig==
+Message-ID: <260d39d2-b619-4caa-b087-d165211b229a@kernel.org>
+Date: Tue, 25 Aug 2026 14:38:42 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>
 References: <20260824134731.3704352-1-chao@kernel.org>
- <20260824134731.3704352-6-chao@kernel.org>
- <20260825054248.399693-1-qiwenjie@xiaomi.com>
+ <20260824134731.3704352-8-chao@kernel.org>
+ <20260825054309.400026-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260825054248.399693-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wykmz-0006jf-Uw
-Subject: Re: [f2fs-dev] [PATCH v2 05/12] f2fs: cache: use meta cache
+In-Reply-To: <20260825054309.400026-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wyko6-0005Cc-Lq
+Subject: Re: [f2fs-dev] [PATCH v2 07/12] f2fs: cache: use node cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,28 +96,26 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-will fix, thanks,
-
-On 8/25/26 13:42, Wenjie Qi wrote:
+On 8/25/26 13:43, Wenjie Qi wrote:
 > Hi Chao,
 > 
->> case META:
->> 	nr_to_write = BIO_MAX_VECS;
->> 	break;
+>> entry = xa_load(&META_CACHE(sbi)->root, nid);
+>> if (entry)
+>> 	return;
+>>
+>> entry = f2fs_grab_node_cache(sbi, nid);
 > 
-> and in `f2fs_sync_meta_caches()`:
+> The first lookup uses `nid` against `META_CACHE`, whose keys are physical
+> block addresses, while the subsequent cache operation uses the NID-keyed node
+> cache.
 > 
->> nwritten += sbi->blocksize;
->> prev = entry->index;
->> if (unlikely(nwritten >= nr_to_write))
->> 	break;
-> 
-> `adjust_flush_cache_number()` returns `BIO_MAX_VECS` for META, while
-> `nwritten` advances by `sbi->blocksize` for each entry before the comparison.
-> 
-> Are `nr_to_write` and `nwritten` intended to be entry counts or byte counts in
-> this path?
+> Is the lookup here intended to test the PBA-keyed meta cache or the NID-keyed
+> node cache?
 
+Yeah, nice catch! I encountered a panic due to this issue, have fixed this
+locally, thanks for pointing it out anyway.
+
+Thanks,
 
 
 _______________________________________________
