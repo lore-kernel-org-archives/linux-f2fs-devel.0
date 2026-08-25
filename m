@@ -4,109 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D9033C5DF94
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 08:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1778C61DBE
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 13:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=En0Dr8o4nmd/BiOWsMeydE59pMAvZAwWO47YnfTWNy0=; b=g4efq6TiyOj/h2tfMG7bP/YGD9
-	fkYWyDYijDcEvp9TCj0cGjr9XKMi8tX4Tu4UI8YYCSQuKNt1fb+9K+X9Bb8NvHUomyWM7+KVu9Ozf
-	G+ahxss/l/y+rfXzHUJqCb0OPro5FQzMxF+OITHxM/iZn7VrYeoy/sZ8X+/5xtO+TxyA=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=WgtsV5uGQtNNgmygD6U4wwfTWaF2bix0/IRO5qqz6Yc=; b=Xb4sfvsNUb+hty/3NtEZtH5hfn
+	6xamWcFlQGWUpfYCkdgAuWkexUllxBRwPMEFvxZLFVtq2s3NGrrsVnXucgs93r7T+P7VQBDMiYo6Y
+	axD5OIVkhjvxYMWILjvo3fOUTRt+FBSBQAngQL01966tN6NrDAqHubU24aXTO37KXdCw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wymfg-0005oZ-P1;
-	Tue, 25 Aug 2026 08:38:17 +0000
+	id 1wyqmx-0001oU-QK;
+	Tue, 25 Aug 2026 13:02:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wymfH-0005o3-5O
+ (envelope-from <chao@kernel.org>) id 1wyqmn-0001nU-Ov
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 08:37:51 +0000
+ Tue, 25 Aug 2026 13:01:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Mb+CK2NqBUYVaIe5Wsr+/1j4bZr/e8glNldexkHYN0o=; b=BIJBl6fVf88j8r05FJlXyKUkuN
- z+wMnFBKAabZUdyRIZtkHxmey8wODQolrD3O21xESsH1A8LReQ1vT4qhgzXYSGjrIUyRb+AZKzcp/
- oNodiPHk4w4iiC9PKJK2XPXHpJMVC+SiTBj2aSeItMfHeXJTywCUPxAAySJpfuMDS+PQ=;
+ bh=fWfJqMch2vJ9mOrxcF1z89bWchqZs15RXwBgkR3PtiY=; b=YYD90VCA5z/PqOjciRbJZNZW5T
+ yrXypQhIJRW++SS5osFp5Q3FzZFVcpPe4AweN4I2BWWymiyKv4LzMv7VKnkLNfPUtR0sQH4O9A9Wp
+ z2b2LiPtNhsalSLuL3ymJE9T+zYtdPmu+UWKqdu1nVnYJMwKEecaTQ+mDp34GUJz2RVI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Mb+CK2NqBUYVaIe5Wsr+/1j4bZr/e8glNldexkHYN0o=; b=j
- w2As+8ZFGdaTBaSe/dlVIRPGj77TSezwTmlWrwa74FKLIB6h1kVE4YG7hJKoLO4OXF478xUQoy7jt
- uOB93afr01nNByugdcgijw4uJ4jQMp6v9fToK91o2326mGWrxBaItIx1dXpmN0u7b2AkYHkQOUuS3
- mLuNj7H2VwYhz1Wo=;
-Received: from mail-pj1-f45.google.com ([209.85.216.45])
+ List-Owner:List-Archive; bh=fWfJqMch2vJ9mOrxcF1z89bWchqZs15RXwBgkR3PtiY=; b=J
+ rznfCOWADtRwsWJgxdK2Y3CXQKALMU1Clp7owwb0LjpJ2AoMcI9nQJq+OwcFfoXBgMnWSz5Bm0irU
+ 9l4VeU8t/Slz4xhFkwAi5vIAola7QiW+YRBj3felB8SPl8zPDYF1rZd6cxCU91Y4b2ufA3nJXnYYn
+ mtTfQQBcgRCK3OSY=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wymfH-00044D-D8 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 08:37:51 +0000
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-38511175ad3so4307793a91.2
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wyqmn-0005l7-27 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Aug 2026 13:01:54 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 6C7A76011F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 25 Aug 2026 01:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787647066; x=1788251866; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=Mb+CK2NqBUYVaIe5Wsr+/1j4bZr/e8glNldexkHYN0o=;
- b=NX90X88q2ukDlYsrdYAndsPwIJghb8S6E5U8/xJN6NEDQ3BcTgCkXphB6RTv3SFOqJ
- tuXUMwYMVzAtJBiXuI45z/WCfR1Rz174mwQW32N/MGRtcOiyS3FR+c+Rgbst0Plq1TFO
- es8a+B4bL1J+Fz7kl5pTMJyjzxea7yCuVCPWhnm1g8s+KaP7QZIXaEBFaJX0Iwqr+O8s
- e+IywyxjAb6rYJoKilHs7vcD0C501IgRLnbDLnoQmVllpu2Vj09Z2l1vI6qxHhP3yuhm
- XYQnO/L0mm6MnNbBpfbAa2B0/EOF8NKjlvb/tx7lbBQdP5+QbWzzTeW9ICxQM5dGm3nL
- nSuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787647066; x=1788251866;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=Mb+CK2NqBUYVaIe5Wsr+/1j4bZr/e8glNldexkHYN0o=;
- b=KfTZhMI1oD7QfmXDit/JpbGJdANvylAqQ6RU/+KFLvJlqZOa3XrD6Qh9s6SHYxNKd/
- twWWQlkX+jHJiH3PgN1waVVVOt9ATWzP4oq3y4JrKnL9GIAHEupraw9ycP2XX0RINcPf
- N3j8pKXc72M8Vve93wyBeN7SMg9/g76YeHIOpy65UsEwxMrQvZh6ttjfU5yCX1SfwRIi
- u8JrkO6rNZx3LGqX7/ayBJ1V4tryT7s0QKm7Ciu1016rHMPQecWjeZ8qj8BRzPMuq2gG
- LQuW9v1mcc/ngJFeEB+6HtmH4fnjeMNjcP51WW2O97ZBbP7lQzxGBK10TG6rJNN1OOaz
- gYvg==
-X-Forwarded-Encrypted: i=1;
- AHgh+Roe/rRnsjptZM0eFZOFGEljJF1R/mwX7XcXZf1SUky4NAAG7d3PMlpNsPsM7iVe3K032ul5cGbjy3T/Gz4KtlrU@lists.sourceforge.net
-X-Gm-Message-State: AFuF++ntZbwv24dLo0AFKuy4r0sR+xcGha+dKIIfBdUAfuihiMBCWlMt
- 5f8kMETlK9CWPiCO0CYv5BmQFXy0pfLQMu+eUGfWWWWvJN8r1mwC7ATI
-X-Gm-Gg: AR+sD13Yp8skbHewDyJgDT8Ca+6fCU7RQgv9MCx+/WIDXfKrYmfWGCZ6VPAkgMQi/X9
- t0LL4QnRLOkcjkGndW7LQj+/xLiL+dONb8umnAT7B9qbsQUZFJpXvf6xHQsHgxEZdk6CTyUy7UH
- Q9Vhsa1fxfB7+MSq54sCo9JrN+mUrBJkd88jaH2nxqmHkm6PTIJFxSaplrJ2gb3DstdrOuaglCG
- MhzTT+ieRzzTS6TiGrNl1ITXmBmxYx7QtFVc1K8vK7NDM+7uDRvELuRT8FDC+KUGdhNyaBWew+I
- +IPC8rafuAeSbLEkvGi9iCjTA7lGq/Bms5SeSeCgF/+mwTac/kveuRolF9fKYFHy4WXfceCwwHA
- p7cqUGfC9bQwJRmayjKtHwKkfb9Yl6gR0Wq9TPaitio26kp0VHkQaIASOqBfPn1ps1PISEzBzGb
- VNUmOba8EOz5g22KUNJUPatitVpEiff32krUvUKjtpVh4obQiqAGkZorDNsejqWKWs7VGv290Cw
- lUO02ASyiLFgbTOR9ywhXHDcBzZBjnT24s=
-X-Received: by 2002:a17:90b:5844:b0:393:1d92:db5 with SMTP id
- 98e67ed59e1d1-395c35e1199mr67956027a91.10.1787647065666; 
- Tue, 25 Aug 2026 01:37:45 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39645d31e74sm2941246a91.11.2026.08.25.01.37.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 25 Aug 2026 01:37:45 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Tue, 25 Aug 2026 16:37:38 +0800
-Message-ID: <20260825083738.526423-1-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+ Tue, 25 Aug 2026 13:01:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC201F00A3A;
+ Tue, 25 Aug 2026 13:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1787662907;
+ bh=fWfJqMch2vJ9mOrxcF1z89bWchqZs15RXwBgkR3PtiY=;
+ h=From:To:Cc:Subject:Date;
+ b=mzeqIJDtn8HTD+GuvJUcXHoPfnUxDUtjUjqy2I+364VuSv5HyFdBWznZQKVDwmSlr
+ 0r3EzQI25BSdkTzlzC36U4B17+oNdr8CncWPWYM/CbH0RTZLNjUPh2zHO4ylpubPqV
+ 51QP0z001jSC9ugIqVntL16P1ZGuUhdtOD6C//ZSPhWEQoSB8dWHd0e1e++jjG4OTH
+ 1T4oEf07vhIowPOXY7Uld53TJWWGOwFcJYxsgbQphzv2OGjLWb9b2SQV8FIJJA5Y8z
+ OsXeZSEk6M56T7q9JQUJCCZjVRgosetyFr/9vNlQcjjTy4QxR4h42G5m2NrVQWO66h
+ 4984x8z07WDbw==
+To: jaegeuk@kernel.org
+Date: Tue, 25 Aug 2026 21:01:14 +0800
+Message-ID: <20260825130126.2078627-1-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.887.g758fc8c411-goog
 MIME-Version: 1.0
-X-Headers-End: 1wymfH-00044D-D8
-Subject: [f2fs-dev] [PATCH] f2fs: propagate resizable_tail_secno mount option
+X-Headers-End: 1wyqmn-0005l7-27
+Subject: [f2fs-dev] [PATCH v3 00/12] f2fs: introduce metadata cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,67 +84,178 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: daehojeong@google.com, qwjhust@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Mount parsing stores resizable_tail_secno in F2FS_CTX_INFO(ctx),
-but it does not mark the option in ctx->spec_mask. As a
-result, f2fs_apply_options() never copies the value into
-F2FS_OPTION(sbi), so adjust_pinned_area_boundary() ignores
-the requested tail reservation.
+This patchset introduces a self-managed metadata block cache in f2fs,
+decoupling meta blocks, node blocks, and compressed data blocks from
+the Linux VFS page cache and fake internal inodes.
 
-Set the missing spec_mask bit and propagate the parsed value
-through f2fs_apply_options().
+=== 1. Background & Motivation ===
 
-Fixes: d8745ba260ab ("f2fs: support resizable tail section and unify pinned allocation")
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
----
-QEMU validation summary:
-- plain mount reported `pinned_area_max_secno=502`
-- `-o resizable_tail_secno=1` reported `pinned_area_max_secno=501`
-- bounded fill stayed within the reduced boundary through the first
-  `FALLOC_RET=-1 ERRNO=28`
+Currently, F2FS uses fake VFS inodes (meta_inode, node_inode, and
+compress_inode) to manage internal block caching through the VFS page
+cache. Because of this implementation, the f2fs block size was
+historically coupled to the kernel page size.
 
- fs/f2fs/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
+We now want to unbind block size from page size to support configurations
+where block size <= PAGE_SIZE (e.g., mounting a 4KB-block F2FS image on a
+16KB or 64KB page system).
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c1e315282ec..6238dfe6f4e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -406,6 +406,7 @@ static match_table_t f2fs_checkpoint_tokens = {
- #define F2FS_SPEC_errors			(1 << 23)
- #define F2FS_SPEC_lookup_mode			(1 << 24)
- #define F2FS_SPEC_reserve_node			(1 << 25)
-+#define F2FS_SPEC_resizable_tail_secno		BIT(26)
- 
- struct f2fs_fs_context {
- 	struct f2fs_mount_info info;
-@@ -1250,6 +1251,7 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_resizable_tail_secno:
- 		F2FS_CTX_INFO(ctx).resizable_tail_secno = result.uint_32;
-+		ctx->spec_mask |= F2FS_SPEC_resizable_tail_secno;
- 		break;
- 	}
- 	return 0;
-@@ -1779,6 +1781,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
- 		F2FS_OPTION(sbi).errors = F2FS_CTX_INFO(ctx).errors;
- 	if (ctx->spec_mask & F2FS_SPEC_lookup_mode)
- 		F2FS_OPTION(sbi).lookup_mode = F2FS_CTX_INFO(ctx).lookup_mode;
-+	if (ctx->spec_mask & F2FS_SPEC_resizable_tail_secno)
-+		F2FS_OPTION(sbi).resizable_tail_secno =
-+				F2FS_CTX_INFO(ctx).resizable_tail_secno;
- 
- 	f2fs_apply_compression(fc, sb);
- 	f2fs_apply_test_dummy_encryption(fc, sb);
+One possible approach is to continue using the VFS page cache to store
+metadata blocks. However, doing so introduces three major architectural
+issues (illustrated by a 4KB block on a 16KB page system):
 
-base-commit: d8745ba260abbcaf75fd458881381019ab3c5c07
+1. Memory Overhead:
+   Metadata access patterns are typically random and sparse. Caching a
+   single 4KB metadata block inside a page cache folio forces the
+   allocation of an entire 16KB folio, resulting in 4x memory waste.
+
+2. Folio and Sub-block Conversion Complexity:
+   Using larger folios requires tracking individual sub-block dirty/uptodate
+   states within each folio and performing index-to-offset conversions across
+   function boundaries. Because core metadata structures (e.g., f2fs_checkpoint,
+   f2fs_sit_block, f2fs_nat_block, f2fs_summary_block, f2fs_node) are accessed
+   extensively throughout the filesystem, this sub-block management and offset
+   calculation complexity would spread across the entire F2FS codebase.
+
+3. Lock Contention:
+   Multiple independent node blocks (e.g., dnode blocks belonging to
+   different files) can reside within the same folio. Concurrent fsync()
+   calls on unrelated files would contend on the same folio_lock(),
+   serializing metadata updates and degrading multi-threaded performance.
+
+Decoupling metadata caching from PAGE_SIZE by allocating exact
+block-sized cache entries is the critical first step toward supporting
+4KB-block F2FS images on 16KB/64KB page systems.
+
+=== 2. Metadata Cache Architecture & Design ===
+
+This patchset introduces a dedicated, block-size-aligned caching
+infrastructure with the following key components:
+
+- Block-Size Aligned Allocation:
+  Allocates memory buffers matching exactly the filesystem block size
+  (4KB or 16KB) via kzalloc(), fully independent of the host
+  architecture's PAGE_SIZE.
+
+- Radix Tree Indexing with Fast Tag Scanning:
+  Each cache instance (META_CACHE, NODE_CACHE, COMPRESS_CACHE) indexes
+  cached blocks via a radix tree (keyed by Physical Block Address for meta/
+  compress cache, and Node ID for node cache). Radix tree tags
+  (F2FS_CACHE_TAG_DIRTY, F2FS_CACHE_TAG_WRITEBACK) provide O(1) batch gang
+  lookups for flushing and writeback without dual-list shuffling.
+
+- Lightweight Bit-Locking:
+  Individual entries use atomic bit locks (F2FS_BLOCK_LOCKED via
+  wait_on_bit_lock() / clear_and_wake_up_bit()) rather than heavyweight
+  embedded mutexes/semaphores, minimizing memory footprint per entry.
+
+- Direct BIO Read/Write & BIO Merging:
+  Decouples metadata/node I/O from VFS address spaces by submitting direct
+  BIOs (f2fs_submit_cache_read / f2fs_submit_cache_write) with chained
+  adjacent vector merging (entry->next_entry) and dedicated completion
+  handlers.
+
+- Memory Reclamation Shrinker:
+  Integrates with the kernel shrinker subsystem via a 3-phase isolation
+  algorithm (isolate unreferenced clean entries -> truncate from radix tree
+  under lock -> splice un-reclaimed entries back to LRU) to safely reclaim
+  clean cached blocks under system memory pressure.
+
+- Background Writeback Kthread & Checkpoint Integration:
+  Provides a dedicated background kthread (f2fs_writeback-X:Y) for periodic
+  dirty cache flushing, combined with synchronous flushing during checkpoint
+  commit.
+
+- Fault Injection, Tracepoints & Debugfs Observability:
+  Integrates FAULT_KALLOC fault injection, tracepoints for cache state
+  transitions and batch writeback, and per-cache memory breakdowns in debugfs.
+
+=== 3. Patchset Organization ===
+
+- Patch 01: Implement the core metadata cache infrastructure & direct BIO I/O.
+- Patch 02: Initialize and teardown META_CACHE in sb_info.
+- Patch 03: Integrate metadata cache into the memory shrinker subsystem.
+- Patch 04: Introduce the background writeback kernel thread.
+- Patch 05: Migrate metadata block caching (SIT, NAT, SSA, CP, recovery, GC)
+            from meta_inode to META_CACHE.
+- Patch 06: Initialize and teardown NODE_CACHE in sb_info.
+- Patch 07: Migrate node and inode block caching from node_inode to NODE_CACHE.
+- Patch 08: Initialize and teardown COMPRESS_CACHE in sb_info.
+- Patch 09: Migrate compressed cluster caching from compress_inode to COMPRESS_CACHE.
+- Patch 10: Add fault injection support for cache allocation paths.
+- Patch 11: Introduce ftrace tracepoints for cache dirty and writeback events.
+- Patch 12: Expose per-cache memory usage in debugfs.
+
+Changelog:
+
+v2->v3:
+- fix to use NODE_CACHE instead of META_CACHE in f2fs_ra_node_cache
+- rename f2fs_ra_node_page{,s} to f2fs_ra_node_cache{,s}
+- fix to use f2fs_put_dentry_block in f2fs_unlink()
+- call cond_resched() after radix_tree_gang_lookup{,_tag}
+- add compress_blocks.num_entries in __count_cache()
+- increase isolated correctly in f2fs_do_shrink_cache() to avoid long traverse
+- fix nwritten in f2fs_sync_meta_caches()
+- check f2fs_is_compress_cache() and entry->ino correctly in
+  f2fs_invalidate_compress_pages()
+- use f2fs_force_clear_cache_dirty() in __write_node_cache()
+
+Chao Yu (12):
+  f2fs: cache: implement metadata cache
+  f2fs: cache: initialize meta cache
+  f2fs: cache: introduce shrinker
+  f2fs: cache: introduce writeback thread
+  f2fs: cache: use meta cache
+  f2fs: cache: initialize node cache
+  f2fs: cache: use node cache
+  f2fs: cache: initialize compress cache
+  f2fs: cache: use compress cache
+  f2fs: cache: support fault injection
+  f2fs: cache: introduce tracepoints
+  f2fs: cache: show per-cache usage in debugfs
+
+ fs/f2fs/Makefile            |    2 +-
+ fs/f2fs/acl.c               |   26 +-
+ fs/f2fs/acl.h               |    8 +-
+ fs/f2fs/cache.c             |  699 ++++++++++++++++++++++++
+ fs/f2fs/cache.h             |  223 ++++++++
+ fs/f2fs/checkpoint.c        |  399 +++++++-------
+ fs/f2fs/compress.c          |  180 +++----
+ fs/f2fs/data.c              |  526 ++++++++++++------
+ fs/f2fs/debug.c             |   70 ++-
+ fs/f2fs/dir.c               |  170 +++---
+ fs/f2fs/extent_cache.c      |   14 +-
+ fs/f2fs/f2fs.h              |  335 ++++++------
+ fs/f2fs/file.c              |   78 ++-
+ fs/f2fs/gc.c                |  184 ++++---
+ fs/f2fs/inline.c            |  284 +++++-----
+ fs/f2fs/inode.c             |  205 +++----
+ fs/f2fs/iostat.h            |   11 +
+ fs/f2fs/namei.c             |  114 ++--
+ fs/f2fs/node.c              | 1010 ++++++++++++++++-------------------
+ fs/f2fs/node.h              |  109 ++--
+ fs/f2fs/recovery.c          |  253 ++++-----
+ fs/f2fs/segment.c           |  263 ++++-----
+ fs/f2fs/segment.h           |   39 +-
+ fs/f2fs/shrinker.c          |   14 +
+ fs/f2fs/super.c             |  143 +++--
+ fs/f2fs/xattr.c             |  123 +++--
+ fs/f2fs/xattr.h             |   12 +-
+ include/linux/f2fs_fs.h     |    3 -
+ include/trace/events/f2fs.h |   71 +++
+ 29 files changed, 3355 insertions(+), 2213 deletions(-)
+ create mode 100644 fs/f2fs/cache.c
+ create mode 100644 fs/f2fs/cache.h
+
 -- 
-2.43.0
+2.49.0
+
 
 
 _______________________________________________
