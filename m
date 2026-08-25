@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E41CCC61DB4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 06:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 46C88C61CE3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Aug 2026 06:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Vh71sYaP9OTyzlDIausC5ljG8M+JvJT5dp0beFnVsTw=; b=IHKbm6EULytmyuijHCe4Q6RqR8
-	XMV1WYdmEVBr6TaWIkHXfCbSXU9/RGfPqHVpVmL2kgxg0lOwEI55C+yjlpdsqKK6z6VDWzXGqGgnn
-	pBkhieK3PZoNsFiTd6bnk0j9mmoWGTDhZi33rrg5ck6Sdx5leUndPHNKeqZHK//CI7Bs=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=zimPKYapVkgpi+C/eNEtpl4k3fImcF/643HzB5zm5oY=; b=d/djyAo2ZrryhCvbF5X9J8gQvO
+	4P9AH25gFzBNcdCDOYKG31zWchUwjNeKpWaIrwjzQqUZEl9HLf4NoNgcAJy2kLhS74Oq/jCkClxlF
+	7dTC/S+fd2N7HKUC8DCKTqtVcdE0lQr8fuu/RRnRQzfsCdbm9JBUqI7yK1tH8o7kkvc4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wykld-0006Jv-RH;
-	Tue, 25 Aug 2026 06:36:18 +0000
+	id 1wykmo-00035X-BS;
+	Tue, 25 Aug 2026 06:37:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wyklc-0006Jh-Da
+ (envelope-from <chao@kernel.org>) id 1wykmn-00035Q-7B
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 06:36:17 +0000
+ Tue, 25 Aug 2026 06:37:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=h6uheborK9kDsnT166ceQL15+6H7t38OLGChs04wgko=; b=KTbrVDuVRQ5BthLvQuwdSMKcG9
- l3JPZWAcNmKx+SawaXBTUzauU3Y2X7pu+5EhcsmCB8kOgvKX/ythRIz4Vk/9oa6psKP4Wh33lsiaG
- BkcpLPB0F+xvloCd2J6v7/YHmvChgfNJDzWJMLiNHWcGNeP8OlYCfnKH5HFMS1EI/alA=;
+ bh=T1juKe2OIJmSp+bgGiNvE3domWkVDZj0t45aNAKcz2U=; b=CK1YfYaBtrW7AUcYOem/SghGuP
+ cnHNiqkcxfiUpzRGFtbkQk70zMCPmckqin45A3APcJ45QZk9DnJ5oL2Fr/hF5d1JDCXES4cUS2ROi
+ 2AWpU07mTdgFJmlRpLDQPBSVGDljoSQ11VwBNt3Z7oTxc86xyH4+7sbPKiRggh95JNNI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=h6uheborK9kDsnT166ceQL15+6H7t38OLGChs04wgko=; b=c4RWM3khIZ/PsXK97QRnPdacG1
- Q7ee7j/i1nYgewDqDd4bvTbFtLSP92b8U8qv++qhJeU4giuLy/uvbLk8epjS0c6w9ayx+5PbrE7fo
- byDZ4QGqY14SMMEj/oRtWI0NayNE5PUwk51QHLsvfVLJhxMnN3XLpyFgFfsYpGNw5esQ=;
+ bh=T1juKe2OIJmSp+bgGiNvE3domWkVDZj0t45aNAKcz2U=; b=Cqho3tHSDXdsBgQ9+W5Bv52LBM
+ K/KHvgJasMK8hzIMLxNfuT3Ma5uPKMzxMQHADWQvIaQWVjlLs0LJBlk1wgEP/bMiqDgf+/xAjrvU9
+ HROMh2HofMlx2XdKoxDsI3qPfakA+ifa8wRn5+PuI2FcPvaaSuvivrFy2SGYVgAxMppY=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wykla-0006ff-JR for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Aug 2026 06:36:17 +0000
+ id 1wykmi-00058G-Qr for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Aug 2026 06:37:25 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id F05AD6011F;
- Tue, 25 Aug 2026 06:36:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5361F000E9;
- Tue, 25 Aug 2026 06:36:07 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 0E3E86011F;
+ Tue, 25 Aug 2026 06:37:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB6D31F000E9;
+ Tue, 25 Aug 2026 06:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1787639768;
- bh=h6uheborK9kDsnT166ceQL15+6H7t38OLGChs04wgko=;
+ s=k20260515; t=1787639838;
+ bh=T1juKe2OIJmSp+bgGiNvE3domWkVDZj0t45aNAKcz2U=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=jpPphzTLzA5lfTsvuSCJU7WZyCU/MlYpMbphSlCpf8n2iWkvZkSJyG30AFzLW8PKL
- RARaq/a+PH+YokM9eeYEL5Nkq4wlYjLsOYDf4+vEDKGOHMupCCEmLbOdSi8n0lXXmu
- tUn38wugnFDIUf7uqGjSSnIq7OWFTvEN7KJp7z1ffBh3diQWB0q+O2U+dKNsIexhR+
- 4ejcnU+QM3B0e+fnHMQUIqK0ntXlS2RXDMA1SpDWkhKutel4N/5Qf5dyopLmpio1af
- N6xyqi8xBpJ6/aJHvNjuTIcuvTaFpqX6a37LgYCtMfIAUwnjnsL1kGUHaqPPEy7VJy
- oeJ6oEbBNj66w==
-Message-ID: <80da6dab-220e-42a3-bbad-a793d653ee37@kernel.org>
-Date: Tue, 25 Aug 2026 14:36:05 +0800
+ b=fBiqn5FfPqLphRakGtAKr7LN8RI/lNcQURq0w18bGn3EcgcZdLPAneR8cwH7E9dJy
+ /YVdAbjakTkKAR/zlPklWqERV3pMgh7L9IBrQ9wvmU+eLTwD4eWJ1kc1+UEykmlzot
+ 4l1Zeo42T9vKxH4KZmBo6JAKhAs5o+OSmYmYVwCWWOgOVaajUGxdc/OcyPyV6ZKh0m
+ 3uBcQ626vtKboly4Xql4r2r2HV/ffsnY0PDXceNPk96zkOAXDIh87NbO3ukgWsKt+y
+ pksdzbCfSCxyPYKPIwjoUUf486yndSxJWXxLgJNveOVNP8/TwRs+I8hLF8+1+iLT37
+ 1vRRVIFyJEGZA==
+Message-ID: <d031a241-a2ee-4494-939d-09084aa77418@kernel.org>
+Date: Tue, 25 Aug 2026 14:37:16 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>
 References: <20260824134731.3704352-1-chao@kernel.org>
  <20260824134731.3704352-4-chao@kernel.org>
- <20260825054205.397297-1-qiwenjie@xiaomi.com>
+ <20260825054226.399346-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260825054205.397297-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wykla-0006ff-JR
+In-Reply-To: <20260825054226.399346-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wykmi-00058G-Qr
 Subject: Re: [f2fs-dev] [PATCH v2 03/12] f2fs: cache: introduce shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -99,27 +99,32 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 On 8/25/26 13:42, Wenjie Qi wrote:
 > Hi Chao,
 > 
->> static unsigned long __count_cache(struct f2fs_sb_info *sbi)
->> {
->> 	return sbi->meta_blocks.num_entries +
->> 		sbi->node_blocks.num_entries;
+>> spin_lock(&cache->list_lock);
+>> list_for_each_entry_safe(entry, next, &cache->lru_list, list) {
+>> 	if (isolated >= nr_to_scan)
+>> 		break;
+>>
+>> 	if (f2fs_cache_test_dirty(entry) ||
+>> 	    f2fs_cache_test_writeback(entry) ||
+>> 	    f2fs_cache_test_locked(entry))
+>> 		continue;
+>>
+>> 	if (f2fs_cache_refcount(entry) != 1)
+>> 		continue;
+>>
+>> 	list_move_tail(&entry->list, &dispose_list);
+>> 	isolated++;
 >> }
 > 
-> and the scan path includes:
+> `isolated` advances only for an eligible entry.  Entries skipped by the state
+> and refcount checks do not consume the `nr_to_scan` budget.
 > 
->> freed += f2fs_do_shrink_cache(COMPRESS_CACHE(sbi),
->> 					nr_to_scan - freed);
-> 
-> The count path includes the meta and node caches, while the scan path also
-> includes `COMPRESS_CACHE`.
-> 
-> Is `COMPRESS_CACHE` intentionally excluded from `__count_cache()` even though
-> `f2fs_shrink_cache()` scans it?
+> Is `nr_to_scan` intended to bound the number of entries examined here, or only
+> the number of reclaimable entries isolated?
 
-Oh, I missed to add it, will fix.
+Yes, better to consume nr_to_scan no matter what state of entry is.
 
 Thanks,
-
 
 
 _______________________________________________
