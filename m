@@ -4,111 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C2E8C61DC6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2026 15:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 35BECC5DF97
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2026 15:37:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=8UDHOvYedG9buPoOmgHb41vp6a1JnYv/zkmHAO3CFh4=; b=bWVY7TyyHP6Ls0W50VW4AfWRaq
-	xVDAZqC8XojqYRxC2Z9I93uppel2iQZ+fBOXhZEJyiJtkYp//5ItIzzU42NRPVNa+6XiitfKy3d+G
-	91eN0GnTvi4In/Z80KL8yJ5RxoJXEQbGNW9QzFZoPzSPtZRKYLQqdyUe25y7tUq8tApk=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=AwUNP41WW2Exa2vLK2EzluF+4GtIu22jk/LlA+dYyUo=; b=EHPjmRyjaYUTUfdePhWKqudfMI
+	Qw8NJYO6xcBaCPu+fQvq1EgerProwulJA4A2UsI5MXOIUuCcfrWzae7jHZYl0n11KhVHcETfHfPT/
+	3bZqgZ5tqkr+sCSN9lI/ANUhjaPFDh/sU83qdRdW3M7eLU7x1zQ+M1cH/Zyyfx4/LhH4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wzFbL-0002FS-LH;
-	Wed, 26 Aug 2026 15:31:43 +0000
+	id 1wzFgS-0000cd-9f;
+	Wed, 26 Aug 2026 15:36:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wzFbK-0002FJ-HM
+ (envelope-from <daeho43@gmail.com>) id 1wzFgR-0000cT-7u
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Aug 2026 15:31:42 +0000
+ Wed, 26 Aug 2026 15:36:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=; b=bW8nYQJakxCM0fu6MWWaT4VJfF
- IZUekH0Ok0olTksW9DDS17LAcCV4ntpNiRIf4KWrn3OggitnSXsjcHsn5Qh8KRLbGEJAtJTR2DVxR
- k9oPPAGFb3PLIvWi2f7NVvpqRBIKMvG/r5cOyIFbS7Scgvb5E2g1ROzgU6NT5IC5D14c=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=; b=ZJmHFi9b+tRCZJxfvmA3gmLZm0
- rEoTjuu1r2lGve92aYkfX+mRVqY+Z4wqcVjjO9jC9ZtUpqBYL12fTvMEHYTHtK5ejW4QCOhobYgtz
- 7MK455UCZKTRSCo4WShBuGlAZJQIv2T1PV/Up0d/G511iukjWtze2m7FfckKJF5p5rfE=;
-Received: from mail-oa1-f50.google.com ([209.85.160.50])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=mRMb7/mGwLP34fLJtfMaGqpTh24hDTQbJ1slGxBXJ5c=; b=UZwyF7qgQDCsfIXm4a4hbHSo97
+ WssfASXbp7e9ZfKg6sRlMqnSqX9aVRlm2bHUdFkL4NNAl7wUGyqkPk4nHwHA1UfL7KpcFJrRYfwss
+ Rlb6QIGLatxu3XUruDavG/SyOqft+TkRQ/owOnfTCJHCRJadFWGw1iPaN4jvcKv/a7Sc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=mRMb7/mGwLP34fLJtfMaGqpTh24hDTQbJ1slGxBXJ5c=; b=I
+ gnbnrcHueagr/7GerdGX5qIau0LtZbtcqOGb34ceY2O3QN8OousElDFJjGYmeb9Oo/0EOhKXdAW+B
+ gSeVKMPFyQ/2newuaGk/QGrGeHkZVQlx5mrQAh+wJ+RaIk8ZpUAaxzRw6hfqo+h+hrPcvatbaA0TI
+ /KvHsI9+8AIljYt4=;
+Received: from mail-pg1-f173.google.com ([209.85.215.173])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wzFbJ-0007T5-79 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Aug 2026 15:31:42 +0000
-Received: by mail-oa1-f50.google.com with SMTP id
- 586e51a60fabf-43bf9548df4so1376253fac.0
+ id 1wzFgN-0007bN-8d for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 26 Aug 2026 15:36:56 +0000
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-c9b373d5af0so829131a12.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Aug 2026 08:31:41 -0700 (PDT)
+ Wed, 26 Aug 2026 08:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787758295; x=1788363095; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=;
- b=PHThkFGlXeE5mJsgBR8DJfSLYXmWkG0aRIMDQEvDsR73OTfguY763qYABFVURqPz0s
- N6+ktoZfvZZEvKgbHH6NwHDlcVjti4a78P2EV7GC23fAOoDXVyihZnMXEuDTc4QSzWUW
- oKu/zt0aHhb14MbQYQSlExi8DTEyY8Gph8WtjtZLbpk4qn7uz11m/bO4vaQipJBhPxL5
- tFbwTNAdyrXrmxDAFan1hHXPy7j21nYpo/hQ5t+9dBkoBZVu/6bRZbjXmycwqFY1n5Z8
- Q3s/kEQ7YuVnxAHLsgbDnYl5RKrPETn0ZNkBjRElX5bt6WdtvKlaY6pXXHJ+lf+xVEyh
- U5UA==
+ d=gmail.com; s=20251104; t=1787758609; x=1788363409; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=mRMb7/mGwLP34fLJtfMaGqpTh24hDTQbJ1slGxBXJ5c=;
+ b=srW+9xSEjBp4bzfQS/YikykQCiBxxV0/Jf+rnA4aLd0vPp+ssxI/6Tr+sI5KQc0WsS
+ 9LNzVkLbdzcRyXgmLhSMPaU+xIZf0xO+2T0flK1d2YSgBu7l/ci9d8VGi9yW4OHRxn1d
+ U7opMRbtRrqTJbbIPm+tuHAYtPJ7sNhz+jDF0l6apZAZ/UeSeAdlpw33qPRn6jSMa5f/
+ UHKI0VI00qY+iy0u/FuOC0P2gPxP89zHaobzsN7IHVJEWho3IzY8fIt5PPqKJbGK3bph
+ Bsh7lW8GWnxwe0KT/0fv6XxRhGj+scBEct/ENaRAGsfM4sPfGDWSmC2MIh6w/vWhRGRP
+ 5UUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787758295; x=1788363095;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=;
- b=nYLGV7MIrq/KDl3IBDJ8kGlEZqckpJYzJy6PD8ma35gMdLfeIaBizmvcm4/6T0B32C
- eJDfPopJF4qKWZYdq0Dg+Ile1m9hz93oROCbsR5qmQ4uRFA/U2IyhLOFaXXyGicHx0p6
- XgrDrIwhgX715K4Cyw7krfdO8toF9KrrxfXgjmQDgTgKR8x8J16Xno4FiDXnlylLS/Mu
- Dx1qhLL1q+nIRis47KtbngtaM6xe1idAlK4xomHRxhw1itbzgQoWj6U0k1IAollixhlx
- hSrxE7oNNlisBBDHwSn7nczWbUJ8NwMEZ5Dhp6oQk63/wxy291DSvaZ8cXnLtpQs+fak
- DS9A==
-X-Gm-Message-State: AFuF++mJgIz00fUKMXDWBQ+M53cSuSJuQw6WjuR42f7bFM7MfW39kT6o
- 8RYNBo10P7f4ZNlKFK6UkPFCLV11XzOYBxbFCceCBgsHbAL8qdelCx6PyoC1SANw
-X-Gm-Gg: AR+sD13BHcXMcBaXUBOPYpnuX+JlBMq4iFbLs13jgxSvgZIGOj3PJ/RasjlL5RgP/bi
- EjKmNpccpSM5qDUtRrHdSsBTCgCzBe8rinUGgmb4+BLJ1xS8+PZbKcLsEsMqH+hoLy55FQD0Xpd
- Ik1fcQbQ1N9GKK3cL+GRR/m587JyaQ5Pbe/bOr8s8bwV24YRrhCc5jh1ZWFfvv54TSWuUg/hBx0
- XUSCbM5UaoAi7x+DIHTnqjWfOTxEI/1j7ldashyc72VPC/2lGoXLSVIJpFFAynGrlUIqzQruqoG
- 1eCTNoWQYMwAc3+oXpgEOvOoBlO1IYmb3weQwmZG/goFHtU0ld1GO0nN45h7+4x8ZUIy3zUcvqG
- 4cNFG+nyUdVD1xN4m2kJLSh1BVS5InQu6+k3URwpPTHpTNRmeVPp78isk5me9TJDvnwrr4I/QFb
- HxfSjFxKsGyYwqqhCo8nIq3kcE0nwL0DVAtx/Rb+GQXq8Ouo7E3d/6pkRJw8USZXnwbhtjb49DQ
- WSwVt9CvFSSUvdCERHpARAChKT6apRuGgo=
-X-Received: by 2002:a17:90a:d2ce:b0:393:1d92:db5 with SMTP id
- 98e67ed59e1d1-3966d3dc5ecmr15674934a91.10.1787751697387; 
- Wed, 26 Aug 2026 06:41:37 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ d=1e100.net; s=20251104; t=1787758609; x=1788363409;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=mRMb7/mGwLP34fLJtfMaGqpTh24hDTQbJ1slGxBXJ5c=;
+ b=mJ59gr3DvS0Gf8JBQ6mMePv7vRsVxiFUL90YqIuHxcTqVoLdk5KUSO8EAnyhue5ggJ
+ 1G5VZ9++BFOOqeFnhtjwan5GueSDU0JnTHr7k+Co4BqTjbzdMq3z3s0rH0kZ0WTALGRH
+ ELsBhIh8GwLvPjIVmxcAKJIBzXxBcHqwIlHYlFcV5DKWz+iqpaaU+djwm7R/Oq5k0NWq
+ 7RptLvFeh0dWA9i+yX3a/oUwQJZTEiHu/9GgyodmtrlqlRC3+i67dplRZFjAHTtiXyR2
+ c2lSfZ0GhsH6BlDAq8uDwXDzZA67unYKM0zUMGlS2ritbK9eUAM+qkVZ3EWuNJTE3K4v
+ jyiw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpRRHdsmjn7+UYTYaD7VCciqJzXAWbCpFhBZc8kxAYYDBMfDnR4w8e/QZFZ1UoBgm0N+HFt7Eoya4Wss54+0JxX@lists.sourceforge.net
+X-Gm-Message-State: AFuF++kezykwBe6hNKcZW2Nb6kSXueYZrkzw4oPThUbLoTTamaIsSZvT
+ MA9fONoz/m70/kcIHd0tMSkPja7RXhaTRrmmifFvMyrOgRhG0nxfeqxr
+X-Gm-Gg: AR+sD12J/SKNortedG/PAh+0oixVG2iSneDZeo1xrKklmsl7VfmaA80stDmNZhpfPLf
+ EnnUtFubx+bQeOS873E274S7Ap0mau97/BZmluPkhwuFJW1smJqCfSVRWrJA41Pmnk5hXZzyIsP
+ 2xvJ2AOxSPqkNYRcslV5n+c/rw0t/hQNhYWCRiIb7di18bMpBTPGfWdilydZMbJ5nUWa84sKmP0
+ iu8iIxkh6bOnAtBFTZP6Qr/GmWAGdRPKAoyvswNlHYDjoCOHxecy5m1o7uANWrxTLswZ2rbLpJH
+ NCQ1BCXKF+25RvyH9O0aMRJnysGfqhVzTw7Ursev/uvgGRgpAU4vG7GiFRFDzNOQ4ZT7F22NfU/
+ HI7aXriGAtbuYdo9GLbqajefH0Fzakn17qQ7TjpQ4btZUTSkinT3OodSGQ/6wXrz1z098Eo3trZ
+ XayoPyzEvhXzKYMQyzqkE0KmBrW+8kjfY25Eyp3t/plVsGMdCecDoraJbvehguiV0BbDZnlDZz6
+ zl0SkCrVsQoDwVLDN60pB/jT05YU35rmqLG4dW+g03LRxR34JunaGLAzHvV+O5scpDAddagM+8p
+ jqAokdDQKr/6oUhQshMt6go=
+X-Received: by 2002:a17:90b:440e:b0:38d:dfd1:7a8 with SMTP id
+ 98e67ed59e1d1-3966d161355mr14873945a91.2.1787758609216; 
+ Wed, 26 Aug 2026 08:36:49 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2a00:79e0:2e7c:8:d10e:986a:5a1c:babc])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39645d69065sm8906472a91.13.2026.08.26.06.41.34
+ 5a478bee46e88-3283d60c2b4sm14703567eec.5.2026.08.26.08.36.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Aug 2026 06:41:36 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Wed, 26 Aug 2026 21:41:25 +0800
-Message-ID: <20260826134126.3729507-2-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260826134126.3729507-1-qiwenjie@xiaomi.com>
-References: <20260826134126.3729507-1-qiwenjie@xiaomi.com>
+ Wed, 26 Aug 2026 08:36:48 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Wed, 26 Aug 2026 08:36:44 -0700
+Message-ID: <20260826153644.3726384-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.55.0.860.g4b6b3295ed-goog
 MIME-Version: 1.0
-X-Headers-End: 1wzFbJ-0007T5-79
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: persist device alias inode across
- remount
+X-Headers-End: 1wzFgN-0007bN-8d
+Subject: [f2fs-dev] [PATCH v2] f2fs: support resizable tail section and
+ unify pinned allocation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,227 +120,341 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com, daehojeong@google.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-A released device alias loses its extent. Reserve then identifies the
-target device by matching the alias filename against the device basename,
-which fails when mkfs used a custom alias name.
+From: Daeho Jeong <daehojeong@google.com>
 
-Store each alias inode number at its device index in the superblock
-reserved area. Record the mapping before releasing blocks and use it to
-identify the device during reserve. Reject conflicting mappings and keep
-the basename lookup for images without a recorded mapping.
+Currently, zoned block devices restrict pinned file allocations to
+conventional zones at the beginning of the storage (before
+first_seq_zone_segno), triggering range GC when conventional space is
+exhausted.
 
-Leave released alias inodes without an extent so existing fsck does not
-account the freed device range as live blocks.
+On regular block devices, when preparing for future online filesystem
+resizing (e.g. partition shrinking), pinned files must not be allocated
+in the tail area that will be truncated, as pinned files cannot be
+relocated by GC. Specifying the resizable tail area size (in sections)
+allows uniform mount configuration across devices of different storage
+capacities.
 
-Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+To support this, introduce a unified `pinned_area_max_secno` boundary
+abstraction in `f2fs_sb_info`:
+1. Add `-o resizable_tail_secno=%u` mount option to specify the number
+   of sections at the tail of the filesystem reserved for resizing.
+2. In `f2fs_fill_super()`, initialize `sbi->pinned_area_max_secno` as:
+   min(MAIN_SECS(sbi) - resizable_tail_sec, zoned_max_sec).
+3. In `get_new_segment()`, restrict segment allocation for pinned files
+   (`pinning == true`) to `0 .. sbi->pinned_area_max_secno - 1`. If no
+   free section is available in the pinned area, return -EAGAIN.
+4. In `f2fs_allocate_pinning_section()`, unify the range GC trigger to
+   run `f2fs_gc_range()` up to `sbi->pinned_area_max_secno` whenever
+   `sbi->pinned_area_max_secno < MAIN_SECS(sbi)` and allocation
+   returns -EAGAIN.
+5. Expose `/sys/fs/f2fs/<dev>/pinned_area_max_secno` as a read-only
+   sysfs node.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
 ---
- fs/f2fs/file.c          | 96 +++++++++++++++++++++++++++++++++++------
- include/linux/f2fs_fs.h |  3 +-
- 2 files changed, 84 insertions(+), 15 deletions(-)
+v2: rename has_pinned_area() to has_unpinned_area().
+    merge resizable_tail_secno sanity check into f2fs_sanity_check_options().
+    fix missing F2FS_SPEC_resizable_tail_secno in fs_context mount parsing
+    and apply logic, reported by Wenjie Qi <qiwenjie@xiaomi.com>.
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++
+ Documentation/filesystems/f2fs.rst      |  8 +++++-
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/segment.c                       | 33 ++++++++++++-----------
+ fs/f2fs/segment.h                       |  1 +
+ fs/f2fs/super.c                         | 36 +++++++++++++++++++++++++
+ fs/f2fs/sysfs.c                         |  2 ++
+ 7 files changed, 72 insertions(+), 17 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d440231b8cb9..7f1dc00031ba 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3725,25 +3725,44 @@ static int f2fs_ioc_get_dev_alias_file(struct file *filp, unsigned long arg)
- 			(u32 __user *)arg);
- }
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 85194e4c7f01..0cebc89799dd 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -1013,3 +1013,10 @@ Description:	Every time a write operation completes f2fs_write_end_io() is
+ 		the maximum size of a write bio that is completed in atomic
+ 		(atc) context. The default value for this attribute is UINT_MAX
+ 		which means that this functionality is disabled by default.
++
++What:		/sys/fs/f2fs/<disk>/pinned_area_max_secno
++Date:		August 2026
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	This is a read-only entry to show the upper bound section number
++		for pinned files. Pinned files will only be allocated within
++		sections 0 to pinned_area_max_secno - 1.
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 1a5fd4afe609..a3c3b6948734 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -417,7 +417,13 @@ lookup_mode=%s		 Control the directory lookup behavior for casefolded
+ 			     auto               F2FS determines the mode based on the
+ 					        on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
+ 					        flag.
+-			     ================== ========================================
++resizable_tail_secno=%u  Control the number of sections at the tail of the
++			 filesystem reserved for online resizing. Pinned files
++			 will only be allocated within sections 0 to
++			 (MAIN_SECS - resizable_tail_secno) - 1. If set to 0
++			 (default), there is no tail restriction unless running
++			 on a zoned block device where conventional zones are
++			 used.
+ ======================== ============================================================
  
--static bool f2fs_get_dev_alias_extent(struct f2fs_sb_info *sbi,
--				       struct dentry *dentry,
--				       struct extent_info *ei)
-+static int f2fs_get_dev_alias_index(struct f2fs_sb_info *sbi,
-+				    struct inode *inode,
-+				    struct dentry *dentry)
- {
-+	int devi = -ENOENT;
- 	int i;
+ Debugfs Entries
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b0a9c14de595..16720f1f0a9c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -255,6 +255,7 @@ struct f2fs_mount_info {
+ 	block_t unusable_cap;		/* Amount of space allowed to be
+ 					 * unusable when disabling checkpoint
+ 					 */
++	unsigned int resizable_tail_secno;	/* number of resizable tail sections */
  
-+	f2fs_down_read(&sbi->sb_lock);
-+	for (i = 0; i < MAX_DEVICES; i++) {
-+		if (le32_to_cpu(sbi->raw_super->dev_alias_ino[i]) !=
-+							inode->i_ino)
-+			continue;
-+		if (!i || i >= sbi->s_ndevs) {
-+			devi = -EFSCORRUPTED;
-+			goto out;
-+		}
-+		if (devi >= 0) {
-+			devi = -EFSCORRUPTED;
-+			goto out;
-+		}
-+		devi = i;
+ 	/* For compression */
+ 	unsigned char compress_algorithm;	/* algorithm type */
+@@ -2005,6 +2006,7 @@ struct f2fs_sb_info {
+ 	spinlock_t dev_lock;			/* protect dirty_device */
+ 	bool aligned_blksize;			/* all devices has the same logical blksize */
+ 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
++	unsigned int pinned_area_max_secno;	/* upper bound section for pinned files */
+ 	unsigned int bggc_io_aware;		/* For adjust the BG_GC priority when pending IO */
+ 	unsigned int allocate_section_hint;	/* the boundary position between devices */
+ 	unsigned int allocate_section_policy;	/* determine the section writing priority */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 56decf9c691c..1e7e745be71d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2877,6 +2877,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+ 	unsigned int alloc_policy = sbi->allocate_section_policy;
+ 	unsigned int alloc_hint = sbi->allocate_section_hint;
++	unsigned int max_secno = MAIN_SECS(sbi);
+ 	bool init = true;
+ 	bool looped = false;
+ 	int i, devi;
+@@ -2908,7 +2909,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+ 		/* Prioritize writing to conventional zones */
+-		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV || pinning)
++		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV)
+ 			segno = 0;
+ 		else
+ 			segno = max(sbi->first_seq_zone_segno, *newseg);
+@@ -2924,19 +2925,24 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 		alloc_hint > MAIN_SECS(sbi))
+ 		alloc_hint = MAIN_SECS(sbi);
+ 
+-	if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
+-		hint < alloc_hint)
++	if (pinning) {
++		max_secno = sbi->pinned_area_max_secno;
++		hint = 0;
++	} else if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
++		hint < alloc_hint) {
+ 		hint = alloc_hint;
+-	else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
+-			hint >= alloc_hint)
++	} else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
++			hint >= alloc_hint) {
+ 		hint = 0;
 +	}
-+	if (devi >= 0)
-+		goto out;
-+
- 	for (i = 1; i < sbi->s_ndevs; i++) {
- 		char *name = strrchr(FDEV(i).path, '/');
  
- 		name = name ? name + 1 : FDEV(i).path;
- 		if (strcmp(name, dentry->d_name.name))
- 			continue;
--
--		ei->blk = FDEV(i).start_blk;
--		ei->len = FDEV(i).total_segments << sbi->log_blocks_per_seg;
--		ei->fofs = 0;
--		return true;
-+		devi = sbi->raw_super->dev_alias_ino[i] ?
-+						-EFSCORRUPTED : i;
-+		break;
- 	}
--	return false;
-+out:
-+	f2fs_up_read(&sbi->sb_lock);
-+	return devi;
- }
+ find_other_zone:
+-	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++	secno = find_next_zero_bit(free_i->free_secmap, max_secno, hint);
  
- static int f2fs_ioc_reserve_dev_alias(struct file *filp)
-@@ -3756,7 +3775,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 	struct f2fs_lock_context lc, glc;
- 	blkcnt_t count;
- 	unsigned int start, end;
--	int type, err;
-+	int devi, type, err;
- 
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
-@@ -3780,7 +3799,8 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 		goto out_inode_unlock;
+-	if (secno >= MAIN_SECS(sbi)) {
++	if (secno >= max_secno) {
+ 		if (looped) {
+-			ret = -ENOSPC;
++			ret = (pinning && has_unpinned_area(sbi)) ?
++					-EAGAIN : -ENOSPC;
+ 			f2fs_bug_on(sbi, !pinning);
+ 			goto out_unlock;
+ 		}
+@@ -3001,12 +3007,6 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 		goto out_unlock;
  	}
  
--	if (!f2fs_get_dev_alias_extent(sbi, filp->f_path.dentry, &ei)) {
-+	devi = f2fs_get_dev_alias_index(sbi, inode, filp->f_path.dentry);
-+	if (devi < 0) {
- 		f2fs_warn(sbi, "device alias file (%s, ino=%llu) has no matching device",
- 			  filp->f_path.dentry->d_name.name,
- 			  (unsigned long long)inode->i_ino);
-@@ -3790,6 +3810,10 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 		goto out_inode_unlock;
- 	}
- 
-+	ei.blk = FDEV(devi).start_blk;
-+	ei.len = FDEV(devi).total_segments << sbi->log_blocks_per_seg;
-+	ei.fofs = 0;
-+
- 	spin_lock(&sbi->stat_lock);
- 	if (sbi->total_valid_block_count + ei.len >
- 			get_available_block_count(sbi, inode, true)) {
-@@ -3801,7 +3825,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 	spin_unlock(&sbi->stat_lock);
- 
- 	spin_lock(&FREE_I(sbi)->segmap_lock);
--	FDEV(f2fs_target_device_index(sbi, ei.blk)).is_reserving = true;
-+	FDEV(devi).is_reserving = true;
- 	spin_unlock(&FREE_I(sbi)->segmap_lock);
- 
- 	start = GET_SEGNO(sbi, ei.blk);
-@@ -3853,7 +3877,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 	f2fs_update_inode_page(inode);
- 
- 	spin_lock(&FREE_I(sbi)->segmap_lock);
--	FDEV(f2fs_target_device_index(sbi, ei.blk)).is_reserving = false;
-+	FDEV(devi).is_reserving = false;
- 	spin_unlock(&FREE_I(sbi)->segmap_lock);
- 
+-	/* no free section in conventional device or conventional zone */
+-	if (new_sec && pinning &&
+-		f2fs_is_sequential_zone_area(sbi, START_BLOCK(sbi, segno))) {
+-		ret = -EAGAIN;
+-		goto out_unlock;
+-	}
+ 	__set_inuse(sbi, segno);
+ 	*newseg = segno;
+ out_unlock:
+@@ -3472,8 +3472,9 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
+ 	err = f2fs_allocate_new_section(sbi, CURSEG_COLD_DATA_PINNED, false);
  	f2fs_unlock_op(sbi, &lc);
-@@ -3870,7 +3894,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 	spin_unlock(&sbi->stat_lock);
  
- 	spin_lock(&FREE_I(sbi)->segmap_lock);
--	FDEV(f2fs_target_device_index(sbi, ei.blk)).is_reserving = false;
-+	FDEV(devi).is_reserving = false;
- 	spin_unlock(&FREE_I(sbi)->segmap_lock);
- 	f2fs_up_write_trace(&sbi->gc_lock, &glc);
+-	if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
+-		err = f2fs_gc_range(sbi, 0, sbi->first_seq_zone_segno - 1,
++	if (has_unpinned_area(sbi) && err == -EAGAIN && gc_required) {
++		err = f2fs_gc_range(sbi, 0,
++				sbi->pinned_area_max_secno * SEGS_PER_SEC(sbi) - 1,
+ 				true, ZONED_PIN_SEC_REQUIRED_COUNT, true);
+ 		if (err)
+ 			return err;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index db1079169a23..5949aa5200ac 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -43,6 +43,7 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
  
-@@ -3880,6 +3904,44 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 	return err;
+ #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define MAIN_SECS(sbi)	((sbi)->total_sections)
++#define has_unpinned_area(sbi)	((sbi)->pinned_area_max_secno < MAIN_SECS(sbi))
+ 
+ #define TOTAL_SEGS(sbi)							\
+ 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3bdb0f891c35..253a579e9d5b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -235,6 +235,7 @@ enum {
+ 	Opt_jqfmt,
+ 	Opt_checkpoint,
+ 	Opt_lookup_mode,
++	Opt_resizable_tail_secno,
+ 	Opt_err,
+ };
+ 
+@@ -366,6 +367,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
+ 	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
+ 	fsparam_enum("lookup_mode", Opt_lookup_mode, f2fs_param_lookup_mode),
++	fsparam_u32("resizable_tail_secno", Opt_resizable_tail_secno),
+ 	{}
+ };
+ 
+@@ -404,6 +406,7 @@ static match_table_t f2fs_checkpoint_tokens = {
+ #define F2FS_SPEC_errors			(1 << 23)
+ #define F2FS_SPEC_lookup_mode			(1 << 24)
+ #define F2FS_SPEC_reserve_node			(1 << 25)
++#define F2FS_SPEC_resizable_tail_secno		(1 << 26)
+ 
+ struct f2fs_fs_context {
+ 	struct f2fs_mount_info info;
+@@ -551,6 +554,17 @@ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
+ 			F2FS_OPTION(sbi).unusable_cap_perc);
  }
  
-+static int f2fs_record_dev_alias_inode(struct f2fs_sb_info *sbi,
-+				       struct inode *inode, int devi)
++static inline void adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
 +{
-+	__le32 old_ino;
-+	int err = 0;
-+	int i;
-+
-+	f2fs_down_write(&sbi->sb_lock);
-+	old_ino = sbi->raw_super->dev_alias_ino[devi];
-+	if (old_ino && le32_to_cpu(old_ino) != inode->i_ino)
-+		goto conflict;
-+
-+	for (i = 0; i < MAX_DEVICES; i++) {
-+		if (i != devi &&
-+		    le32_to_cpu(sbi->raw_super->dev_alias_ino[i]) ==
-+							inode->i_ino)
-+			goto conflict;
-+	}
-+
-+	if (!old_ino) {
-+		sbi->raw_super->dev_alias_ino[devi] =
-+						cpu_to_le32(inode->i_ino);
-+		err = f2fs_commit_super(sbi, false);
-+		if (err)
-+			sbi->raw_super->dev_alias_ino[devi] = old_ino;
-+	}
-+	goto out;
-+
-+conflict:
-+	f2fs_warn(sbi, "conflicting device alias inode mapping for device %d",
-+		  devi);
-+	set_sbi_flag(sbi, SBI_NEED_FSCK);
-+	err = -EFSCORRUPTED;
-+out:
-+	f2fs_up_write(&sbi->sb_lock);
-+	return err;
++	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
++	if (f2fs_sb_has_blkzoned(sbi) && sbi->first_seq_zone_segno != NULL_SEGNO)
++		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
++				GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno));
++	if (F2FS_OPTION(sbi).resizable_tail_secno)
++		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
++				MAIN_SECS(sbi) - F2FS_OPTION(sbi).resizable_tail_secno);
 +}
 +
- static int f2fs_ioc_release_dev_alias(struct file *filp)
+ static void init_once(void *foo)
  {
- 	struct inode *inode = file_inode(filp);
-@@ -3888,6 +3950,7 @@ static int f2fs_ioc_release_dev_alias(struct file *filp)
- 	struct extent_info ei = {0, };
- 	struct cp_control cpc = { CP_SYNC, 0, 0, 0 };
- 	struct f2fs_lock_context lc, glc;
-+	int devi;
- 	int err;
+ 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
+@@ -1235,6 +1249,10 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		F2FS_CTX_INFO(ctx).lookup_mode = result.uint_32;
+ 		ctx->spec_mask |= F2FS_SPEC_lookup_mode;
+ 		break;
++	case Opt_resizable_tail_secno:
++		F2FS_CTX_INFO(ctx).resizable_tail_secno = result.uint_32;
++		ctx->spec_mask |= F2FS_SPEC_resizable_tail_secno;
++		break;
+ 	}
+ 	return 0;
+ }
+@@ -1763,6 +1781,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 		F2FS_OPTION(sbi).errors = F2FS_CTX_INFO(ctx).errors;
+ 	if (ctx->spec_mask & F2FS_SPEC_lookup_mode)
+ 		F2FS_OPTION(sbi).lookup_mode = F2FS_CTX_INFO(ctx).lookup_mode;
++	if (ctx->spec_mask & F2FS_SPEC_resizable_tail_secno)
++		F2FS_OPTION(sbi).resizable_tail_secno =
++					F2FS_CTX_INFO(ctx).resizable_tail_secno;
  
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -3920,6 +3983,11 @@ static int f2fs_ioc_release_dev_alias(struct file *filp)
- 	ei = et->largest;
- 	read_unlock(&et->lock);
+ 	f2fs_apply_compression(fc, sb);
+ 	f2fs_apply_test_dummy_encryption(fc, sb);
+@@ -1771,6 +1792,13 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
  
-+	devi = f2fs_target_device_index(sbi, ei.blk);
-+	err = f2fs_record_dev_alias_inode(sbi, inode, devi);
-+	if (err)
-+		goto out_inode_unlock;
+ static int f2fs_sanity_check_options(struct f2fs_sb_info *sbi, bool remount)
+ {
++	unsigned int total_sections = le32_to_cpu(sbi->raw_super->section_count);
 +
- 	f2fs_down_write_trace(&sbi->gc_lock, &glc);
- 	f2fs_lock_op(sbi, &lc);
++	if (F2FS_OPTION(sbi).resizable_tail_secno >= total_sections) {
++		f2fs_err(sbi, "Option resizable_tail_secno is larger than or equal to total sections (%u >= %u)",
++				F2FS_OPTION(sbi).resizable_tail_secno, total_sections);
++		return -EINVAL;
++	}
+ 	if (f2fs_sb_has_device_alias(sbi) &&
+ 	    !test_opt(sbi, READ_EXTENT_CACHE)) {
+ 		f2fs_err(sbi, "device aliasing requires extent cache");
+@@ -2544,6 +2572,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	else if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_AUTO)
+ 		seq_show_option(seq, "lookup_mode", "auto");
  
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index bb2b6cd5d507..2130bacdbe93 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -158,7 +158,8 @@ struct f2fs_super_block {
- 	__le16  s_encoding_flags;	/* Filename charset encoding flags */
- 	__u8 s_stop_reason[MAX_STOP_REASON];	/* stop checkpoint reason */
- 	__u8 s_errors[MAX_F2FS_ERRORS];		/* reason of image corrupts */
--	__u8 reserved[258];		/* valid reserved region */
-+	__le32 dev_alias_ino[MAX_DEVICES]; /* device alias inode numbers */
-+	__u8 reserved[226];		/* valid reserved region */
- 	__le32 crc;			/* checksum of superblock */
- } __packed;
++	if (F2FS_OPTION(sbi).resizable_tail_secno)
++		seq_printf(seq, ",resizable_tail_secno=%u",
++				F2FS_OPTION(sbi).resizable_tail_secno);
++
+ 	return 0;
+ }
  
+@@ -2586,6 +2618,7 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
+ 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+ 	F2FS_OPTION(sbi).memory_mode = MEMORY_MODE_NORMAL;
+ 	F2FS_OPTION(sbi).errors = MOUNT_ERRORS_CONTINUE;
++	F2FS_OPTION(sbi).resizable_tail_secno = 0;
+ 
+ 	set_opt(sbi, INLINE_XATTR);
+ 	set_opt(sbi, INLINE_DATA);
+@@ -3045,6 +3078,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 
++	adjust_pinned_area_boundary(sbi);
+ 	limit_reserve_root(sbi);
+ 	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+ 
+@@ -5287,6 +5321,8 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	/* get segno of first zoned block device */
+ 	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
+ 
++	adjust_pinned_area_boundary(sbi);
++
+ 	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
+ 			ZONED_PIN_SEC_REQUIRED_COUNT :
+ 			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi));
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 3201e2185fea..811e350a1430 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1313,6 +1313,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ F2FS_SBI_GENERAL_RW_ATTR(carve_out);
+ F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
++F2FS_SBI_GENERAL_RO_ATTR(pinned_area_max_secno);
+ F2FS_SBI_GENERAL_RW_ATTR(bggc_io_aware);
+ F2FS_SBI_GENERAL_RW_ATTR(max_lock_elapsed_time);
+ F2FS_SBI_GENERAL_RW_ATTR(lock_duration_priority);
+@@ -1525,6 +1526,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(max_read_extent_count),
+ 	ATTR_LIST(carve_out),
+ 	ATTR_LIST(reserved_pin_section),
++	ATTR_LIST(pinned_area_max_secno),
+ 	ATTR_LIST(allocate_section_hint),
+ 	ATTR_LIST(allocate_section_policy),
+ 	ATTR_LIST(max_lock_elapsed_time),
 -- 
-2.43.0
+2.55.0.860.g4b6b3295ed-goog
 
 
 
