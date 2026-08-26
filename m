@@ -4,128 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD8A6C5DF97
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2026 18:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3E1FDC5DF97
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2026 18:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=U8uACE7zbnVyJHRQu2Qt7aS6uOnwUdYHW8u3fyJqen4=; b=YNvdEwBf0aCFDMgzhXNn38AX/R
-	RXRRbBonJsygu1uLiviq4ySaDJk5VctUxHVYoEAJjKFgtM4vEXYbEl5xN50MEMw+AiopE3iL/ZSHi
-	qNkM5MK0MpXV7Uut+6uu/fNH/gJldaDBeiu/3YFt1ymudlcPNAucg/et6CD2YMmVj4ro=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Wdwb7qxmwafl1wEBpFuCyBiWZGoEQmcH4oActyJsG4Q=; b=k3edNhD/BfHhHGVLJQ2XLCWmUU
+	DcvsDpzERQN3lxuVMFLaF9wF/xMIA0Nvs+oIC5HANIV3goE4i5Aq/Soon0aDvHXBuS+pLUmLv6aK8
+	HfEeMHZoyo7cQ53k21nw6RhWYB3Z49RlhkBQcWbwvrH3ASgxjjyJwTg4c+BNrXWz0+f0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wzI4j-0006bA-5N;
-	Wed, 26 Aug 2026 18:10:13 +0000
+	id 1wzI67-0002xH-S3;
+	Wed, 26 Aug 2026 18:11:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1wzI4i-0006b4-0v
+ (envelope-from <daeho43@gmail.com>) id 1wzI63-0002x9-2T
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Aug 2026 18:10:12 +0000
+ Wed, 26 Aug 2026 18:11:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HKlNWChrlTdknNsFl50kDymmeGcJ6nBkHT+ji7+M0pY=; b=Y5K3VEaS+2Ic/0m6ivKPDg0zcR
- cwhxIAg4TsWrWk9MAwaidP4Jj9WDCT8tfEeDW6RCzLzB7pYzRbCYzGMgbBNnsHoJgFwspRQnqlTPV
- 9mHrfEthrjsJoZwPkjkbMHluXjvS9EA1eZAppAqQLdi26lflslDQfZpvF+MLWfURKUpU=;
+ bh=70l+pktXnkTFw9cxbeR6NIJIADP4PanSEbbcQ2ECs8I=; b=muy9ZUljpSaPTQnjIYLl2nIUP7
+ 35Weam1s3GitLuqe20pCly4A/awNBXS9RyxD1cE4IFxxa/QfdHwYyoqCybtKD9mF9NmIU51MSBrXw
+ GlqulEVVAWXg6cE5yns9i2ndOO/6pGyeVtGlVv0pBZTNAdV5kuxVtxN+MmigZHOy4BPg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=HKlNWChrlTdknNsFl50kDymmeGcJ6nBkHT+ji7+M0pY=; b=FbIFjgREXKB1ODKVCChClEToAw
- /YWKVcXC+Wnkvhi49BOIDw+HQ59/o7X9K6/xO5mGjPlxBLaAVNRcnUOhATSAsnBsx2k9vKB5JjsF4
- R7ZNvENnUK8xyRjymSBTClJbDrtw0QTmXho3ZzXaZr8UHik35O4xmiCVscNgUzELxOLQ=;
-Received: from mail-lf1-f46.google.com ([209.85.167.46])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=70l+pktXnkTFw9cxbeR6NIJIADP4PanSEbbcQ2ECs8I=; b=O
+ /SWZ7fPtHmnByb1VvOSBdCBR+qUk140tk5sq7ZzOdrGFxetDhHCZXSPwMG67vCotx/z9Z0/3EouGz
+ FalZmiC+KJUmu/lz1KWYYEQJVGia4RIg6FldD1PjpUQ/EKQtNH/gDgCIqo2cyEok/87OLfNwHlnhl
+ t/y6dVWtBZ5wODog=;
+Received: from mail-pg1-f174.google.com ([209.85.215.174])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wzI4g-0004XQ-0R for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Aug 2026 18:10:12 +0000
-Received: by mail-lf1-f46.google.com with SMTP id
- 2adb3069b0e04-5b4740ec30cso1080415e87.3
+ id 1wzI60-0004Zx-23 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 26 Aug 2026 18:11:32 +0000
+Received: by mail-pg1-f174.google.com with SMTP id
+ 41be03b00d2f7-c9e607d81fcso788332a12.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Aug 2026 11:10:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787767803; cv=none;
- d=google.com; s=arc-20260327;
- b=m2b0qoQ1jhhi/HcnzEVFK2BB+Ae3jSyDXcUf65h3svhb28z5U8RIaGKfGHBrW5L7nn
- mjXx+lffog4Xf9VKDFLTvfoj/wk2yXB90tzoYN9iCqZZzIEx7XlmLLfa8IXDxd7zXSis
- qpOr9l46zBd77lXDSLo1Ln0Poy82n7nvuqNYvu8bmuyuLRQiATlmTjGKypsZ+ql453Yx
- QeBFYUcyy8baKg3d89cDBeGQ8JqQrQx1UpdHxJdh5pxnr5yEOtiEMjrnkO9yR5Je0bfu
- Q9rxGhksJ59/VstpJcVOpKfEl0gI56HXPE+1sntpPwEXyDeFezKF1S8CAcpj7XTz68A2
- EyBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=HKlNWChrlTdknNsFl50kDymmeGcJ6nBkHT+ji7+M0pY=;
- fh=vazqkcntwzLThPpzntvnb10UQdEjUPxaJ4Ql1qzGlRM=;
- b=OxbEEmcD25IX5Ha/gvAApFTPSFOt+x8qk0Ooqs7ZNWRMs0LqSKNmw8L+XV3S6De0sn
- gYaztzHw0kKNwZ50qbLrgoaSGIYa0tELJaC7vKK3hgLmPyFp6deagP5jRmY133SZQ6cx
- KigrimPI7Z8Z45xIgOvxvN5mNQHu+We2brpBn2lO137YJHyNK38HkewvFPW30edwPfnM
- q49XE5Q2oanbKDaqvCI3SlY3EWiHN+uV+fDjY45hBvlb01O7cML0yUNtGrCADz0xLLiU
- LVqNjTts9H+/PmTYO3VoFyTRpz0pXVpG5DsD6KaFm1kLsmX7VEp+sf7FmYJSqrNN+AAG
- qmAg==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ Wed, 26 Aug 2026 11:11:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787767803; x=1788372603; darn=lists.sourceforge.net;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=HKlNWChrlTdknNsFl50kDymmeGcJ6nBkHT+ji7+M0pY=;
- b=nUQitDYSsDavDgqWcTr1tmuChqG0GKt8h8R4SYCg0o2WKh5T6mw3yhUcQWkwR55Zfh
- mwtaQ/YDEXeqVSxdD2zHZLLALg8svZGGclhbcHdST96Vku47uT57L/x8YBphqJSYVgXl
- mHFq9V7RFssAgoRif8tHvSyX24DSm+TFIMg/JoYtTT4eVWqneAGsrjZVCkxVX/JWIO2M
- Tonr18j9PvMC8Ecl46tg4A9TXSH7OWQ8oob+Br4imau/TSeAY+NIIxP0Yn/YgUNsyzd7
- vwQLifAMX3KYHMoeGzqj90J5qTqsjgXSsJz6GlGyTey64z1DEXF5Q5iJrTfjiC/9sj5n
- WBKg==
+ d=gmail.com; s=20251104; t=1787767886; x=1788372686; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=70l+pktXnkTFw9cxbeR6NIJIADP4PanSEbbcQ2ECs8I=;
+ b=kScVTozCB/54h80IBVPL+w2YXQ58c9zyyNlDtP1ZUdgVJx/xmDroDVPwjOSutLxb1G
+ 3YEIPlKVvIJy70j51U/hlYPEpmgneKYKmnoD1VnP2gg4aetoBLdhtdJ5Sl2oj7xtGCXD
+ XS/hiqpXpeVGeJNnoXqqL5kyh1mBcEV/lR3Op2kruLRpSEOztq2SSZp9OKdh93Fnq438
+ vIfT9l7/BhJtk4gTVbZc7L0f0wiNEUUIS+HBmGAQAjhXoEjZfPvCCTe2Bta/wDxrCl/Q
+ WtXZEE11/fijB6Oe+KC9ZYuz8nCkHA4TJhKjIAds62V1QR6v/lMK7a1z4raePT7tQl9O
+ 1EBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787767803; x=1788372603;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=HKlNWChrlTdknNsFl50kDymmeGcJ6nBkHT+ji7+M0pY=;
- b=XIwn4IR8ygx+4B6K1F0cp0Z9wU/3x8Ekf/lkltJCA1/gKowFfr5H9YX2HQ71TN/Wob
- lRpKPa2QMafTFw+zP8Qm7DiazPN2OdPKmmbD7fvwMUtLANqmJXnIsp2CeV9iR93p58sT
- nWLthY43xoBTMmR6pp9P2yWFANiy8ndn+hMWxrenRQqIHDP5fKtEO86GDIyKeMJEt8di
- BuDdbrpeG7k6nFXTZoiyAabT5mimsuyZFca07sCguQg3+vyjSLZEibEi10nlbW8ruJHb
- LzrnQ6SfxinlTap32u3GrjgQgWkY1VtnS2vMcetA5pMQl6+dhRaBOVKlXHB96L9U+f/T
- ydUA==
+ d=1e100.net; s=20251104; t=1787767886; x=1788372686;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=70l+pktXnkTFw9cxbeR6NIJIADP4PanSEbbcQ2ECs8I=;
+ b=GAXet3JHOhqGu2/jh+5+GReZpbbgdvA2tThOnEc/iZKokHiuZfi8udYExS7WSXXWq2
+ 5C+LMObA9cMn8AVnGrpQlSpcb8LJExkoY4yYe8TMTrBfVIyg4QTKJu4L+YbEbYOzCo6q
+ 401Y3cmlJZ3g2vbdzwgcNVhyhBFHEZfda2GIu4HFzCeELtXEN2L5cwNO/GDsWYi0+HX5
+ hVlaII/JZwGuVLkrj2TjoZ+L6r8m7DsLaPAvf4sAqrWnWxrQkzSaCwqPAsttJifdDEHP
+ MwwJPKruB3ti1jOvt0r+9jU+y8NB03pzWU0AsD1r2JKOXVH1YV9bFztfh890Xladptcu
+ /yxQ==
 X-Forwarded-Encrypted: i=1;
- AHgh+Rri4Z78Yoh0m329rgvUda9xOgC+I2pfE7RbrQNj5gxNp7NHZmts4SQ+iBADl+HUlnKWk2unlcKFa5hprgMf8o9P@lists.sourceforge.net
-X-Gm-Message-State: AFuF++nGEXrAlKvpfignFs0naOIUXiLU5mqUtas6fh/XxrPMN8x/fvSv
- jAi+RgJvB8ADJ28TvYq0MeQMCOQtnK7cP1H4soevgSluEWKRRGPU5EK9HdzimCAlKQyIrycuF1j
- tp9C8AxEgHxrlLZWZyU8s3S/WE2bGe4k=
-X-Gm-Gg: AR+sD1269HRDDlKMO+qoRIJjSyehSOOnmfkJaWN9Hh5YAj4PNxMrYdGLxZZWh8A/z6u
- AvJ5FQP4Qvu0dIZHNP7Y4IutPvTmQjdSwfz1u2kGD5yzuNevH1Nc7c6q/jGKTyaTYmWjMpBXKqy
- lUFXeTe9oV6zI8Mgo88yt/dc3xqRkLGzYIx5sClbtmOIHvmwkiVHt/BnV3RuZYc5EnkjIlPn/rS
- pCw47Rw3w5SEgsPHM7VDrIFjl0AThrrdEJkq+PXO2rWxSV8RFoP8EzNNbwGpnieWSeZB9tU4eVI
- uVg8Jy85uUyz9Ew6M4uAsdFdHxcLa9UVy7vk5FGQpgNxkfzGLJzIjBP1xbsGWIjBZtV4ljZb+SY
- Ui6k/hXjQnxyg0jlyyJjQiJp32ZxNE6EznQ==
-X-Received: by 2002:a05:6512:220d:b0:5b0:ceb3:1150 with SMTP id
- 2adb3069b0e04-5b4a901ba54mr2637553e87.8.1787767802762; Wed, 26 Aug 2026
- 11:10:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <CACOAw_xpF2fBnJwXPATANo5bK0UWUEx2uNKpy2RCfZRzhOphoA@mail.gmail.com>
- <20260826170954.3878638-1-qiwenjie@xiaomi.com>
-In-Reply-To: <20260826170954.3878638-1-qiwenjie@xiaomi.com>
+ AHgh+Rray9qLTWyK+izQLFw/yBi0CEoG/0KXwxGaVDggl9OSBK7jv/rcHc5lqX/EUZlZiK/VSQOa6tcX9t6SeC/055Gd@lists.sourceforge.net
+X-Gm-Message-State: AFuF++kC5Fx0JF70J3alV+DregDjc25E0bSUSffDpHx7D4j/QHhDpFyj
+ M3NJG/j1g6AhVtBgTNSd2PyKxV7xXz3cLqO5Gxp1Fz4+TbxaYfwN5EwG
+X-Gm-Gg: AR+sD12wdM8DU9/Lt6Vqcz+Ny4IEQDqocSq4JDnvS7rRO96j/1oHpyVDAKxsZZimkek
+ BBFLEBTgUrJlrkGsSR4a+NU5sM0EnfaAlnxVurCnj1q5IVPtyECCASKlCykHtvRu61D/xR0q8dl
+ 21GqX2HZsbeF5fPgz/cocsfOpfFhJvkNdUZ1gcx1v2q6peH1fGndXC6WqwLLmc08WaOH3r1RBCs
+ u7P6CTdIf5Kx/hTnbHMhrmdF7nVpLWKDoMHUEeBYnymz3X7HhWTL2T4WecfYU9h5mmR3I3JDe9z
+ 98Ba6rezKd6wKv9/i1WroJCoQwanUE2xmv87mRCCufc0IBM+7G87xbfNyrHy5IEuNHNLYcKVM+3
+ xwZMKZlw7XG6HlgWkx8cqGZLx0OCfS1qWRXsTgSiHYCa9gPZ08iDMB/DHzdPzG6feA0FzGQp/gH
+ LArOePOaYixqGtaT1l3L/2aHWf89nPm+cxHG2HAnrfiV+7ndwGZCms/wg6wwEFZjCpM2qjWUMb3
+ CPXrLjoKp22PQdAT4JplNp3LmS7xsU/aywlfl7QXedeUUt8FWvgvAPlZ3/YbUm1k/AbivwmRmkY
+ svZyxnjo8djs
+X-Received: by 2002:a05:6a20:94ce:b0:3c3:9df0:2d66 with SMTP id
+ adf61e73a8af0-3cf7607a0ebmr19577158637.6.1787767886004; 
+ Wed, 26 Aug 2026 11:11:26 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2a00:79e0:2e7c:8:d10e:986a:5a1c:babc])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-141a9036c85sm9334737c88.9.2026.08.26.11.11.24
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 26 Aug 2026 11:11:25 -0700 (PDT)
 From: Daeho Jeong <daeho43@gmail.com>
-Date: Wed, 26 Aug 2026 11:09:46 -0700
-X-Gm-Features: AcwNN1U6mFU_aQynqdGD2J9fZeJHXDULG_iVi6h_430q97y92VMIyrXjYn534_0
-Message-ID: <CACOAw_zpa79gA7JO8FX2kiLnXSnCcaKuVTNaL0fH-6LfpTpS0Q@mail.gmail.com>
-To: Wenjie Qi <qwjhust@gmail.com>
-X-Headers-End: 1wzI4g-0004XQ-0R
-Subject: Re: [f2fs-dev] [PATCH 0/2] f2fs: fix device alias state across
- remount
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Wed, 26 Aug 2026 11:11:21 -0700
+Message-ID: <20260826181121.3825702-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.55.0.887.g758fc8c411-goog
+MIME-Version: 1.0
+X-Headers-End: 1wzI60-0004Zx-23
+Subject: [f2fs-dev] [PATCH] mkfs.f2fs: enforce alias_filename to match
+ device name
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -137,51 +120,116 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: daehojeong@google.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com,
- jaegeuk@kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Daeho Jeong <daehojeong@google.com>, stable@vger.kernel.org,
+ Wenjie Qi <qiwenjie@xiaomi.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gV2VkLCBBdWcgMjYsIDIwMjYgYXQgMTA6MTDigK9BTSBXZW5qaWUgUWkgPHF3amh1c3RAZ21h
-aWwuY29tPiB3cm90ZToKPgo+IEhpIERhZWhvLAo+Cj4gVGhlIGYyZnMtdG9vbHMgY29tcGFuaW9u
-IHBhdGNoIHdhcyBzZW50IHNlcGFyYXRlbHkuIEl0IHBvcHVsYXRlcwo+IGRldl9hbGlhc19pbm9b
-XSB3aGVuIG1rZnMgYXNzaWducyB0aGUgYWxpYXMgaW5vZGVzLCBiZWZvcmUgY2FsY3VsYXRpbmcK
-PiB0aGUgc3VwZXJibG9jayBjaGVja3N1bSwgc28gYSBmaWxlc3lzdGVtIGNyZWF0ZWQgd2l0aCB0
-aGUgdXBkYXRlZCB0b29scwo+IGhhcyB0aGUgbWFwcGluZyBvbiBpdHMgZmlyc3QgbW91bnQuCj4K
-PiBDdXJyZW50IG1rZnMuZjJmcyBhY2NlcHRzIGFuIGFyYml0cmFyeSBzbGFzaC1mcmVlIGFsaWFz
-X2ZpbGVuYW1lLgo+IEVuZm9yY2luZyBiYXNlbmFtZSBlcXVhbGl0eSB3aWxsIHByZXZlbnQgbmV3
-IGN1c3RvbSBhbGlhc2VzLCBidXQgaXQgZG9lcwo+IG5vdCBoYW5kbGUgZXhpc3RpbmcgZmlsZXN5
-c3RlbXM6IGFmdGVyIHJlbGVhc2UgYW5kIHJlbW91bnQsIHJlc2VydmUKPiBjYW5ub3QgaWRlbnRp
-ZnkgYSBjdXN0b20tbmFtZWQgYWxpYXMsIGFuZCBoYXNfYWxpYXMgaXMgbm90IHJlc3RvcmVkIGZv
-cgo+IHBpbm5lZCBhbGxvY2F0aW9uLgo+Cj4gVGhlIGFkZGVkIHN1cGVyYmxvY2sgY29tbWl0IGlz
-IG5lZWRlZCBvbmx5IHdoZW4gdGhlIG1hcHBpbmcgaXMgZmlyc3QKPiByZWNvcmRlZCwgYW5kIHRo
-ZSByZWxlYXNlIGlvY3RsIGFscmVhZHkgZW5kcyB3aXRoIGEgc3luY2hyb25vdXMKPiBjaGVja3Bv
-aW50Lgo+Cj4gU2hvdWxkIGV4aXN0aW5nIGZpbGVzeXN0ZW1zIGNyZWF0ZWQgd2l0aCBjdXN0b20g
-YWxpYXMgZmlsZW5hbWVzIHJlbWFpbgo+IHN1cHBvcnRlZD8gSWYgc28sIGEgdG9vbHMtb25seSBy
-ZXN0cmljdGlvbiBkb2VzIG5vdCBzZWVtIHN1ZmZpY2llbnQuCj4KClRoYW5rcyBmb3IgdGhlIGNs
-YXJpZmljYXRpb24uCgpIb3dldmVyLCBJIGRvbid0IHRoaW5rIHdlIG5lZWQgdG8gbW9kaWZ5IHRo
-ZSBvbi1kaXNrIHN1cGVyYmxvY2sgZm9ybWF0IGZvciB0aGlzOgoKMS4gQ3VzdG9tIGFsaWFzIGZp
-bGVuYW1lcyB3aXRoIGR5bmFtaWMgcmVzZXJ2ZS9yZWxlYXNlIGhhdmUgbmV2ZXIKd29ya2VkIHBy
-b3Blcmx5IGZyb20gdGhlIGJlZ2lubmluZyAoYXMgeW91IG5vdGVkLCByZXNlcnZlIGFuZCByZW1v
-dW50CndpdGggaGFzX2FsaWFzIHdlcmUgYWxyZWFkeSBicm9rZW4gdXBvbiB0aGUgaW50cm9kdWN0
-aW9uKS4KU2luY2UgaXQgd2FzIG5ldmVyIGEgZnVuY3Rpb25pbmcgZmVhdHVyZSBpbiB0aGUgd2ls
-ZCwgZW5mb3JjaW5nIHRoZQpuYW1lIGFsaWdubWVudCBpbiBta2ZzLmYyZnMgZG9lcyBub3QgYnJl
-YWsgYW55IGV4aXN0aW5nIHdvcmtpbmcKc2V0dXBzLgoKMi4gSW4gcmVhbC13b3JsZCBwcm9kdWN0
-aW9uIGVudmlyb25tZW50cyAoc3VjaCBhcyBBbmRyb2lkKSwgdGhlCnBhcnRpdGlvbiBuYW1lIGFu
-ZCBhbGlhcyBmaWxlbmFtZSBhcmUgYWxyZWFkeSBjb25maWd1cmVkIGlkZW50aWNhbGx5CnZpYSAv
-ZGV2L2Jsb2NrL2J5LW5hbWUvIHN5bWxpbmtzIChlLmcuLCAtYwovZGV2L2Jsb2NrL2J5LW5hbWUv
-Zm9vQGZvbykuCgozLiBJZiBzb21lb25lIHJlYWxseSB3YW50cyBhIHNwZWNpZmljIGFsaWFzIGZp
-bGVuYW1lLCB0aGV5IGNhbiBzaW1wbHkKcG9pbnQgdG8gYW4gYXBwcm9wcmlhdGVseSBuYW1lZCBk
-ZXZpY2Ugbm9kZSBvciBzeW1saW5rIChlLmcuLAovZGV2L2Jsb2NrL2J5LW5hbWUvbXlfYWxpYXNA
-KS4KCk1vZGlmeWluZyB0aGUgb24tZGlzayBzdXBlcmJsb2NrIGxheW91dCBhbmQgcGVyZm9ybWlu
-ZyBydW50aW1lCnN1cGVyYmxvY2sgd3JpdGVzIChmMmZzX2NvbW1pdF9zdXBlcigpKSBpbiBpb2N0
-bCBwYXRocyBpbnRyb2R1Y2UKcGVybWFuZW50IGFyY2hpdGVjdHVyYWwgYmFnZ2FnZSBhbmQgY29t
-cGxleGl0eSB0byB0aGUga2VybmVsLCBqdXN0IHRvCnN1cHBvcnQgYSBjb3JuZXIgY2FzZSB0aGF0
-IHdhcyBicm9rZW4gc2luY2UgaXRzIGluY2VwdGlvbiBhbmQgY2FuIGJlCmNsZWFubHkgcHJldmVu
-dGVkIGF0IGZvcm1hdCB0aW1lLgoKVGhhbmtzLAoKPiBUaGFua3MsCj4gV2VuamllCgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
-bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
-cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
-bAo=
+From: Daeho Jeong <daehojeong@google.com>
+
+The kernel expects the device alias file in the root directory to match
+the device basename (strrchr(path, '/') + 1) to identify the target device
+both during mount in f2fs_restore_device_alias() and during reserve in
+f2fs_ioc_reserve_dev_alias().
+
+If a custom alias filename that differs from the device name is used,
+the kernel fails to match the alias file at mount time (leaving
+FDEV(i).has_alias unset and allowing pinned files to allocate in that
+range) and subsequently fails to reserve the device range when requested.
+
+Enforce that if an alias filename is specified, it must match the device
+name. Also allow specifying just '-c <device>@' as a shorthand so users
+do not have to redundantly type the device basename twice.
+
+Reported-by: Wenjie Qi <qiwenjie@xiaomi.com>
+Fixes: 8cc4e257ec20 ("mkfs.f2fs: add device aliasing feature")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ man/mkfs.f2fs.8         |  4 +++-
+ mkfs/f2fs_format_main.c | 27 +++++++++++++++------------
+ 2 files changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+index 9096646..430d180 100644
+--- a/man/mkfs.f2fs.8
++++ b/man/mkfs.f2fs.8
+@@ -121,10 +121,12 @@ Currently, the kernel is only able to mount f2fs filesystems where the
+ block size matches the page size.
+ The default value is 4096.
+ .TP
+-.BI \-c " device-list"
++.BI \-c " device_name[@alias_filename]"
+ Build f2fs with these additional devices, so that the user can
+ see all the devices as one big volume.
+ Supports up to 7 devices except meta device.
++If '@' or '@alias_filename' is given, the device is configured as a device alias.
++Note that alias_filename must match the device name.
+ .TP
+ .BI \-d " debug-level"
+ Specify the level of debugging options.
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 8d44a9b..99d92c5 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -191,6 +191,7 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 	int32_t option=0;
+ 	int val;
+ 	char *token;
++	bool is_alias;
+ 	int dev_num;
+ 
+ 	while ((option = getopt_long(argc,argv,option_string,long_opts,NULL)) != EOF) {
+@@ -218,6 +219,8 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 				mkfs_usage();
+ 			}
+ 
++			is_alias = (strchr(optarg, '@') != NULL);
++
+ 			token = strtok(optarg, "@");
+ 			if (strlen(token) > MAX_PATH_LEN) {
+ 				MSG(0, "Error: device path should be equal or "
+@@ -226,21 +229,21 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 				mkfs_usage();
+ 			}
+ 			c.devices[dev_num].path = strdup(token);
+-			token = strtok(NULL, "");
+-			if (token) {
+-				if (strlen(token) > MAX_PATH_LEN) {
+-					MSG(0, "Error: alias_filename should "
+-						"be equal or less than %d "
+-						"characters\n", MAX_PATH_LEN);
+-					mkfs_usage();
+-				}
+-				if (strchr(token, '/')) {
+-					MSG(0, "Error: alias_filename has "
+-						"invalid '/' character\n");
++
++			if (is_alias) {
++				char *dev_name = strrchr(token, '/');
++
++				dev_name = dev_name ? dev_name + 1 : token;
++
++				token = strtok(NULL, "");
++				if (token && strcmp(token, dev_name)) {
++					MSG(0,
++						"Error: alias_filename (\"%s\") must match device name (\"%s\")\n",
++						token, dev_name);
+ 					mkfs_usage();
+ 				}
+ 				c.devices[dev_num].alias_filename =
+-					strdup(token);
++					strdup(dev_name);
+ 				if (!c.aliased_devices)
+ 					c.feature |= F2FS_FEATURE_DEVICE_ALIAS;
+ 				c.aliased_devices++;
+-- 
+2.55.0.887.g758fc8c411-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
