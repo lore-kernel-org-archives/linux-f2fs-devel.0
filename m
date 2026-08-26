@@ -4,107 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A6852C61DBD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2026 15:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C2E8C61DC6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2026 15:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=bSz4fsIRSTECAgexXlwYb2GlhjvhU/z5Ij3C/GJK+88=; b=VUR7GlzM9R9tuZpG0rVwGPS1SO
-	DKRuogfz5QsNNKnCoQwl7OCWIUsesJ6TfS8SSq8tgeoP8eZMl6Fkc9skP2ia8NmbHQFhxEiBAUQYv
-	wACgF9/jsamiavNhIsvUm3pcGHj9Mmr9xrceuHVfsfBXR5DqEROaTMO/lO2JD4zGS8tE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=8UDHOvYedG9buPoOmgHb41vp6a1JnYv/zkmHAO3CFh4=; b=bWVY7TyyHP6Ls0W50VW4AfWRaq
+	xVDAZqC8XojqYRxC2Z9I93uppel2iQZ+fBOXhZEJyiJtkYp//5ItIzzU42NRPVNa+6XiitfKy3d+G
+	91eN0GnTvi4In/Z80KL8yJ5RxoJXEQbGNW9QzFZoPzSPtZRKYLQqdyUe25y7tUq8tApk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wzFIb-0007Cf-Oz;
-	Wed, 26 Aug 2026 15:12:19 +0000
+	id 1wzFbL-0002FS-LH;
+	Wed, 26 Aug 2026 15:31:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wzFIa-0007CZ-Oy
+ (envelope-from <qwjhust@gmail.com>) id 1wzFbK-0002FJ-HM
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Aug 2026 15:12:18 +0000
+ Wed, 26 Aug 2026 15:31:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rqzQBp0nrSAFCfyclJraR8i8GHOdK8ExujsnsKkIJkk=; b=LIA3FUdu3YhY2r87QxXzYMUZHu
- XAuQ7PJgtO2JtcoClApxOR70+L6hyMyncjq4f8jqU1XBVD9DYVYxuRxuoROtsGRI5EtQySgb6+nYy
- Zzl5uzosXbJcPo4UPcjpqO/P9rg8gjECCnPHJnPn/DoMXIfkYS9gMXHc+2i6pulSEc+U=;
+ bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=; b=bW8nYQJakxCM0fu6MWWaT4VJfF
+ IZUekH0Ok0olTksW9DDS17LAcCV4ntpNiRIf4KWrn3OggitnSXsjcHsn5Qh8KRLbGEJAtJTR2DVxR
+ k9oPPAGFb3PLIvWi2f7NVvpqRBIKMvG/r5cOyIFbS7Scgvb5E2g1ROzgU6NT5IC5D14c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=rqzQBp0nrSAFCfyclJraR8i8GHOdK8ExujsnsKkIJkk=; b=Q
- rniUUqeTFkF4lT4nM9MptRcWqpVS2d+Euzp+tfcEEYUvD+w+Mz1wzrKaVJwpyAT2slGPbeFkyxXMx
- /A8uwA2KQeAa4boHsRZ/vcLJhr447Ym2Vr/nZZDkvh5DkxMmGprG90XGvdiofr8C9nM1N4Q+YJ49B
- Enj1LDMIrim7P/OM=;
-Received: from mail-oa1-f43.google.com ([209.85.160.43])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=; b=ZJmHFi9b+tRCZJxfvmA3gmLZm0
+ rEoTjuu1r2lGve92aYkfX+mRVqY+Z4wqcVjjO9jC9ZtUpqBYL12fTvMEHYTHtK5ejW4QCOhobYgtz
+ 7MK455UCZKTRSCo4WShBuGlAZJQIv2T1PV/Up0d/G511iukjWtze2m7FfckKJF5p5rfE=;
+Received: from mail-oa1-f50.google.com ([209.85.160.50])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wzFIW-0006pW-Oa for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Aug 2026 15:12:18 +0000
-Received: by mail-oa1-f43.google.com with SMTP id
- 586e51a60fabf-462df62f872so2340260fac.0
+ id 1wzFbJ-0007T5-79 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 26 Aug 2026 15:31:42 +0000
+Received: by mail-oa1-f50.google.com with SMTP id
+ 586e51a60fabf-43bf9548df4so1376253fac.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Aug 2026 08:12:16 -0700 (PDT)
+ Wed, 26 Aug 2026 08:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787757131; x=1788361931; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=rqzQBp0nrSAFCfyclJraR8i8GHOdK8ExujsnsKkIJkk=;
- b=UAiqO0IMRdQ3Bv0Cbey41ZcOOSsfAJnXpt++A17+vMzqHkw/JOHV8bJw9sje5i3inw
- +T+NGTvBSC2kRK4NaG4AqJ9HI61fky7gugrrhrpXnwaqQpZ+aENceZAIegxCRmT+qWHY
- IWRaBrzVrcJs5zAt6tQl7pL6Wdb3HU7WVWd+Onb21iLXmjIu95yYtcJpLSgK6vsbI1KR
- AwISUP8tr8UWlEMg8ypfDaB92EmcioeUnKJhtb//WlgvMv27sS+zrJ/dj+A+LoWxzmpw
- 6MQKyL7sTXFG4xH2MRz6tlcfjx06OuB3DJj1cLH0JaJxx1wwM4PDZb6zOk0fxOA5yTq8
- +nig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787757131; x=1788361931;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1787758295; x=1788363095; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=rqzQBp0nrSAFCfyclJraR8i8GHOdK8ExujsnsKkIJkk=;
- b=J48wBgb2FuUoL2vWmN+OKQkndfmAZ+rw6Wo7FGghnLxTQCjEsJhavEfThXaLvnVmbf
- 1IyDmkuHBUU2UwqAzVM3fhATUeUleuNPsYVYTShC+bZ26XL1fwHtfyvuJlizCFC9DZtP
- IGMC1FQc9ZYsQDFeXRTh3rF9fYsQHdg3gOz6Ij+r1Tpx1T7WmOkP/QayJ7wlVS48pRPK
- jW1/bu0nGZ5keV+DcVSdGYFCedf8uYTadj1iM8Fp2nXj+2BEmfagQJP9woQ3vF2WK5Vz
- 6HDdKk36nGGB9QDUdGpKWthJ7B3El5A0Epn7P2reUIEV2zQ3pZXnDzGFXfbM5H1WgNG4
- r0ng==
-X-Gm-Message-State: AFuF++kW0kuIAi0gytmuRIXYDJYN58RmIGb1aQvR03BQQsjp2L3sQxYp
- cwfBlvJqiH04MWIOYMh1PsoTNsGHiriZzVLS7iSzWJifm8dxvs8p+ECGio1pL26g
-X-Gm-Gg: AR+sD10DqPhA09pxhNIGle/RyXZ2S7zWsOafCOPSWqdlH7V3Bapb9Z6URcIMypByAJg
- aMn9wMqwrBb8ym+TM8EFGmL6KBpGCCbn7VBOZcogcn6Vc1AedGniybaz9tCRv/wcT7OIjlC/sat
- rz76GKLRbJITt0ZmLM9TWSEZrautVFFXOmZi7GlJRfHf09nCQVpCI96m3R4UXb7klvLKw2DUHED
- 1mXCPmBf/4LYK6xZhF+X2ycsAVQaiyRBLC8uXA64kuIEb5Bd4Jm+ROGtQvapZcYLF6BGwEmDW4C
- 92s8uZfRp132vYMeKQBDdj721YxQ4ooHyXONlZi2Bgn7ZxJPoRfvmd41Mu35U0vABDz4c/7fR1Z
- 88FaLO8auUEP/vh0yU4z7FMUTRzVjQj+frJTFmMtoiDKqkG0GYWOo1l/hsxjYNjjEdPieh55tOW
- 6iy8VgUgp1CPC6wpCZ2NhG9oVuDsyrQoX9pHVEtjWAqCVjP13qr8B/4NrnSuxJtAf7ugOUisLee
- WYeonKgx5IZxAgb41FA1fe+
-X-Received: by 2002:a17:90b:3d81:b0:38e:6d55:b1a6 with SMTP id
- 98e67ed59e1d1-3966d3d1262mr8939100a91.3.1787751693501; 
- Wed, 26 Aug 2026 06:41:33 -0700 (PDT)
+ bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=;
+ b=PHThkFGlXeE5mJsgBR8DJfSLYXmWkG0aRIMDQEvDsR73OTfguY763qYABFVURqPz0s
+ N6+ktoZfvZZEvKgbHH6NwHDlcVjti4a78P2EV7GC23fAOoDXVyihZnMXEuDTc4QSzWUW
+ oKu/zt0aHhb14MbQYQSlExi8DTEyY8Gph8WtjtZLbpk4qn7uz11m/bO4vaQipJBhPxL5
+ tFbwTNAdyrXrmxDAFan1hHXPy7j21nYpo/hQ5t+9dBkoBZVu/6bRZbjXmycwqFY1n5Z8
+ Q3s/kEQ7YuVnxAHLsgbDnYl5RKrPETn0ZNkBjRElX5bt6WdtvKlaY6pXXHJ+lf+xVEyh
+ U5UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1787758295; x=1788363095;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=NFQ51HJ7fyE1u0r/xRDp9ewL6yDSIMejUbH85HRUqXg=;
+ b=nYLGV7MIrq/KDl3IBDJ8kGlEZqckpJYzJy6PD8ma35gMdLfeIaBizmvcm4/6T0B32C
+ eJDfPopJF4qKWZYdq0Dg+Ile1m9hz93oROCbsR5qmQ4uRFA/U2IyhLOFaXXyGicHx0p6
+ XgrDrIwhgX715K4Cyw7krfdO8toF9KrrxfXgjmQDgTgKR8x8J16Xno4FiDXnlylLS/Mu
+ Dx1qhLL1q+nIRis47KtbngtaM6xe1idAlK4xomHRxhw1itbzgQoWj6U0k1IAollixhlx
+ hSrxE7oNNlisBBDHwSn7nczWbUJ8NwMEZ5Dhp6oQk63/wxy291DSvaZ8cXnLtpQs+fak
+ DS9A==
+X-Gm-Message-State: AFuF++mJgIz00fUKMXDWBQ+M53cSuSJuQw6WjuR42f7bFM7MfW39kT6o
+ 8RYNBo10P7f4ZNlKFK6UkPFCLV11XzOYBxbFCceCBgsHbAL8qdelCx6PyoC1SANw
+X-Gm-Gg: AR+sD13BHcXMcBaXUBOPYpnuX+JlBMq4iFbLs13jgxSvgZIGOj3PJ/RasjlL5RgP/bi
+ EjKmNpccpSM5qDUtRrHdSsBTCgCzBe8rinUGgmb4+BLJ1xS8+PZbKcLsEsMqH+hoLy55FQD0Xpd
+ Ik1fcQbQ1N9GKK3cL+GRR/m587JyaQ5Pbe/bOr8s8bwV24YRrhCc5jh1ZWFfvv54TSWuUg/hBx0
+ XUSCbM5UaoAi7x+DIHTnqjWfOTxEI/1j7ldashyc72VPC/2lGoXLSVIJpFFAynGrlUIqzQruqoG
+ 1eCTNoWQYMwAc3+oXpgEOvOoBlO1IYmb3weQwmZG/goFHtU0ld1GO0nN45h7+4x8ZUIy3zUcvqG
+ 4cNFG+nyUdVD1xN4m2kJLSh1BVS5InQu6+k3URwpPTHpTNRmeVPp78isk5me9TJDvnwrr4I/QFb
+ HxfSjFxKsGyYwqqhCo8nIq3kcE0nwL0DVAtx/Rb+GQXq8Ouo7E3d/6pkRJw8USZXnwbhtjb49DQ
+ WSwVt9CvFSSUvdCERHpARAChKT6apRuGgo=
+X-Received: by 2002:a17:90a:d2ce:b0:393:1d92:db5 with SMTP id
+ 98e67ed59e1d1-3966d3dc5ecmr15674934a91.10.1787751697387; 
+ Wed, 26 Aug 2026 06:41:37 -0700 (PDT)
 Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39645d69065sm8906472a91.13.2026.08.26.06.41.30
+ 98e67ed59e1d1-39645d69065sm8906472a91.13.2026.08.26.06.41.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Aug 2026 06:41:32 -0700 (PDT)
+ Wed, 26 Aug 2026 06:41:36 -0700 (PDT)
 From: Wenjie Qi <qwjhust@gmail.com>
 X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Wed, 26 Aug 2026 21:41:24 +0800
-Message-ID: <20260826134126.3729507-1-qiwenjie@xiaomi.com>
+Date: Wed, 26 Aug 2026 21:41:25 +0800
+Message-ID: <20260826134126.3729507-2-qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260826134126.3729507-1-qiwenjie@xiaomi.com>
+References: <20260826134126.3729507-1-qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1wzFIW-0006pW-Oa
-Subject: [f2fs-dev] [PATCH 0/2] f2fs: fix device alias state across remount
+X-Headers-End: 1wzFbJ-0007T5-79
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: persist device alias inode across
+ remount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,25 +126,222 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Split device-alias remount handling into two changes.  The first records a
-stable device-to-inode mapping so a custom alias name can be reserved again
-after release and remount.  The second uses that mapping to keep released
-alias devices out of pinned allocation, both immediately and after remount.
+A released device alias loses its extent. Reserve then identifies the
+target device by matching the alias filename against the device basename,
+which fails when mkfs used a custom alias name.
 
-The f2fs-tools layout and mkfs update will be sent separately because it
-applies to a different repository.
+Store each alias inode number at its device index in the superblock
+reserved area. Record the mapping before releasing blocks and use it to
+identify the device during reserve. Reject conflicting mappings and keep
+the basename lookup for images without a recorded mapping.
 
-Wenjie Qi (2):
-  f2fs: persist device alias inode across remount
-  f2fs: keep released alias devices out of pinned allocation
+Leave released alias inodes without an extent so existing fsck does not
+account the freed device range as live blocks.
 
- fs/f2fs/file.c          | 100 ++++++++++++++++++++++++++++++++++------
- fs/f2fs/super.c         |  48 +++++++++++++++++++
- include/linux/f2fs_fs.h |   3 +-
- 3 files changed, 136 insertions(+), 15 deletions(-)
+Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+---
+ fs/f2fs/file.c          | 96 +++++++++++++++++++++++++++++++++++------
+ include/linux/f2fs_fs.h |  3 +-
+ 2 files changed, 84 insertions(+), 15 deletions(-)
 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d440231b8cb9..7f1dc00031ba 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3725,25 +3725,44 @@ static int f2fs_ioc_get_dev_alias_file(struct file *filp, unsigned long arg)
+ 			(u32 __user *)arg);
+ }
+ 
+-static bool f2fs_get_dev_alias_extent(struct f2fs_sb_info *sbi,
+-				       struct dentry *dentry,
+-				       struct extent_info *ei)
++static int f2fs_get_dev_alias_index(struct f2fs_sb_info *sbi,
++				    struct inode *inode,
++				    struct dentry *dentry)
+ {
++	int devi = -ENOENT;
+ 	int i;
+ 
++	f2fs_down_read(&sbi->sb_lock);
++	for (i = 0; i < MAX_DEVICES; i++) {
++		if (le32_to_cpu(sbi->raw_super->dev_alias_ino[i]) !=
++							inode->i_ino)
++			continue;
++		if (!i || i >= sbi->s_ndevs) {
++			devi = -EFSCORRUPTED;
++			goto out;
++		}
++		if (devi >= 0) {
++			devi = -EFSCORRUPTED;
++			goto out;
++		}
++		devi = i;
++	}
++	if (devi >= 0)
++		goto out;
++
+ 	for (i = 1; i < sbi->s_ndevs; i++) {
+ 		char *name = strrchr(FDEV(i).path, '/');
+ 
+ 		name = name ? name + 1 : FDEV(i).path;
+ 		if (strcmp(name, dentry->d_name.name))
+ 			continue;
+-
+-		ei->blk = FDEV(i).start_blk;
+-		ei->len = FDEV(i).total_segments << sbi->log_blocks_per_seg;
+-		ei->fofs = 0;
+-		return true;
++		devi = sbi->raw_super->dev_alias_ino[i] ?
++						-EFSCORRUPTED : i;
++		break;
+ 	}
+-	return false;
++out:
++	f2fs_up_read(&sbi->sb_lock);
++	return devi;
+ }
+ 
+ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+@@ -3756,7 +3775,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 	struct f2fs_lock_context lc, glc;
+ 	blkcnt_t count;
+ 	unsigned int start, end;
+-	int type, err;
++	int devi, type, err;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+@@ -3780,7 +3799,8 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 		goto out_inode_unlock;
+ 	}
+ 
+-	if (!f2fs_get_dev_alias_extent(sbi, filp->f_path.dentry, &ei)) {
++	devi = f2fs_get_dev_alias_index(sbi, inode, filp->f_path.dentry);
++	if (devi < 0) {
+ 		f2fs_warn(sbi, "device alias file (%s, ino=%llu) has no matching device",
+ 			  filp->f_path.dentry->d_name.name,
+ 			  (unsigned long long)inode->i_ino);
+@@ -3790,6 +3810,10 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 		goto out_inode_unlock;
+ 	}
+ 
++	ei.blk = FDEV(devi).start_blk;
++	ei.len = FDEV(devi).total_segments << sbi->log_blocks_per_seg;
++	ei.fofs = 0;
++
+ 	spin_lock(&sbi->stat_lock);
+ 	if (sbi->total_valid_block_count + ei.len >
+ 			get_available_block_count(sbi, inode, true)) {
+@@ -3801,7 +3825,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 	spin_unlock(&sbi->stat_lock);
+ 
+ 	spin_lock(&FREE_I(sbi)->segmap_lock);
+-	FDEV(f2fs_target_device_index(sbi, ei.blk)).is_reserving = true;
++	FDEV(devi).is_reserving = true;
+ 	spin_unlock(&FREE_I(sbi)->segmap_lock);
+ 
+ 	start = GET_SEGNO(sbi, ei.blk);
+@@ -3853,7 +3877,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 	f2fs_update_inode_page(inode);
+ 
+ 	spin_lock(&FREE_I(sbi)->segmap_lock);
+-	FDEV(f2fs_target_device_index(sbi, ei.blk)).is_reserving = false;
++	FDEV(devi).is_reserving = false;
+ 	spin_unlock(&FREE_I(sbi)->segmap_lock);
+ 
+ 	f2fs_unlock_op(sbi, &lc);
+@@ -3870,7 +3894,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 	spin_unlock(&sbi->stat_lock);
+ 
+ 	spin_lock(&FREE_I(sbi)->segmap_lock);
+-	FDEV(f2fs_target_device_index(sbi, ei.blk)).is_reserving = false;
++	FDEV(devi).is_reserving = false;
+ 	spin_unlock(&FREE_I(sbi)->segmap_lock);
+ 	f2fs_up_write_trace(&sbi->gc_lock, &glc);
+ 
+@@ -3880,6 +3904,44 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 	return err;
+ }
+ 
++static int f2fs_record_dev_alias_inode(struct f2fs_sb_info *sbi,
++				       struct inode *inode, int devi)
++{
++	__le32 old_ino;
++	int err = 0;
++	int i;
++
++	f2fs_down_write(&sbi->sb_lock);
++	old_ino = sbi->raw_super->dev_alias_ino[devi];
++	if (old_ino && le32_to_cpu(old_ino) != inode->i_ino)
++		goto conflict;
++
++	for (i = 0; i < MAX_DEVICES; i++) {
++		if (i != devi &&
++		    le32_to_cpu(sbi->raw_super->dev_alias_ino[i]) ==
++							inode->i_ino)
++			goto conflict;
++	}
++
++	if (!old_ino) {
++		sbi->raw_super->dev_alias_ino[devi] =
++						cpu_to_le32(inode->i_ino);
++		err = f2fs_commit_super(sbi, false);
++		if (err)
++			sbi->raw_super->dev_alias_ino[devi] = old_ino;
++	}
++	goto out;
++
++conflict:
++	f2fs_warn(sbi, "conflicting device alias inode mapping for device %d",
++		  devi);
++	set_sbi_flag(sbi, SBI_NEED_FSCK);
++	err = -EFSCORRUPTED;
++out:
++	f2fs_up_write(&sbi->sb_lock);
++	return err;
++}
++
+ static int f2fs_ioc_release_dev_alias(struct file *filp)
+ {
+ 	struct inode *inode = file_inode(filp);
+@@ -3888,6 +3950,7 @@ static int f2fs_ioc_release_dev_alias(struct file *filp)
+ 	struct extent_info ei = {0, };
+ 	struct cp_control cpc = { CP_SYNC, 0, 0, 0 };
+ 	struct f2fs_lock_context lc, glc;
++	int devi;
+ 	int err;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -3920,6 +3983,11 @@ static int f2fs_ioc_release_dev_alias(struct file *filp)
+ 	ei = et->largest;
+ 	read_unlock(&et->lock);
+ 
++	devi = f2fs_target_device_index(sbi, ei.blk);
++	err = f2fs_record_dev_alias_inode(sbi, inode, devi);
++	if (err)
++		goto out_inode_unlock;
++
+ 	f2fs_down_write_trace(&sbi->gc_lock, &glc);
+ 	f2fs_lock_op(sbi, &lc);
+ 
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index bb2b6cd5d507..2130bacdbe93 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -158,7 +158,8 @@ struct f2fs_super_block {
+ 	__le16  s_encoding_flags;	/* Filename charset encoding flags */
+ 	__u8 s_stop_reason[MAX_STOP_REASON];	/* stop checkpoint reason */
+ 	__u8 s_errors[MAX_F2FS_ERRORS];		/* reason of image corrupts */
+-	__u8 reserved[258];		/* valid reserved region */
++	__le32 dev_alias_ino[MAX_DEVICES]; /* device alias inode numbers */
++	__u8 reserved[226];		/* valid reserved region */
+ 	__le32 crc;			/* checksum of superblock */
+ } __packed;
+ 
 -- 
 2.43.0
+
 
 
 _______________________________________________
