@@ -4,113 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ADC59C61DCB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2026 14:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E80B0C61DCB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2026 14:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=bu3Eo+be1GtzQTGnU+2+e2pAuOM5zKizFDdgoMX4/Sk=; b=RPL+8uwdg4k/jr6TZYPUA/Rxv/
-	i0tGfXQyxUUudLclmMu985VEkG72heTJ0CPJ82wgKqyJ4YxsRkKyQXLS1zQdwgwhYRzdXyqimfnMV
-	iUwS0CvBzCEEDnP6BAFJoKlEGI7B+cawTxvA+wzq7p/x6v4S0WM/QpgvE/CZw1dghWS0=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:To:Date:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=MYqFVpCa5QTZ47xtVSWAasuwlmi/DVxn8lTtD0JNG8E=; b=BvndFIRzXuGX05J9NI2AaV00mC
+	+ibWc8TbaAfeF5oOZzbsaIbiUJzzATyjDOKY89JuOsVI4sMgyiZzQ47v5PxhQxbk5JBEGf46q8Wr6
+	OpunQFcnbN5vTSvoT1oqxdv5DKUGVc18m7CE2WX0IJi4LDy20h42GUuNC7IP9S5O963I=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wzxKF-00065L-1m;
-	Fri, 28 Aug 2026 14:12:59 +0000
+	id 1wzxwz-00014o-QM;
+	Fri, 28 Aug 2026 14:53:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wzxKE-00065B-Ba
+ (envelope-from <jaegeuk@kernel.org>) id 1wzxwj-00014Q-Ac
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Aug 2026 14:12:59 +0000
+ Fri, 28 Aug 2026 14:52:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+ From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jwGAw/3u92Bautox8ZBye7j/eciIao9tSSPeFwdR8xA=; b=O3Uw7HMaVsuMlMQ6Bw4AE6YzC7
- fNb2rUCwroVByk0sYUuzlWJLWT2SCpWXzGLXFTm3EjII7PA2d2+O1hVps2dDwVBxIuBoKoEizf94i
- 2xmtfFlQhXGeRqU+hXv9n3WXxACZq/s+fNnfVKJveN50EQOuCxZFfbIbnRLwsM4jSj64=;
+ bh=ELhljBAu15ROpmEaT8Yh7qydfeZbcelWQRMHhRVBiPc=; b=mP6kAtapDcD0U+6cI6WGqai/Zh
+ O/5swbvGqA08MKLMrCXrePdU8QPnusPtYxW0PcUh33asmfJVElORv9bSPtJZ8aCXYn9TwrPMyUvyo
+ ntAN8x1Gw208Yv6Ze7cscWElMLWZV/QPJYNVrr0hPOv7FAZtX6/Nz9aZg1PcKMRdkPAo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=jwGAw/3u92Bautox8ZBye7j/eciIao9tSSPeFwdR8xA=; b=kVRhZU4NX8kCz565zdWEyMi5yo
- llRMT/3UwWLZgELNfp2ot/CoEhoM8QvvWMx5p3g1H/jB6qwzyKgo6IrOtEMrD0yUWDru2/uX3MFsE
- e6/jifoBrfUOjh6Ex5hI1ImiOkX9aG6g6WI+Q5DDDdQWMRYMuDGYGVrkQ5M5MAs2tMWY=;
-Received: from mail-pj1-f54.google.com ([209.85.216.54])
+ h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ELhljBAu15ROpmEaT8Yh7qydfeZbcelWQRMHhRVBiPc=; b=J
+ B/aXwqEpvNQKDm4LYI/jooOU1oT+Fzws+GqhVu2fC4vJ3oY5U7V7upKAXrvVnkvedn/Je5QILyYMX
+ PkopR7aQKuUl50uWmC7awRWBNSveF5sg/CGwg9hufs+dOSrNqwSJXG6TzwVr5bkUddf762C2tm7W4
+ vw3qII7imnquoaS4=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wzxKD-0005B7-Iy for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Aug 2026 14:12:59 +0000
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-382ef647e20so975751a91.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 28 Aug 2026 07:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787926372; x=1788531172; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=jwGAw/3u92Bautox8ZBye7j/eciIao9tSSPeFwdR8xA=;
- b=HmN1YsjuBQtW9JblkPWkSYFnmO5BNNqmbSUxdU5hoR+g3dOgn0yWW9953KHgbCLBgs
- ss/C68+KIm/J5RzjvSgoAleIYYXfcWqjW0xGVIRO/njoyU+sc98vcPpWQbYG1R3tTIgM
- qsloCRptKKvk+N65zyKzg2YK6zcH9HXDtx1WQTuMeqK6CcKsKwyHuNyJg2HB5D/XklCO
- 83ZStkfIAT/OsncpLA+45/cVJOmpYHEjegvtWBuNEFi+pRtjMH3/187n3tYkI2JeF8BP
- RM9H7WGIiqq/hvMPnW4VpQKSttO4doz2LeogihX8sU11MYI56SwTxaM14dOjGzMLaIsM
- jecw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787926372; x=1788531172;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=jwGAw/3u92Bautox8ZBye7j/eciIao9tSSPeFwdR8xA=;
- b=TOFyDjWt43RC749tPN3GU5nMNARTKQ6P1QZR2yjAZAxNaq2DD7R6MDtEMxBs28cdMN
- kyTjogFCqPauxlI9ENnl47/y0+q7EtyyXqiC5lYS53IZ27WZyZpGGm7YYCoJSgDRnBDs
- voGDQ5hpQgHdyhwPvyFvrVouNaAcYtEbFwRu3mjQ8WCje3G1ZhpztBWtVzq0shk7nz+q
- jOn/Tqx1zF9YOvg2sayYYTZU6K7GJkYOkk3hNnRGL7E6pB82Av41iPeYpyhXsji6IwVN
- 7MeqYJ5yN3L6orNbTj1ZFURD0pSAqSYC/fwzbaUIydPyiECeftSBSvNbOQV6UdJAPDpZ
- R2OA==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rr9H4nKMU9Zt2D19DXR0kuHiNdQOR6LcwBrCjW3igVTX0wiYAjlBkRDl/UjLXyQRVNBVxtnteCkyKxTtktjfmY2@lists.sourceforge.net
-X-Gm-Message-State: AFuF++lLX19lFF6vgELwKn0h7/E01A3Zh0tdZ3deow6A3h0812PwXz58
- XZYUPOihQf73aKWf9qAX2M38mzBSqf6dq8mfKshfTRAzYdbfbYHNWpYT
-X-Gm-Gg: AR+sD11KqaOOXv0e5dybfqj8GHPAfD0aNr56hH4PHvqOE0f6QhpjwsIJs714PIgHI+V
- eQIo3DXxXGhIKGOHK0/AuaP9lhjPC4bdsV9sRcZZav7kXZIDhZ9y0x9nSaLw0dTmOzIhNQxzRos
- 5uKQ/EpaSRuNjFYrLQ1hlOBK/SZL8oCctwW+TkQ+uVJ1Q6U6LVOJoTS11xCYOJKODnBDd2bjQPb
- JQuCGKZEMBabPLJPXwtRVtkBKJe9xFGwLtrjaXek8g87OkOOJTFkpIChYP0PX1TSvvQcJyCFNLA
- 18XoQP33HSP9TvW0xzRiJaVOezAZ/hbRBPhIr3sN0YYhbId184t9iyHsfFLvnbEobEO5bmnbOa8
- 4PV19oZpOZJCNqPPSVjJiRczvdoitE+jzuhr2m1F3ip8IXoSxqTNXQagPaSZ65zaCDQZKCMEsMn
- TOR9GVqlp1Z6MkWjCpFGDKEoV2IAuRr3zksA+8wn+ZnZ+w6aVzTankBl7QfC0LiGU9vdeHSx4Fj
- ViYE9vlcooehpW2EKmegAGOLT2w9netn3FO
-X-Received: by 2002:a17:90b:5890:b0:392:e5b1:d833 with SMTP id
- 98e67ed59e1d1-396d0f1a83fmr15048057a91.13.1787926371638; 
- Fri, 28 Aug 2026 07:12:51 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-396ddc0c703sm2737951a91.9.2026.08.28.07.12.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Aug 2026 07:12:51 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Fri, 28 Aug 2026 22:12:40 +0800
-Message-ID: <20260828141240.2391915-2-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260828141240.2391915-1-qiwenjie@xiaomi.com>
-References: <20260828141240.2391915-1-qiwenjie@xiaomi.com>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wzxwi-0005tB-7x for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Aug 2026 14:52:46 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id AAD6D40221;
+ Fri, 28 Aug 2026 14:52:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6665B1F000E9;
+ Fri, 28 Aug 2026 14:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1787928758;
+ bh=ELhljBAu15ROpmEaT8Yh7qydfeZbcelWQRMHhRVBiPc=;
+ h=Date:From:To:Cc:Subject;
+ b=ZJVzAIobQ8VTMLVwthiWeqOdq2KaEtJDkcBkAna8yjxaYGDfSL4JQql3gnxclxwvJ
+ AthXPcQsxO7fIBIO5pfTN67WGR9hRfOicMpTB2k0+Js4V602FxQCkyS9l/ae3j/yk4
+ +uh79hDG/SXDI9oissI84j1vYP+Bl00tYl6TxRaYhvnQB7FQZ8BZRmpxWT9wLUSH+q
+ EU8sDxC3dEhNqKrEfpYAB3U4F1evzR5nyvrItWIa/VL6QRUcw0mPhROO/99zLs8hpW
+ kGXs3O/u63mkaKuFHzOVUHpNPTGJ/6iZC8xlI7gKaUuvONBjlhF+WfUNJ5rMWzborH
+ PfzbEP/3mLeIQ==
+Date: Fri, 28 Aug 2026 14:52:36 +0000
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <apGgtMJ4mB-XRBlO@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1wzxKD-0005B7-Iy
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: refresh pinned allocation boundary
- after resize
+Content-Disposition: inline
+X-Headers-End: 1wzxwi-0005tB-7x
+Subject: [f2fs-dev] [GIT PULL] f2fs for 7.3-rc1
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,134 +83,177 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: daehojeong@google.com, qwjhust@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com,
- sunqiuyang@huawei.com
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-pinned_area_max_secno is derived from MAIN_SECS(), the zoned device
-boundary, and resizable_tail_secno. It is currently recalculated only
-at mount and remount, so online resize leaves the pre-resize value
-active after MAIN_SECS() changes.
+Hi Linus,
 
-A stale value can allow pinned allocations in sections outside the
-new main-area boundary.
+Could you please consider this pull request?
 
-Move the calculation to segment.h and call it whenever
-update_fs_metadata() changes MAIN_SECS(). This also restores the
-previous boundary when a final checkpoint error rolls the resize
-metadata back.
+Thanks,
 
-Mount option validation compares the tail count with the pre-resize
-section count. Recalculating after a shrink below that tail would make
-the unsigned subtraction wrap. Reject such a shrink with -EINVAL
-before taking resize locks or changing filesystem geometry.
 
-Fixes: c966d29e01bb ("f2fs: support resizable tail section and unify pinned allocation")
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
----
- fs/f2fs/gc.c      |  7 +++++++
- fs/f2fs/segment.h | 16 ++++++++++++++++
- fs/f2fs/super.c   | 15 ++-------------
- 3 files changed, 25 insertions(+), 13 deletions(-)
+The following changes since commit 62cc90241548d5570ee68e01aaba6506964e9811:
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 0a00180c21dc..978e85578c79 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -2326,6 +2326,7 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
- 	SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
- 	MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
- 	MAIN_SECS(sbi) += secs;
-+	f2fs_adjust_pinned_area_boundary(sbi);
- 	if (sbi->allocate_section_hint > MAIN_SECS(sbi))
- 		sbi->allocate_section_hint = MAIN_SECS(sbi);
- 	FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
-@@ -2398,6 +2399,12 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
- 
- 	shrunk_blocks = old_block_count - block_count;
- 	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
-+	if (secs >= MAIN_SECS(sbi) ||
-+	    F2FS_OPTION(sbi).resizable_tail_secno >=
-+	    MAIN_SECS(sbi) - secs) {
-+		err = -EINVAL;
-+		goto out_drop_write;
-+	}
- 
- 	/* stop other GC */
- 	if (!f2fs_down_write_trylock_trace(&sbi->gc_lock, &glc)) {
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 5949aa5200ac..7c7ca0730d77 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -91,6 +91,22 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
- #define GET_ZONE_FROM_SEG(sbi, segno)				\
- 	GET_ZONE_FROM_SEC(sbi, GET_SEC_FROM_SEG(sbi, segno))
- 
-+static inline void f2fs_adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
-+{
-+	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
-+	if (f2fs_sb_has_blkzoned(sbi) &&
-+	    sbi->first_seq_zone_segno != NULL_SEGNO)
-+		sbi->pinned_area_max_secno =
-+			min(sbi->pinned_area_max_secno,
-+			    GET_SEC_FROM_SEG(sbi,
-+					     sbi->first_seq_zone_segno));
-+	if (F2FS_OPTION(sbi).resizable_tail_secno)
-+		sbi->pinned_area_max_secno =
-+			min(sbi->pinned_area_max_secno,
-+			    MAIN_SECS(sbi) -
-+			    F2FS_OPTION(sbi).resizable_tail_secno);
-+}
-+
- #define GET_SUM_BLOCK(sbi, segno)	\
- 	(SM_I(sbi)->ssa_blkaddr + (segno / (sbi)->sums_per_block))
- #define GET_SUM_BLKOFF(sbi, segno) (segno % (sbi)->sums_per_block)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 253a579e9d5b..c8f8ecf49635 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -554,17 +554,6 @@ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
- 			F2FS_OPTION(sbi).unusable_cap_perc);
- }
- 
--static inline void adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
--{
--	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
--	if (f2fs_sb_has_blkzoned(sbi) && sbi->first_seq_zone_segno != NULL_SEGNO)
--		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
--				GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno));
--	if (F2FS_OPTION(sbi).resizable_tail_secno)
--		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
--				MAIN_SECS(sbi) - F2FS_OPTION(sbi).resizable_tail_secno);
--}
--
- static void init_once(void *foo)
- {
- 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
-@@ -3078,7 +3067,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
- 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
- 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
- 
--	adjust_pinned_area_boundary(sbi);
-+	f2fs_adjust_pinned_area_boundary(sbi);
- 	limit_reserve_root(sbi);
- 	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
- 
-@@ -5321,7 +5310,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	/* get segno of first zoned block device */
- 	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
- 
--	adjust_pinned_area_boundary(sbi);
-+	f2fs_adjust_pinned_area_boundary(sbi);
- 
- 	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
- 			ZONED_PIN_SEC_REQUIRED_COUNT :
--- 
-2.43.0
+  Merge tag 'mm-hotfixes-stable-2026-07-27-14-18' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2026-07-27 14:36:26 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-7.3-rc1
+
+for you to fetch changes up to c966d29e01bbf829f8bb4a39a49811c56cdb49c3:
+
+  f2fs: support resizable tail section and unify pinned allocation (2026-08-27 04:47:36 +0000)
+
+----------------------------------------------------------------
+f2fs-for-7.3-rc1
+
+In this round, key enhancements focus on reducing inode management memory
+overhead, introducing resizable tail sections with unified pinned allocation,
+and boosting I/O throughput via parallel multi-device flushes and asynchronous
+f2fs_write_end_io() execution. We also add dynamic device alias reservations to
+allow on-the-fly space donation from user partitions.
+
+Alongside these features, critical bug fixes resolve folio race conditions,
+lingering dirty flags, dentry and block counter leaks, and potential deadloops
+in f2fs_fsync_node_pages(). Additional stability patches address error-path
+handling across symlink, sync, and rename/unlink operations, prevent pinned file
+fragmentation, and correct segment migration and free section accounting in
+free_segment_range.
+
+Enhancement:
+ - reduce memory footprint of ino management
+ - support dynamic reserve/release for device aliasing
+ - issue multi-device flushes in parallel
+ - add a way to run f2fs_write_end_io() asynchronously
+ - support resizable tail section and unify pinned allocation
+
+Bug fix:
+ - fix to pass folio->index to f2fs_sanity_check_node_footer()
+ - fix folio_nr_pages() race after put in large folio invalidate
+ - fix to clear dirty flag on folio in error path
+ - accurately adjust free_sections during free_segment_range
+ - fix to avoid potential deadloop in f2fs_fsync_node_pages()
+ - fix the error path in symlink, device alias in rename/unlink,
+   f2fs_sync_fs,
+ - fix to migrate all curseg types during free_segment_range
+ - fix to avoid pinfile fragment on fragment:{block, segment} mode
+ - fix valid block count leak on data block allocation failure
+ - fix dentry folio leak in find_in_level
+ - reject overlapping move range after len expansion
+ - fix some bugs related to file pinning, GC functions, i_size.
+
+And, the series includes a number of minor bug fixes.
+
+----------------------------------------------------------------
+Bart Van Assche (1):
+      f2fs: Run f2fs_write_end_io() asynchronously
+
+Chao Yu (22):
+      f2fs: drop FGP_NOFS in f2fs_write_begin()
+      f2fs: quota: do not use GFP_NOFS in f2fs_quota_read()
+      f2fs: embed f2fs_gc_kthread in f2fs_sb_info
+      f2fs: fix to avoid potential section-unaligned pinfile
+      f2fs: fix to avoid move_range and defragment on device_alias file
+      f2fs: fix to return -EFSCORRUPTED in f2fs_get_node_info() correctly
+      f2fs: avoid unnecessary shrink in f2fs_shrink_scan()
+      f2fs: fix to clear dirty flag on folio in error path
+      f2fs: print error information in f2fs_put_super()
+      f2fs: fix to pass folio->index to f2fs_sanity_check_node_footer()
+      f2fs: fix to off-by-one issue in f2fs_zero_post_eof_page()
+      f2fs: fix to zero post-EOF data when extending file size
+      f2fs: unify add/remove ino entry API for all ino types
+      f2fs: fix to reclaim space in f2fs_allocate_pinning_section()
+      f2fs: fix to shrink gc_lock coverage in f2fs_gc_range()
+      f2fs: cleanup w/ f2fs_need_rand_{blk, seg, seg_blk}
+      f2fs: fix to avoid pinfile fragment on fragment:{block, segment} mode
+      f2fs: reduce memory footprint of ino management
+      f2fs: use f2fs_{down, up}_(read, write}_trace() for nat_tree_lock
+      f2fs: fix to reset all pinned status during fggc
+      f2fs: fix to propagate error from f2fs_sync_fs()
+      f2fs: fix to avoid potential deadloop in f2fs_fsync_node_pages()
+
+Chen Changcheng (1):
+      f2fs: fix valid block count leak on data block allocation failure
+
+Daeho Jeong (6):
+      f2fs: support dynamic reserve/release for device aliasing
+      f2fs: avoid setting SBI_NEED_FSCK on transient resize failure
+      f2fs: fix to migrate all curseg types during free_segment_range
+      f2fs: fix error handling on device alias check in rename and unlink
+      f2fs: accurately adjust free_sections during free_segment_range
+      f2fs: support resizable tail section and unify pinned allocation
+
+Guanghui Yang (1):
+      f2fs: fix dentry folio leak in find_in_level
+
+Hao-Qun Huang (1):
+      f2fs: reject overlapping move range after len expansion
+
+Jaegeuk Kim (3):
+      f2fs: refactor f2fs_evict_inode having three major parts
+      f2fs: call __add_ino_entry out of the eviction path
+      f2fs: don't leave the hashed inode while it's unlinked
+
+Joanne Chang (1):
+      f2fs: dirty directory inodes on mtime/ctime update
+
+Seongjae Jeong (1):
+      f2fs: use adjusted write range after f2fs_write_checks()
+
+Wenjie Qi (8):
+      f2fs: validate MOVE_RANGE destination size
+      f2fs: limit recovery filename logging to stored length
+      f2fs: only redirty pinned folios in redirty_blocks
+      f2fs: return writeback error from collapse range
+      f2fs: reject invalid recovered filename lengths
+      f2fs: avoid NULL checkpoint thread access in sysfs
+      f2fs: protect critical_task_priority updates with s_umount
+      f2fs: return symlink writeback errors
+
+Yonggil Song (1):
+      f2fs: issue multi-device flushes in parallel
+
+Zhan Xusheng (4):
+      f2fs: use the mount idmap for the owner check in f2fs_xattr_advise_set()
+      f2fs: don't drop the top folio order in the f2fs_iostat tracepoint
+      f2fs: Remove unused curseg_segno() and curseg_alloc_type()
+      f2fs: fix i_size when pinned fallocate partially fails
+
+Zhaoyang Huang (1):
+      f2fs: fix folio_nr_pages() race after put in large folio invalidate
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  18 ++
+ Documentation/filesystems/f2fs.rst      |  43 ++-
+ fs/f2fs/checkpoint.c                    | 123 ++++++++-
+ fs/f2fs/data.c                          |  48 +++-
+ fs/f2fs/debug.c                         |   4 -
+ fs/f2fs/dir.c                           |   7 +-
+ fs/f2fs/extent_cache.c                  |   9 +
+ fs/f2fs/f2fs.h                          |  90 ++++++-
+ fs/f2fs/file.c                          | 460 ++++++++++++++++++++++++++++----
+ fs/f2fs/gc.c                            | 129 +++++----
+ fs/f2fs/gc.h                            |  27 +-
+ fs/f2fs/inline.c                        |   2 +-
+ fs/f2fs/inode.c                         | 234 +++++++++++-----
+ fs/f2fs/iostat.c                        |   6 +
+ fs/f2fs/namei.c                         | 168 +++++++-----
+ fs/f2fs/node.c                          |  81 +++---
+ fs/f2fs/recovery.c                      |  55 ++--
+ fs/f2fs/segment.c                       | 279 +++++++++++++------
+ fs/f2fs/segment.h                       |  37 ++-
+ fs/f2fs/shrinker.c                      |   3 +-
+ fs/f2fs/super.c                         |  99 ++++++-
+ fs/f2fs/sysfs.c                         |  34 ++-
+ fs/f2fs/xattr.c                         |   2 +-
+ include/trace/events/f2fs.h             |  23 +-
+ include/uapi/linux/f2fs.h               |   7 +
+ 25 files changed, 1532 insertions(+), 456 deletions(-)
 
 
 _______________________________________________
