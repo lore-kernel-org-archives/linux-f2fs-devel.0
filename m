@@ -4,108 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 211A9C61DC7
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2026 07:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2E0CEC61DBD
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2026 07:20:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=yKzXfmmdg4i7EmvNVrqraZY1mW4HasyrQ3v52AbbHqY=; b=Mn9AeAlWr0gG9duhlF0fZ/HUUK
-	V30vomLt2hOBTlDdzEVjKoD2pgIilqWlPX4b17X/UW6SSgOzcDZnI7UaACkeDVoZE+hqYc/zIFUYm
-	5DUEHg0Mc1J8ruT92nazmpCoUIhZKMpkrx80qrE4wi31YjkneX5HXS5mtvE0stvMzQ4U=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=21nc8Ao/41qZRJ0s/PM5eROF4oXbTzntDpJMmG4QVTI=; b=L/DWf9rcFsoT3u0wB6SNRok/Ba
+	mnzXJQ7eHEKSdz+Oq0PNpB3TL7Wpi+B/EmEb/gBCyM8HlToL7BCRJehippgDCDoDGbq/EiwRXW8+V
+	91IekZyTO7tQRpgMgp++cloY2WBz9ejlY8/f9/CLU/f6CPvK5Z2XbjbXx8b3SRtvW6Yk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wzqtB-00025s-9w;
-	Fri, 28 Aug 2026 07:20:38 +0000
+	id 1wzqtE-0001lT-NA;
+	Fri, 28 Aug 2026 07:20:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jeuk20.kim@gmail.com>) id 1wzqt9-00025l-PS
+ (envelope-from <jeuk20.kim@gmail.com>) id 1wzqtD-0001lN-5t
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Aug 2026 07:20:36 +0000
+ Fri, 28 Aug 2026 07:20:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uXsApZa8Vi5ynohBI7cN4DA/XtwNMqC5yo4nBQCk/iE=; b=lgxNMaIo9RvWrc6N1/H5gr+1tG
- GTGCkxYVjhG0QhOubLB+KuDoYv7ncpFItNMH6WKbP63r5zZDersmSRTerannlnR50hWQF34VTr8b5
- /DzhA+JEl6AIpXn3i3goPLoM9poaEHKS+9CE+nxgtNZjgX08rn9R/37/L7yOGlFxfbY0=;
+ bh=GzEDMkX4yTC4NY1QHzlw8SSeuXFcMhPqxibPy+lQxOY=; b=VqWXYMx1iciJQTSVmVm4EwuEVp
+ kENJ5YyDJdsUhigLEuzbCQY2XC8235tuwz87E/WNoSkzQBCVcmUnaL0lDMTYFvnnBLbctOTAJ9zlT
+ AojR/RweZ9Wr6NV8zhyxf24tIAICHFLpsVL0Iv6DVgozLpJQvs/m/wCOCTePJ/oPghYA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=uXsApZa8Vi5ynohBI7cN4DA/XtwNMqC5yo4nBQCk/iE=; b=Y
- WJxM3gHzDZzYx832HmdTFmRqCcbEfUZWKrzv5BFinevmwgmdrNcV5Cgxs6RZKBzX5msttuqiilqig
- R5tcIkNaV+ppi4GXgAkabdv1Vt+ru+qJeKnCJB6dwDEh5LJ+HGgKlK8hMYWMQsGIwhqhTY5swvPfM
- 6IlIiD/3ohs5YoQk=;
-Received: from mail-pg1-f176.google.com ([209.85.215.176])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=GzEDMkX4yTC4NY1QHzlw8SSeuXFcMhPqxibPy+lQxOY=; b=e0elxDkrRGVkoNQcSSZX8QB3qn
+ gdxiTHxW3HZiKIIrqAOFVRXn/86/R7V4MMnVZGXZ+tW3MqSQSDIvqVEzZrEJc/TlwpSdUgHiHz951
+ rNdsRAbso4eos67tRwhKTvez8XLTRMQOkpiWQF29afmRTkEt4Y87Kb6J31ixCYGcc7lM=;
+Received: from mail-pj1-f53.google.com ([209.85.216.53])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wzqtA-00030u-1K for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Aug 2026 07:20:36 +0000
-Received: by mail-pg1-f176.google.com with SMTP id
- 41be03b00d2f7-cc1a4c62804so505373a12.3
+ id 1wzqtC-00030v-JK for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Aug 2026 07:20:39 +0000
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-38e07ebd263so640416a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 28 Aug 2026 00:20:36 -0700 (PDT)
+ Fri, 28 Aug 2026 00:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787901630; x=1788506430; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=uXsApZa8Vi5ynohBI7cN4DA/XtwNMqC5yo4nBQCk/iE=;
- b=GYtBgHfF+Lcx2bcq+rkDj1+rKIG5AV2yR9rRjTrlhhM2acc6TOUZi2cI82rVW9zJnU
- UkMcIOsZpnQG0rCuNgl1Z2qmJS6nm7avWtbdu9X/RbgM40p+ynDLbYv9VAATTYHV4MoY
- /yxpMpJSV5lS7dH7B6XQEgh0MTkLX5meEJTzISdXqPJoeoWhaFEvTyrouF8nSieS1R7i
- HJpKkHlyhp73zTRemiIC2MNkipSHAFt29agDyF2kfMDAib6qIsYi6FlEBZAOXQ28AulC
- HAPji+zRatCphrVo63Iu9adYfUQ2P+jwl+nM4FgJEy/nZeFULS54NftQ+79hL+R7TZt/
- y/YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787901630; x=1788506430;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1787901633; x=1788506433; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=uXsApZa8Vi5ynohBI7cN4DA/XtwNMqC5yo4nBQCk/iE=;
- b=sggW7y/9xbO65yqPz+B96ifwGtAOv/rN/fm5eV9UYxwfIoB2KLhDCaxlpuyEIYotgo
- NoIJJapoh5l+rZOqB9a6TRWpwqxMlgoZ3qCSaAUAtlGy6lZ2JtX+nrRqBE6sVDMJ4hTy
- JEoOMrvxkm7OaWOKBcfS3u5vxESaeq43oEqXMUr7LmRBdOhPlTp7uVeFJF4nxnHm6ZW6
- +AgGEbR5jO1HBrJB+5FwuMcreN7gj9gpIS92efx2tYVBohak2WM+Xq/+t6xqpBl6G0Fb
- pc74LXWDKDubdVDwmkuuM0EPcjUowcUYwHoAe+kb80UQHx1aGB1HPDGYURF9MvoGpQGy
- 2k0A==
+ bh=GzEDMkX4yTC4NY1QHzlw8SSeuXFcMhPqxibPy+lQxOY=;
+ b=IuS51SzBGmGtVMCYxdnOQ9ZRv+vO9dqo7h1libS0DBZi2J+eIzlYQU4P933QUw10Se
+ KBiRLqGqqNag2NvhDxA1lx5G8jevJTVuEWYjDxGcVQeKtYAhLlwNeGnuD2Hp5tGwqHPZ
+ pfGOZNdfKR8P8P5oHgOvRnDvrIwfaeobl7FBCW2wfcUOMKw7gV76Zx/8KvQksdBF7PW8
+ sBxXuPONcimkiq4vUCKee1IqeH4Y7cSXUYO4Y5zJgGcJEH6fhYIAxHgPQLFMoMVVWAzy
+ ZeixkvJznOgg+sQ2hRnJRTH9+zjR/Ehp84J/xj74flC3HGfBk7h/c+38utmX7aAeHMEG
+ lKiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1787901633; x=1788506433;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=GzEDMkX4yTC4NY1QHzlw8SSeuXFcMhPqxibPy+lQxOY=;
+ b=fPBPLUE3LEHwe08fheQUbN7TUHIJSc9JXqko3KfqFWyTqQJ1Q2kH/Zgn8EpIVXtf37
+ QEmsiLJxci/qh/xMG+ZfJG836/P8chTBsWffDxwkzYgpaKVXOgDvbfe3GzCKx0j888WY
+ qhQsvC5lyUqZC+GpYL3QfFT04Sj+1rPcxOLbd0i9YKttoYFwpMe21ClSPbDua1+EDFwH
+ PD32dyiWfNDQBP46rVaurg+bHr/ZlV2AGQCJ/BWSyTZvfFe571WNRsJs9jhdRYpisdYh
+ sal3BxH60DPnO5up12jeiyZDhzLFLUjihMJ6WcmF6sOP+ldiWvGv1/V6O7jxwkzlM8Yk
+ 4I+A==
 X-Forwarded-Encrypted: i=1;
- AHgh+RrxT8riG4/i8FfZWe254VCY2wo7HzopZ34XIXtW85ZiFz/6pUbYS7RoG3I3Q+PBZC6OCFFEGSKxUZUgwBHpfK6c@lists.sourceforge.net
-X-Gm-Message-State: AFuF++lfmTQYvUng/VDzIqTWMZPcFioY+8IQvMsN8ehtSyDeRR2B2+Mb
- jkCl9VfvUz8f+S2tmEAsHqVefXLKDGqTdnmqLrWVym40v19j+rAHUfoO
-X-Gm-Gg: AR+sD101JrpMQkBX1wHQOLgxtX+mF3YACwMZemnKx9bLn4wLzJ6qz2RpUZZO1eP6+Ad
- pO1gkxChwn/q5fuHBH5DUPd4HTO9r0dppiESHSqoUrluMJC51SC230tr7dL32ZHZwPh7PG0n9OM
- j8lZB1moLbvc5GICL5yKsR0J/fs3b8YqwjueJ5wKX+3jjl9A2fcxE52o1Sj1R60IVAessojTRcH
- KxMxs5ue8oQUDZ2VaTG2JMnz2VYP9S0lBt0SKIFy0piw41Zq/NSd75TIGnFM0ZH7DG+uOAcNOiq
- VpETatMxBy6MG22o7Da2dTdIan4YH3+7g2DZLMKWc4LGL9UNFD9dJRn+GZFUCNi2pWZ/Dav2fZG
- VkV1gx/2mdTfMiI3nxXSp5y9X25YBm75IzXzuOMUYAf0bmqwTEjzc6SyLnWTgDb/Dmk6W5Tlc7c
- kSWgyKHDJBQ/7S88bZD+U8hiMA5H00dXW49JwdZsSEjMUfWjx6w6Q+/ABdsygc5/4BcqU=
-X-Received: by 2002:a17:90b:54c5:b0:395:4de4:92c7 with SMTP id
- 98e67ed59e1d1-396d0e5ccc7mr10951364a91.3.1787901630320; 
- Fri, 28 Aug 2026 00:20:30 -0700 (PDT)
+ AHgh+RoKRYV9hQzSQUZbv+6Pyl4SYO98Rcny8DxD7+C1qMWrvg3R1J8J9MFtMHeprA2SVecax1BeqQEKmKfd7Bm1GnHP@lists.sourceforge.net
+X-Gm-Message-State: AFuF++mF6JyNXdydY7PzC2rAuUe32cbIeOZ9l6oOUOGBZuhdXWbyOwC8
+ wlu+wsBy4TgIfUAILbo0UAsJZIO1uZNK7yra23Bu6EuG8EGJBboID+NgeB6JlQ==
+X-Gm-Gg: AR+sD13YYLY3YkHE+O0qMi7jfzxuB9229uGoe3h8UhE9QgKYT0jy3D4WUJ8gjeSc+BL
+ gP6tj1p2eiFijyhLiKLAgRbrxhQdx4JW5O7jKHPrWohDvCeLySntMMZ5LFvWBPpAEf0UgW8eHGD
+ vvc179G1odNM4xQiKq4/RYgFwPcQNFshWNn8MkphKff16AswW0eX8UicGoCLgLesNo2GoKbZZWp
+ /3Ixcb9nFEHCsXwfkSNNVgmACev9YIyoqtDuPNn1kw2sDNYhXEItupwGOdPHsQTViUJBb/JvW7q
+ TvijUVvaYSMNq/h7BSQvArsgiV10g98ADzR9tUHAyA9YZ6zFekdJjiLSh11P0QlnDts13PHizWf
+ aeZRatlUdw4XeJvEKXR1YdIENtSE7qekjgEWHa20J9mxCehILhs8gvNYc58y7kJroe//CGfTVDG
+ ZLu4AZjrt0Mt8CXlKidPOtcmkQzKTHwK62Xhj8UnzOd9A2Rz5UavM6geH0z8B/VC2aL0g=
+X-Received: by 2002:a17:90b:17c3:b0:38f:240d:b857 with SMTP id
+ 98e67ed59e1d1-396d0ea9ce7mr7311266a91.2.1787901632866; 
+ Fri, 28 Aug 2026 00:20:32 -0700 (PDT)
 Received: from jeuk-MS-7D42.. ([211.226.54.223])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-396b0ea7fa9sm6123731a91.4.2026.08.28.00.20.28
+ 98e67ed59e1d1-396b0ea7fa9sm6123731a91.4.2026.08.28.00.20.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Aug 2026 00:20:30 -0700 (PDT)
+ Fri, 28 Aug 2026 00:20:32 -0700 (PDT)
 From: Jeuk Kim <jeuk20.kim@gmail.com>
 X-Google-Original-From: Jeuk Kim <jeuk20.kim@samsung.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Fri, 28 Aug 2026 16:20:14 +0900
-Message-ID: <20260828072017.44569-1-jeuk20.kim@samsung.com>
+Date: Fri, 28 Aug 2026 16:20:15 +0900
+Message-ID: <20260828072017.44569-2-jeuk20.kim@samsung.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260828072017.44569-1-jeuk20.kim@samsung.com>
+References: <20260828072017.44569-1-jeuk20.kim@samsung.com>
 MIME-Version: 1.0
-X-Headers-End: 1wzqtA-00030u-1K
-Subject: [f2fs-dev] [PATCH 0/3] f2fs: add per-file out-place update control
+X-Headers-End: 1wzqtC-00030v-JK
+Subject: [f2fs-dev] [PATCH 1/3] f2fs: set FI_UPDATE_WRITE for in-place
+ direct writes to pinned files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,47 +128,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-F2FS currently has only filesystem-wide controls for its update policy.
-Both "mode=lfs" and ipu_policy affect every file in the filesystem, so
-there is no way to force OPU for a selected file while leaving unrelated
-files under the normal adaptive policy. This series adds a persistent
-per-file OPU override.
+f2fs_dio_write_iter() does not set FI_UPDATE_WRITE when do_opu is true,
+assuming that the write landed on a newly allocated block. That assumption
+does not hold for pinned files. They are updated in place even in LFS mode.
 
-Patch 1 fixes write tracking for pinned direct I/O in LFS mode. Pinned
-files still overwrite in place, so FI_UPDATE_WRITE must be set to ensure
-that fdatasync() flushes the device cache.
+Without FI_UPDATE_WRITE and with no appended data, fdatasync() can return
+without issuing a device cache flush, leaving an in-place direct overwrite
+in a volatile write cache.
 
-Patch 2 fixes a regression in the existing LFS-mode direct-I/O path.
-Since commit 351bc761338d ("f2fs: optimize f2fs DIO overwrites"), an
-O_DIRECT overwrite of an already mapped range can reuse the existing
-physical block even in LFS mode. Restore OPU for those overwrites before
-extending the same path to per-file OPU in patch 3.
+Make do_opu false for pinned files so that FI_UPDATE_WRITE is set and the
+flush takes place.
 
-Patch 3 adds F2FS_IOC_{SET,GET}_OPU_FILE and stores the per-file policy
-in a new F2FS_OPU_FL bit in the inode's on-disk i_flags word. A
-runtime-only inode flag would lose the setting on inode eviction.
+This can occur on zoned devices, which force LFS mode but allow direct I/O
+to pinned files, and on conventional devices when a file is pinned before
+the filesystem is remounted with mode=lfs.
 
-There is no free bit in i_inline or i_advise, and extending extra_attr
-would require a larger i_extra_isize, which cannot be assumed for existing
-inodes. Store the policy in an unused i_flags bit instead, avoiding an
-inode layout change and allowing the policy to be set on existing files.
+Signed-off-by: Jeuk Kim <jeuk20.kim@samsung.com>
+---
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Comments on the per-file interface and the use of an i_flags bit for the
-persistent policy would be appreciated.
-
-Jeuk Kim (3):
-  f2fs: set FI_UPDATE_WRITE for in-place direct writes to pinned files
-  f2fs: fix in-place direct I/O overwrites in LFS mode
-  f2fs: add ioctl to force out-place-update per file
-
- fs/f2fs/data.c            | 36 ++++++++++++------
- fs/f2fs/f2fs.h            | 16 ++++++++
- fs/f2fs/file.c            | 80 ++++++++++++++++++++++++++++++++++-----
- include/uapi/linux/f2fs.h |  2 +
- 4 files changed, 113 insertions(+), 21 deletions(-)
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 089759366cdc..51518caee460 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5166,7 +5166,7 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 	struct inode *inode = file_inode(file);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	const bool do_opu = f2fs_lfs_mode(sbi);
++	const bool do_opu = f2fs_lfs_mode(sbi) && !f2fs_is_pinned_file(inode);
+ 	const loff_t pos = iocb->ki_pos;
+ 	const ssize_t count = iov_iter_count(from);
+ 	unsigned int dio_flags;
 -- 
 2.43.0
+
 
 
 _______________________________________________
