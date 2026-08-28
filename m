@@ -4,113 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0D2E5C61DB9
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2026 07:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 514D7C61DD9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2026 11:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=E2Y8viitU03T9PZkI72lYQLJbL28u3vT1goGozOhc74=; b=TglzKYGA6CIJ/lhTJ8r/o6o0Hb
-	HelTwhJ6Nz8EA6Eg9mBMruMk2yLXRRXVJKhK31IFUTBgmxmeLvjGVHxDRZAR0aC83yrlQrRh/Ju1n
-	MlDve7Wlj2TryXym4jyA91VS7pJrWAjFe/hoGjP5VAk4AOOCBvTBzqNoSvd2KJhqNk4o=;
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=qHiA58nejTkI2o5H6v52kj4tWzWHSR0DYod1eRZiy8k=; b=NOLLF+SDl18Xy0g7WC29pJyjXH
+	vk7RmF5zCsopEHSjU/GX3G1JY62pNnsJ3J1wbMxnTUNPdaLEkI2zBESKdWD4/DoAk9g8OC8/QxzrG
+	1Idsuvw/WxvSN4tpF70Pnl70oUKLVs8Z2BN625pyPytHdITb+MFu+Wtq4VVWvgdWAmHc=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wzqtL-00026f-3g;
-	Fri, 28 Aug 2026 07:20:47 +0000
+	id 1wzuxo-00085y-5A;
+	Fri, 28 Aug 2026 11:41:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jeuk20.kim@gmail.com>) id 1wzqtI-00026Q-68
+ (envelope-from <qwjhust@gmail.com>) id 1wzuxm-00085s-DN
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Aug 2026 07:20:44 +0000
+ Fri, 28 Aug 2026 11:41:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vpJQdL71fncq3A1DKuUk0L7Wkeu7zNdyUOmsnNXN+mE=; b=K/7ojFG5Uw5mwQBjAWNJwbDgGF
- qAGFoT1aLhehlkgNrxQsi8n5nWYCwnJTsGKInNBIMBIxzW73JfNToHR6n7GG7VzQQKyNGCnjmGbrE
- 8BcuxGPIZbdiYZDvblovd+SH+MnfeNIj9WbGBTB/Vc/3gxB3tbth2rWnAFwxyr76heG8=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=vpJQdL71fncq3A1DKuUk0L7Wkeu7zNdyUOmsnNXN+mE=; b=YiyeBeXR+mRFs3u48HbcF1S/nw
- ES9Kf+39b4kjd7wT0nJ7Xq5906/VAekoxYe9WxOJpIgfeWM7grJhRFqL/zeqjDwcs9NkFNQd5vCY4
- 3Q8FZQ0+XCxBBMeWPV+9t3CKeFxidfLob9ZG5+MKP0fqOwXw3R0FO2l2VFynMvo3D0l0=;
-Received: from mail-pl1-f174.google.com ([209.85.214.174])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=zYlvfP1aWzjYvT/xolEYx3UQdxCu1UNNLVMYIqVN0H0=; b=NLtKwWrmemtSE49nY9DbU9pWx5
+ w0cfqm6ZR0a82xtBSVsPZej640fIyqa5Pqd4gN4KzXeS723Txiab+Ux2SCVZJy/zPSvAVEXhPSrlt
+ HQ20OF3g+7lG7wWSAEP0EtkYWfZqM8HemZ4NzsQOFYaM6HPbJ1LuyMcCB+O1WoQb+6lo=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=zYlvfP1aWzjYvT/xolEYx3UQdxCu1UNNLVMYIqVN0H0=; b=T
+ LeuzP6ooGznrgc6MG0RPOxpej0c4/hpAvfXf0ASKeXouFxMb6AjTCgAz3H7sW1ZbEqC/VdaZZOeI9
+ XaOr0EVCFSTwWitgalRhDaN+DEqHAjbVCHZ1YD5G3SGkYc6fV2LbGebsa3yuxQ6reGryr8JSzQhYG
+ Ybxfg4cnTJLq1aAg=;
+Received: from mail-pg1-f172.google.com ([209.85.215.172])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wzqtI-000317-5B for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Aug 2026 07:20:44 +0000
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2d6f55a7089so5729615ad.3
+ id 1wzuxl-0001XH-Py for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Aug 2026 11:41:39 +0000
+Received: by mail-pg1-f172.google.com with SMTP id
+ 41be03b00d2f7-cc1cc97b84bso859611a12.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 28 Aug 2026 00:20:44 -0700 (PDT)
+ Fri, 28 Aug 2026 04:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787901638; x=1788506438; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=vpJQdL71fncq3A1DKuUk0L7Wkeu7zNdyUOmsnNXN+mE=;
- b=mQScVVwombnjOLKkMxo4y/FhFw3tyuzIgKvQj9e7tvQrV6yNf2CN/W9WxqiphgODtE
- tKhKciMV3KyS+DlaepCL+GDGrWjzJCXfRtpCSZCB/j+k0nmbWSgf5cljgvrX1ZNnE8WC
- oignXXbhCikwV56ZaG2ANwxFx1x6yh7iHx6xNa94bNWokZYZi9FieAHRDyLybokK4KAk
- 8D0UTjib7fsbDbZ8p5WqdAHQC6fnMBgpxM1TD3rVpE5apIscSlk4Tngrfb7/vrQ/zxff
- XJ8Ey3tPDYgL0rHLy5kHXchvhkQHFRVfSRSlQegbIoK/W5OQLmKJuTLWYtq+/8ihGrZW
- ewnw==
+ d=gmail.com; s=20251104; t=1787917292; x=1788522092; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=zYlvfP1aWzjYvT/xolEYx3UQdxCu1UNNLVMYIqVN0H0=;
+ b=HNyw+YnzTumUaKQ5UKXvb+BleTh9hIAbsfRANPKAJ114cf9n9eOB4Y9R9J1BcJiYf6
+ v6Pm0PI8WUH2Pxpmn/2ChacSWxiwt0u/W0+9uu2IA44nFKS5Jm9XAg8Y25uwFVWLkCPa
+ glkIn7vD18Q+JbtRJXmcXFML3WS0BhP6ZobWSI3QpNfL1lTgah+Wpgn2Ze0IegREWSmw
+ UsQ8i/JACfSbZxHgFfmD3Ba2OJfw3IeynaLV6+tQ3a/QZ4BYrbL7tvFkKxI/+c2+qaOl
+ nnIuOsamgJrB1/oHeoBAxzfMtRVoCQ7GcYSvkJHY6k3Hnr02bEVjcYZbLenpmfJEDwnL
+ Iifg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787901638; x=1788506438;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=vpJQdL71fncq3A1DKuUk0L7Wkeu7zNdyUOmsnNXN+mE=;
- b=IggeQ7ZmXsqzPazZ/T7lmwm8P1ZEC+Y8444mkWZcBXl6+9xDg+7qOFDVawk1VIUcI0
- C+laPCXIqAwmfLl6CqSReXLcts98mOtJD0IGcECA4MIAbK3cW1PIcI3+H0SIEtmS0nxt
- V9Ejppf5//itQAIeC4rcad/5A9bR21804P9NFeUUOcKrdgSWRTMh3c+pIxbcCZebi3OG
- 5K9NcKSp+vU6hnTcC8Z9FKgcZ50O2/nFTBFycVNjyioW2uZVICJbWrj8Q7yEUF4xqud7
- YcNuXPzz5xyKNzXqdPE2eytL0Wqe+i0qjUVc1vdpniHGpDrMTc5cMQvpSBzhoa/wMWuz
- FysQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rr6kD4QCjQ09+gEaDgbL0IQvu/4w/SMPPTg3jt3PtyGhbzlI4pFFFUGFjvu7wXT9LCYsJqRyEpQvtnuTqgSo+PG@lists.sourceforge.net
-X-Gm-Message-State: AFuF++mFlUOSP+GtDQL1oWVE5tXdXZf+o0lHZNtWt+1FuqaBaQkUHBvX
- Ou/KFi6gCsuQqXQlk97XrKVPB+eUGYdt6tfyAEhOBvrGJDD9zyIgsckj
-X-Gm-Gg: AR+sD10uFEv3Oh5lOeGlSh/ph0iDjd9RXptPXXIU+pWXVDx5WydZ2HnGPQPeFfBiogj
- 9B7wL9UvPiEV8BYfIoPolevZ50h6ayQDF8f8gbXyvK/Uk0fKLH6q2hirrhKbII1387OIOZPiB18
- f807gUQ8ecvap2uKsIUCeUmUhm8u7vAq4Qxz155lEKlxDmmQnhc9U19e7VOBrkWXn9e2g3gkRy8
- YURzHZG0TLoPpY0SebKoaprBmTNhDr+rhh0hhQD1EOOWoiVgC19AzK0KEINAQN70xR/16si8Wio
- 6oZulwf1ZbrTzovY+HoG2cyquPmIbM8tBZuprNX7OaNvJ6lsJeBghkKDIkkV7g4QtgT6bPTuh18
- 5RAmyMpJRgJZPoM0PQeSn8Qw42fmzpZxPevBLzHhWXaNSfN0G/OSLfg+a58IWUbmpIRelAIBgsc
- sKqURbIJgSIP/8YTJTtAPDrHb6T2RpEs6gIauFyYTK695u8jTNk/se6FEYMJZtC9W/Zc2kcvm2N
- ew5jg==
-X-Received: by 2002:a17:90b:380a:b0:38f:de97:b06 with SMTP id
- 98e67ed59e1d1-396d0daf810mr9330220a91.5.1787901638253; 
- Fri, 28 Aug 2026 00:20:38 -0700 (PDT)
-Received: from jeuk-MS-7D42.. ([211.226.54.223])
+ d=1e100.net; s=20251104; t=1787917292; x=1788522092;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=zYlvfP1aWzjYvT/xolEYx3UQdxCu1UNNLVMYIqVN0H0=;
+ b=YDlwB2Oyj3FJ6f/OAPjES5L5v9zFJPOYiL60qRlfelOGrVf6d50qNZXedRBfmcyATr
+ XgMwJngC5GPIBp+TNruh9QgtyMDF9pvj2OOOtbjP3YJIPgj9hEZ+fnXa59UByv1B/KIz
+ 1sD56NgTFw+CewtdLaKFy686qmZYdDUPI4yP6Vwhhc1Lo26fzqDYn8fsYsNr1+pcAGdV
+ SkmBuWcTfCFSyjDcZXJlv4IT2bcq0BpnHLz1U9zqwFtqFyHUnRO2Fy/eT3Fn1NWCwGgH
+ 2xtREBn5J9LehUNpmpI7cKIRr9DJNTgvbtwlIc41PjTIh8gVdmtZ1TIeI64PQTS8tgd6
+ dcOw==
+X-Gm-Message-State: AFuF++nsm+fH5ZE1CiUPKSIZoWhbzwenXaPzrXmrvv7KLPBbh3q1GMBG
+ jm/bdY4vzPTdCRAJD+uaIzxOUuPSWvPv4rEVX6rWnhBT7Mf4V0+jGpc/
+X-Gm-Gg: AR+sD11C5LW1kHzXy/PxPdSvsSNKDfY/uf/UDAFDwlm18W4s4aq3w0hPXlLtjQT7AKi
+ ndDZDumWyKRCRLbgBHUMpj/ALp93R8PTzlcUvezssFnaBGNB9eeu2MsW3au0TCdvLdqdV8cl9Ij
+ bUtUigynVIjVO9OhREC/kge0kzoBkczl6Kq4KJXTtQu1/t4h84Capcdne5U6V7TIkeV0wbXo+0s
+ AvRKG6TaDQOhEqgtBUzCgXchaUFEdmY866Ae/flpQfAd2c/qskKNX6G7RZ31YvW2QEaH8M1skUr
+ fPqaVCQRRibJobfdJDqh0Lp1joAMKrP/gBTJlrwiOWrUjR5Kgi9pFD58UmfVAL/RjiQvw2YzIBd
+ f191BHXn2I81RrjfbpmyBRofbbXwZEodyIYPl7m806LG36GpI3e4RHs18I5XuGCcvrFwP0F/g4L
+ +2jnIEbZ+OXWt/IFyNzip1g2pJz3QHCIDEoaBkMRb2o+/JI8SNVOhVA81ijfIsPkKnytEHeCir+
+ hlqDKQB/soadXxyX+XnfSo8
+X-Received: by 2002:a17:90b:4fc7:b0:395:bbfe:fc6f with SMTP id
+ 98e67ed59e1d1-396d0e26cb3mr13722493a91.3.1787917292018; 
+ Fri, 28 Aug 2026 04:41:32 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-396b0ea7fa9sm6123731a91.4.2026.08.28.00.20.35
+ 98e67ed59e1d1-396b0fcfa3asm6888747a91.6.2026.08.28.04.41.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Aug 2026 00:20:37 -0700 (PDT)
-From: Jeuk Kim <jeuk20.kim@gmail.com>
-X-Google-Original-From: Jeuk Kim <jeuk20.kim@samsung.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Fri, 28 Aug 2026 16:20:17 +0900
-Message-ID: <20260828072017.44569-4-jeuk20.kim@samsung.com>
+ Fri, 28 Aug 2026 04:41:31 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Fri, 28 Aug 2026 19:41:25 +0800
+Message-ID: <20260828114125.637513-1-qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260828072017.44569-1-jeuk20.kim@samsung.com>
-References: <20260828072017.44569-1-jeuk20.kim@samsung.com>
 MIME-Version: 1.0
-X-Headers-End: 1wzqtI-000317-5B
-Subject: [f2fs-dev] [PATCH 3/3] f2fs: add ioctl to force out-place-update
- per file
+X-Headers-End: 1wzuxl-0001XH-Py
+Subject: [f2fs-dev] [PATCH] f2fs: sync pending discards before reserving
+ device alias
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,280 +117,90 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: yunjae00.jo@samsung.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Yohan Joung <jyh429@gmail.com>,
- Jeuk Kim <jeuk20.kim@samsung.com>
+Cc: daehojeong@google.com, qwjhust@gmail.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ qiwenjie@xiaomi.com, stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Out-place-update can only be enabled for an entire filesystem, via the
-"mode=lfs" mount option or the ipu_policy sysfs entry. There is no way
-to force OPU on a single file. Add F2FS_OPU_FL and
-F2FS_IOC_{SET,GET}_OPU_FILE to control OPU on a per-file basis.
+A released device-alias range can accumulate pending discard
+commands. The reserve path then marks the same range valid again
+through f2fs_reserve_device_alias() without first synchronizing
+those discards.
 
-Reject OPU for pinned, swap, and device-alias files because they require
-stable block addresses. The flag forces OPU without enabling LFS mode,
-so block allocation may still use SSR.
+If the discard thread later submits one of the stale commands,
+__check_sit_bitmap() can still see valid blocks in that range and
+trigger a BUG.
 
-The flag is kept in the on-disk i_flags word, so it survives umount and
-inode eviction. An older kernel preserves the bit but ignores it and
-applies its normal update policy to the file.
+Synchronize pending discard commands in the alias range before
+making it valid again.
 
-Signed-off-by: Jeuk Kim <jeuk20.kim@samsung.com>
+Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 ---
- fs/f2fs/data.c            | 25 ++++++++++----
- fs/f2fs/f2fs.h            |  9 ++++-
- fs/f2fs/file.c            | 69 +++++++++++++++++++++++++++++++++++++--
- include/uapi/linux/f2fs.h |  2 ++
- 4 files changed, 95 insertions(+), 10 deletions(-)
+  kernel BUG at fs/f2fs/segment.c:1228!
+  Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+  CPU: 1 UID: 0 PID: 79 Comm: f2fs_discard-25
+  RIP: 0010:__check_sit_bitmap+0x2e1/0x4e0
+  Call Trace:
+   __submit_discard_cmd+0x921/0x1140
+   __issue_discard_cmd+0x524/0x12f0
+   issue_discard_thread+0x686/0xe20
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 618e6fc2da0c..2babfcf1dae5 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1639,12 +1639,13 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 	unsigned int start_pgofs;
- 	int bidx = 0;
- 	bool is_hole;
--	bool lfs_dio_write;
-+	bool opu_dio_write;
- 
- 	if (!maxblocks)
- 		return 0;
- 
--	lfs_dio_write = (flag == F2FS_GET_BLOCK_DIO && f2fs_should_opu(inode) &&
-+	opu_dio_write = (flag == F2FS_GET_BLOCK_DIO &&
-+				f2fs_should_opu(inode) &&
- 				map->m_may_create);
- 
- 	if (!map->m_may_create && f2fs_map_blocks_cached(inode, map, flag)) {
-@@ -1685,7 +1686,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 
- next_dnode:
- 	if (map->m_may_create) {
--		if (f2fs_lfs_mode(sbi))
-+		if (f2fs_lfs_mode(sbi) || f2fs_is_opu_file(inode))
- 			f2fs_balance_fs(sbi, true);
- 		f2fs_map_lock(sbi, &lc, flag);
- 	}
-@@ -1715,9 +1716,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 		goto sync_out;
- 	}
- 
--	/* use out-place-update for direct IO under LFS mode */
-+	/* use out-place-update for direct IO under LFS mode or on OPU files */
- 	if (map->m_may_create && (is_hole ||
--		(flag == F2FS_GET_BLOCK_DIO && f2fs_should_opu(inode) &&
-+		(flag == F2FS_GET_BLOCK_DIO &&
-+		f2fs_should_opu(inode) &&
- 		map->m_last_pblk != blkaddr))) {
- 		if (unlikely(f2fs_cp_error(sbi))) {
- 			err = -EIO;
-@@ -1804,13 +1806,13 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 		if (map->m_multidev_dio)
- 			map->m_bdev = FDEV(bidx).bdev;
- 
--		if (lfs_dio_write)
-+		if (opu_dio_write)
- 			map->m_last_pblk = NULL_ADDR;
- 	} else if (map_is_mergeable(sbi, map, blkaddr, flag, bidx, ofs)) {
- 		ofs++;
- 		map->m_len++;
- 	} else {
--		if (lfs_dio_write)
-+		if (opu_dio_write)
- 			map->m_last_pblk = blkaddr;
- 		goto sync_out;
- 	}
-@@ -2862,6 +2864,9 @@ bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio)
- 	if (f2fs_is_pinned_file(inode))
- 		return true;
- 
-+	if (f2fs_is_opu_file(inode))
-+		return false;
-+
- 	/* if this is cold file, we should overwrite to avoid fragmentation */
- 	if (file_is_cold(inode) && !is_inode_flag_set(inode, FI_OPU_WRITE))
- 		return true;
-@@ -2899,6 +2904,9 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
- 	if (is_inode_flag_set(inode, FI_OPU_WRITE))
- 		return true;
- 
-+	if (f2fs_is_opu_file(inode))
-+		return true;
-+
- 	if (fio) {
- 		if (page_private_gcing(fio->page))
- 			return true;
-@@ -4357,6 +4365,9 @@ static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
- 	if (f2fs_readonly(sbi->sb))
- 		return -EROFS;
- 
-+	if (f2fs_is_opu_file(inode))
-+		return -EINVAL;
-+
- 	if (f2fs_lfs_mode(sbi) && !f2fs_sb_has_blkzoned(sbi)) {
- 		f2fs_err(sbi, "Swapfile not supported in LFS mode");
- 		return -EINVAL;
+ fs/f2fs/f2fs.h    | 2 ++
+ fs/f2fs/file.c    | 1 +
+ fs/f2fs/segment.c | 9 +++++++++
+ 3 files changed, 12 insertions(+)
+
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e85d4db3a401..79f3f365432a 100644
+index 16720f1f0a9..2b9c6bf310b 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3322,6 +3322,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- #define F2FS_NOCOMP_FL			0x00000400 /* Don't compress */
- #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
- #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
-+#define F2FS_OPU_FL			0x01000000 /* File always uses out-place-update */
- #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
- #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
- #define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
-@@ -3598,6 +3599,11 @@ static inline bool f2fs_is_pinned_file(struct inode *inode)
- 	return is_inode_flag_set(inode, FI_PIN_FILE);
- }
- 
-+static inline bool f2fs_is_opu_file(struct inode *inode)
-+{
-+	return F2FS_I(inode)->i_flags & F2FS_OPU_FL;
-+}
-+
- static inline bool f2fs_is_atomic_file(struct inode *inode)
- {
- 	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
-@@ -4944,7 +4950,8 @@ static inline bool f2fs_should_opu(struct inode *inode)
- 	if (f2fs_is_pinned_file(inode))
- 		return false;
- 
--	return f2fs_lfs_mode(F2FS_I_SB(inode));
-+	return f2fs_lfs_mode(F2FS_I_SB(inode)) ||
-+		f2fs_is_opu_file(inode);
- }
- 
- static inline bool f2fs_is_sequential_zone_area(struct f2fs_sb_info *sbi,
+@@ -4067,6 +4067,8 @@ int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
+ void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
+ bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi, bool need_check);
++void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi,
++			    block_t blkaddr, unsigned int len);
+ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 					struct cp_control *cpc);
+ void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 37d4e5c8dbcb..09731ad05d70 100644
+index d440231b8cb..58cea2aa314 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -3558,6 +3558,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
- 		goto done;
- 	} else if (f2fs_is_pinned_file(inode)) {
- 		goto done;
-+	} else if (f2fs_is_opu_file(inode)) {
-+		ret = -EINVAL;
-+		goto out;
- 	}
+@@ -3847,6 +3847,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
+ 	write_unlock(&et->lock);
+ 	clear_inode_flag(inode, FI_NO_EXTENT);
  
- 	if (F2FS_HAS_BLOCKS(inode)) {
-@@ -3606,6 +3609,62 @@ static int f2fs_ioc_get_pin_file(struct file *filp, unsigned long arg)
- 	return put_user(pin, (u32 __user *)arg);
++	f2fs_wait_discard_bios(sbi, ei.blk, ei.len);
+ 	f2fs_reserve_device_alias(sbi, ei.blk, ei.len);
+ 
+ 	i_size_write(inode, (loff_t)ei.len << sbi->log_blocksize);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1e7e745be71..7f4fe8c34c2 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1916,6 +1916,15 @@ static void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 		__wait_one_discard_bio(sbi, dc);
  }
  
-+static int f2fs_ioc_set_opu_file(struct file *filp, unsigned long arg)
++void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi,
++			    block_t blkaddr, unsigned int len)
 +{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	__u32 opu;
-+	int ret;
++	block_t end = blkaddr + len;
 +
-+	if (get_user(opu, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	if (f2fs_readonly(sbi->sb))
-+		return -EROFS;
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	inode_lock(inode);
-+
-+	if (!opu) {
-+		/*
-+		 * Direct writes issued while the flag was set may still be in
-+		 * flight with their blocks unwritten, so drain them before
-+		 * f2fs_file_read_iter() stops serializing against them.
-+		 */
-+		if (f2fs_is_opu_file(inode))
-+			inode_dio_wait(inode);
-+		fi->i_flags &= ~F2FS_OPU_FL;
-+		goto done;
-+	}
-+
-+	if (f2fs_is_pinned_file(inode) || IS_DEVICE_ALIASING(inode)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	fi->i_flags |= F2FS_OPU_FL;
-+done:
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+	f2fs_update_time(sbi, REQ_TIME);
-+out:
-+	inode_unlock(inode);
-+	mnt_drop_write_file(filp);
-+	return ret;
++	while (blkaddr < end)
++		f2fs_wait_discard_bio(sbi, blkaddr++);
 +}
 +
-+static int f2fs_ioc_get_opu_file(struct file *filp, unsigned long arg)
-+{
-+	return put_user(f2fs_is_opu_file(file_inode(filp)) ? 1 : 0,
-+			(__u32 __user *)arg);
-+}
-+
- static int f2fs_ioc_get_dev_alias_file(struct file *filp, unsigned long arg)
+ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
  {
- 	return put_user(IS_DEVICE_ALIASING(file_inode(filp)) ? 1 : 0,
-@@ -4740,6 +4799,10 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_get_dev_alias_file(filp, arg);
- 	case F2FS_IOC_IO_PRIO:
- 		return f2fs_ioc_io_prio(filp, arg);
-+	case F2FS_IOC_SET_OPU_FILE:
-+		return f2fs_ioc_set_opu_file(filp, arg);
-+	case F2FS_IOC_GET_OPU_FILE:
-+		return f2fs_ioc_get_opu_file(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -4936,8 +4999,8 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- 	dio = f2fs_should_use_dio(inode, iocb, to);
- 
--	/* In LFS mode, if there is inflight dio, wait for its completion */
--	if (f2fs_lfs_mode(F2FS_I_SB(inode)) &&
-+	/* For OPU direct writes, wait for any inflight dio to complete */
-+	if ((f2fs_lfs_mode(F2FS_I_SB(inode)) || f2fs_is_opu_file(inode)) &&
- 	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE) &&
- 		(!f2fs_is_pinned_file(inode) || !dio))
- 		inode_dio_wait(inode);
-@@ -5522,6 +5585,8 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_COMPRESS_FILE:
- 	case F2FS_IOC_GET_DEV_ALIAS_FILE:
- 	case F2FS_IOC_IO_PRIO:
-+	case F2FS_IOC_SET_OPU_FILE:
-+	case F2FS_IOC_GET_OPU_FILE:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index 795e26258355..ebfef7e88bcb 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -45,6 +45,8 @@
- #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
- #define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
- #define F2FS_IOC_IO_PRIO		_IOW(F2FS_IOCTL_MAGIC, 27, __u32)
-+#define F2FS_IOC_SET_OPU_FILE		_IOW(F2FS_IOCTL_MAGIC, 28, __u32)
-+#define F2FS_IOC_GET_OPU_FILE		_IOR(F2FS_IOCTL_MAGIC, 29, __u32)
- 
- /*
-  * should be same as XFS_IOC_GOINGDOWN.
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
 -- 
 2.43.0
-
 
 
 _______________________________________________
