@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 18FCCC61DD6
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Aug 2026 06:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11708C61DD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Aug 2026 06:05:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=x0LPzJTD+LecL2JDd6AZ4gwkrBi+JpKRXBW+SDhyuPM=; b=HZAW0G91XH8VMusyQbiiFeiFAb
-	gUE9trWKCJ5ZKpP2t1RkiXvUxiFhC6G4fxjSdw++ubMguU4f2RwDrTsZ5FiDBzH7bC7idPARHohlM
-	HPL5Xb9eYeYm40mLMxdgYiP2fgrkrNma4uaIPu5Th/RMVtW1uT1o0m+E4ZV4iv6bVBE0=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=gLIx83f4QB3rWR+wEX3Hi4oVpUl7BxbmzOXFuC5I164=; b=XpfuOUQJeMbsT3lQPdevv1HHkd
+	itKdo0hm3XZiv4zmpPCPWhrgAApGBDUSTIukKKGKXReKUFhZqAsxNvDKa1u/WeD6/NZC0YvQLmXo8
+	ElSZSnk83jLzkI8zr0hv1JXlYjwPXsB1dcAc2RjlVsiKYp8PAZ5gWxviySb2ErgikLDo=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x0CCF-0004EF-Sq;
-	Sat, 29 Aug 2026 06:05:44 +0000
+	id 1x0CCK-0005OS-0A;
+	Sat, 29 Aug 2026 06:05:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1x0CCE-0004Dx-3o
+ (envelope-from <qwjhust@gmail.com>) id 1x0CCI-0005OL-WA
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Aug 2026 06:05:42 +0000
+ Sat, 29 Aug 2026 06:05:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=n29SS5Q6nUE/mH+zwwp5J1MgKbYJCrFJK4KKmQ6En+4=; b=V5xkw40gaSkV63y62aRI3ebEpo
- UISQBQXMfl85/70PEprnk2CHknzTSH3gN+wyEDtgWAQvLzjfLPyNFASjh8aHUaE0EQq9w0jg/yenY
- YJvOwrOTYtZKxUoyA0lMXDocbs9GSknbp3CURqXBAcX2JUNQxVADYabD0waHHtz4Hgfk=;
+ bh=I5So2O3euKFFg61wXFy7xjMLgdHoSVBr97j8orXpOWw=; b=H9AxHSsdpLxIz6OC/5EVCI0rWH
+ FAYPDX2E47qPOEAOp0EmyI+pmpWaAKJy6IPfekdxcCTVYcMcmYRIo5WbPcgfNJIJxM8Vuy96Vx5BT
+ sXy7vUw9oAOFBlNxD4DOCjRwU8lpu7SlFhifFde/FDUyVjJv6K6aeZCd5CEO5qyzo7vc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,75 +42,75 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=n29SS5Q6nUE/mH+zwwp5J1MgKbYJCrFJK4KKmQ6En+4=; b=GtTUWvSCx3NGvkqUysK6bLZiJT
- QAOVcoHLOJ0ny8bVEjgQiLhbMygBtWoNDGJjpxG5KoHEVIldyIVn2DI343bfNWnynuoERPgHbLsmb
- aPhe5TjWQJRkueTpcyv7rEio2+7bFn+iuDnk6gzA2kLUJM+krFFEButKKA9xa8R/v0cw=;
-Received: from mail-pj1-f52.google.com ([209.85.216.52])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=I5So2O3euKFFg61wXFy7xjMLgdHoSVBr97j8orXpOWw=; b=DjbBduGfoCTepuMNHOf+9JKS8z
+ 7xCYgYxACyyvF7wY8VAfq89TLMw28r24G1FhNAYUXGM3HGVvG0o5GScbq+W8mWe3rMLz6etj9nbrj
+ uq/sFEoHMp/rDZcORSaWt0j66RdBRLnC6V3HOWSvyhdRfh6Cg2MpJlLjGLJd4wcf9vxU=;
+Received: from mail-pg1-f175.google.com ([209.85.215.175])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x0CCE-00050j-FK for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Aug 2026 06:05:42 +0000
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-398b1e63c49so127874a91.0
+ id 1x0CCJ-0002HJ-3R for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 29 Aug 2026 06:05:47 +0000
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-c9aea40d799so997128a12.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 28 Aug 2026 23:05:42 -0700 (PDT)
+ Fri, 28 Aug 2026 23:05:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787983537; x=1788588337; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1787983541; x=1788588341; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=n29SS5Q6nUE/mH+zwwp5J1MgKbYJCrFJK4KKmQ6En+4=;
- b=SJZxMFPY/ZR1kqNdQfw+CVQuqCCEA4XdznMKRFclk6C1htLQ/q5bIuuAHWDwUJqlgI
- hlYD174NyR1avGmQcYVKNeobwTQnmIi7sgpnA2C4AnGGxVpeJn3JnGAUqv4c16/DLGuv
- vNTnvXnbEAzgthJ7pSChQQcMF4zqGPlzd2eWD4clbFYLzkVqZBRfM47wDivV2/WgkLzV
- luUJF2wZ2d4FqEZG/RRl40Fm0YfqvQ3jImTDq+XKPbAj3a8htZIRa2D8ySBwc767cGdn
- 0IkxbvLWn3fD3Hs7yXqNQXvpeG3w5WvSscxFPJ1eqV7LEhNuyB9rIViTd5B7uSPau0vu
- Ix4Q==
+ bh=I5So2O3euKFFg61wXFy7xjMLgdHoSVBr97j8orXpOWw=;
+ b=oAjR3rFhGhXIN5D+IieuNzeu0dMZlYE7rMhFHcvFaDJjBigoCxH6WSu7zQJwUf67P6
+ Sy3u7y3DWc/N8xBRgQKsiAnP/Y6CvetFblv/UziNrKQLaU3Iz2rSxWe6zyiCSz1gkDyX
+ MyYjpaEaQJXPL5b3TABY5g19/j3/3MsuOy25Jxcr3x5XBMJqRv+xmSXtdJpZAFK16oti
+ /k+k1LYknbYwvn7YPMhbY2np3zt/8Za2I0RfvytNuB5Vx35yizMTnM6dAWaV5RolgUEA
+ 26rR28y/X7PU7/NPilA2Hdmohs/XJRrridzi2OLjTRj/sjgrDUJ1b0CLkq2KYXjmysMN
+ Fc3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787983537; x=1788588337;
+ d=1e100.net; s=20251104; t=1787983541; x=1788588341;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=n29SS5Q6nUE/mH+zwwp5J1MgKbYJCrFJK4KKmQ6En+4=;
- b=BCRVJrFAZFXDzuxVbiM5y1d653mCP+eJ9lmxuyJmJyfqIG3kRshMvgBPt+8AV9JR+4
- ktJcY2WTKRx9xgxINhmuL3FMELXBI1m7bHRClYxOUFWXL6OHNg0r+zDtYtbFCHjEYcES
- bhOEhNZ38PYCPC0jcpacPUdhPSkf/h8oMXDlzcECc/7DWdZDuRkKF48BS0pwRd+bvlYu
- VbCI4n+zmhTc0JZe28RCMfFCX+qonUbMvGeSDZlSXJedojAzVW1DEvzHxiWWkatLoofZ
- cRqOHw98Okto8DN7UXWfNuxtyZoipiSW5vxBiZoX44e7dk3F8HCy84PTOPv2BBcbBrIx
- 23rQ==
+ bh=I5So2O3euKFFg61wXFy7xjMLgdHoSVBr97j8orXpOWw=;
+ b=FXOq9y0wTf1Q+IYsI8tEMeXz5Wy3VZyJbfYM9L7qX1qc4gFvhbKe6hFuNT1A8HuaaY
+ ZNF1MRxdDNQtJoM7Bj6qV6IFVsat7RP5LRwTXQ9bouvHwST7biEqRrEd42lOI/POq/xp
+ DVELhjNXTP7nOSU/magwBoiOL6TkNOyT9WZwmcgwZajxz0wh9Sy3JxLhbAt6Yh+HhQXF
+ PBi3yBZ6P4KFXm1S9LdFhZBcYiopWE1CRfQxxvYtO2UNb+Z9b0UGrYM51rO8XqisTBAq
+ YWSwHcbjgESvEmkFo3RQHqVF2zhrQ0kYLZBwLoQKxfyOuoU3j1Yvs1j7URaOOtYLsXCN
+ A7Pw==
 X-Forwarded-Encrypted: i=1;
- AKwUvBywZ3MiTHGpLyuxAm5KuM17VOdU4rTgpWtG+WQziA88WZ6AwSq2aRsve8dAG6uQtzsNrm7fYeDtlSpEo3YLDHFt@lists.sourceforge.net
-X-Gm-Message-State: AFuF++kkbhDmQJfNTMkzo8N3SJGNAQxqle6mzmW5AIhWr8iVVzCulx40
- tkJAo5XmTmlU2c7qZu8LsM8C6da0vUhzdsu+EeyqaS85kinqp1xQ2Dt0CkSfPOLd
-X-Gm-Gg: AYBFou3KQaolEcSANn8lv+bqX29Imb3uGI4MRrTbaXRyMd1I/Zfjtar2tL6aib0H/w1
- vIlmMjkpoSGI6aXRb0hQ1q/OildMeQIE/Q+htnj4jIwI9tF/cMHuc6Y1vw4nGn8VBDHYrlb0oyb
- dYBuhdh8GyycbpXylr6i087HfvC0EsbJx2r1sdMLwfT6jo+93I44O2enjSJuXEn/8GaJA6ciD/E
- By4OatorfxhKf/ANJvo0VQoBJKUIvv52jxOXwdfip8d4NNcQYpUX+LRVIX0Ret0w9jkbnhKQ6Jv
- msry0PrZ1H5HHHVfCIIirHc2b/P4d/74y9MdnfzsUIwvuFAeV8ASRlj/oAdjgWyDPIM4v2ff32J
- uT94EbWEwvm4aRYAlNHC7OKTP3Wp70sDZRwLRqll3Dcl1SCFGhfGhhm+0yl/fdDj3P7Xbn5wBWf
- pslEL3tbe21jyGpaZHUQZGO4KfbQWm2aKNKvXccgUwjYBzy+ErqWUMAP17Z8oibRm/zIVt6O0D7
- +0eeB/cXfPHBd/2xWXMHP2n
-X-Received: by 2002:a17:90b:50cf:b0:38e:42f5:d096 with SMTP id
- 98e67ed59e1d1-3989b0db85fmr3991699a91.0.1787983536638; 
- Fri, 28 Aug 2026 23:05:36 -0700 (PDT)
+ AKwUvByiZ1cfPEQWe4zTx/nBzwkd4klY+UdbT8fs7r6YysruZmnX+sPVAjtKHMjk33HexPMD2Zczm9kJSpyeR/RDor+O@lists.sourceforge.net
+X-Gm-Message-State: AFuF++lHmCIDAUqw1ajpNIG1G0s1mpH8MGNDiCKvBlFghae7an73wRfl
+ gNw5EaACcTTkCi/mXtwiu/E+QDJUMzAH1Bls1Lec7YUpJoMGmrthmc/f
+X-Gm-Gg: AYBFou2XJVTcQNLC8RxHkzesllZrSh3yH7nb3yNVO8Ro3QWEQks/DqBKmZj7QoO1CfR
+ yack+YK+W+h2LE22no/PVWbdgWq0tk64qTClNQxzSYJ0hM1YJPYfUsGWjiUmnKMCH+yBHSEDMiN
+ S1ie3O/DSxyFCSgxlC0SQTtqy+5q5yEEFlIqioQheoAL0lFiWZvXBHAF4nxexHlnxMRnqq6tkzP
+ 5vo6ZOdsu+FtRZPYrWp4Uy8pEUCuzukLkESnhb36xgc+RzgF0NG9yBly9CzpKeQU1XBt+OuRJ3v
+ 9npbB2zEf3SPopZzOpEspbTQNxwi33SBHpyqIEh4qDXco9D7f2N0uyQI+jOl3nQUyOvJbjLXQxn
+ 1UNO+AQGfz51gqpV3DoyAdUhscLI9hz6WksxCL2KAy8ZeIZMk+cqwzUT/tevk54TRMmHaYdQPNM
+ MwPbGy4Egh2/PFzmSjUu8APHGdPahVpmVcZzKWZrO8EZgfdtTIu3dDf/xHgODBj4cmEVvBFBNp0
+ zZenNlPWKnIUaut/MoZWEzHfe+bY7wBluai
+X-Received: by 2002:a17:90b:37cc:b0:366:10f1:3d91 with SMTP id
+ 98e67ed59e1d1-396d0d92d0amr22678953a91.1.1787983541205; 
+ Fri, 28 Aug 2026 23:05:41 -0700 (PDT)
 Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-396dda36ed6sm5609411a91.2.2026.08.28.23.05.33
+ 98e67ed59e1d1-396dda36ed6sm5609411a91.2.2026.08.28.23.05.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Aug 2026 23:05:36 -0700 (PDT)
+ Fri, 28 Aug 2026 23:05:40 -0700 (PDT)
 From: Wenjie Qi <qwjhust@gmail.com>
 X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Sat, 29 Aug 2026 14:05:23 +0800
-Message-ID: <20260829060524.2656620-2-qiwenjie@xiaomi.com>
+Date: Sat, 29 Aug 2026 14:05:24 +0800
+Message-ID: <20260829060524.2656620-3-qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260829060524.2656620-1-qiwenjie@xiaomi.com>
 References: <20260829060524.2656620-1-qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1x0CCE-00050j-FK
-Subject: [f2fs-dev] [PATCH v2 1/2] f2fs: flush SIT journal during filesystem
- resize
+X-Headers-End: 1x0CCJ-0002HJ-3R
+Subject: [f2fs-dev] [PATCH v2 2/2] f2fs: refresh pinned allocation boundary
+ after resize
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -129,41 +129,172 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-During a filesystem resize, SBI_IS_RESIZEFS prevents new SIT entries
-from being added to the journal and forces existing entries to the SIT
-area. However, f2fs_flush_sit_entries() returns early when there are no
-new dirty sentries, leaving existing journal entries behind.
+pinned_area_max_secno is derived from MAIN_SECS(), the zoned device
+boundary, and resizable_tail_secno. It is currently recalculated only
+at mount and remount, so online resize leaves the pre-resize value
+active after MAIN_SECS() changes.
 
-After the main area shrinks, a later checkpoint can access a journal
-entry whose segment number is outside the new geometry and trigger
-f2fs_bug_on().
+A stale value can allow pinned allocations in sections outside the
+new main-area boundary.
 
-Only take the zero-dirty fast path when entries may be written back to
-the journal. This lets resize drain existing entries through
-remove_sits_in_journal() even when there are no new dirty sentries.
+Move the calculation to segment.h and call it whenever
+update_fs_metadata() changes MAIN_SECS(). This also restores the
+previous boundary when a final checkpoint error rolls the resize
+metadata back.
 
-Fixes: 04f0b2eaa3b3 ("f2fs: ioctl for removing a range from F2FS")
+Mount option validation compares the tail count with the pre-resize
+section count. Recalculating after a shrink below that tail would make
+the unsigned subtraction wrap. Reject such a shrink with -EINVAL and
+report the geometry before acquiring a mount write reference.
+
+A concurrent remount can change the tail after that early check.
+Recheck it after freezing the filesystem and taking the resize locks,
+before changing block counts or filesystem geometry.
+
+Fixes: c966d29e01bb ("f2fs: support resizable tail section and unify pinned allocation")
 Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1:
+- Simplify the incompatible-tail condition.
+- Log the main, shrink, and tail section counts on rejection.
+- Validate before acquiring the mount write reference.
+- Restore compact formatting in the shared boundary helper.
+- Recheck after freeze to cover a concurrent remount option change.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1e7e745be71d..9f9ce25dd07e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4816,7 +4816,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ fs/f2fs/gc.c      | 27 ++++++++++++++++++++++++---
+ fs/f2fs/segment.h | 13 +++++++++++++
+ fs/f2fs/super.c   | 15 ++-------------
+ 3 files changed, 39 insertions(+), 16 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 0a00180c21dc..3c61bf675afa 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -2326,6 +2326,7 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+ 	SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
+ 	MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
+ 	MAIN_SECS(sbi) += secs;
++	f2fs_adjust_pinned_area_boundary(sbi);
+ 	if (sbi->allocate_section_hint > MAIN_SECS(sbi))
+ 		sbi->allocate_section_hint = MAIN_SECS(sbi);
+ 	FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
+@@ -2349,6 +2350,19 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+ 	}
+ }
  
- 	down_write(&sit_i->sentry_lock);
++static bool f2fs_resize_tail_invalid(struct f2fs_sb_info *sbi,
++				     unsigned int secs)
++{
++	if (MAIN_SECS(sbi) >
++			secs + F2FS_OPTION(sbi).resizable_tail_secno)
++		return false;
++
++	f2fs_err(sbi, "Invalid resize: main %u, shrink %u, tail %u",
++		 MAIN_SECS(sbi), secs,
++		 F2FS_OPTION(sbi).resizable_tail_secno);
++	return true;
++}
++
+ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
+@@ -2392,13 +2406,15 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ 		return -EINVAL;
+ 	}
  
--	if (!sit_i->dirty_sentries)
-+	if (!sit_i->dirty_sentries && to_journal)
- 		goto out;
++	shrunk_blocks = old_block_count - block_count;
++	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
++	if (f2fs_resize_tail_invalid(sbi, secs))
++		return -EINVAL;
++
+ 	err = mnt_want_write_file(filp);
+ 	if (err)
+ 		return err;
  
- 	/*
+-	shrunk_blocks = old_block_count - block_count;
+-	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
+-
+ 	/* stop other GC */
+ 	if (!f2fs_down_write_trylock_trace(&sbi->gc_lock, &glc)) {
+ 		err = -EAGAIN;
+@@ -2442,6 +2458,11 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ 	f2fs_down_write_trace(&sbi->gc_lock, &glc);
+ 	f2fs_down_write_trace(&sbi->cp_global_sem, &clc);
+ 
++	if (f2fs_resize_tail_invalid(sbi, secs)) {
++		err = -EINVAL;
++		goto out_err;
++	}
++
+ 	spin_lock(&sbi->stat_lock);
+ 	if (shrunk_blocks + valid_user_blocks(sbi) +
+ 		sbi->current_reserved_blocks + sbi->unusable_block_count +
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 5949aa5200ac..a31d3a6ca756 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -91,6 +91,19 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
+ #define GET_ZONE_FROM_SEG(sbi, segno)				\
+ 	GET_ZONE_FROM_SEC(sbi, GET_SEC_FROM_SEG(sbi, segno))
+ 
++static inline void f2fs_adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
++{
++	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
++	if (f2fs_sb_has_blkzoned(sbi) &&
++	    sbi->first_seq_zone_segno != NULL_SEGNO)
++		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
++						 GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno));
++	if (F2FS_OPTION(sbi).resizable_tail_secno)
++		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
++						 MAIN_SECS(sbi) -
++						 F2FS_OPTION(sbi).resizable_tail_secno);
++}
++
+ #define GET_SUM_BLOCK(sbi, segno)	\
+ 	(SM_I(sbi)->ssa_blkaddr + (segno / (sbi)->sums_per_block))
+ #define GET_SUM_BLKOFF(sbi, segno) (segno % (sbi)->sums_per_block)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 253a579e9d5b..c8f8ecf49635 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -554,17 +554,6 @@ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
+ 			F2FS_OPTION(sbi).unusable_cap_perc);
+ }
+ 
+-static inline void adjust_pinned_area_boundary(struct f2fs_sb_info *sbi)
+-{
+-	sbi->pinned_area_max_secno = MAIN_SECS(sbi);
+-	if (f2fs_sb_has_blkzoned(sbi) && sbi->first_seq_zone_segno != NULL_SEGNO)
+-		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
+-				GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno));
+-	if (F2FS_OPTION(sbi).resizable_tail_secno)
+-		sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
+-				MAIN_SECS(sbi) - F2FS_OPTION(sbi).resizable_tail_secno);
+-}
+-
+ static void init_once(void *foo)
+ {
+ 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
+@@ -3078,7 +3067,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 
+-	adjust_pinned_area_boundary(sbi);
++	f2fs_adjust_pinned_area_boundary(sbi);
+ 	limit_reserve_root(sbi);
+ 	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+ 
+@@ -5321,7 +5310,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	/* get segno of first zoned block device */
+ 	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
+ 
+-	adjust_pinned_area_boundary(sbi);
++	f2fs_adjust_pinned_area_boundary(sbi);
+ 
+ 	sbi->reserved_pin_section = f2fs_sb_has_blkzoned(sbi) ?
+ 			ZONED_PIN_SEC_REQUIRED_COUNT :
 -- 
 2.43.0
-
 
 
 _______________________________________________
