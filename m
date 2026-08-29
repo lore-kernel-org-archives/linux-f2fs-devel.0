@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1AFC5C61DBE
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 02B64C61DE6
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Aug 2026 17:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,18 +12,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Subject:To:Message-ID:Date:References:In-Reply-To:MIME-Version:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=KebQtDShsmBeNHjLSgiES9/G1wUEfz4qemjc84XPmJY=; b=jnIKKx9mIl70PwVyWUzUS4qEVG
-	XTADOfgxYBPNFcswJUurGy0dsrhx5iGpxTeoTAM6ZJYr1yRS+q5VWeKQ9KhkNzb8boMxTlXzhY9qp
-	AwQxg34Kz/JQgLi95qkPsO0GoEH73RIRPyNPxvWGP6Awpjzi8QuV749xVDKlXH0qiAQ8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=rRslYdFnE1ZX1SFpg8BL6LlWdgwlBShrO7wJXnd50EQ=; b=St5Tq/KGJ8Cu1dYjVDeZRrql0y
+	TuPMleemu0mImE+d4awcwbtkRNtIL5cImxS+2z8TupzdgdGPqGZW7JzcPuUKsnY9SHV6KJRx70N/n
+	WCY6oJRG8EdLcuUyb1Ot5PYGH5I7HjtPIZhYDbza7Rv5oFQl8r924pv+Qup6duAkaNR0=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x0NBt-00048I-Vz;
-	Sat, 29 Aug 2026 17:50:06 +0000
+	id 1x0NBu-0002ac-Uz;
+	Sat, 29 Aug 2026 17:50:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangxp1998@gmail.com>) id 1x0NBo-00045J-Pa
+ (envelope-from <zhangxp1998@gmail.com>) id 1x0NBo-0002YH-RJ
  for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 29 Aug 2026 17:50:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Lxs6re5XMINX1YAgGCNMKMyhwD4CCm+XoEwKtl4IBc4=; b=e7iEvjDlTYkV5sTxAckwa2Sfil
- srNUqmFXYX5CX0MdeEg8Pw4Ust+2LQe1lzD0w81DUh0jTGN9sKXtSVzhKsvrRQT38IsRJ+cdaNieW
- kXP0VM1+LHCcw/iRFiOlK8jJqrVcMrj8UeQPbsZuMyVLuuRuug6Mrv7QgtwBXTcjo+SM=;
+ bh=C/Ut8igNUUEDDCrdtbCLiaGMVpNyyvqtTQshGja4fhw=; b=EzejT++cZVdqjMLDGRFNO8iOhG
+ pGCd0OQSxHqZky5X4y9dgUkDUsMqglLBQagnOQ58rQaekwpVtFCOlWrCvda/bCrdIymySneG50g8v
+ pvEfr5U0ihjmeLfJsgq5QII0LI8G1Yt03pMGVamdOlwRdQwEJJhUzL12MMdcgcjIyUWY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:References:In-Reply-To:
@@ -42,89 +42,89 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Lxs6re5XMINX1YAgGCNMKMyhwD4CCm+XoEwKtl4IBc4=; b=A0GXN/wRpewGoaUYiWP3kGF7jv
- OPWvGOsLUlzKRdrBlYb549U6mdsKRHOeXrB6pPzUJjbJV5xhUiNfz3dpbbsOkRZo7FneaJQ9yFyMn
- QnlfAb98HP2ZU0df60hpDgs7oGhnT3YOzjkC3d6YQkORgNORmzh0QyBcNM+N/dVA1Kxs=;
-Received: from mail-ed1-f43.google.com ([209.85.208.43])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=C/Ut8igNUUEDDCrdtbCLiaGMVpNyyvqtTQshGja4fhw=; b=flSKDLKGDjKR0nH/F8yuRRHilR
+ BJ6QBoWrJX94gDadN5IEK7baENFrXqeQh196E1Ev09MFlhgXZgCYOx4wwsbtJ6Dgw2eDOng4fUDvg
+ eewFwL2ooIV1BbP0LoX/VxXlwBiFVkhsWe0269HPQQ+7mX6liKga+TBgGGC9WmAst7x0=;
+Received: from mail-ed1-f42.google.com ([209.85.208.42])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x0NBV-0001ET-E1 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Aug 2026 17:49:43 +0000
-Received: by mail-ed1-f43.google.com with SMTP id
- 4fb4d7f45d1cf-6a173ad7cf4so3195525a12.3
+ id 1x0NBN-0005vp-EV for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 29 Aug 2026 17:49:33 +0000
+Received: by mail-ed1-f42.google.com with SMTP id
+ 4fb4d7f45d1cf-6a0de062db5so3513367a12.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 29 Aug 2026 10:49:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788025774; cv=none;
+ Sat, 29 Aug 2026 10:49:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788025767; cv=none;
  d=google.com; s=arc-20260327;
- b=UQOJd+G4BrqhqEzht09KKVpZSyyrmKgYoIHm1xnsyq5+K+6A2D3ikqzpeudAPf8NIq
- xVRHNoK3Oc0vQLENgppJtNOlijnV8wZiQl7PkcLghSblI40cAXh8ty34QIiAjNDR917I
- Gme/6x73cZd8g1FkmnH2GJVXnLeFaxJNZU0722xUbDo21tyWhNtlrwYSg7EGGOSVTU5P
- fCvXicrUsdax7etB3de0+Z/IUKYM5gQ86VOOUKgub/4I8ZZ31ojNTiddtu/5GCmgCe9y
- mBbW8v8vJBCxaNv78GN+G/ezZ/MrEY6dnPDrq0vj2fPJ7+OGIGQQXN0PtrE8nW30K5rA
- vYig==
+ b=LD34NYmVor5pk7oxamTU2sNt5Fb/oMDTsdV0WSa5URlzZKC96tGFNZZPTKrL+0qoXM
+ vDuJgFwaFwsulx7i07mJw8bRd4DV6++AO5s7QcThDoGtsjdiKJkgDU0n3LVK/pK2b0bi
+ 5h5kzRNaUlLqdAYqPJToVbHpmdcTqtlyXOc8an3YbwE4tgf+n/roctPXdQ+pS6SrrozN
+ pPFOHYmKSj7/eC5bdWs0lQAoPM63GwIHomqeI8FEdWpq3Z9KTQZex38OuvZkOtAUWXmu
+ jD9fIHhCYwypYQ9wOOM4Av1XHuSHXer+4sRALwBhCe70Wl7h53+FOTxeH/9IkdtD24gn
+ rAMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
  h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
  :from:dkim-signature;
- bh=Lxs6re5XMINX1YAgGCNMKMyhwD4CCm+XoEwKtl4IBc4=;
+ bh=C/Ut8igNUUEDDCrdtbCLiaGMVpNyyvqtTQshGja4fhw=;
  fh=xQlrTCtbZS9AeHiZIznQSf0O/ILYiLS8eBp4kjanibk=;
- b=ajAb+E1icy1BwwL9OwB+/EK1Vpd6LuBxVNnJdm4NtbbFCenynkxnK0KQuum4nQ151V
- WipRLHdAVbUcYDnk4C8b6dKbuoBUI3yLmJoAUKYCIIdVrWzGQgtWsEa2ES9QoSWMAfjF
- h/6nF/e9fQDYwnN8KRyYple1y9A1bT0M6eWLJ+eH70p+OAeDyEJs+y3S34G2mSa1DXse
- TiPIDxCuzhfRjoFZ1mAA4SZCgYWlXDmr0i2lVAMw7avjM3/rHQoKv7MLg29kFAiYMP4X
- JCVBV70qpTrENc713bIGtkDxXRcl5760sAd8D4jFSVaFLoL0dMwvaywNm/IvIBqF2zck
- QrkA==; darn=lists.sourceforge.net
+ b=CnNktGvnU7/TiQT2TYEEboAIVNTsh8pPi1+yABsheK4e4Wmyx73QBilZQn0Lmi5fKz
+ dkV/VArWm3suvhH/3gOweFDSy7dj/DXhC1FzId7ZfQmIet8N+bsCrHQsqMVE6ulWxo1L
+ GnnfM0aKXAplQCiFwZdclPZmuR6zmNWYNBf+IxaD72n/gaoRPrkUm7RI9TAGqSKywg50
+ UFwypfZS7drFPLsl3eZ+pIahYucqCdf0fPXWDZ2SL9c3/IxmlS7rtqCVvd8+FGKr6+IJ
+ 8ldja6F5zua1ogw7xG8JkPhYzMICyW/jNQrbUqd3JcLFtv4MCgWvMlCT68FaL44QvCj7
+ l10A==; darn=lists.sourceforge.net
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788025774; x=1788630574; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1788025767; x=1788630567; darn=lists.sourceforge.net;
  h=content-type:cc:to:subject:message-id:date:references:in-reply-to
  :mime-version:from:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=Lxs6re5XMINX1YAgGCNMKMyhwD4CCm+XoEwKtl4IBc4=;
- b=gu5iI/3ToPVmPKL3vCbGoqogRm9AH6rtjyxFU0zbfrkljDDdsTOKutCHgyn5MYJY+3
- qX30WvhDrJcZtG+qfbWb7sXAcOCj14wFZEyN6f1jwipKTHhB0pGLihn9O+hDjGeuF6fg
- 083LapJnaQCygqi/BBTKuh425nTAn/j1RD0SaO2VXQNKeS/tM1623ksBYZK1buJL1y06
- JUcHLOBCIcoAysRe4VqTcgcmfSFrurZ+baF/wAWsi2ZpiIvL5G6sPDkV/cyBLh5ndFWZ
- SPaa/lVdx1uULlDx3bGsAvt6rCJFcwXOoA07R/23050oExU0j6U7Ci+kVahd11bUY5AH
- cJCg==
+ :content-type; bh=C/Ut8igNUUEDDCrdtbCLiaGMVpNyyvqtTQshGja4fhw=;
+ b=CZeVNkiSG3U0Cb1/jbojr47N4anBl2NvgZcUhZMTiTteKt32CT/ywZWWquzK+Tm6Hq
+ /Qe9HCAyCybwuOGzVs7xZ0UvbILHVf5st4cpXtm+8MECF3SUurGdTFn3+UQORgrJatYE
+ whz/oWbzJG+Z6nwmIJUJnWJU5oUpRtRFhAhn+tgXmvw0B7Imc7AFKYEXbaF2U6lgCxR/
+ /f0V9e3Fo1XFSj07TXnWyLWO2dtIHyCbkQtdzE7tB7Y8XaIBlVzH6Td+dDx99gy6rt6G
+ sRhTg+aiyQEpcutN5M6AVqOktfYWF5ukM3q+vshumwFXiyIBgO6imGx2ZFI4J6U2KrZT
+ /wyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788025774; x=1788630574;
+ d=1e100.net; s=20251104; t=1788025767; x=1788630567;
  h=content-type:cc:to:subject:message-id:date:references:in-reply-to
  :mime-version:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=Lxs6re5XMINX1YAgGCNMKMyhwD4CCm+XoEwKtl4IBc4=;
- b=OKvBmS/ut+HF1s2+EVebNvlnGrm/qzIfs2gO2ySJU87UR9ZiZoTB2xgl6zVcc8g1rQ
- 1j+7Un49KptLUaG5VaATadnSEVXTyTDk10H/T0SDTCqlcYi6moykRKySYUEC0+xQlidu
- yuwOh/XpaYHHqRTdWpPbg4lMT6HifqAWEVHu7xm/P8QnAS/co6qYLYUQC0WZ0Dr4kwhN
- 3wjFJfka4zFMEctdHuAo6x3t+FsP1yGKP9j3kw94FSbkQkdYVsj0VPYcWYjRFtrFh51u
- 1uypGEt48RqscdLkhBcJcQVZ+62Wuuef1Xd9CXpXHYWuBSuwpfu6YnwGZss7hQR/oaIu
- ozvA==
-X-Gm-Message-State: AFuF++m26HQwW8CkcsRyas5o4v02jO1IsACymHsZdwgCFY5Xp9jj1fck
- yF9kpLBCKYtkCX1Rm6CIOX8+ES5ZTY/vOZPkTLZu4MF9NdQfJ5Kx7ZMJTaKBDUwDzFHWq2B/PZr
- zQqMVA/1uFdc7XoSATuQAQdnsLbzhBvep1YUAok4=
-X-Gm-Gg: AYBFou2MUgX9AgqcCTS3LQjqySYLjlCZqR1PYEa5TfRqUvlnHDJL70VIs3GrYXhsqZz
- jmEHMtI1VPwldC+KWnO4Neok1fHSf4BVfe6L6wuRwAaMVghxfbkTVeHlYAlMiBO6EJBIO1MObD4
- uRCX3aN0x3R8RbyhAEPqjN6AVIUZrXyMUDRLE6hu97ErR9+v3fpfcT1QV+o9cIoolFOCqA68Dhk
- vOZvu1QloriGj9Y37PZ3Gkf62CGBzdisiWZ2pFpkKVhGrTg2sC73kudgFhO/HhCKC7GE/qMZyMD
- Zetq+dd/FkTRzbJukScgKS/xXpRkPmiVrv1D+4JcC3totKCeUcWOJwa3PNu4Y8YiXBmjHxfjyvq
- 5WtVQNaCU8X07pA==
-X-Received: by 2002:a05:6402:24d5:b0:697:f6b2:a94e with SMTP id
- 4fb4d7f45d1cf-6a60d3a7b8cmr7959598a12.13.1788025773849; Sat, 29 Aug 2026
- 10:49:33 -0700 (PDT)
+ bh=C/Ut8igNUUEDDCrdtbCLiaGMVpNyyvqtTQshGja4fhw=;
+ b=Oqzcs9MkebBz24I9xHeWavoru2fxgKAvdx6XSrf192I98d2FrZyDMtTqJJhVV4kqzd
+ 1fzkpvzh/PFlauTAS3XnmydyecbD6FsY76xlRPmpybLerFnGSgLDHM7kea90HngJ7sEi
+ 1ef9W/irF0HEYyzj3//y8cQqhg6XChBaElAbWuSfz97ecxZqTZdY+exC5fe57iYcvJCa
+ iwUSqFEVyZ0TcQaI/W/+XpmMhb+nocID/0GyCSho+d/rNRUTMgf8cxE7E4//4ls4lUnm
+ XeO+8j19cSIxDAaBL4oETuXM9/L4A/fjt9NizAXM5pyAyVdY9khjLWFFwVkI3B+0ml+D
+ LPrQ==
+X-Gm-Message-State: AFuF++lACxElXiHOAJS9+WwS6R/e2oHAl7xSX32Y+DlxClffeaT219UX
+ mVN1CSsVgjwwE04+0Y4TgQf+qw7Yzp3PVsaI03ifUWyc7jODooZId651pTLNoM7p9pvb9maPI5b
+ igm6fVfFZy+XJJU5OKaMj0B+dx5Xfp/Bfz9IoUzs=
+X-Gm-Gg: AYBFou3knsI/eHYHnToBA6SQZD/mys5Kuxc8oOyYwf79d1V+CVRXXJ1Ux7DMAFmagz8
+ 2rV0lAhVETIdiWFDW0Wrac/Bux4bDy9pkN3LbLeL5fJa7TAMRDi4/++lVHXe1vPzVpnrUxPJRxf
+ WZvfQa1zb6SUVqbGHIWHed1ONZwmCCIurAveZIBoL4nfxO+YarKnf3cNLQgF/7WbysHVYaH31yz
+ H9+BCGvapXS3H8Vvd0zWPxg0WlJqwPqpvD+mI/mCa8QL+hsZMcU44WUiVnLyM3f7QIRckJB/rTV
+ 8Mu4XnRUcHBQU7j2sDU/jgcWn0GFVZv+TpSUA1S3QBf0d6T391w1q3pi5jUYmIoGM73/XRxv+mz
+ Gmg==
+X-Received: by 2002:a05:6402:2354:b0:6a6:32f6:10 with SMTP id
+ 4fb4d7f45d1cf-6a632f6018fmr2135352a12.22.1788025766571; Sat, 29 Aug 2026
+ 10:49:26 -0700 (PDT)
 Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 29 Aug 2026 10:49:32 -0700
+ HTTPREST; Sat, 29 Aug 2026 10:49:26 -0700
 Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 29 Aug 2026 10:49:32 -0700
+ HTTPREST; Sat, 29 Aug 2026 10:49:26 -0700
 From: Xinping Zhang <zhangxp1998@gmail.com>
 MIME-Version: 1.0
 In-Reply-To: <CAH=xXfHWW_J92z3YgvoLSx8+z6rekq=p2kiP15KE9=2+Ju2RjQ@mail.gmail.com>
 References: <CAH=xXfHWW_J92z3YgvoLSx8+z6rekq=p2kiP15KE9=2+Ju2RjQ@mail.gmail.com>
-Date: Sat, 29 Aug 2026 10:49:32 -0700
-X-Gm-Features: AcwNN1WvMxuhExni0UWMXGddN8jm3UA89aH7som-upGcLpEU6TAEjTgje9k8tDQ
-Message-ID: <CAH=xXfFy10WpCebZSsVhoe1gyktix60bWh2a6Y_OVX9ZcdFEYg@mail.gmail.com>
+Date: Sat, 29 Aug 2026 10:49:26 -0700
+X-Gm-Features: AcwNN1VPFbUxMZo0vv3M1b072VLJ8ALxYO_nCN1eu9bWQAa0bdENrYB8eDbqABo
+Message-ID: <CAH=xXfFTThTDXpLX=F3j1Nmj8ypViopBLSRkwAvX2wGJ5wkaQQ@mail.gmail.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1x0NBV-0001ET-E1
-Subject: [f2fs-dev] [PATCH v2 07/11] f2fs: describe xattr block layout
- dynamically
+X-Headers-End: 1x0NBN-0005vp-EV
+Subject: [f2fs-dev] [PATCH v2 01/11] f2fs: initialize sb_info early in
+ f2fs_fill_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -141,198 +141,72 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The usable capacity of dedicated on-disk extended attribute blocks and
-inline xattr regions scales with the filesystem block size.
+Previously, init_sb_info() was invoked late in f2fs_fill_super(), after
+processing superblock error tracking, mount options, and sb->s_maxbytes.
 
-Parameterize VALID_XATTR_BLOCK_SIZE and MAX_INLINE_XATTR_SIZE to
-calculate usable xattr limits dynamically from sbi->blocksize rather than
-hardcoding PAGE_SIZE or DEF_ADDRS_PER_INODE.
+However, read_raw_super_block() reads the superblock folio directly
+from the block device mapping using folio page offsets. This makes the
+initial static sb_set_blocksize(sb, F2FS_BLKSIZE) call redundant.
 
-Update mount option consistency validation for inline_xattr_size to
-evaluate allowed boundaries dynamically against the runtime block size.
+Move init_sb_info() to execute immediately after sbi->raw_super is
+attached, allowing the block device block size to be set dynamically via
+sb_set_blocksize(sb, sbi->blocksize).
+
+This early initialization also prepares for upcoming patches that add
+dynamically computed filesystem geometry fields, such as
+sbi->addrs_per_block and sbi->nids_per_block, to init_sb_info(). These
+fields are required by earlier initialization steps, including mount option
+consistency checks and sb->s_maxbytes computation.
 
 Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
 ---
- fs/f2fs/inode.c         |  4 ++--
- fs/f2fs/node.c          |  2 +-
- fs/f2fs/super.c         | 17 +++++++++++++++--
- fs/f2fs/xattr.c         |  8 +++++---
- fs/f2fs/xattr.h         | 15 ++++++++++-----
- include/linux/f2fs_fs.h |  2 ++
- 6 files changed, 35 insertions(+), 13 deletions(-)
+ fs/f2fs/super.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index fda9ee3bfc61..20b0561fe35d 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -337,12 +337,12 @@ static bool sanity_check_inode(struct inode
-*inode, struct folio *node_folio)
- 	}
-
- 	if (f2fs_sb_has_flexible_inline_xattr(sbi) &&
--		(fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE ||
-+		(fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE(inode) ||
- 		(f2fs_has_inline_xattr(inode) &&
- 		fi->i_inline_xattr_size < MIN_INLINE_XATTR_SIZE))) {
- 		f2fs_warn(sbi, "%s: inode (ino=%llx) has corrupted
-i_inline_xattr_size: %d, min: %zu, max: %lu",
- 			  __func__, inode->i_ino, fi->i_inline_xattr_size,
--			  MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
-+			  MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE(inode));
- 		return false;
- 	}
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index e3f594f7bcce..7dabfada1b54 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2919,7 +2919,7 @@ int f2fs_recover_xattr_data(struct inode *inode,
-struct folio *folio)
- 	/* 3: update and set xattr node page dirty */
- 	if (folio) {
- 		memcpy(F2FS_NODE(xfolio), F2FS_NODE(folio),
--				VALID_XATTR_BLOCK_SIZE);
-+				VALID_XATTR_BLOCK_SIZE(inode));
- 		folio_mark_dirty(xfolio);
- 	}
- 	f2fs_folio_put(xfolio, true);
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fcaeaacaab33..3ba4df757213 100644
+index 253a579e9d5b..2d9f5b77f815 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -855,9 +855,11 @@ static int f2fs_parse_param(struct fs_context
-*fc, struct fs_parameter *param)
- 		break;
- 	case Opt_inline_xattr_size:
- 		if (result.int_32 < MIN_INLINE_XATTR_SIZE ||
--			result.int_32 > MAX_INLINE_XATTR_SIZE) {
-+			result.int_32 >
-+			MAX_INLINE_XATTR_SIZE_FOR_BLOCKSIZE(F2FS_MAX_BLKSIZE)) {
- 			f2fs_err(NULL, "inline xattr size is out of range: %u ~ %u",
--				 (u32)MIN_INLINE_XATTR_SIZE, (u32)MAX_INLINE_XATTR_SIZE);
-+				 (u32)MIN_INLINE_XATTR_SIZE,
-+				 (u32)MAX_INLINE_XATTR_SIZE_FOR_BLOCKSIZE(F2FS_MAX_BLKSIZE));
- 			return -EINVAL;
- 		}
- 		ctx_set_opt(ctx, F2FS_MOUNT_INLINE_XATTR_SIZE);
-@@ -1596,6 +1598,8 @@ static int f2fs_check_opt_consistency(struct
-fs_context *fc,
+@@ -5125,12 +5125,6 @@ static int f2fs_fill_super(struct super_block
+*sb, struct fs_context *fc)
  	}
+ 	mutex_init(&sbi->flush_lock);
 
- 	if (ctx_test_opt(ctx, F2FS_MOUNT_INLINE_XATTR_SIZE)) {
-+		int min_size, max_size;
+-	/* set a block size */
+-	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
+-		f2fs_err(sbi, "unable to set blocksize");
+-		goto free_sbi;
+-	}
+-
+ 	err = read_raw_super_block(sbi, &raw_super, &valid_super_block,
+ 								&recovery);
+ 	if (err)
+@@ -5138,6 +5132,14 @@ static int f2fs_fill_super(struct super_block
+*sb, struct fs_context *fc)
+
+ 	sb->s_fs_info = sbi;
+ 	sbi->raw_super = raw_super;
++	init_sb_info(sbi);
 +
- 		if (!f2fs_sb_has_extra_attr(sbi) ||
- 			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
- 			f2fs_err(sbi, "extra_attr or flexible_inline_xattr feature is off");
-@@ -1605,6 +1609,15 @@ static int f2fs_check_opt_consistency(struct
-fs_context *fc,
- 			f2fs_err(sbi, "inline_xattr_size option should be set with
-inline_xattr option");
- 			return -EINVAL;
- 		}
-+		min_size = MIN_INLINE_XATTR_SIZE;
-+		max_size = MAX_INLINE_XATTR_SIZE_FOR_BLOCKSIZE(F2FS_BLKSIZE);
-+
-+		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
-+				F2FS_OPTION(sbi).inline_xattr_size > max_size) {
-+			f2fs_err(sbi, "inline xattr size is out of range: %d ~ %d",
-+				 min_size, max_size);
-+			return -EINVAL;
-+		}
- 	}
++	/* set a block size */
++	if (!sb_set_blocksize(sb, sbi->blocksize)) {
++		f2fs_err(sbi, "unable to set blocksize %u", sbi->blocksize);
++		err = -EINVAL;
++		goto free_sb_buf;
++	}
+ 	sbi->max_atc_write_bio_size = UINT_MAX;
 
- 	if (ctx_test_opt(ctx, F2FS_MOUNT_ATGC) &&
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 6728d1488cad..99c863513725 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -310,7 +310,8 @@ static int read_xattr_block(struct inode *inode,
-void *txattr_addr)
- 		return PTR_ERR(xfolio);
+ 	INIT_WORK(&sbi->s_error_work, f2fs_record_error_work);
+@@ -5217,8 +5219,6 @@ static int f2fs_fill_super(struct super_block
+*sb, struct fs_context *fc)
+ 	if (err)
+ 		goto free_bio_info;
 
- 	xattr_addr = folio_address(xfolio);
--	memcpy(txattr_addr + inline_size, xattr_addr, VALID_XATTR_BLOCK_SIZE);
-+	memcpy(txattr_addr + inline_size, xattr_addr,
-+	       VALID_XATTR_BLOCK_SIZE(inode));
- 	f2fs_folio_put(xfolio, true);
-
- 	return 0;
-@@ -393,7 +394,7 @@ static int read_all_xattrs(struct inode *inode,
-struct folio *ifolio,
- {
- 	struct f2fs_xattr_header *header;
- 	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
--	unsigned int size = VALID_XATTR_BLOCK_SIZE;
-+	unsigned int size = VALID_XATTR_BLOCK_SIZE(inode);
- 	unsigned int inline_size = inline_xattr_size(inode);
- 	void *txattr_addr;
- 	int err;
-@@ -502,7 +503,8 @@ static inline int write_all_xattrs(struct inode
-*inode, __u32 hsize,
-
- 	if (inline_size)
- 		memcpy(inline_addr, txattr_addr, inline_size);
--	memcpy(xattr_addr, txattr_addr + inline_size, VALID_XATTR_BLOCK_SIZE);
-+	memcpy(xattr_addr, txattr_addr + inline_size,
-+	       VALID_XATTR_BLOCK_SIZE(inode));
-
- 	if (inline_size)
- 		folio_mark_dirty(ifolio ? ifolio : in_folio);
-diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index bce3d93e4755..d9e2c65a1fc7 100644
---- a/fs/f2fs/xattr.h
-+++ b/fs/f2fs/xattr.h
-@@ -71,24 +71,29 @@ struct f2fs_xattr_entry {
- 		for (entry = XATTR_FIRST_ENTRY(addr);\
- 				!IS_XATTR_LAST_ENTRY(entry);\
- 				entry = XATTR_NEXT_ENTRY(entry))
--#define VALID_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
-+#define VALID_XATTR_BLOCK_SIZE(i)	(i_blocksize(i) - \
-+					sizeof(struct node_footer))
- #define XATTR_PADDING_SIZE	(sizeof(__u32))
- #define XATTR_SIZE(i)		((F2FS_I(i)->i_xattr_nid ?		\
--					VALID_XATTR_BLOCK_SIZE : 0) +	\
-+					VALID_XATTR_BLOCK_SIZE(i) : 0) +	\
- 						(inline_xattr_size(i)))
- #define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
--						VALID_XATTR_BLOCK_SIZE)
-+						VALID_XATTR_BLOCK_SIZE(i))
-
- #define MAX_VALUE_LEN(i)	(MIN_OFFSET(i) -			\
- 				sizeof(struct f2fs_xattr_header) -	\
- 				sizeof(struct f2fs_xattr_entry))
-
- #define MIN_INLINE_XATTR_SIZE (sizeof(struct f2fs_xattr_header) /
-sizeof(__le32))
--#define MAX_INLINE_XATTR_SIZE						\
--			(DEF_ADDRS_PER_INODE -				\
-+#define MAX_INLINE_XATTR_SIZE_FOR_BLOCKSIZE(blocksize)			\
-+			(((blocksize) - OFFSET_OF_END_OF_I_EXT -	\
-+			SIZE_OF_I_NID - sizeof(struct node_footer)) /	\
-+			sizeof(__le32) -				\
- 			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -	\
- 			DEF_INLINE_RESERVED_SIZE -			\
- 			MIN_INLINE_DENTRY_SIZE / sizeof(__le32))
-+#define MAX_INLINE_XATTR_SIZE(inode)					\
-+			MAX_INLINE_XATTR_SIZE_FOR_BLOCKSIZE(i_blocksize(inode))
- #define DEFAULT_XATTR_SLAB_SIZE	(DEFAULT_INLINE_XATTR_ADDRS *		\
- 				sizeof(__le32) + XATTR_PADDING_SIZE)
-
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index f339f83220f2..18a9abaa879a 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -15,6 +15,8 @@
- #define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
- #define F2FS_MAX_LOG_SECTOR_SIZE	PAGE_SHIFT	/* Max is Block Size */
- #define F2FS_LOG_SECTORS_PER_BLOCK	(PAGE_SHIFT - 9) /* log number for
-sector/blk */
-+#define F2FS_MIN_LOG_BLOCKSIZE		12
-+#define F2FS_MIN_BLKSIZE		4096UL
- #define F2FS_BLKSIZE			PAGE_SIZE /* support only block == page */
- #define F2FS_MAX_BLKSIZE		PAGE_SIZE
- #define F2FS_BLKSIZE_BITS		PAGE_SHIFT /* bits for F2FS_BLKSIZE */
+-	init_sb_info(sbi);
+-
+ 	err = f2fs_init_iostat(sbi);
+ 	if (err)
+ 		goto free_bio_info;
 -- 
 2.53.0
 
