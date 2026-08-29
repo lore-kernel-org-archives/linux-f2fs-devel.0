@@ -4,124 +4,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 30DBBC61DCB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Aug 2026 17:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7D9CC61DBE
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Aug 2026 17:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:MIME-Version:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=bT0cDZiyPLD3ZzJdDs7zqvPZkq8gIxqai7fJdwykha4=; b=UEvBvHCgCDYJwRTrB8OF3JSwT9
-	ADX98sYkR4NPmv5qc300GmkLR+iAQ8blNuCJqko/UwElUzhB8h6k/oKFWQIGn3Mlpj/EdpjaK8jJu
-	5rsagWxy4TSCQuLQclAjudhjnk492n7eUuibxJsMVWMyS2wST8mOuFIwyuQuZf3EC8hU=;
+	Subject:To:Message-ID:Date:References:In-Reply-To:MIME-Version:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=YQUVebXPJH58kcng80G+2NRftJmhzKkfO4UEDt39AHM=; b=bWPFOxNHJGcISv+XgAgnxda2CY
+	0CGIqX7nSgYM5I2YJbnz4pDu5M79UxISIKLFQGd8d0643eFlTLHqPxOPBQo1L1jOlCZl9uBFcinDG
+	JEkmljdieqzUYH1falpNX76eZ8fMe4bIYls8LJ3zivdHPMsljCTzRtWxcOjX3XoOqM8E=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x0NB3-0003VY-CW;
-	Sat, 29 Aug 2026 17:49:10 +0000
+	id 1x0NBs-0003rc-S5;
+	Sat, 29 Aug 2026 17:50:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangxp1998@gmail.com>) id 1x0NB2-0003VS-TB
+ (envelope-from <zhangxp1998@gmail.com>) id 1x0NBT-0003ps-UO
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Aug 2026 17:49:10 +0000
+ Sat, 29 Aug 2026 17:49:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:
- MIME-Version:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zjeV7NCdLgAGDWJtitErfI8jcGCQ5aP6bLcxQ2n9l7s=; b=D5D8uLSLqsngIs4hAuYVA2yQ2h
- n+5dfboiNMzS9jXM9kwIb5pjv13/xmtEAIsirSmAlMWEyUxYHTJiZevg0M60xDXAo8xclEQTDOuyi
- EBSRGacFejGH+tFMiJQH/X/45oHlEvzlHwEoIvSfjmViNCya9h4PbqH2qL9Ck6zn8mIs=;
+ References:In-Reply-To:MIME-Version:From:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=CDNAuQ1kvARivt3maJXFM2kukD8tD7kPodxQeS73Ko0=; b=MhZO0/JEjLZUItqX0glbrZtqwY
+ BCzHEJQlf8iV87jdU5A5VTxq4kHEYGFfBt1LhYvA9IpGUTUpwVwaZpoPe2QhQaxV9n/GCBMq0GXmv
+ hAJuHNuRqBs4Px7/7b6HQKkQuOeWjhDvNsn601+xsdN3G3BoDyQ3xgeEdHLhbrYS0HkI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:MIME-Version:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=zjeV7NCdLgAGDWJtitErfI8jcGCQ5aP6bLcxQ2n9l7s=; b=X
- wzu87LzhFH248QoA/nNXPlbJ97F0pbS/IezwjopnXnOB7Rsx2iLeVzgeaprU2OGg1iE7CUqxyXrMx
- 4EkfWznh0V0IpqNENkB3LOVoUJesoJYdsREpwOnlbjDGMSSuwIFKB3YiBxL8uGCYyUFW1ptUDYosR
- cofp4AlSjYTAl+vE=;
-Received: from mail-ed1-f47.google.com ([209.85.208.47])
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:References:In-Reply-To:
+ MIME-Version:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=CDNAuQ1kvARivt3maJXFM2kukD8tD7kPodxQeS73Ko0=; b=d67XNCJJOMy3nEcoID0FpNveV5
+ 2NA7b4UhdOf+sYkcoufyjv5A1o8s9o/ij6NpJGxbzw6eVmYpGewlrqCbRlzsiro8VM7GfG3ZwoTcY
+ 6ojUyTKVpwBF0vDeL0u34+mx0eaqBho914St7DFW4itP0CBGTehUOaaIY7YiX9lldERg=;
+Received: from mail-ed1-f41.google.com ([209.85.208.41])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x0NAz-0005vJ-IU for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Aug 2026 17:49:10 +0000
-Received: by mail-ed1-f47.google.com with SMTP id
- 4fb4d7f45d1cf-6a6143cca69so2876506a12.3
+ id 1x0NBP-0005vv-VM for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 29 Aug 2026 17:49:37 +0000
+Received: by mail-ed1-f41.google.com with SMTP id
+ 4fb4d7f45d1cf-6a20319d030so2635870a12.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 29 Aug 2026 10:49:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788025743; cv=none;
+ Sat, 29 Aug 2026 10:49:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788025769; cv=none;
  d=google.com; s=arc-20260327;
- b=UcuSCYeuuVtC9OYIxp4E4VLjJT6Tt4BhDtR6Vs+DKdD8sEZv501vYx4mNKi8kKPyot
- RoldSrWPI4Gh2tJy2rEbzhFzJZ33eT083MnqmBEWuyNDCOkmDmRfGz98cYLif7MncP1H
- lLK72DQ0/ZDowT062eB8eXHnJSlhUX48psE/oFDTZhN/ZkFRnBGJKn7uh21iLvv1mY2N
- 4fza/M+d0cqIXao+0Cu2vMgVKOmg8akYNaJilVNJcbynlNhYxDBKkGm94uEW1mpwbkUP
- SvIvO60bF6MrzyqJs3cwO/PLSqtCACSczGc4kWf+Z9p1SnCU8eU0xLecc7E5FKaiNQqj
- xeBw==
+ b=HD2Egp87l0TMgdP5RohxGMacGWNXfsfIxy7qrHn7hAKeWlhcnDJyoa20n1G/Y3cC81
+ hhzH/DTM8XnaHLXZpKahDwsY/WXYXIf822bt0ocOP5oxnooudmn8PdGr9TvTwKZG9nLH
+ InsgHEKzn6EdBSO8BOt0KY3wEuf959vMRuedKqxpOol2pub+xOKvSI9oaAFLFWPoisPK
+ vEIO/2ncg1pO++0L10n4brlfkLWe/UOPMN7OL5Hyg2VkaVdUviillYv6NedSqbk26eug
+ 8K6GYJaXCeJvUINw7HJbOsD+kT+l+TvwjoTFdcD0wfUcZf+YMr4dMox52uHgwQdaF2dG
+ x4Ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
- h=cc:to:subject:message-id:date:mime-version:from:dkim-signature;
- bh=zjeV7NCdLgAGDWJtitErfI8jcGCQ5aP6bLcxQ2n9l7s=;
+ h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
+ :from:dkim-signature;
+ bh=CDNAuQ1kvARivt3maJXFM2kukD8tD7kPodxQeS73Ko0=;
  fh=xQlrTCtbZS9AeHiZIznQSf0O/ILYiLS8eBp4kjanibk=;
- b=XH6txgNJWm25MBe1S3AFLcZHQ4WTCb4UV3H647KMm7Z6LTnbDpRW6dsLNmtRzClHxh
- DFDUzpjuGVOIBTKfoB02LumET/Pu3EGQmDjiToFzXxzcSwwgzRQqX4e7tY6RXbnIq+pu
- 8DClpSLynDaf8TWen0fSmzRuR4DPztCo+i/N+4SnV0uNaWf6Ap+vOUyanX6YJQGuLt4v
- /Q9/Zg5f6Zsj/qRi8irykt++GduRnL6hm8DoQblEdaXP+YvId5bSUOvYHm0GldktezEf
- vlv+nL+baz59K0R5+7BROHL45xxLYAMqbZLkXn2j7MvZySZPDjFRXqWFuwzQ36/5YT1d
- tc0w==; darn=lists.sourceforge.net
+ b=NQiMKHD3y1psMDD/H8xceEO9Rqx9l83tqxfz3riSLcPSlJbbco/gwGm3Od3QReYU6s
+ TEywXwbPxK3wLu4dbdMGJbCn0lqtURnqT6aAXVwiaLGdtrn6QWFj7TtVV03TxcXzB6Gx
+ 1kGStBiBhS/l+KTlrA9oXR6XsecoUqWdblu7kqKZ9mfsyXmX0U312WeJGWmTszaPQHf9
+ 7YzUpV9ApCFHn1T3CwKJAsPDi/BJkz0SpbEVQZ3ndkrHGVx4oYzmJNM8XHBmz5/FGXzY
+ 5EEHxSFPCaPbt7NS1Ojr/HRwjItV4VQbJyNeOZqYvMq3GAIXGt23o15Z/oGhLdOSasvO
+ O79w==; darn=lists.sourceforge.net
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788025743; x=1788630543; darn=lists.sourceforge.net;
- h=content-type:cc:to:subject:message-id:date:mime-version:from:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=zjeV7NCdLgAGDWJtitErfI8jcGCQ5aP6bLcxQ2n9l7s=;
- b=EYk/UthRIHVo/9vEz/K+Z02H6L7v0yjbqmZiv2TQ3R93JkAQMy4+G32cqdVzJvVjXa
- j+uPKgeLzxDPbt5WCk2rvtjdbzKIUg6JlAPfXDDqIXBiFLcEbCrc6no5fxVpNo8iLR2R
- USHQR8Hol7+ja6xQl337Chd1RtOzk0/YN8SvPbn7LtGgtXHzUA8xQpfFbn5toPJWDpVF
- K1lGUAMKYefVoEd8Q1irCzTZt7GB4/rJLofcHgiuj9yjZLOIu2c06OvT1xK/5ZOJJ222
- 7MuajbsqME7a+2VtyQpBl3uKsRsqIh/7/jz1m3HLdx0SGCaQ9NhhQcpwGPMuLnouDbsi
- l/Jg==
+ d=gmail.com; s=20251104; t=1788025769; x=1788630569; darn=lists.sourceforge.net;
+ h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+ :mime-version:from:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=CDNAuQ1kvARivt3maJXFM2kukD8tD7kPodxQeS73Ko0=;
+ b=jhxeYbYyK/Ae5RKRTdV2w5JhzKSQ9iD9LZ6bzNfEsfxF+U2LDDHabbDuB8jwd0BCfW
+ zd8nfWg84emSotTm/jYRoKC5z4GOtCaiah7JwsQc/SMQz0F58nygxVAWioMDlh+YCoqV
+ S5bOh1AacJ4nt79CnXeAI++KyUL5HIu81WF1wPeq9UCMepveIbGZ1vRskeqIPk82q6RS
+ ddXgnnlohCERI4c5Kw9j+qp0MYwPhYGbDUQzDz8RHhfhp+PIt9IsjHFLqIoZiz3l7OKW
+ xNSPKRafUxYxhMIkw79tgjhZVSPN6gTT6bsu70JLn/VgjjljGG0F1joqUiMkIakGcTVX
+ jWaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788025743; x=1788630543;
- h=content-type:cc:to:subject:message-id:date:mime-version:from
- :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to:content-type;
- bh=zjeV7NCdLgAGDWJtitErfI8jcGCQ5aP6bLcxQ2n9l7s=;
- b=BucXQG4UbAMQvDdo0br+StqhyEoaVBkV4e1NoeuhdvmDde0cu2vW0jMxk9OyT4JoLe
- MuZa2vy4IM9KP88SHS0T3Jp2TxF4xzR3ENOAeWQE/yYY1WnaDJVBNvHsdz4/RLfwJRHD
- IPq2prq378lsLxrPvzwNzbrUvZlJ1eNLW0Vz5WL1+fRlMdcqqRr1s1Jyd/Vb8kxIApBy
- y5BD9+y4SqrYqMwjKOLa8XcHLFAWSH70uV+R/ZNzSiz76bc4GQ/r6ZWtNOT4L04ITRhM
- m3U0QfP7H+8dRxXGMPci50CPE2l53g+f51iL207dS4ZZzNPdC73Wqaj7+bnODrjn3tTh
- bdIg==
-X-Gm-Message-State: AFuF++lXMyt3xp7jXgDu2n+dTlECI2N3Tvsb/Mjvjpo51T6XvIYTetj6
- rdyYXeZZ1nFTmRTToixhcg9EFmbwwYy8sG9cD569tepDVDNFprVbg26HX0n6BolY5H/xRXCtG3T
- DMzrFCez2ppwMOMM60n87+28vSRsgpKrYZnP0
-X-Gm-Gg: AYBFou0LeqKUFns9f2jrqgSLC+jcxnOxPKk4F5iZqkcC/8TygzThVVfUAi8gxK2TeMS
- KGd1mrJqyJyPTpTckI2aC5xdrD/7cv5GtfDdC6n0zNC6w0zi7NtXpfv1SFQC+JK7bx7U6Th7KR4
- 6oli4y4tARzeMJUpzZq5gNHSB+dEMGQhM8tI7GphoGceQBs+4jn+XGuiPMHR7/EKspWv8R9c6gg
- 8s/r9p1HsWayj0WIsuvR4A40d8LfQz7GceBWBxN+9kSl4+VicF2NY3egwoAyB3dZK0pPh74iuIN
- hKygyRpiVgeE2v0kG1sC3J8UDQ7zFKyoRHS7TnFx3YOffcGmERsYZ/eF7eSOn6UiFHtmIkFhVmd
- unEu1zAb6gXxQ
-X-Received: by 2002:a05:6402:c2d4:b0:6a6:d40:6d16 with SMTP id
- 4fb4d7f45d1cf-6a60d406e0amr8037773a12.6.1788025742752; Sat, 29 Aug 2026
- 10:49:02 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1788025769; x=1788630569;
+ h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+ :mime-version:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=CDNAuQ1kvARivt3maJXFM2kukD8tD7kPodxQeS73Ko0=;
+ b=Epn4FJYcuf4/kAH9pwcbruxOd2MlvPtxTNtXnahCOljcewyn1aG5SNaufoMuk9U76P
+ 4/yMF9194D2FwjgZ7Wng1kTu2VhGpVg1SlKVpg1i6qhB56iLfKUzyPFd3q4UUb/KwdnV
+ LEQHm+8rm8wxJe60MWB9UjgPJnuCmwnHI0ApVLGLjGXWeZZbFA+Sxq7Ar/2Tmfxe5FFT
+ E1YcLMkZwsiDdIF4CAQ3jPdWLNprUensxgzNNNDOJdX5TVfEHb5dq01B3i6qwwgyHYkB
+ jn47L/m0jjqHud+MRDmDkRGUgtlUxbx8D7SYWG9JSMiCO24HGcRGHI8IAB2X8/t+HzX+
+ bsNg==
+X-Gm-Message-State: AFuF++k9/ERsBFyqPXdOfWnCJDL0PnBqAjfpsKbLT6W/GeoOLt3TTru0
+ HTes6C+xYbcHn+iyKxbfhFm2SJfeebOdiwfLy4x/c1e1k12a5sY5aj89PhWwOC65pJQ2O6xtKzT
+ wHMkcploz/bSQp60FKCWR86vgxR/B9lFMaCAOnMo=
+X-Gm-Gg: AYBFou2JrYG8tiprwYANirVlspWoe/wyFI114+NeKG8Rbfdm8efM6k1cHiQUipS1zo5
+ J81QG+bte5HW+WazEl0UAb87uULVLBQKKX1kKHCWstTJSes9QKZKfhOCsIZKZsdBzAMsBlOL/BH
+ VOALn/izgd9p3jPBNOK7ZP5bewtsItQZ7Tb4aqX3lHlJ87TmT0P9Ga8zOUv5M35OiIFdAFDzbad
+ YGmAPpso6BxqiqrDM4aeF26y6xbkbczRabUUHjLCI2I5DbGSZa70dEP8pCOIPMVCMxTcRzhhKlE
+ GNVi1UyN/MiiqCyWA5O1jwNinTZcpxIMATLUVXshS8a6//ugcZZMkoZGTKiEC+4/2GIuH8ZXG+C
+ uhsddOVYX4SUE
+X-Received: by 2002:a05:6402:510f:b0:6a0:9c84:ce0e with SMTP id
+ 4fb4d7f45d1cf-6a60d3c6ff5mr9739115a12.14.1788025768872; Sat, 29 Aug 2026
+ 10:49:28 -0700 (PDT)
 Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 29 Aug 2026 10:49:01 -0700
+ HTTPREST; Sat, 29 Aug 2026 10:49:27 -0700
 Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 29 Aug 2026 10:49:01 -0700
+ HTTPREST; Sat, 29 Aug 2026 10:49:27 -0700
 From: Xinping Zhang <zhangxp1998@gmail.com>
 MIME-Version: 1.0
-Date: Sat, 29 Aug 2026 10:49:01 -0700
-X-Gm-Features: AcwNN1UxYcFtMsRCZ2QxoFaPr_61cYZppUzVUR8sFKE168lb2ME5_XzR8EnEYfY
-Message-ID: <CAH=xXfHWW_J92z3YgvoLSx8+z6rekq=p2kiP15KE9=2+Ju2RjQ@mail.gmail.com>
+In-Reply-To: <CAH=xXfHWW_J92z3YgvoLSx8+z6rekq=p2kiP15KE9=2+Ju2RjQ@mail.gmail.com>
+References: <CAH=xXfHWW_J92z3YgvoLSx8+z6rekq=p2kiP15KE9=2+Ju2RjQ@mail.gmail.com>
+Date: Sat, 29 Aug 2026 10:49:27 -0700
+X-Gm-Features: AcwNN1UtaWo5RFBz8_YUtnUMZmiqc4PMrU4bd1rdJLB76IQD6dqlVnRejvHYQMg
+Message-ID: <CAH=xXfFgcYQOegSYqeov+0zPXh=nKw3Uts+5b5eQM6ns1saSeA@mail.gmail.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1x0NAz-0005vJ-IU
-Subject: [f2fs-dev] [PATCH v2 00/11] f2fs: prepare metadata layouts for
- runtime block sizes
+X-Headers-End: 1x0NBP-0005vv-VM
+Subject: [f2fs-dev] [PATCH v2 02/11] f2fs: describe SIT block layout
+ dynamically
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -138,74 +141,244 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-F2FS currently describes several on-disk metadata layouts and filesystem
-geometry values with constants derived from PAGE_SIZE or a fixed 4KB block
-size.  This series derives those values from the mounted filesystem's block
-size instead, as preparation for supporting filesystem blocks smaller than
-PAGE_SIZE.
+An SIT block consists of an on-disk array of struct f2fs_sit_entry elements
+whose total capacity depends on the filesystem block size. The existing
+fixed SIT_ENTRY_PER_BLOCK macro hardcodes a 4KB block size.
 
-The patches initialize sb_info early, describe the SIT, NAT, orphan, dentry,
-node, and xattr layouts dynamically, parameterize sector/byte/block
-conversion helpers, and derive node-tree geometry at runtime.
+Convert the entries array in struct f2fs_sit_block into a C flexible array
+member, and calculate sbi->sit_entries_per_block dynamically in
+init_sb_info().
 
-This series does not relax the block-size mount check or enable subpage I/O.
-It is intended to be a behavior-preserving refactoring for currently
-supported 4KB-block filesystems.
+Parameterize SIT indexing helpers (SIT_ENTRY_PER_BLOCK, SIT_BLOCK_OFFSET,
+SIT_BLK_CNT, and f2fs_start_segno) to take struct f2fs_sb_info *sbi, and
+update all call sites across segment management, checkpointing, and mount.
 
-Changes since v1:
-- rebase onto f2fs/dev at c966d29e01bb
-- drop the unrelated free-NID underflow fix from this series
-- split the preparatory changes into 11 focused patches
-- initialize sb_info earlier and describe the xattr layout explicitly
-- separate sector, byte/block, and block-size macro parameterization
-- update commit messages and address checkpatch warnings
+This is a layout-only change; valid 4KB filesystems retain identical
+runtime geometry and behavior.
 
-v1: https://lore.kernel.org/linux-f2fs-devel/CAH=xXfFVAwQ3r_NdUDtmXhtg6Lw8kDWoNTzGL5oy4mwHMsJLJw@mail.gmail.com/
+Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
+---
+ fs/f2fs/checkpoint.c    |  2 +-
+ fs/f2fs/f2fs.h          |  3 +++
+ fs/f2fs/segment.c       | 15 ++++++++-------
+ fs/f2fs/segment.h       | 22 +++++++++++++---------
+ fs/f2fs/super.c         |  4 +++-
+ include/linux/f2fs_fs.h |  9 ++++++---
+ 6 files changed, 34 insertions(+), 21 deletions(-)
 
-Tested with:
-- x86_64 F2FS build at every patch
-- arm64 16KB-page F2FS build at the series tip
-- scripts/checkpatch.pl --strict (no errors or warnings)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 4b59f30ef45d..47c4a5c83a70 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -487,7 +487,7 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi,
+block_t start, int nrpages,
+ 				goto out;
+ 			/* get sit block addr */
+ 			fio.new_blkaddr = current_sit_addr(sbi,
+-					blkno * SIT_ENTRY_PER_BLOCK);
++					blkno * SIT_ENTRY_PER_BLOCK(sbi));
+ 			break;
+ 		case META_SSA:
+ 		case META_CP:
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 16720f1f0a9c..035863d513ab 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1863,6 +1863,7 @@ struct f2fs_sb_info {
+ 	unsigned int log_sectors_per_block;	/* log2 sectors per block */
+ 	unsigned int log_blocksize;		/* log2 block size */
+ 	unsigned int blocksize;			/* block size */
++	unsigned int sit_entries_per_block;	/* SIT entries in a block */
+ 	unsigned int root_ino_num;		/* root inode number*/
+ 	unsigned int node_ino_num;		/* node inode number*/
+ 	unsigned int meta_ino_num;		/* meta inode number*/
+@@ -2251,6 +2252,8 @@ static inline struct f2fs_sb_info
+*F2FS_F_SB(const struct folio *folio)
+ 	return F2FS_M_SB(folio->mapping);
+ }
 
-Kelvin Zhang (11):
-  f2fs: initialize sb_info early in f2fs_fill_super
-  f2fs: describe SIT block layout dynamically
-  f2fs: describe NAT block layout dynamically
-  f2fs: describe orphan block layout dynamically
-  f2fs: describe dentry block layout dynamically
-  f2fs: describe {i,d,id}node block layout dynamically
-  f2fs: describe xattr block layout dynamically
-  f2fs: parameterize sector conversion macros
-  f2fs: parameterize byte and block conversion macros
-  f2fs: parameterize block size and mask macros
-  f2fs: describe node tree geometry dynamically
++#define SIT_ENTRY_PER_BLOCK(sbi)	((sbi)->sit_entries_per_block)
++
+ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
+ {
+ 	return (struct f2fs_super_block *)(sbi->raw_super);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1e7e745be71d..b3bf1b62cdad 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4708,7 +4708,7 @@ static struct folio *get_next_sit_folio(struct
+f2fs_sb_info *sbi,
+ 	seg_info_to_sit_folio(sbi, folio, start);
 
- fs/f2fs/checkpoint.c    |  75 ++++++++++--------
- fs/f2fs/data.c          |  85 +++++++++++---------
- fs/f2fs/debug.c         |   4 +-
- fs/f2fs/dir.c           |  51 ++++++------
- fs/f2fs/extent_cache.c  |   6 +-
- fs/f2fs/f2fs.h          | 122 +++++++++++++++++++++-------
- fs/f2fs/file.c          |  84 +++++++++++---------
- fs/f2fs/gc.c            |  27 ++++---
- fs/f2fs/inline.c        |  11 ++-
- fs/f2fs/inode.c         |  22 +++---
- fs/f2fs/node.c          | 171 +++++++++++++++++++++-------------------
- fs/f2fs/node.h          |  89 +++++++++++----------
- fs/f2fs/recovery.c      |   4 +-
- fs/f2fs/segment.c       |  60 +++++++-------
- fs/f2fs/segment.h       |  32 ++++----
- fs/f2fs/shrinker.c      |   2 +-
- fs/f2fs/super.c         |  83 +++++++++++++------
- fs/f2fs/sysfs.c         |  10 +--
- fs/f2fs/verity.c        |   6 +-
- fs/f2fs/xattr.c         |  10 ++-
- fs/f2fs/xattr.h         |  15 ++--
- include/linux/f2fs_fs.h | 131 ++++++++++++++++--------------
- 22 files changed, 636 insertions(+), 464 deletions(-)
+ 	folio_mark_dirty(folio);
+-	set_to_next_sit(sit_i, start);
++	set_to_next_sit(sbi, sit_i, start);
 
+ 	return folio;
+ }
+@@ -4747,10 +4747,11 @@ static void adjust_sit_entry_set(struct
+sit_entry_set *ses,
+ 	list_move_tail(&ses->set_list, head);
+ }
 
-base-commit: c966d29e01bbf829f8bb4a39a49811c56cdb49c3
+-static void add_sit_entry(unsigned int segno, struct list_head *head)
++static void add_sit_entry(struct f2fs_sb_info *sbi, unsigned int segno,
++		struct list_head *head)
+ {
+ 	struct sit_entry_set *ses;
+-	unsigned int start_segno = START_SEGNO(segno);
++	unsigned int start_segno = f2fs_start_segno(sbi, segno);
+
+ 	list_for_each_entry(ses, head, set_list) {
+ 		if (ses->start_segno == start_segno) {
+@@ -4775,7 +4776,7 @@ static void add_sits_in_set(struct f2fs_sb_info *sbi)
+ 	unsigned int segno;
+
+ 	for_each_set_bit(segno, bitmap, MAIN_SEGS(sbi))
+-		add_sit_entry(segno, set_list);
++		add_sit_entry(sbi, segno, set_list);
+ }
+
+ static void remove_sits_in_journal(struct f2fs_sb_info *sbi)
+@@ -4793,7 +4794,7 @@ static void remove_sits_in_journal(struct
+f2fs_sb_info *sbi)
+ 		dirtied = __mark_sit_entry_dirty(sbi, segno);
+
+ 		if (!dirtied)
+-			add_sit_entry(segno, &SM_I(sbi)->sit_entry_set);
++			add_sit_entry(sbi, segno, &SM_I(sbi)->sit_entry_set);
+ 	}
+ 	update_sits_in_cursum(journal, -i);
+ 	up_write(&curseg->journal_rwsem);
+@@ -4843,7 +4844,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info
+*sbi, struct cp_control *cpc)
+ 		struct folio *folio = NULL;
+ 		struct f2fs_sit_block *raw_sit = NULL;
+ 		unsigned int start_segno = ses->start_segno;
+-		unsigned int end = min(start_segno + SIT_ENTRY_PER_BLOCK,
++		unsigned int end = min(start_segno + SIT_ENTRY_PER_BLOCK(sbi),
+ 						(unsigned long)MAIN_SEGS(sbi));
+ 		unsigned int segno = start_segno;
+
+@@ -5008,7 +5009,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 	sit_i->written_valid_blocks = 0;
+ 	sit_i->bitmap_size = sit_bitmap_size;
+ 	sit_i->dirty_sentries = 0;
+-	sit_i->sents_per_block = SIT_ENTRY_PER_BLOCK;
++	sit_i->sents_per_block = SIT_ENTRY_PER_BLOCK(sbi);
+ 	sit_i->elapsed_time = le64_to_cpu(sbi->ckpt->elapsed_time);
+ 	sit_i->mounted_time = ktime_get_boottime_seconds();
+ 	init_rwsem(&sit_i->sentry_lock);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 5949aa5200ac..534e376cbc92 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -102,12 +102,15 @@ static inline void sanity_check_seg_type(struct
+f2fs_sb_info *sbi,
+
+ #define SIT_ENTRY_OFFSET(sit_i, segno)					\
+ 	((segno) % (sit_i)->sents_per_block)
+-#define SIT_BLOCK_OFFSET(segno)					\
+-	((segno) / SIT_ENTRY_PER_BLOCK)
+-#define	START_SEGNO(segno)		\
+-	(SIT_BLOCK_OFFSET(segno) * SIT_ENTRY_PER_BLOCK)
++#define SIT_BLOCK_OFFSET(sbi, segno)				\
++	((segno) / SIT_ENTRY_PER_BLOCK(sbi))
++static inline unsigned int
++f2fs_start_segno(struct f2fs_sb_info *sbi, unsigned int segno)
++{
++	return SIT_BLOCK_OFFSET(sbi, segno) * SIT_ENTRY_PER_BLOCK(sbi);
++}
+ #define SIT_BLK_CNT(sbi)			\
+-	DIV_ROUND_UP(MAIN_SEGS(sbi), SIT_ENTRY_PER_BLOCK)
++	DIV_ROUND_UP(MAIN_SEGS(sbi), SIT_ENTRY_PER_BLOCK(sbi))
+ #define f2fs_bitmap_size(nr)			\
+ 	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
+
+@@ -424,7 +427,7 @@ static inline void seg_info_to_sit_folio(struct
+f2fs_sb_info *sbi,
+ 	struct f2fs_sit_block *raw_sit;
+ 	struct seg_entry *se;
+ 	struct f2fs_sit_entry *rs;
+-	unsigned int end = min(start + SIT_ENTRY_PER_BLOCK,
++	unsigned int end = min(start + SIT_ENTRY_PER_BLOCK(sbi),
+ 					(unsigned long)MAIN_SEGS(sbi));
+ 	int i;
+
+@@ -869,7 +872,7 @@ static inline pgoff_t current_sit_addr(struct
+f2fs_sb_info *sbi,
+ 						unsigned int start)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+-	unsigned int offset = SIT_BLOCK_OFFSET(start);
++	unsigned int offset = SIT_BLOCK_OFFSET(sbi, start);
+ 	block_t blk_addr = sit_i->sit_base_addr + offset;
+
+ 	f2fs_bug_on(sbi, !valid_main_segno(sbi, start));
+@@ -894,9 +897,10 @@ static inline pgoff_t next_sit_addr(struct
+f2fs_sb_info *sbi,
+ 	return block_addr + sit_i->sit_base_addr;
+ }
+
+-static inline void set_to_next_sit(struct sit_info *sit_i, unsigned int start)
++static inline void set_to_next_sit(struct f2fs_sb_info *sbi,
++				   struct sit_info *sit_i, unsigned int start)
+ {
+-	unsigned int block_off = SIT_BLOCK_OFFSET(start);
++	unsigned int block_off = SIT_BLOCK_OFFSET(sbi, start);
+
+ 	f2fs_change_bit(block_off, sit_i->sit_bitmap);
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2d9f5b77f815..4bd1c9fb1f7f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4329,7 +4329,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+
+-	sit_blk_cnt = DIV_ROUND_UP(main_segs, SIT_ENTRY_PER_BLOCK);
++	sit_blk_cnt = DIV_ROUND_UP(main_segs, SIT_ENTRY_PER_BLOCK(sbi));
+ 	if (sit_bitmap_size * 8 < sit_blk_cnt) {
+ 		f2fs_err(sbi, "Wrong bitmap size: sit: %u, sit_blk_cnt:%u",
+ 			 sit_bitmap_size, sit_blk_cnt);
+@@ -4382,6 +4382,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 		le32_to_cpu(raw_super->log_sectors_per_block);
+ 	sbi->log_blocksize = le32_to_cpu(raw_super->log_blocksize);
+ 	sbi->blocksize = BIT(sbi->log_blocksize);
++	sbi->sit_entries_per_block = sbi->blocksize /
++		sizeof(struct f2fs_sit_entry);
+ 	sbi->log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
+ 	sbi->blocks_per_seg = BIT(sbi->log_blocks_per_seg);
+ 	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index bb2b6cd5d507..324427cc29dc 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -396,8 +396,6 @@ struct f2fs_nat_block {
+  * Not allow to change this.
+  */
+ #define SIT_VBLOCK_MAP_SIZE 64
+-#define SIT_ENTRY_PER_BLOCK (F2FS_BLKSIZE / sizeof(struct f2fs_sit_entry))
+-
+ /*
+  * F2FS uses 4 bytes to represent block address. As a result, supported size of
+  * disk is 16 TB for a 4K page size and 64 TB for a 16K page size and it equals
+@@ -424,8 +422,13 @@ struct f2fs_sit_entry {
+ 	__le64 mtime;				/* segment age for cleaning */
+ } __packed;
+
++/*
++ * The on-disk SIT block is a filesystem-block-sized array of SIT entries.
++ * Its entry count depends on the filesystem block size, so it must be
++ * calculated by the caller rather than implied by this C structure.
++ */
+ struct f2fs_sit_block {
+-	struct f2fs_sit_entry entries[SIT_ENTRY_PER_BLOCK];
++	struct f2fs_sit_entry entries[];
+ } __packed;
+
+ /*
 -- 
 2.53.0
 
