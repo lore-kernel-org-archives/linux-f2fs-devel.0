@@ -4,108 +4,166 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B475AC624C6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 22:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78C18C61DFD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 23:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+FyjxajGau9RaAGCJNABayE+lDQS/uQjZknyvg6NNik=; b=c+0p5njxq5XPka99d6+CnRHsEn
-	rCOiMF5mg+ntlbQf9Ym7eSlwhlqVsb/tZzMC5ZAc/cBxfNVZuGO+Y7dTysWj3eDwJEFGfojz9W+72
-	LO96WKfvfJ4uN8JDi3a+RggAnL0HcKbq6A0LH6w48T38ZiydBQTpuB91zUb06/tZzHDo=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:To:In-Reply-To:References:
+	Message-Id:Date:Sender:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=C+aJF1yL1SYm5OjemAHN2MgbLhI0AP9gxM0F5sSdwIs=; b=blvvISgosEI+FopDZHFhulQV0/
+	kvsbR5ZUL8hMhp4RJePQzIxNRkR/QfLxzHpPGlrUeS7IXsPD5NUah1JcFKBNHpbTABdP9QtBBrU8G
+	tdOxQYPH3BSvrDnJQflAvsQqR0RY5JBy1BiEDPr2U51C3AvgfuvdqDzwsj+k8RbOD0ss=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1ABA-0005p3-CY;
-	Mon, 31 Aug 2026 22:08:36 +0000
+	id 1x1Azv-0002QC-2I;
+	Mon, 31 Aug 2026 23:01:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangxp1998@gmail.com>) id 1x1AB7-0005od-0t
+ (envelope-from <ziy@nvidia.com>) id 1x1Azt-0002Q0-LX
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 22:08:33 +0000
+ Mon, 31 Aug 2026 23:01:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=MIME-Version:Cc:To:In-Reply-To:References:
+ Message-Id:Content-Transfer-Encoding:Content-Type:Subject:Date:From:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=OPJDDJcKa9lvexi7Wypu3m0WvDuY+EowhGLAL4uORvw=; b=YPIQeQBIlPKEFtD00VzEr70m2G
+ zSQSq9DnRwFrxtextUKP6O+5bDd5vK98YAdmz/oVy23NlM1rsGKrhP8CSVdPbe51nJ7M/gHUfldyX
+ N06wwSpXr3B1zwvos9Zbx9b9snr19/lVHKC5Lva9YLb5eP6OjI3LbJLgkisgyREGH1Ao=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ; h=MIME-Version:Cc:To:In-Reply-To:References:Message-Id:
+ Content-Transfer-Encoding:Content-Type:Subject:Date:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pzD6Qgco6utzkju+m2uoC36z1vRssf5I1H5k3p9Aq34=; b=WxKLA6BcO4sMGeBWf5cRcZ0dM7
- kf0Ug6O+j1FxaL9gyCvotLCohmAVInztgxf0kU8fGHhFZ/N8I+nvBgc9TkxxOjFtiWrj+Ws4GqQyF
- nz93eJ1Y5cJPsUwwYAhbJO+swXgCm7Xq0fwNJIAjxCW/z1pWJM1w4AK6g6MulmXOje4Q=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=pzD6Qgco6utzkju+m2uoC36z1vRssf5I1H5k3p9Aq34=; b=D98p0QAfiZlH7Uqu2V4yrkqXMH
- 1TeJifbn7UGIcsR0QIxTBj+1SnpviEyi5TOEco6bZXFpDFKCx7kzSoFHsF4eC5cAeEEFSdSLPvRDw
- Z1BEBL7C0Aun7C48svubEZIvYYHe7qQZ2s/CYNbrd5BLdmBxkef1uyEHpqCbaEVf79B4=;
-Received: from mail-pj1-f44.google.com ([209.85.216.44])
+ bh=OPJDDJcKa9lvexi7Wypu3m0WvDuY+EowhGLAL4uORvw=; b=m5vl7b2l8Im2NPHMXdSfnb3dN5
+ t9hhVynpYTKJr1J4tf11zVhU2MExZb5vUBwC8ETQFeiR1G2tQB25T5QvbNnczhRQNsPVBGGio6Edz
+ c1GtHabHpRlXKwCg++k/0gGbIVZ/IxhLzlHoFoJBKxCXmKvOOQhFkXaF7yUGzCYNvz88=;
+Received: from mail-eastus2azon11010009.outbound.protection.outlook.com
+ ([52.101.56.9] helo=BN1PR04CU002.outbound.protection.outlook.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x1AB5-0004rA-Lb for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 22:08:32 +0000
-Received: by mail-pj1-f44.google.com with SMTP id
- 98e67ed59e1d1-38dfe910e9dso4719640a91.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 31 Aug 2026 15:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788214106; x=1788818906; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=pzD6Qgco6utzkju+m2uoC36z1vRssf5I1H5k3p9Aq34=;
- b=eBGEaGW3m31sBxb5XWjEyi7TDiqIM5C2tWgBspMIt0+VcsJEZ+N2/kkx17rLoe/MtV
- MDftLJ2Y/EvX0Hudju+lfpKW9V+jWhABLlr44QZHtnr0J2NpERdPlHqONC0mxjAUaVxa
- GdndJQ9Ek+leUjqWtfgTo0kRMTWIlkFJiOrqCCsczfROTgS5r65Z47h61pDTt/zPA8N0
- tY+xrt/YLsxQK8N5Mqi7qHhT4QiDL8flIVjpByDemilIiG2nq9tkwt/0lDFeqDM14Xj+
- 8dft0PbN6wi1oSWsEHvOuvT10TiAB4gICZfsiwfGEdNqet4wPNrV1qPUbtYsvQZV/wnh
- Vi4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788214106; x=1788818906;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=pzD6Qgco6utzkju+m2uoC36z1vRssf5I1H5k3p9Aq34=;
- b=Qfi656+McAhm1D+jUo8DeBCN8JFGiO+gfVxbUWaJGLZF171CakMbXWS5rG2I7Gj+Un
- w/5WbMB02ayvKRdToZxciR0kkfR8JJKFyvfzbAL1Un4Nv0L6SgreiVjAnudFh/L3wLMW
- VVD6xCzCXgMD7iG39rZRNDbbbMQuOODbNSZF6awfkp4iWqR0tq2C7MvBm0bQDFw8vWKB
- ZfA92y7cy8ZDHK38k7/6ZHJeUDH2CKzdx8QIEQj6MsSjNWD98wU922ji9fKBbC9Lf8GL
- bXEsllDkRjAuUzXkE3JjPQcpgkscsmQ6Np428FQkdaWhk/P5cFcpsSULKU+jFhwLsu7S
- fB/A==
-X-Gm-Message-State: AFuF++mPYc7BjheL3on/p1bMSBRaSzHaKPTYMlct3+NrxoF603RRI8f+
- ixxup65QgWy7MAgdelfUz8twD86hA4OXNCUkMEOZlJEgHi485Lqoy54ERRqmLwXv7JE=
-X-Gm-Gg: AYBFou1+fEiRH6MYJuJ5/RRDA7HqWlYV3TCmTJfJUMdH/cMkrrC7sqi8sTCqVnL2UOn
- 3xJUQuxZLRdG21HrSp5+259buyMdqnsr2TYN1U6pQ7OKhr80w1RcsLulS4P/DyPBwbPSOnTzAsb
- QzICAdklDaQFs7GKU0khA545DkSYl5NhPqH7k9cYnzdbfnQjSqF7U6Gwy5UBFy9hRURdj1yymVO
- DOpksSbJ4i/IMlkRJtf0IPW7QkEhKd1zEX+5aHdWtoBITz13lI+9XZ/1szU2uYRTA/DAt4P7kJQ
- dFOGZikpH9IWyYr+9qoWg5ZVvHaQ5HFGMBSZssnUoFiuZrbaHfmrFp1/SAUQht4OfbHfsq7OwFl
- dbVGVFOxW+SX9oNWIim1SYO/XtRoZcCbOCj3x667VEWybJTmgF4dxhl8BcMbJtDfQ8toZ8A/Njg
- jEbNlqjXAlVF8wvoBW/TcE8VucI/fuORxx+l5JkyVDJ/2CKam4y8wA8cTn43RycP8SqA==
-X-Received: by 2002:a17:90b:384f:b0:396:40e6:f631 with SMTP id
- 98e67ed59e1d1-39907b6759bmr4619796a91.3.1788214105846; 
- Mon, 31 Aug 2026 15:08:25 -0700 (PDT)
-Received: from [127.0.1.1] ([2601:647:4184:b3f0:91a4:c2d8:1d54:21ad])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3990d75b540sm1704841a91.10.2026.08.31.15.08.25
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 31 Aug 2026 15:08:25 -0700 (PDT)
-From: Kelvin Zhang <zhangxp1998@gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 31 Aug 2026 15:08:12 -0700
-Message-ID: <48104cd0c1fb5198a8f48e473ce13c4b89d0b5de.1788213716.git.zhangxp1998@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <cover.1788213716.git.zhangxp1998@gmail.com>
-References: <cover.1788213716.git.zhangxp1998@gmail.com>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x1Azs-0000B3-Lb for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Aug 2026 23:01:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ddbMxkwfQ4sBexT5Wtffmk2NaD8EcxHuURhMU8etJvSFf1tIvdeRQj7+d0Lf2x/OlgU0EIkOFc0u1lvI0DutAC8+kHgXWApf8p55WyRsK+5xuYYoX5SR6PITRg+PBbfcgEveht7ueduv/+d1kkVeHbq9s1n1KmsH8WWNK5kVYSzQSuLds+4LQ59cvFoYkOpb2+oa+oa6zlEE3TiwvwzvGEVqbOXHYBHGejSezjxKR5pkS3E1WHWbK5qlIMg2cTXDa9u/cJUVtpGhtCN+CKSTkiszAcyzw4VHQ5mcpXrwNHhMJbhmb79FSbbspGmrDb2crbdoZsNDhizpEQc0DTGAiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OPJDDJcKa9lvexi7Wypu3m0WvDuY+EowhGLAL4uORvw=;
+ b=AdXMfwAYaQIl6uTt/PkVsIeF1mRd+Dy3VBRxkXdRv0vR4hgMuekizA3zucp8tk6nHqCsI1I/WVH8bObrrSx6h07CTp2p3yef2eDt+j/tcX760f45a2jb0dnG7TEyQzC9i0CABT/zjclVCamI10gRpeEsGwj7vbp2bpUmDutzOJyzMbTJDWW3P6oLOU9ZeGXK66UvQWV2GZoiaRlSTuzPC33d3v11RAp9lOW0RO4Ud/2v87opz2KbXmUUA3oBV6VkB0agFNl92svE9KEGmwXepNrb1xKemhPH5ucj0pXOrfgEo5zqemzSUP5AzhQRJ131HTw+QSbNMyE9x5RIt9dCUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OPJDDJcKa9lvexi7Wypu3m0WvDuY+EowhGLAL4uORvw=;
+ b=j1ymtVBrZKTRb5u7ro5RNr0iGxETNsm2rTaR2VYFnzOuRuh2/ZX9LD7d7AMj+ZylYyK+KFxWKZAB0yh0ivcV75HmWjl55A7nzCHWozvc2hpYqZU275EKpcxhYvRMP0LT9z1O/aV8yxPyqkmEYeM5L85WPMYnRMHELGPPRW0tmeCpghzc+QhZ5RxvC4SNX77KyoycF/yMo8oti/F+U2Io1ixfnxMDeGpK4m1P1u8JFHZa+WJzwhNVMecjfvIKnl68IaTcLktbEQfwl6MQIF9iCrIx/Fg3vsPyNhjH9M7iIg6It1BLHpju5oWGNXeaPxNsAyVNVDSuYH3/RNhzOHQwrg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7)
+ by SA1PR12MB8742.namprd12.prod.outlook.com (2603:10b6:806:373::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.7; Mon, 31 Aug
+ 2026 19:25:50 +0000
+Received: from IA0PR12MB8374.namprd12.prod.outlook.com
+ ([fe80::d85f:4c87:ae84:3f16]) by IA0PR12MB8374.namprd12.prod.outlook.com
+ ([fe80::d85f:4c87:ae84:3f16%5]) with mapi id 15.21.0360.008; Mon, 31 Aug 2026
+ 19:25:50 +0000
+Date: Mon, 31 Aug 2026 15:25:29 -0400
+Message-Id: <20260831-remove-pg_private-v2-6-3668159cd9e8@nvidia.com>
+References: <20260831-remove-pg_private-v2-0-3668159cd9e8@nvidia.com>
+In-Reply-To: <20260831-remove-pg_private-v2-0-3668159cd9e8@nvidia.com>
+To: David Hildenbrand <david@kernel.org>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Muchun Song <muchun.song@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>, 
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, 
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+ Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>, 
+ Gregory Price <gourry@gourry.net>, 
+ Ying Huang <ying.huang@linux.alibaba.com>, 
+ Alistair Popple <apopple@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+ Qi Zheng <qi.zheng@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+ Kairui Song <kasong@tencent.com>
+X-Mailer: b4 0.15.2
+X-ClientProxiedBy: YQBPR01CA0152.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:7e::11) To IA0PR12MB8374.namprd12.prod.outlook.com
+ (2603:10b6:208:40e::7)
 MIME-Version: 1.0
-X-Headers-End: 1x1AB5-0004rA-Lb
-Subject: [f2fs-dev] [PATCH v7 11/11] f2fs: describe node tree geometry
- dynamically
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PR12MB8374:EE_|SA1PR12MB8742:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e44d3d6-7e27-46da-673d-08df0795a8e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|7416014|376014|366016|1800799024|23010399003|56012099006|10067099003|11063799006|22082099003|18002099003|921020;
+X-Microsoft-Antispam-Message-Info: yrYgEWOvIqv0iriZ5z8SvtfyHNzNWThtT8NrOO7iVBrtNSoh9xV/wuHllwTxcK7ShETe5GiC1YWUmPrOfmcaE/mfKN1SbLmg4HHHs9uuEWBftm2HBNrFv3wjQ6mrLnHRv5VnRyuYFS+DUTwl7IrRCbJJaN0kDRVOxqKGMkGShRujTFV+9yZY59OYslZ31RfdzbqouJjneDIcWbF8VUP4aIgyvggB4PkYBVyVqBNNxy9Cn9MyxGAIF77gcph+969EuKiSE+sPoKR2I7T+dORub9+Khr3FNFYRXwlYzkjEdpE6CCz+UHwoWZrZh4yx9oWpqjATW3tQrPhlapbqGczGBRfm5arjz2nDqTLILXFF2Q6UA0OJ5nC+ZQO6FyyxmWtZZp6MW2c+KDq4101y9atBpYBD3r0KqPO08DR7wb+GfpHkwv/hgmUeqfWkY77P7QS7mYtt+QQzNOfL5WKUsJvHndN3g2YLRg93nbRwqyjeDAWbARtLBaF7eDc5gjGmJKOO9MJQFwPac75rrfDrpwzU1U48WDse1H9MryaR9sEdL18qc/IUZwqVCw3xa67WVAlcPj/OcKDAZ3B4bivn1CSY1w63v4l8xllLfZyOHBOXcWtj24w02WJfsRzdOSXIjAvSZ0bo6ZrY7x4sCsShV9RWqjzAskVt1jjtLBSX/1RPefvv8sluJcjgTwAbGs5sWDE9jreN2rfQdKx7vdjdXMQ7fg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA0PR12MB8374.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(7416014)(376014)(366016)(1800799024)(23010399003)(56012099006)(10067099003)(11063799006)(22082099003)(18002099003)(921020);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eWFaUWRLdUlDZ25CamxJcCs1bFNWbGRRdm5OZVFoZUNhR29KeUo3ZmNxeWFE?=
+ =?utf-8?B?bXVqQ2JLSk9jQk1pRW1UYXQyTllPcFlrbG13N1dneWgvSGtJbHBlM1ZGMTZj?=
+ =?utf-8?B?cGhkVUY4K0ZITTVlTDNUWDFLV1ppTE1SNEFuYktyblUrUVFhRXdmejVwWlJr?=
+ =?utf-8?B?dmh0clQxN3J6RXpVSWlNVjFGdkQrcTZiUldBZmxzZDZkTkdNeUlPdFhwd3lm?=
+ =?utf-8?B?QzFhTGVsdzhUWDNrMEtaMVcybmFFMHM3YTFpa2JheHJoWTlIZ1hOQjU3NFZw?=
+ =?utf-8?B?Mm9yeU9rbStwVnpTWEloTU9TditDM1FjM1E5dmgzVkFSeERIYWg4UWhtNklu?=
+ =?utf-8?B?VGFEU3RsRU1lVlJhWjM1anB2YUY1ZE53RkZaNHhrM29KQlk5ay9GbUpNcDZ0?=
+ =?utf-8?B?MDBwcGV3UGFyZnhXaXczK2xldmhRYVJNcXJBM0VRUzBZUVJmVGVtazE5QnpC?=
+ =?utf-8?B?bGdRWmpiQ1pTbXBtSEI4RGNsSFlJdXM5UUc4VWJaeGs2TGxRd2Rmbm5rb2lx?=
+ =?utf-8?B?TjhnblRON1Z4dHdkSlBGK2dnWDVrUEpzS0xZcGxWVGlsQzJhUUkxMlYwM1ll?=
+ =?utf-8?B?My9oQzlKcG5kQzRHa1NyVjlWcHZVMTgzS0xWK2NWd2EwY0E1WFZhbVZsSlhx?=
+ =?utf-8?B?SWY1aGN1YitFTlh2MERHUDBWUkVrTTY4MXlZdGE1SFg4MVp6SlFCYWt4dFN3?=
+ =?utf-8?B?Q0pjYnpSS2FFQnNveVB2cjQ4TktINzlqZVV4L3pNY3FNNHJURWFTL3pDemt6?=
+ =?utf-8?B?ZUFJYUNZd0pUMVd0TnJDck5UQzJHYVRQaVBROXFoTTdOUnJNNDZ4U1l3b09N?=
+ =?utf-8?B?ZWh1d0t6YVdnZnVvWDM0YzJLMENaTFdBNGUzSjRTcXlYSEp1Vy9IejFvenZj?=
+ =?utf-8?B?MDNxWWpnTWhENmNTWnJMRVFueFJRS2Z6OS80UmhoZ3VlRmcvREJXb2dVMHQr?=
+ =?utf-8?B?M3JDNzMwM2hBemFYMjNMUGZXa2hQcnZZV2dNcDVna2JHcktNcnVHMXM0MExB?=
+ =?utf-8?B?b3BBMm13OW0zSmN5cXhTOGdybzR1OWc0Zit5cTl0V3E0SE9lUXdFbG8wa0Z5?=
+ =?utf-8?B?ZWJUcHRQWjNJY1FwQ1FVQTBlUnlaVzk1Zzc3TjFqYWxuM0tHQkVIVUlDUzV4?=
+ =?utf-8?B?T0NhbktsdGcxRUxKdjRNS0NucXI1anhNRUE3L21pWEhSWHdlVzZIME5mdEE3?=
+ =?utf-8?B?L0FLclZTcDNVRTJJVlF1eW5WWU5oRkFaYmtzR1QrV0xrTGJISzIxcU16cTRs?=
+ =?utf-8?B?SHYxWlIraVhWQy90UGhnMWpXaUxra1R0a1c5Vml3NG84dkUyZnlwQkRFUzFT?=
+ =?utf-8?B?NVZsNENUMXlmc0Nia0pjZi82WTBCMDcyQnRDbS9GNTdVejVCZUhlUGxUWkQw?=
+ =?utf-8?B?N1Nwc3NaNXJPL3FJSWtjVmllcDZORURMQ3drb2NWWUxYS2VnVjNyTDhaUHp5?=
+ =?utf-8?B?OFY0dVN4N25Tek5vVHNFT292Yng2bE11OEJNcUpHb01pby95b1dzckE0NlJi?=
+ =?utf-8?B?K1lzOGl5QTJsZWNvdHBOOWhhajBRVEUvQk5sc045cGl0RUxaeGJyd041LzFI?=
+ =?utf-8?B?dnNYbU1OTHdXenVISjdyL2VSUnplbTVZMEFBcUppNGlZMjhqaHd3T2k4WkRL?=
+ =?utf-8?B?aC9SRHpIeTRlL3U3VHk3OFJSUWJSV3BBeFNHdTl5c1VNUFNSd3FQUzZTRnNJ?=
+ =?utf-8?B?NG9wL0VZVm1Ndldjb2FrYVRiM3R3WmluVmRYN1VMK29QNEFiV3d4Z09zKzU1?=
+ =?utf-8?B?T28zcFdIUGxYRktta1U1U2szZnY4bU9IcjZjL1VONzVvbnFIOHVZQWk5SHhX?=
+ =?utf-8?B?dEM1aEhwTExzcFVvNVRPT3FpNTJKK2xBV2xzSzRTRnkvS3p4OGVuMzZ6VjVL?=
+ =?utf-8?B?cUw3bnY4VkdvcVpiY1JLNWNDaEJrbzEzcWxXakZMb0RRMFdiWDNFeHlJTm1W?=
+ =?utf-8?B?a2FseW5GTFY5SVIyc2VGT0lTMVErUlhGclo0MTVSdTZabnM1cHBzTEYxZERX?=
+ =?utf-8?B?dGtUUlVSTTFyb3M2blJUQzdTMVpDMXlLU3kzN0c5M0VjNm9CeXRrcm9makxh?=
+ =?utf-8?B?UU1GRTNtVm05SzB4Ni9lNHM5dUdVYWYwckRLNG50aHFPcmZNRE9XYW8yWDhw?=
+ =?utf-8?B?TG5NeFpmeUtEYUtTYU9xTC9JVVM0cUh6OXk4cDNTWW1BdDdSbjRkTlRNNktQ?=
+ =?utf-8?B?am51dUhTSWRHQ0ZuSlBKUWF2TGkvOVlxb1NtMmNkc1FOM3dHd05tUWR1S0Rs?=
+ =?utf-8?B?dUZCM1RDU3RmOVpsekhkQ0p5VUVFbHV6TFJwTnp4SEZLMGRQVE15cFM1eDBL?=
+ =?utf-8?Q?K2rt57nUk1369xtLxL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e44d3d6-7e27-46da-673d-08df0795a8e8
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8374.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2026 19:25:47.6611 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fK0nlask0fl3Llr8ZeIpXxLcy3oOfUwyXTcL55SHI6Moup45u3qsqZIz9d4/vQkm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8742
+X-Headers-End: 1x1Azs-0000B3-Lb
+Subject: [f2fs-dev] [PATCH v2 06/14] f2fs: stop using PG_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,458 +175,67 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org
+From: Zi Yan via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-mm@kvack.org, Zi Yan <ziy@nvidia.com>, Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The file indexing tree boundaries separating direct, indirect, and
-double-indirect node blocks depend on the number of data block addresses
-and node IDs contained in each node block.
+f2fs sets its PAGE_PRIVATE_* flags in page->private and checking
+page->private != NULL is equivalent to checking PG_private. Change
+PagePrivate() to page_private(). Meanwhile, in set_page_private_##name(),
+page->private is first set to 0/NULL before an PAGE_PRIVATE_* flag is set,
+but it can cause confusion when PG_private is removed and
+page->private != NULL is used instead. Change it to initialize
+page->private to PAGE_PRIVATE_NOT_POINTER instead and retain the original
+semantics.
 
-Parameterize index boundary macros (NODE_DIR1_BLOCK,
-NODE_DIR2_BLOCK, NODE_IND1_BLOCK, NODE_IND2_BLOCK, and NODE_DIND_BLOCK) and
-address capacity helpers (DEF_ADDRS_PER_BLOCK, NIDS_PER_BLOCK,
-cur_addrs_per_inode, addrs_per_page, and addrs_per_folio) with
-struct f2fs_sb_info *sbi.
+It prepares for a future commit that removes PG_private.
 
-Update file mapping, block allocation, truncate, garbage collection,
-and recovery paths to compute indexing tree offsets from the runtime
-geometry.
+No functional change intended.
 
-Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
+Assisted-by: Claude:claude-opus-4-8
+Assisted-by: Codex:gpt-5
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Usama Arif <usama.arif@linux.dev>
+Acked-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- fs/f2fs/f2fs.h          | 19 +++++++++--
- fs/f2fs/gc.c            | 10 +++---
- fs/f2fs/node.c          | 74 +++++++++++++++++++++--------------------
- fs/f2fs/node.h          | 18 ++++++----
- fs/f2fs/super.c         |  6 ++--
- include/linux/f2fs_fs.h | 18 ++--------
- 6 files changed, 77 insertions(+), 68 deletions(-)
+ fs/f2fs/f2fs.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f83cdab66f54..e1f33ac24c6e 100644
+index 9940a6cecf1a2..2f7ab5888b078 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -602,8 +602,12 @@ static inline int update_sits_in_cursum(struct f2fs_journal *journal, int i)
- #define DEF_INLINE_RESERVED_SIZE	1
- static inline int get_extra_isize(struct inode *inode);
- static inline int get_inline_xattr_addrs(struct inode *inode);
-+static inline unsigned int cur_addrs_per_inode(struct inode *inode)
-+{
-+	return DEF_ADDRS_PER_INODE(inode) - get_extra_isize(inode);
-+}
- #define MAX_INLINE_DATA(inode)	(sizeof(__le32) *			\
--				(CUR_ADDRS_PER_INODE(inode) -		\
-+				(cur_addrs_per_inode(inode) -		\
- 				get_inline_xattr_addrs(inode) -	\
- 				DEF_INLINE_RESERVED_SIZE))
- 
-@@ -2257,11 +2261,19 @@ static inline struct f2fs_sb_info *F2FS_P_SB(struct page *page)
- #define SIT_ENTRY_PER_BLOCK(sbi)	((sbi)->sit_entries_per_block)
- #define NAT_ENTRY_PER_BLOCK(sbi)	((sbi)->nat_entries_per_block)
- #define DEF_ADDRS_PER_INODE_SBI(sbi)	((sbi)->addrs_per_inode)
-+#define DEF_ADDRS_PER_BLOCK(sbi)	((sbi)->addrs_per_block)
-+#define NIDS_PER_BLOCK(sbi)		((sbi)->nids_per_block)
- #define F2FS_ORPHANS_PER_BLOCK(sbi)	((sbi)->orphans_per_block)
- #define GET_ORPHAN_BLOCKS(sbi, n)	DIV_ROUND_UP((n), \
- 					F2FS_ORPHANS_PER_BLOCK(sbi))
- #define CP_CHKSUM_OFFSET(sbi)		(F2FS_BLKSIZE(sbi) - sizeof(__le32))
- 
-+#define NODE_DIR1_BLOCK(sbi)		(DEF_ADDRS_PER_INODE_SBI(sbi) + 1)
-+#define NODE_DIR2_BLOCK(sbi)		(DEF_ADDRS_PER_INODE_SBI(sbi) + 2)
-+#define NODE_IND1_BLOCK(sbi)		(DEF_ADDRS_PER_INODE_SBI(sbi) + 3)
-+#define NODE_IND2_BLOCK(sbi)		(DEF_ADDRS_PER_INODE_SBI(sbi) + 4)
-+#define NODE_DIND_BLOCK(sbi)		(DEF_ADDRS_PER_INODE_SBI(sbi) + 5)
-+
- static inline struct f2fs_orphan_footer *
- f2fs_orphan_footer(void *orphan_block, struct f2fs_sb_info *sbi)
- {
-@@ -3650,8 +3662,9 @@ static inline bool f2fs_need_compress_data(struct inode *inode)
- static inline unsigned int addrs_per_page(struct inode *inode,
- 							bool is_inode)
- {
--	unsigned int addrs = is_inode ? (CUR_ADDRS_PER_INODE(inode) -
--			get_inline_xattr_addrs(inode)) : DEF_ADDRS_PER_BLOCK;
-+	unsigned int addrs = is_inode ? (cur_addrs_per_inode(inode) -
-+			get_inline_xattr_addrs(inode)) :
-+			DEF_ADDRS_PER_BLOCK(F2FS_I_SB(inode));
- 
- 	if (f2fs_compressed_file(inode))
- 		return ALIGN_DOWN(addrs, F2FS_I(inode)->i_cluster_size);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 299d5310e597..b17e7ce58f2c 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1123,7 +1123,8 @@ static int gc_node_segment(struct f2fs_sb_info *sbi,
-  */
- block_t f2fs_start_bidx_of_node(unsigned int node_ofs, struct inode *inode)
- {
--	unsigned int indirect_blks = 2 * NIDS_PER_BLOCK + 4;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int indirect_blks = 2 * NIDS_PER_BLOCK(sbi) + 4;
- 	unsigned int bidx;
- 
- 	if (node_ofs == 0)
-@@ -1132,11 +1133,12 @@ block_t f2fs_start_bidx_of_node(unsigned int node_ofs, struct inode *inode)
- 	if (node_ofs <= 2) {
- 		bidx = node_ofs - 1;
- 	} else if (node_ofs <= indirect_blks) {
--		int dec = (node_ofs - 4) / (NIDS_PER_BLOCK + 1);
-+		int dec = (node_ofs - 4) / (NIDS_PER_BLOCK(sbi) + 1);
- 
- 		bidx = node_ofs - 2 - dec;
- 	} else {
--		int dec = (node_ofs - indirect_blks - 3) / (NIDS_PER_BLOCK + 1);
-+		int dec = (node_ofs - indirect_blks - 3) /
-+			(NIDS_PER_BLOCK(sbi) + 1);
- 
- 		bidx = node_ofs - 5 - dec;
- 	}
-@@ -1179,7 +1181,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		max_addrs = DEF_ADDRS_PER_INODE_SBI(sbi);
- 	} else {
- 		base = 0;
--		max_addrs = DEF_ADDRS_PER_BLOCK;
-+		max_addrs = DEF_ADDRS_PER_BLOCK(sbi);
- 	}
- 
- 	if (base + ofs_in_node >= max_addrs) {
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 8d16715a3aae..68a95d703c4a 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -691,7 +691,7 @@ static void f2fs_ra_node_pages(struct folio *parent, int start, int n)
- 
- 	/* Then, try readahead for siblings of the desired node */
- 	end = start + n;
--	end = min(end, (int)NIDS_PER_BLOCK);
-+	end = min_t(int, end, NIDS_PER_BLOCK(sbi));
- 	for (i = start; i < end; i++) {
- 		nid = get_nid(parent, i, false);
- 		f2fs_ra_node_page(sbi, nid);
-@@ -702,9 +702,11 @@ static void f2fs_ra_node_pages(struct folio *parent, int start, int n)
- 
- pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
- 	const long direct_index = ADDRS_PER_INODE(dn->inode);
- 	const long direct_blks = ADDRS_PER_BLOCK(dn->inode);
--	const long indirect_blks = ADDRS_PER_BLOCK(dn->inode) * NIDS_PER_BLOCK;
-+	const long indirect_blks = ADDRS_PER_BLOCK(dn->inode) *
-+		NIDS_PER_BLOCK(sbi);
- 	unsigned int skipped_unit = ADDRS_PER_BLOCK(dn->inode);
- 	int cur_level = dn->cur_level;
- 	int max_level = dn->max_level;
-@@ -714,7 +716,7 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs)
- 		return pgofs + 1;
- 
- 	while (max_level-- > cur_level)
--		skipped_unit *= NIDS_PER_BLOCK;
-+		skipped_unit *= NIDS_PER_BLOCK(sbi);
- 
- 	switch (dn->max_level) {
- 	case 3:
-@@ -740,11 +742,13 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs)
- static int get_node_path(struct inode *inode, long block,
- 				int offset[4], unsigned int noffset[4])
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	const long direct_index = ADDRS_PER_INODE(inode);
- 	const long direct_blks = ADDRS_PER_BLOCK(inode);
--	const long dptrs_per_blk = NIDS_PER_BLOCK;
--	const long indirect_blks = ADDRS_PER_BLOCK(inode) * NIDS_PER_BLOCK;
--	const long dindirect_blks = indirect_blks * NIDS_PER_BLOCK;
-+	const long dptrs_per_blk = NIDS_PER_BLOCK(sbi);
-+	const long indirect_blks = ADDRS_PER_BLOCK(inode) *
-+		NIDS_PER_BLOCK(sbi);
-+	const long dindirect_blks = indirect_blks * NIDS_PER_BLOCK(sbi);
- 	int n = 0;
- 	int level = 0;
- 
-@@ -756,7 +760,7 @@ static int get_node_path(struct inode *inode, long block,
- 	}
- 	block -= direct_index;
- 	if (block < direct_blks) {
--		offset[n++] = NODE_DIR1_BLOCK;
-+		offset[n++] = NODE_DIR1_BLOCK(sbi);
- 		noffset[n] = 1;
- 		offset[n] = block;
- 		level = 1;
-@@ -764,7 +768,7 @@ static int get_node_path(struct inode *inode, long block,
- 	}
- 	block -= direct_blks;
- 	if (block < direct_blks) {
--		offset[n++] = NODE_DIR2_BLOCK;
-+		offset[n++] = NODE_DIR2_BLOCK(sbi);
- 		noffset[n] = 2;
- 		offset[n] = block;
- 		level = 1;
-@@ -772,7 +776,7 @@ static int get_node_path(struct inode *inode, long block,
- 	}
- 	block -= direct_blks;
- 	if (block < indirect_blks) {
--		offset[n++] = NODE_IND1_BLOCK;
-+		offset[n++] = NODE_IND1_BLOCK(sbi);
- 		noffset[n] = 3;
- 		offset[n++] = block / direct_blks;
- 		noffset[n] = 4 + offset[n - 1];
-@@ -782,7 +786,7 @@ static int get_node_path(struct inode *inode, long block,
- 	}
- 	block -= indirect_blks;
- 	if (block < indirect_blks) {
--		offset[n++] = NODE_IND2_BLOCK;
-+		offset[n++] = NODE_IND2_BLOCK(sbi);
- 		noffset[n] = 4 + dptrs_per_blk;
- 		offset[n++] = block / direct_blks;
- 		noffset[n] = 5 + dptrs_per_blk + offset[n - 1];
-@@ -792,7 +796,7 @@ static int get_node_path(struct inode *inode, long block,
- 	}
- 	block -= indirect_blks;
- 	if (block < dindirect_blks) {
--		offset[n++] = NODE_DIND_BLOCK;
-+		offset[n++] = NODE_DIND_BLOCK(sbi);
- 		noffset[n] = 5 + (dptrs_per_blk * 2);
- 		offset[n++] = block / indirect_blks;
- 		noffset[n] = 6 + (dptrs_per_blk * 2) +
-@@ -1054,6 +1058,7 @@ static int truncate_dnode(struct dnode_of_data *dn)
- static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 						int ofs, int depth)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
- 	struct dnode_of_data rdn = *dn;
- 	struct folio *folio;
- 	struct f2fs_node *rn;
-@@ -1063,7 +1068,7 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 	int i, ret;
- 
- 	if (dn->nid == 0)
--		return NIDS_PER_BLOCK + 1;
-+		return NIDS_PER_BLOCK(sbi) + 1;
- 
- 	trace_f2fs_truncate_nodes_enter(dn->inode, dn->nid, dn->data_blkaddr);
- 
-@@ -1074,11 +1079,11 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 		return PTR_ERR(folio);
- 	}
- 
--	f2fs_ra_node_pages(folio, ofs, NIDS_PER_BLOCK);
-+	f2fs_ra_node_pages(folio, ofs, NIDS_PER_BLOCK(sbi));
- 
- 	rn = F2FS_NODE(folio);
- 	if (depth < 3) {
--		for (i = ofs; i < NIDS_PER_BLOCK; i++, freed++) {
-+		for (i = ofs; i < NIDS_PER_BLOCK(sbi); i++, freed++) {
- 			child_nid = le32_to_cpu(rn->in.nid[i]);
- 			if (child_nid == 0)
- 				continue;
-@@ -1090,16 +1095,16 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 				dn->node_changed = true;
- 		}
- 	} else {
--		child_nofs = nofs + ofs * (NIDS_PER_BLOCK + 1) + 1;
--		for (i = ofs; i < NIDS_PER_BLOCK; i++) {
-+		child_nofs = nofs + ofs * (NIDS_PER_BLOCK(sbi) + 1) + 1;
-+		for (i = ofs; i < NIDS_PER_BLOCK(sbi); i++) {
- 			child_nid = le32_to_cpu(rn->in.nid[i]);
- 			if (child_nid == 0) {
--				child_nofs += NIDS_PER_BLOCK + 1;
-+				child_nofs += NIDS_PER_BLOCK(sbi) + 1;
- 				continue;
- 			}
- 			rdn.nid = child_nid;
- 			ret = truncate_nodes(&rdn, child_nofs, 0, depth - 1);
--			if (ret == (NIDS_PER_BLOCK + 1)) {
-+			if (ret == (NIDS_PER_BLOCK(sbi) + 1)) {
- 				if (set_nid(folio, i, 0, false))
- 					dn->node_changed = true;
- 				child_nofs += ret;
-@@ -1156,10 +1161,12 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
- 		nid[i + 1] = get_nid(folios[i], offset[i + 1], false);
- 	}
- 
--	f2fs_ra_node_pages(folios[idx], offset[idx + 1], NIDS_PER_BLOCK);
-+	f2fs_ra_node_pages(folios[idx], offset[idx + 1],
-+			   NIDS_PER_BLOCK(F2FS_I_SB(dn->inode)));
- 
- 	/* free direct nodes linked to a partial indirect node */
--	for (i = offset[idx + 1]; i < NIDS_PER_BLOCK; i++) {
-+	for (i = offset[idx + 1];
-+			i < NIDS_PER_BLOCK(F2FS_I_SB(dn->inode)); i++) {
- 		child_nid = get_nid(folios[idx], i, false);
- 		if (!child_nid)
- 			continue;
-@@ -1193,7 +1200,9 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
+@@ -2691,7 +2691,7 @@ static inline bool folio_test_f2fs_##name(const struct folio *folio)	\
+ }									\
+ static inline bool page_private_##name(struct page *page) \
+ { \
+-	return PagePrivate(page) && \
++	return page_private(page) && \
+ 		test_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)) && \
+ 		test_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
+ }
+@@ -2710,9 +2710,9 @@ static inline void folio_set_f2fs_##name(struct folio *folio)		\
+ }									\
+ static inline void set_page_private_##name(struct page *page) \
+ { \
+-	if (!PagePrivate(page)) \
+-		attach_page_private(page, (void *)0); \
+-	set_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)); \
++	if (!page_private(page)) \
++		attach_page_private(page, \
++				(void *)BIT(PAGE_PRIVATE_NOT_POINTER)); \
+ 	set_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
  }
  
- /*
-- * All the block addresses of data and nodes should be nullified.
-+ * All the node blocks actually belong to the inode will be released.
-+ * If the level is 0, we will simply truncate the dnode,
-+ * or else we should do dynamic truncate for the node pointers with the depth.
-  */
- int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
- {
-@@ -1240,10 +1249,10 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
- 		err = truncate_partial_nodes(&dn, offset, level);
- 		if (err < 0 && err != -ENOENT)
- 			goto fail;
--		nofs += 1 + NIDS_PER_BLOCK;
-+		nofs += 1 + NIDS_PER_BLOCK(sbi);
- 		break;
- 	case 3:
--		nofs = 5 + 2 * NIDS_PER_BLOCK;
-+		nofs = 5 + 2 * NIDS_PER_BLOCK(sbi);
- 		if (!offset[level - 1])
- 			goto skip_partial;
- 		err = truncate_partial_nodes(&dn, offset, level);
-@@ -1257,23 +1266,16 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
- skip_partial:
- 	while (cont) {
- 		dn.nid = get_nid(folio, offset[0], true);
--		switch (offset[0]) {
--		case NODE_DIR1_BLOCK:
--		case NODE_DIR2_BLOCK:
-+		if (offset[0] == NODE_DIR1_BLOCK(sbi) ||
-+		    offset[0] == NODE_DIR2_BLOCK(sbi)) {
- 			err = truncate_dnode(&dn);
--			break;
--
--		case NODE_IND1_BLOCK:
--		case NODE_IND2_BLOCK:
-+		} else if (offset[0] == NODE_IND1_BLOCK(sbi) ||
-+				offset[0] == NODE_IND2_BLOCK(sbi)) {
- 			err = truncate_nodes(&dn, nofs, offset[1], 2);
--			break;
--
--		case NODE_DIND_BLOCK:
-+		} else if (offset[0] == NODE_DIND_BLOCK(sbi)) {
- 			err = truncate_nodes(&dn, nofs, offset[1], 3);
- 			cont = 0;
--			break;
--
--		default:
-+		} else {
- 			BUG();
- 		}
- 		if (err == -ENOENT) {
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 32125f8fc753..66898288b961 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -354,17 +354,18 @@ static inline bool is_recoverable_dnode(const struct folio *folio)
-  */
- static inline bool IS_DNODE(const struct folio *node_folio)
- {
-+	struct f2fs_sb_info *sbi = F2FS_F_SB(node_folio);
- 	unsigned int ofs = ofs_of_node(node_folio);
- 
- 	if (f2fs_has_xattr_block(ofs))
- 		return true;
- 
--	if (ofs == 3 || ofs == 4 + NIDS_PER_BLOCK ||
--			ofs == 5 + 2 * NIDS_PER_BLOCK)
-+	if (ofs == 3 || ofs == 4 + NIDS_PER_BLOCK(sbi) ||
-+	    ofs == 5 + 2 * NIDS_PER_BLOCK(sbi))
- 		return false;
--	if (ofs >= 6 + 2 * NIDS_PER_BLOCK) {
--		ofs -= 6 + 2 * NIDS_PER_BLOCK;
--		if (!((long int)ofs % (NIDS_PER_BLOCK + 1)))
-+	if (ofs >= 6 + 2 * NIDS_PER_BLOCK(sbi)) {
-+		ofs -= 6 + 2 * NIDS_PER_BLOCK(sbi);
-+		if (!((long)ofs % (NIDS_PER_BLOCK(sbi) + 1)))
- 			return false;
- 	}
- 	return true;
-@@ -372,13 +373,15 @@ static inline bool IS_DNODE(const struct folio *node_folio)
- 
- static inline int set_nid(struct folio *folio, int off, nid_t nid, bool i)
- {
-+	struct f2fs_sb_info *sbi = F2FS_F_SB(folio);
- 	struct f2fs_node *rn = F2FS_NODE(folio);
- 	__le32 *inode_nids = F2FS_INODE_NIDS(folio);
- 
- 	f2fs_folio_wait_writeback(folio, NODE, true, true);
- 
- 	if (i)
--		inode_nids[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
-+		inode_nids[off - NODE_DIR1_BLOCK(sbi)] =
-+			cpu_to_le32(nid);
- 	else
- 		rn->in.nid[off] = cpu_to_le32(nid);
- 	return folio_mark_dirty(folio);
-@@ -388,9 +391,10 @@ static inline nid_t get_nid(const struct folio *folio, int off, bool i)
- {
- 	struct f2fs_node *rn = F2FS_NODE(folio);
- 	const __le32 *inode_nids = F2FS_INODE_NIDS(folio);
-+	int nid_index = off - NODE_DIR1_BLOCK(F2FS_F_SB(folio));
- 
- 	if (i)
--		return le32_to_cpu(inode_nids[off - NODE_DIR1_BLOCK]);
-+		return le32_to_cpu(inode_nids[nid_index]);
- 	return le32_to_cpu(rn->in.nid[off]);
- }
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index ca6403a0ed88..f6c492f76f0c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3899,17 +3899,17 @@ loff_t max_file_blocks(struct f2fs_sb_info *sbi, struct inode *inode)
- 	if (inode && f2fs_compressed_file(inode))
- 		leaf_count = ADDRS_PER_BLOCK(inode);
- 	else
--		leaf_count = DEF_ADDRS_PER_BLOCK;
-+		leaf_count = DEF_ADDRS_PER_BLOCK(sbi);
- 
- 	/* two direct node blocks */
- 	result += (leaf_count * 2);
- 
- 	/* two indirect node blocks */
--	leaf_count *= NIDS_PER_BLOCK;
-+	leaf_count *= NIDS_PER_BLOCK(sbi);
- 	result += (leaf_count * 2);
- 
- 	/* one double indirect node block */
--	leaf_count *= NIDS_PER_BLOCK;
-+	leaf_count *= NIDS_PER_BLOCK(sbi);
- 	result += leaf_count;
- 
- 	/*
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 957bb713ff24..e43ac6509550 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -271,27 +271,15 @@ struct node_footer {
- } __packed;
- 
- /* Address Pointers in an Inode */
--#define DEF_ADDRS_PER_INODE	((PAGE_SIZE - OFFSET_OF_END_OF_I_EXT	\
--					- SIZE_OF_I_NID	\
--					- sizeof(struct node_footer)) / sizeof(__le32))
--#define CUR_ADDRS_PER_INODE(inode)	(DEF_ADDRS_PER_INODE - \
--					get_extra_isize(inode))
-+#define DEF_ADDRS_PER_INODE(inode) \
-+	((i_blocksize(inode) - OFFSET_OF_END_OF_I_EXT - SIZE_OF_I_NID - \
-+	  sizeof(struct node_footer)) / sizeof(__le32))
- #define DEF_NIDS_PER_INODE	5	/* Node IDs in an Inode */
- #define ADDRS_PER_INODE(inode)	addrs_per_page(inode, true)
- /* Address Pointers in a Direct Block */
--#define DEF_ADDRS_PER_BLOCK	((PAGE_SIZE - sizeof(struct node_footer)) / sizeof(__le32))
- #define ADDRS_PER_BLOCK(inode)	addrs_per_page(inode, false)
--/* Node IDs in an Indirect Block */
--#define NIDS_PER_BLOCK		((PAGE_SIZE - sizeof(struct node_footer)) / sizeof(__le32))
--
- #define ADDRS_PER_PAGE(folio, inode)	(addrs_per_page(inode, IS_INODE(folio)))
- 
--#define	NODE_DIR1_BLOCK		(DEF_ADDRS_PER_INODE + 1)
--#define	NODE_DIR2_BLOCK		(DEF_ADDRS_PER_INODE + 2)
--#define	NODE_IND1_BLOCK		(DEF_ADDRS_PER_INODE + 3)
--#define	NODE_IND2_BLOCK		(DEF_ADDRS_PER_INODE + 4)
--#define	NODE_DIND_BLOCK		(DEF_ADDRS_PER_INODE + 5)
--
- #define F2FS_INLINE_XATTR	0x01	/* file inline xattr flag */
- #define F2FS_INLINE_DATA	0x02	/* file inline data flag */
- #define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
+
 -- 
 2.53.0
 
