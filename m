@@ -4,80 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72E40C61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 08:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B86A4C61DD3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 09:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7KdKykqVmrBvyiILq/NJE0gASzDOrKhYrEYwc6YTGxo=; b=hqnq0GrjeldF1M5UlNqrWVpY88
-	l+J4mLXteMyBFWGr8Z5LF05r02CNatV1nvrrWl3fhjzs7sXDuC3hGMMf0Wd8yPNetxGyyck3HQZsI
-	u0WXg2IPEkLbEJwr620XSGg6FVSXAzQEDiWZeYvI52W/uMZCLrUrpD+xfMtKIU8Puqm0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=9Tj6Bys3iqMRWsxQErSzF5K0OG2pYlV+dtBkivfhARo=; b=BLJwH5ECpn5QDoTSsa9QpgrwvF
+	2nhDKTm93GvHVCkWy9bubjkygX08MMHuOxzF6CbA7zZdf3FFlGfCBLYPw4rT+PeS/CdTXRa49ddx7
+	9lr6Skz5VYtY5tUL3BhevLzcqqE4UgCPHa0lzY6nJ3QVAxs/2EpAtg4e7dMXzp58YQ+8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x0xfW-00066S-2n;
-	Mon, 31 Aug 2026 08:47:06 +0000
+	id 1x0yEH-0007DP-IW;
+	Mon, 31 Aug 2026 09:23:01 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x0xfV-00066L-3X
+ (envelope-from <chao@kernel.org>) id 1x0yE6-0007Cq-4F
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 08:47:05 +0000
+ Mon, 31 Aug 2026 09:22:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VQnyeozED9KENp5fLCfASXjgZw48Aez7/KG7ZHlPB6o=; b=TZVTlnfiI6fkfF6kZvvW6xdp2Z
- Ska+n1xswgrqiPdP/h0qV+XYXYIYEFHRXfOcczpJV4ErC8ZuF2ktDktQ/BqzmSfhscazZPDN1j0g4
- LwpGcNvSE/UYLgL09lsxYL1xdmCbSeaqqVY7LU4V2UHU5bnb+ZaJMxEPsTReXMaVaq+E=;
+ bh=n4a+Rmw7OyCgDc+ssPabYOmdo6Oy7BLAhFKE3yiudc8=; b=Abmo9ix1ejFACA/u/yaOhP8awc
+ YATpzn8hhb11Wpc6W29wdyojXleN5ARPYcNtLcPqzSJmzmiQu9M1uPAFS3w7ucAWX3WBfGhjZ1XMR
+ pUSc5PqnT3BdqAckQWwK0y9wkXiSHhCqp1u52HvtoUlg1VFnKIbsf9RAyY4ydA7CSdZk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VQnyeozED9KENp5fLCfASXjgZw48Aez7/KG7ZHlPB6o=; b=CgkaAUFEqJUoZJou3k6gJs8dFt
- w8r+mGR0SDeNxV42yDqD7khwEuG1UDh2+y8NecuVjAJ74tOORMRbvf7cRYo0m14MSNGnks9SVTd90
- JnihP4iPvaQckleGw4yg5OYdyidp7XjWAbYax66XGoieiwzG4IAQ0rMy3NjH8F1HekA8=;
+ bh=n4a+Rmw7OyCgDc+ssPabYOmdo6Oy7BLAhFKE3yiudc8=; b=JNTmR5mSFT3UQvjmB5rqrrcEc5
+ V8e/gj1HFfZ3JQW8UkQJl6wRZu3xGW4ZYHQlM1tKK2UHELzWQS6O1CTMXV6635CBEBBNDhVCEiW37
+ 2/4TQ2XGoeEpeJjnvKd4JtHtLWivWLGBio9ag2iKpiAwySs0dO/q0ADmbUmU+KPWqisA=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x0xfV-0005cU-9I for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 08:47:05 +0000
+ id 1x0yE4-0005uV-M9 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Aug 2026 09:22:50 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 9FA7060120;
- Mon, 31 Aug 2026 08:46:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E401F000E9;
- Mon, 31 Aug 2026 08:46:57 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 12DB36020A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 31 Aug 2026 09:22:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47831F00A3F;
+ Mon, 31 Aug 2026 09:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788166019;
- bh=VQnyeozED9KENp5fLCfASXjgZw48Aez7/KG7ZHlPB6o=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=VarKxufOjF6BHqCh8Z40QAsdJqNubO50wawp61Z3JBQ3BhuO/DENJ4jsFiEzOJVvQ
- ldLi5gMiXYx0vR7ofVe6PNpVHoSva48bt/tHrRSoOg4ZKaR2mt0tM7eXNg9BCaEaMf
- 1ySy9kqreXd4mWNkRqe0tHmjqiX+UKEkIJ2lF7BP/vR6DVirLU65l+nqfcR7VAdVYi
- VPyjzM0J8x3HPNeZYmOZ+6+y2AYOx3EdvsfTPzDt1N9MBcD5jex5JxNClTyq87VxMo
- NusHTTXOYJ8OA84ILSET03FrZ5KILZBBTi2H03GYTrSDvgWIOBxS6gCuw5OeKxJhJc
- GT9090PLkflAw==
-Message-ID: <bd032f33-01ec-48e0-a214-cd1e04cb466e@kernel.org>
-Date: Mon, 31 Aug 2026 16:46:55 +0800
+ s=k20260515; t=1788168162;
+ bh=n4a+Rmw7OyCgDc+ssPabYOmdo6Oy7BLAhFKE3yiudc8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=SJ9i/lGCmhDhYNcfwuB3G0LxA2MwzgW1Oi211e61sIwDEPmBgIDcmb6mBH+DDnn06
+ kHpZtf1dVe+MUSbBpKt4FpAP+FqOntzDwY6uGjU5pSH/3UUvN7RZcSUQ7ecdZ2J6oB
+ kKl+yvB3dGv8t3+03EGJA7F+Ujxt9AMoj9/wOM/VoegNnEMVw/o1CQuV+Zcr0LOxgL
+ nibL/BtpqbjbO9X4jxEuTtWEWERKkV42BNPFon6PjpDArEULzf6dePwQ767uNOAMdU
+ Go8AD4aBQGauF/O5jF4GRgCUxd/5gZTcwM7RsZO2CCPmCj21iEe3iZCm9vnuxkgHHz
+ xxju761xJWHig==
+To: jaegeuk@kernel.org
+Date: Mon, 31 Aug 2026 17:22:17 +0800
+Message-ID: <20260831092227.739737-3-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.897.gb25b4bd76c-goog
+In-Reply-To: <20260831092227.739737-1-chao@kernel.org>
+References: <20260831092227.739737-1-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260826082641.2007658-1-zhaonanzhe@xiaomi.com>
- <20260826130916.2231342-4-zhaonanzhe@xiaomi.com>
-Content-Language: en-US
-In-Reply-To: <20260826130916.2231342-4-zhaonanzhe@xiaomi.com>
-X-Headers-End: 1x0xfV-0005cU-9I
-Subject: Re: [f2fs-dev] [PATCH 14/14] f2fs: make compressed files compatible
- with large folio
+X-Headers-End: 1x0yE4-0005uV-M9
+Subject: [f2fs-dev] [PATCH v5 02/12] f2fs: cache: initialize meta cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,68 +88,117 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <David.Hildenbrand@arm.com>, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Nanzhe Zhao <nzzhao@126.com>,
- Pengfei Li <lipengfei28@xiaomi.com>, Ryan Roberts <Ryan.Roberts@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/26/26 21:09, Nanzhe Zhao wrote:
-> The compression flag is the hint indicates that the inode can be
-> compressed, when the inode is using large folio, we expected it keeps
-> using the large folio read/write paths and its data stays uncompressed
-> on disk until the inode is evicted and re-read
-> 
-> Let f2fs_write_begin() skip the compression overwrite preparation for
-> such inodes and remove the compressed-file gate in
-> f2fs_read_data_large_folio() so the data is simply read/written as
-> regular blocks.
+From: Chao Yu <chao@kernel.org>
 
-Can you please elaborate more about compress policy in doc as well?
+This patch introduces meta_blocks in f2fs_sb_info structure, initializes
+and destroys the meta cache during filesystem mount and unmount.
 
-Otherwise, user may be confuse about compressed inode behavior, e.g.
-for the case we enable compress inode via ioctl, but due to large
-folio flag is set, content of inode will be kept as raw before evict
-and reload.
+It also introduces helper wrappers for meta cache operation.
 
-Thanks,
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/cache.h | 12 ++++++++++++
+ fs/f2fs/data.c  |  3 +++
+ fs/f2fs/f2fs.h  |  3 +++
+ fs/f2fs/super.c | 10 +++++++++-
+ 4 files changed, 27 insertions(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-> ---
->   fs/f2fs/data.c | 9 ++-------
->   1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 2e20833c6417..befcdc3742f6 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2955,12 +2955,6 @@ static int f2fs_read_data_large_folio(struct inode *inode,
->   	int ret = 0;
->   	bool folio_in_bio = false;
->   
-> -	if (f2fs_compressed_file(inode)) {
-> -		if (folio)
-> -			folio_unlock(folio);
-> -		return -EOPNOTSUPP;
-> -	}
-> -
->   	map.m_seg_type = NO_CHECK_TYPE;
->   
->   	if (rac)
-> @@ -4935,7 +4929,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
->   	}
->   
->   #ifdef CONFIG_F2FS_FS_COMPRESSION
-> -	if (f2fs_compressed_file(inode)) {
-> +	if (f2fs_compressed_file(inode) &&
-> +	    !mapping_large_folio_support(inode->i_mapping)) {
->   		int ret;
->   		struct page *page;
->   
+diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
+index e2f39ff42510..74b88ef2f6b5 100644
+--- a/fs/f2fs/cache.h
++++ b/fs/f2fs/cache.h
+@@ -191,4 +191,16 @@ void f2fs_truncate_cache(struct f2fs_cached_block *entry, bool drop_dirty);
+ void f2fs_drop_cache_range(struct f2fs_cached_block_list *cache,
+ 		unsigned long start, unsigned long len, bool drop_dirty);
+ 
++int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi);
++void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
++
++#define META_CACHE(sbi)		(&(sbi)->meta_blocks)
++
++#define f2fs_find_meta_cache(sbi, blkaddr)		\
++	f2fs_find_cache(META_CACHE(sbi), blkaddr)
++#define f2fs_invalidate_meta_caches(sbi, start, len)	\
++	f2fs_drop_cache_range(META_CACHE(sbi), start, len, false)
++#define f2fs_truncate_meta_caches(sbi, start, len)	\
++	f2fs_drop_cache_range(META_CACHE(sbi), start, len, true)
++
+ #endif /* _LINUX_F2FS_CACHE_H */
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7114e24756e3..ce76871ac68c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -668,6 +668,9 @@ static bool __has_merged_page(struct bio *bio, struct inode *inode,
+ 	if (!inode && !folio && !ino)
+ 		return true;
+ 
++	if (f2fs_is_cache_bio(bio))
++		return false;
++
+ 	bio_for_each_folio_all(fi, bio) {
+ 		struct folio *target = fi.folio;
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 353decad2c62..38027711f2f8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2107,6 +2107,9 @@ struct f2fs_sb_info {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lock_class_key cp_global_sem_key;
+ #endif
++
++	/* f2fs internal cache */
++	struct f2fs_cached_block_list meta_blocks;
+ };
+ 
+ /* Definitions to access f2fs_sb_info */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1314b6ccced9..858bd36f5f1b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2081,6 +2081,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	iput(sbi->meta_inode);
+ 	sbi->meta_inode = NULL;
+ 
++	f2fs_destroy_cache(META_CACHE(sbi));
++
+ 	/* Should check the page counts after dropping all node/meta pages */
+ 	for (i = 0; i < NR_COUNT_TYPE; i++) {
+ 		if (!get_pages(sbi, i))
+@@ -5231,12 +5233,16 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (err)
+ 		goto free_percpu;
+ 
++	err = f2fs_init_cache(sbi, META_CACHE(sbi), F2FS_META_CACHE);
++	if (err)
++		goto free_page_array_cache;
++
+ 	/* get an inode for meta space */
+ 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
+ 	if (IS_ERR(sbi->meta_inode)) {
+ 		f2fs_err(sbi, "Failed to read F2FS meta data inode");
+ 		err = PTR_ERR(sbi->meta_inode);
+-		goto free_page_array_cache;
++		goto free_meta_cache;
+ 	}
+ 
+ 	err = f2fs_get_valid_checkpoint(sbi);
+@@ -5564,6 +5570,8 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	make_bad_inode(sbi->meta_inode);
+ 	iput(sbi->meta_inode);
+ 	sbi->meta_inode = NULL;
++free_meta_cache:
++	f2fs_destroy_cache(META_CACHE(sbi));
+ free_page_array_cache:
+ 	f2fs_destroy_page_array_cache(sbi);
+ free_percpu:
+-- 
+2.49.0
 
 
 
