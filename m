@@ -4,77 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EAA23C624C6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 20:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3202C61DFD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 22:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=pJYFDKhN+I6X+KG+9J0+ShyIB20u02a20YEorCvYmv4=; b=e3GDbxg/c9Yp9n3xHwjGHF4Fgh
-	lTICcIVjn+97EZZ1Ts7/61zBnxPe4P5McN3SAmxsYUHoC4AwsGb+dziWsDuuV1QM8rZ+2wWERDqWT
-	I0yONLA93RUucfBPuukPy0f+6412GAnHtr0QDc0X99k+P5LyOVqmJuZsMjmv4gmMx5Bs=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Klxseu7tll32ppaBV4nuGrdDKui3DsdAZ+KSWl0hJEM=; b=E+bEHnOEQZwrVK3sj67f0W0L/Y
+	TYoCXddcGlKTjgnBmCVuokpfNMKIvKJQFNGhvzZGlPHsnvxqyaJIfZ1BRN554ZlQeC1KWPQfifJkM
+	zSnNfTm+PFJGV/ZoaAHyB8ZBDtFfDZdnRf3tnTozhkIgU1mXbiTshpPTYj2RRoPzO1N0=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x18qN-00048Q-L8;
-	Mon, 31 Aug 2026 20:43:03 +0000
+	id 1x1A8U-0005iq-Lh;
+	Mon, 31 Aug 2026 22:05:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1x18qM-00048I-Bu
+ (envelope-from <zhangxp1998@gmail.com>) id 1x1A8Q-0005ih-TE
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 20:43:02 +0000
+ Mon, 31 Aug 2026 22:05:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EcsqIntohDBj7T07atoCdhzgU+9ZNI8GEG8azdvgvJA=; b=nQaH5cNO9l0bRA1Mf1LIfiZSiU
- l4oagAV8jdiqdEhoda898N/10LTnLAgMqUoH0xLKrougGWQEoAnDtS/ghS/URSswiZN8xZvZIXZdX
- cKjs/yWk8W+VjH/imNYKcoHmtDgYEgbjQxriNUDtwKa/hjblk7jIz8GuqeYgQN158Ufw=;
+ bh=1SU3rdh97lkeZJr+7CduyypOUNik8G+JmicPTmnCyvI=; b=kZ+X4lZtbXStxi+9HqXoDigLGJ
+ UUyHs8MJACeKMBWebW63XtJWGsnXfWyCz8cHjaK9h/6Ka4VWPoNQA9HnBlXIYYwCiW1hKzlby6Adj
+ 4Z8rfV3DAt9G5rytouXOOYijhYZj/5MJa1PesVp9sVq+QIIRWabRLx/jfdG/Gp1ofysc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=EcsqIntohDBj7T07atoCdhzgU+9ZNI8GEG8azdvgvJA=; b=CZzgvRoUzBDxj69LpTSMLZzgII
- 8Wqjvb38cOBbt4XxuHQX7go3qwijtK1DlRsU5pXpJhh42QsuG5AG4k2ycSeD7RImYmYUXxjVg0gCx
- h9SSVHYz+MwbR1Hec663XnRJJsq6+/KAgqzseiDMDKwzKCz0fLM85qj8auUMQhTyiByY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=1SU3rdh97lkeZJr+7CduyypOUNik8G+JmicPTmnCyvI=; b=Neg03TksM6W+6fSTOWYU90Vvxh
+ RwFUGP02sX1THrzhQA2viEZAx/0zsguEDKmMH5DJ2orNXCSZtVN7fucuFoB4jEyjO/bwbXFzNCz6Z
+ ++6gBJlOkeCGyhh9rnekzf2k5OsarDiKlMaA1M+1+lDrfWDTjR0uuC+sSra95IrnEzgc=;
+Received: from mail-pj1-f50.google.com ([209.85.216.50])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x18qL-0000IV-6h for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 20:43:02 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 0EEF7601DE;
- Mon, 31 Aug 2026 20:42:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD401F000E9;
- Mon, 31 Aug 2026 20:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788208974;
- bh=EcsqIntohDBj7T07atoCdhzgU+9ZNI8GEG8azdvgvJA=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=dAAjSV36Im0KXym3fl6aCZsYF7UXjbdF0EVKD7PT4GhNaG6JFsOVEPUNApNhbs66Y
- oq/L0aNfPFZfjq52rnznStVLOCk+H4k8CfhCynCp9UuMgWj6erLwF9WcB+2mw27AG/
- u4Plxihgr50APIHEpiELpva/MHjbyQuolf36O/mGsL+RzjlSQtU/WEKk/z/D7/Vx7P
- vmE3hetnL6KajuIiq+Do9BwWkj6GyrNutROj9BvxMw9JhxakxnJ5S1FMyAdRL+4FNW
- WxpVMWiwAXQXy+IFMBZfpWPQuezikM9YmBkqdlis75Hs/nccI21HW9mYQPsMJYyec5
- ilvmJVLDInbVw==
-Date: Mon, 31 Aug 2026 20:42:53 +0000
-To: Kelvin Zhang <zhangxp1998@gmail.com>
-Message-ID: <apXnTaf1gQOxBmLk@google.com>
-References: <CAH=xXfE6o2sLwcYdoH9cayZpbf389y8PeJ_aDRty61i7q4QKow@mail.gmail.com>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1x1A8P-0004fF-Fz for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Aug 2026 22:05:46 +0000
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-398b3d66515so2753987a91.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 31 Aug 2026 15:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1788213940; x=1788818740; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=1SU3rdh97lkeZJr+7CduyypOUNik8G+JmicPTmnCyvI=;
+ b=FmbMO/ElcHu2qWjWZPEw8rilNkQ+k2kOZ5J2oLhH9BXa6tf4jguFKRNV0aYMvbpOnQ
+ bD6lkOv4Foe3TnvY7137VNzIAdsaHwHOodcMsBsdMP2tHdbV7ogC0V1fBJz0ynU2YeER
+ HBdrIAd/bV8vQK31KdBwL/HxAd0ZEczNLYzVmfaDVhxLLrFdZPgiqNOu+RZI6UwjspS1
+ /FJM25gyNC5ME3QHrCsdq7I8vDHMfUd2KPkhezmKTilnlIQeky7kn9Sydn0M6HF0spGb
+ cYl6RMBKNEbW+0U2ONTdKMiagua01SGpaQ+jpl5Olw0iJBmbyNQqdU33x49iNe9EZbv/
+ PlzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788213940; x=1788818740;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=1SU3rdh97lkeZJr+7CduyypOUNik8G+JmicPTmnCyvI=;
+ b=hMH+/qTpxsttDzzsU2jV2A2ETh5mLZndgRHhQyRp86CD/r8sWCrLcqUMRv3jvOoZsg
+ 1JAebpkhfm6bMcLkauYDmvY+jXWub4ODCc7iyfiBu5UlpoiLD+xiqTeGo6VkjmA/MfCt
+ uxQ7P/Q0dXQZTZR1NYVqjPG+uL3RzJeLTJbvfFttC4LJ21WGuO8zsl1u43+/Kt4Giytb
+ lJ+B8Q7GBaKGfJhGgKitqRGapFHmhJjKp+ygrP87sSyBF5TBE1GS8jvqP+wmBD96lUem
+ c1+kK8T++PVzjtCPsACedw4Uv+dCNFXYUYg3meGx0DFkqwR6RJxT4g12id8V5+5Kfdhh
+ 3YLA==
+X-Gm-Message-State: AFuF++kGYN7CSmxeLH7MweYdxESkIrTIFUkc3/g6yZxB2W7qTLcc13bZ
+ Fji/dk2jmnn6uG+DwblLCFx6mJlVUlMdR1+KphEDTtffsKxHQnbkUR0T9fFWkmHo
+X-Gm-Gg: AYBFou21p3oi4Ja0//XsI1V0lWoGHuEKNKdjW+W8xPGRFaqxOyGvvk/3BGEAjYQu860
+ 8FyA6rqs5kAOqBQgs5IwxbAq7Ay+Jzg077Uj7XJ1TmceRz8bsbBxchOfvlIdUOJe6ZR6T4FKWdm
+ 9S6ZBi5zPLbboyqgdCtIAWFDuWd+rwIMSlrRlISdRcdisHkdSIx/n2xLXeoJd357l3yZA7gIhyM
+ tcTaFrNGid1beiCVwd8HAovTj8YIk4CH0oZhRAu/639jGAWOIDim7uDNmwwcYtWvNtemaDr5EL1
+ BVguURz0Aw8dYjGcpwYggQAo0LuhsaxdHHHZtRW0Hyw96OdTqomVNIBR3iQbQWSymP+/EcmHhdc
+ G0OXiCHP+o4JRn/iBDNR1gQ7RoSINFpSE+RLq2Z3ZaafeiOGQSvYE7aRIpUGRHIzcFN9/hy3Dih
+ /itKXXAU/kp+lmxhS/G1IWU7VIIX+BYyIIfJR6jNmTbEHVnZqA8HKkqUF8ezJDIUTnwIo=
+X-Received: by 2002:a17:90b:538c:b0:398:d6e6:4671 with SMTP id
+ 98e67ed59e1d1-398d6e68870mr18634235a91.25.1788213939680; 
+ Mon, 31 Aug 2026 15:05:39 -0700 (PDT)
+Received: from [127.0.1.1] ([2601:647:4184:b3f0:91a4:c2d8:1d54:21ad])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3990d499811sm1952863a91.10.2026.08.31.15.05.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 31 Aug 2026 15:05:39 -0700 (PDT)
+From: Kelvin Zhang <zhangxp1998@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 31 Aug 2026 15:05:37 -0700
+Message-ID: <d3fa15836c409ac6028956c06dbe11a8e0149734.1788213716.git.zhangxp1998@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <cover.1788213716.git.zhangxp1998@gmail.com>
+References: <cover.1788213716.git.zhangxp1998@gmail.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAH=xXfE6o2sLwcYdoH9cayZpbf389y8PeJ_aDRty61i7q4QKow@mail.gmail.com>
-X-Headers-End: 1x18qL-0000IV-6h
-Subject: Re: [f2fs-dev] [PATCH v6 00/11] f2fs: prepare metadata layouts for
- runtime block sizes
+X-Headers-End: 1x1A8P-0004fF-Fz
+Subject: [f2fs-dev] [PATCH v7 01/11] f2fs: initialize sb_info early in
+ f2fs_fill_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,135 +117,77 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Kelvin,
+Previously, init_sb_info() was invoked late in f2fs_fill_super(), after
+processing superblock error tracking, mount options, and sb->s_maxbytes.
 
-I see only the first patch in this series. Am I missing something?
+However, read_raw_super_block() reads the superblock folio directly
+from the block device mapping using folio page offsets. This makes the
+initial static sb_set_blocksize(sb, F2FS_BLKSIZE) call redundant.
 
-On 08/31, Kelvin Zhang wrote:
-> F2FS currently describes several on-disk metadata layouts and filesystem
-> geometry values with constants derived from PAGE_SIZE or a fixed 4KB block
-> size. This series derives those values from the mounted filesystem's block
-> size instead, as preparation for supporting filesystem blocks smaller than
-> PAGE_SIZE.
-> 
-> The patches initialize sb_info early, describe the SIT, NAT, orphan, dentry,
-> node, and xattr layouts dynamically, parameterize sector/byte/block
-> conversion helpers, and derive node-tree geometry at runtime.
-> 
-> This series does not relax the block-size mount check or enable subpage I/O.
-> It is intended to be a behavior-preserving refactoring for currently
-> supported 4KB-block filesystems.
-> 
-> Changes since v5:
-> - no code changes
-> - send each diff as a base64-encoded text/x-patch attachment because Gmail's
->   outgoing transport reflowed long lines in inline text/plain bodies
-> - verified that an actual received raw message applies with git am and
->   produces the expected tree; the list-side copy of patch 01/11 will be
->   checked before completing the series
-> 
-> v5:
-> https://lore.kernel.org/linux-f2fs-devel/CAH=xXfH7TPGt-zKXvJRNTgGDZKa1Xoq_sF3-WGs5kdsQLuYn4g@mail.gmail.com/
-> 
-> Changes since v4:
-> - no code changes
-> - resend with CRLF-canonicalized RFC822 messages; the delivered inline patch
->   was still reflowed by Gmail's outgoing transport
-> 
-> v4:
-> https://lore.kernel.org/linux-f2fs-devel/CAH=xXfHWPg6qRwW+N2ziH1cvG3OD3wJc1z_Tm04MtFCpqYmQFg@mail.gmail.com/
-> 
-> Changes since v3:
-> - no code changes
-> - resend with git send-email because the previous mail-sending path produced
->   hard-wrapped hunk headers in the delivered messages
-> 
-> v3:
-> https://lore.kernel.org/linux-f2fs-devel/CAH=xXfEFL7w7nsU3xjNubKJ1soYMqT-DbJBuyzfEX4Rv3rdFEA@mail.gmail.com/
-> 
-> Changes since v2:
-> - use DECLARE_FLEX_ARRAY() for flexible arrays that are alone in a struct or
->   used in a union, fixing the reported m68k GCC build failures
-> - use F2FS_BLK_ALIGN() in f2fs_sec_trim_file() to avoid a runtime 64-bit
->   division and an unresolved __divdi3 reference on 32-bit SH
-> - no other code changes
-> 
-> Changes since v1:
-> - rebase onto f2fs/dev at c966d29e01bb
-> - drop the unrelated free-NID underflow fix from this series
-> - split the preparatory changes into 11 focused patches
-> - initialize sb_info earlier and describe the xattr layout explicitly
-> - separate sector, byte/block, and block-size macro parameterization
-> - update commit messages and address checkpatch warnings
-> 
-> v2:
-> https://lore.kernel.org/linux-f2fs-devel/CAH=xXfHWW_J92z3YgvoLSx8+z6rekq=p2kiP15KE9=2+Ju2RjQ@mail.gmail.com/
-> v1:
-> https://lore.kernel.org/linux-f2fs-devel/CAH=xXfFVAwQ3r_NdUDtmXhtg6Lw8kDWoNTzGL5oy4mwHMsJLJw@mail.gmail.com/
-> 
-> Tested with:
-> - x86_64 W=1 F2FS build at every patch
-> - arm64 16KB-page W=1 F2FS build at the series tip
-> - m68k W=1 F2FS builds with the two reported randconfigs at the affected
->   patch points
-> - SH W=1 F2FS build with the reported randconfig at the affected patch;
->   fs/f2fs/file.o has no __divdi3 reference
-> - scripts/checkpatch.pl --strict (no errors or warnings)
-> 
-> Kelvin Zhang (11):
->   f2fs: initialize sb_info early in f2fs_fill_super
->   f2fs: describe SIT block layout dynamically
->   f2fs: describe NAT block layout dynamically
->   f2fs: describe orphan block layout dynamically
->   f2fs: describe dentry block layout dynamically
->   f2fs: describe {i,d,id}node block layout dynamically
->   f2fs: describe xattr block layout dynamically
->   f2fs: parameterize sector conversion macros
->   f2fs: parameterize byte and block conversion macros
->   f2fs: parameterize block size and mask macros
->   f2fs: describe node tree geometry dynamically
-> 
->  fs/f2fs/checkpoint.c    |  75 ++++++++++--------
->  fs/f2fs/data.c          |  85 +++++++++++---------
->  fs/f2fs/debug.c         |   4 +-
->  fs/f2fs/dir.c           |  51 ++++++------
->  fs/f2fs/extent_cache.c  |   6 +-
->  fs/f2fs/f2fs.h          | 122 +++++++++++++++++++++-------
->  fs/f2fs/file.c          |  84 +++++++++++---------
->  fs/f2fs/gc.c            |  27 ++++---
->  fs/f2fs/inline.c        |  11 ++-
->  fs/f2fs/inode.c         |  22 +++---
->  fs/f2fs/node.c          | 171 +++++++++++++++++++++-------------------
->  fs/f2fs/node.h          |  89 +++++++++++----------
->  fs/f2fs/recovery.c      |   4 +-
->  fs/f2fs/segment.c       |  60 +++++++-------
->  fs/f2fs/segment.h       |  32 ++++----
->  fs/f2fs/shrinker.c      |   2 +-
->  fs/f2fs/super.c         |  83 +++++++++++++------
->  fs/f2fs/sysfs.c         |  10 +--
->  fs/f2fs/verity.c        |   6 +-
->  fs/f2fs/xattr.c         |  10 ++-
->  fs/f2fs/xattr.h         |  15 ++--
->  include/linux/f2fs_fs.h | 131 ++++++++++++++++--------------
->  22 files changed, 636 insertions(+), 464 deletions(-)
-> 
-> 
-> base-commit: c966d29e01bbf829f8bb4a39a49811c56cdb49c3
-> -- 
-> 2.53.0
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Move init_sb_info() to execute immediately after sbi->raw_super is
+attached, allowing the block device block size to be set dynamically via
+sb_set_blocksize(sb, sbi->blocksize).
+
+This early initialization also prepares for upcoming patches that add
+dynamically computed filesystem geometry fields, such as
+sbi->addrs_per_block and sbi->nids_per_block, to init_sb_info(). These
+fields are required by earlier initialization steps, including mount option
+consistency checks and sb->s_maxbytes computation.
+
+Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
+---
+ fs/f2fs/super.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 253a579e9d5b..2d9f5b77f815 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -5125,12 +5125,6 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	}
+ 	mutex_init(&sbi->flush_lock);
+ 
+-	/* set a block size */
+-	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
+-		f2fs_err(sbi, "unable to set blocksize");
+-		goto free_sbi;
+-	}
+-
+ 	err = read_raw_super_block(sbi, &raw_super, &valid_super_block,
+ 								&recovery);
+ 	if (err)
+@@ -5138,6 +5132,14 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	sb->s_fs_info = sbi;
+ 	sbi->raw_super = raw_super;
++	init_sb_info(sbi);
++
++	/* set a block size */
++	if (!sb_set_blocksize(sb, sbi->blocksize)) {
++		f2fs_err(sbi, "unable to set blocksize %u", sbi->blocksize);
++		err = -EINVAL;
++		goto free_sb_buf;
++	}
+ 	sbi->max_atc_write_bio_size = UINT_MAX;
+ 
+ 	INIT_WORK(&sbi->s_error_work, f2fs_record_error_work);
+@@ -5217,8 +5219,6 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (err)
+ 		goto free_bio_info;
+ 
+-	init_sb_info(sbi);
+-
+ 	err = f2fs_init_iostat(sbi);
+ 	if (err)
+ 		goto free_bio_info;
+-- 
+2.53.0
+
 
 
 _______________________________________________
