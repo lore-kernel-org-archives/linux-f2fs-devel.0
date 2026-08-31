@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BAEDC61DF0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 05:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4211C61DD3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Aug 2026 05:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:To:Message-ID:Date:References:In-Reply-To:MIME-Version:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=qduLsXr7gxSFUDex1cp4DkWF4ixFcHMzn19B8QHYpAQ=; b=CpZbLPr3xMLPNl1reYMdkyR4iR
-	5MMvw8GxN6H8Nh92sx8yNQsOiKpseJAcC2gWEZUe0pyEHcXP1gtp0yA55e9gUPoDAWlcsXUFrYlza
-	MtVyLlSn9Kpzs+SnFre07SgEJT2Xs6rAyTtUabthvFMgk/iRnBoYXwUDiM1syWc26BYQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=r2vsAaIyEm9PgtoZWpZ8vo60t7gXAKvItX4Ck5dr7bw=; b=Ojil8wfFlqfxkXyLg0hrCTW1zA
+	lYlNRW//2sWiN70fhBwy5jPJvlkQ9fwAwPKBa+rW9v+SIwrV07P3eX2lVHwoBHZmXypqlPYmt65V1
+	u4q41T2Eu+kElwrPovFTFhLRTcGC9ziZuWSLpdWKjuFEC0kq2cd6X0lZYzq62rXE9+1s=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x0udu-0002Il-AO;
-	Mon, 31 Aug 2026 05:33:14 +0000
+	id 1x0udz-0004k2-UH;
+	Mon, 31 Aug 2026 05:33:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangxp1998@gmail.com>) id 1x0udt-0002If-Ih
+ (envelope-from <zhangxp1998@gmail.com>) id 1x0udy-0004jw-Et
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 05:33:13 +0000
+ Mon, 31 Aug 2026 05:33:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:
  References:In-Reply-To:MIME-Version:From:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RqZhl3KyjNT5gAP4GrsiR5RK9iHeIl9R7u9oOVd2Ssc=; b=PkFzCYhCY9WWzJP6uWIplljAoY
- zYiXQoM56KSY4wIm0JZLJXq82l/70hkMV8ta9OUCazPvzSulO14ckDuwIa3Dtz9NA76G/RMMM8r/I
- QEQnpoFlm0V2hgnGD2kVmmU/B4tfI2Rmu7yTj5wbeAJORVokqCOxNqKNuV2VJTljM/h0=;
+ bh=1vBZz0FHk3hbElOsJDIqL5UVlyjBmQ/JI/HbefNK6tE=; b=TYc1/UEeZDK6KRDsskVaVzbPoO
+ Eat9GY179IKwujrOoDotXdz9VLX4vvHN4FESTXckKOH82XN7XoQDcrRG45G1ZSRzqj4W2Z8zA4++G
+ 7ATLvTQLz0sLFsXGQI5hEMJTIBOfkiuI6v2j2fX/in1u2ab0uXDMyWepIMeSGw2K8NVQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:References:In-Reply-To:
@@ -42,89 +42,89 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RqZhl3KyjNT5gAP4GrsiR5RK9iHeIl9R7u9oOVd2Ssc=; b=VeiH5Kg3p4ML/o3iQudLsB7Tr/
- DMUX1/6u/PWXig4EVn5obAv9hZ5C8CrZIjfZ7I/bTijHaLgCTQGI3fowyL9nvHgKkiyzkYfl6WK+l
- bPWfexneob7ZOAOt29OpA9ZMaZbsf4fQCWOKZubEr1r/aczEmwtEnawpSRJmk2WoLnVE=;
-Received: from mail-ed1-f53.google.com ([209.85.208.53])
+ bh=1vBZz0FHk3hbElOsJDIqL5UVlyjBmQ/JI/HbefNK6tE=; b=BQ5fdJ9IKl0z3SkeFyRvw7A4LC
+ 12hWytUkpiN/1bxgKchKVAB8KwqVQpM3Z1F9F0OTfZaAnK0LfMSYaazcM1iMjVqz131nsZR6GKew/
+ 7JEjZs+dIJK4a2yP3nwho4HuJhbEjr2pNQqrdnO/fGujqyzrB++G58rhjEbp5/FRj32w=;
+Received: from mail-ed1-f45.google.com ([209.85.208.45])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x0uds-0008AA-IO for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Aug 2026 05:33:13 +0000
-Received: by mail-ed1-f53.google.com with SMTP id
- 4fb4d7f45d1cf-6a611ba5130so3879751a12.1
+ id 1x0udu-0008AE-Ri for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Aug 2026 05:33:15 +0000
+Received: by mail-ed1-f45.google.com with SMTP id
+ 4fb4d7f45d1cf-6a156627e22so7390469a12.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 30 Aug 2026 22:33:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788154386; cv=none;
+ Sun, 30 Aug 2026 22:33:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788154388; cv=none;
  d=google.com; s=arc-20260327;
- b=UtD61idFo83d20iM+GPp5uljLKqQoQVT3Gc/X/owesjJDUDTyf7/Kl74qdWn/7tUln
- +A7pgm1OMg9872DCDY1flSKPQIqJr75uEx/AiUdlCtLooL3eZ+DfKx3h5grt3at6cQYi
- 8F81CGZqMCgbiGVc92Ui0zgoPSQ7krtchbCxrquaOJKC/i69Qtd/0g1fLtRo5XJYoBuU
- zmObal8lfvJUKMWASKd2rVO4dvpQM1+8w3FcyXOMID/4qbQZh0MyOKnFYdtoQ0wjeo7v
- Qxme15gPLyYKWcZk7+NH2b+X/JYES4w2GmLAVWuy40q5iu7PmBkNwUadqb5Q8auNlPLk
- uoWg==
+ b=OcQPVnZ5JO249U8HUgY90MgHbA0aGv64SsQ4GxqPA40k5DwJRr599KlJdM1kPbo/pF
+ 0O6rsUst6WQH95MBR7LU6DY0lvZcSjLAhlrJdItIe5ngxnH6ZxLqd7IYuKTicyRs+1pG
+ F6Fz+jKU6nfslFO6oCTCXpEc5svfXqKvP6NSSEslMpUtUP0/mMPm8wgb8uI1y1QbsnZ/
+ RcwhOd0dBlD+s264+FiTLL9g2Do490wmmc/WolF8aJpp7jfUMVsvuG9obwv0M9f/lGDM
+ zufBrmVjcaOX/Exc4Co8EFl4FU7sJmvGTKOk0hEjyYlPoNiFEixr+4RmwtIIy7pKyxyY
+ Hnew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
  h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
  :from:dkim-signature;
- bh=RqZhl3KyjNT5gAP4GrsiR5RK9iHeIl9R7u9oOVd2Ssc=;
+ bh=1vBZz0FHk3hbElOsJDIqL5UVlyjBmQ/JI/HbefNK6tE=;
  fh=xQlrTCtbZS9AeHiZIznQSf0O/ILYiLS8eBp4kjanibk=;
- b=ifZXTbCjRV78GqdUCacC2HSvXrsJGs7UzfVcqgV7JFIPMHzrbz14MI1SxjiyAfk9K1
- AMT04D+CwNmsY1irZJd4AcwPEFIe1YZmearpSkXi0gOLM8CVX4bGBYIsvYgctJvTGF3r
- kTLAnaLFz3DwXMCpajg5GV/j+vdu3XOAqgKF/+tsWM+C5vw1u6/T1nF0RYDsIz4eA+Fl
- q9m4neQA41vnBHwxv1WBTmARxned0tTNyU+nsA7iXxZX/7CWOo9ce79w0L4hmMpIdBjF
- W0B9xaiJ70WRqCiMCFGFMNIPVap8nwTPspcuZwJytlVBczE5Svo94ZF//yznEcZ8yr6L
- XrYw==; darn=lists.sourceforge.net
+ b=ZleWoRgRZS8UnkUKS1Hf1wxLEGlzTk9UYaj79nxOpuyd5ySRBQnS2kfiMpWiAICsup
+ gbvY7YoPnVXKj09m6IxZd8dSdz5MlLlCG+D3RniNh6yB4sW7FYNAhzHurODpHmm9XYsy
+ iwlq0TXbpkTdb9NOdmr0JSl7cY/xDhjc5qPOHk4d7JcXZktcaNSMP6wMUS2q8RVoi/36
+ cpVi0zTWjUoV1g3hpP1EFs/OkJHhFQLeFGd5CYQt2ZXp1CTX7gHin3uCjAYmz7i0vrp+
+ mROAB90n/LK0neQ18t0KnY2lEbqC6KD/6auxdUlgV/tO0HDoanUie+13hZzxdJKMQi+N
+ rlUw==; darn=lists.sourceforge.net
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788154386; x=1788759186; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1788154388; x=1788759188; darn=lists.sourceforge.net;
  h=content-type:cc:to:subject:message-id:date:references:in-reply-to
  :mime-version:from:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=RqZhl3KyjNT5gAP4GrsiR5RK9iHeIl9R7u9oOVd2Ssc=;
- b=l+uREbGp0EajMAeD/yKLBeyICi0V5zAb2gsjEsm+8qbeiq3qkm86dpOPy8chsP2keE
- BtV6ORp42IwhLn0iNrHT1IE06bHsFJn7FbdwrDdp7vsWjFEkDO7gvtL5cHAWBRiFYpPy
- 2lbz8tdqzezY4zdqEKpCYqas8l+n2MmYNEGaL/OswH/2NKz3ozqyGYqABvWHZJsJKcOH
- Vc1E9/nZi1/6+FPsVE7VS67J527gtLi+Twx2RAPUMs+G0uUPQE+/AIXHeaCI2kKadRWK
- VGIFm3LVttDiz5hCRZNcwK8TozmImSha1qwzgnuzn0DnZASX2sGfa6ItTB+Z+uMdlV5w
- vHUw==
+ :content-type; bh=1vBZz0FHk3hbElOsJDIqL5UVlyjBmQ/JI/HbefNK6tE=;
+ b=OzM8irnwKvyLjZOaxnMtitnVZwzr+MJoil4y+JETbkzSeBK+sxcX5kQ1Oq7YTB72Cr
+ K7WSXxlVU+4orXjr4OPYcdkY3A19XTXzWKFhsBx02k36HRSip3v1NK8ANmf0VzhNiksj
+ tBku4Gl1FjD3Pb30fRRTldMljyica7A9qOCFM7Uh6/Tiy5gLH3vw/D1U2i5wJl9Qh26Q
+ i7JJ1omw7exbMIyKnYKO8eU7+o9HBKOLoX3HJZD93zKR1zWE5mZHq2DvKI30GnQVA4tV
+ rQzBdMskc7zXbuOotk5pOhEbZ5AAu4lV96VKN7oSqISVhVFFVq8mWM6ITZreB+POsW8U
+ GMZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788154386; x=1788759186;
+ d=1e100.net; s=20251104; t=1788154388; x=1788759188;
  h=content-type:cc:to:subject:message-id:date:references:in-reply-to
  :mime-version:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=RqZhl3KyjNT5gAP4GrsiR5RK9iHeIl9R7u9oOVd2Ssc=;
- b=UJekbGOBKHrPjzRTTNwWuUaaf2CLIZyg2wDI22OJMS84wnGCRwBuMYa3r81V7o/th2
- 1m+4tMq1fTpjxbfI630iXp+74RXn77YdLDHTB5ES+0pO3a8gDeo6saYMPeRjMj15azr4
- TxJGsUWmPFtD4eDho0WB8Q1FDia61/8vjI/awvm5ppDsO6/y9W8BTrT7+c78lcH9/0PJ
- n7SyphEEKrf1NcJsODaCu0mTV2+ELtAmBp7VUI5GU5vHS42KiEmsMHjWORtJjzZZM524
- 34zKTOOKUuEOfKkYWWabBJf/a1D5Dko3ZzcDG7XsHeWbYKFKfd2PT0tWcjtNJTgKurt+
- Ub6g==
-X-Gm-Message-State: AFuF++mxSBcsB1Y/YhhE1Z7r3dfMieAsK5vv03+rBeLBSA7HcKW638c3
- TZxR7cY0clJzbzaCltjOtjBPbqvjgMEdaFQf+QwAemcXEb7okpGg/htn/o5Oispsb8FJYyJl4C6
- sgq/Z8/wxOaAe6IgTrmJlinN+TR+Ti/rdQtLwtMM=
-X-Gm-Gg: AYBFou0mDK6yDGv+8zi+Cs2R4jUfz1urr2a0w5iNy9+KXe5sT8IUR/fMyDjCwBBPIjP
- +JV46h5qvok71voLY8b4dy5koM4qBByoCn9ivBO5Pj1JCazXk4rS9iaVfaCwy+PK5MjfkWhb1hZ
- RefH0NXhNcP2JqAY7xobxNAyQzDXUNRRfXfxTg8nIEKgUabFVeorQebBgSyA+BGG90+HmO8r+7V
- 5wfrIkFGFuGYug4gFZXURr9FqUtgtbaYdJZxfIJmNvyHQqoGFNoRiZ7AF9BJQvjuV5kfnvTM50Q
- x2mDmBtQWqnYPzVkkBM2KnXsODUQl5IWPu6U9iQhAUC3Pzg0zO8ah84hp4EzmKBejbhXo7bZOHA
- 1uA==
-X-Received: by 2002:a05:6402:4025:b0:698:be4d:ca2a with SMTP id
- 4fb4d7f45d1cf-6a65e674f1emr338362a12.15.1788154385801; Sun, 30 Aug 2026
- 22:33:05 -0700 (PDT)
+ bh=1vBZz0FHk3hbElOsJDIqL5UVlyjBmQ/JI/HbefNK6tE=;
+ b=Y7khLESZobAVxtEi32jlH5jZkeUBW1gWsZqs69zxuN5KD0TrOxVhyUJnht5CSGq4kS
+ n8vK/7lNZ8T/RPUxeGkidhqaRTL7eXEZnbMugcfxpAsT+2qkWgogQss5YYk52XApyJaq
+ skgFjeg6oX07veV2l7nvNQzhg7pbiAfwtQZGf7y0SJow394HB6Vb1JiIO7ibZhOaCmbF
+ H4Iq23tMFZBiX8nTtl+wUUa7Oei6yfhmv7x+fJ4bNQNAKM878QHfFNCeJL14Vw3GU40z
+ TbEGbiEKL6cKPUnA8uBwLlqYmIhz3A3X4RArLeAMHv+Qrvj3r0Q/ggahlXqOqwzKkh+t
+ yTBQ==
+X-Gm-Message-State: AFuF++kRks0SfFJr7omlS9fsz+Gd5zRuCaPyob1WclTGxiJEtXXdjri6
+ VJuGXPy1PInDPsCouueTvtOUYMZSi7jY6CBc0WZ3CIStQwelLEYeuKQCrsYvP1rB6YNPaIZDqSV
+ msoILqC4uubXQAEBNMm97gXHOo0aZrerMquTfFbI=
+X-Gm-Gg: AYBFou2FR0D9PZzjLLmnBuVxt/xCO+T8YEqe4zEQGLnnGOmTo2edkmI6G/6PJa1xgea
+ zR8GK2ul33I3DqSkYwUPnMQvuRfCRZMqfTwwcMMJjeZXIEJ6/iWzueFsCixgI/CyMRYdxefNSYw
+ MaM7dvOjsP2MAiO7mS39Im37S5la3k6HZJjn8Hiin2UcjtwuEDTD8AbzB6jpHm0q+bI5y9Ie0D9
+ E2b9LqTnR2ew5/98LmFL3aqUVUoTmb2rzYP2+RHj/bLwBZGH0h02HS6GMkwrXL3SpSzWJzX7+eL
+ 7v6Hivtac5kDRXWla7Bjzrw3CrCXh+D7Y5G70kO9oauinpQQi/k4XNAmost5uGwDyQ0d87m62Om
+ kLQ==
+X-Received: by 2002:a05:6402:5052:b0:697:eb97:a4ed with SMTP id
+ 4fb4d7f45d1cf-6a647759b2amr3213291a12.7.1788154388003; Sun, 30 Aug 2026
+ 22:33:08 -0700 (PDT)
 Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 31 Aug 2026 07:33:04 +0200
+ HTTPREST; Mon, 31 Aug 2026 07:33:07 +0200
 Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 31 Aug 2026 07:33:04 +0200
+ HTTPREST; Mon, 31 Aug 2026 07:33:07 +0200
 From: Xinping Zhang <zhangxp1998@gmail.com>
 MIME-Version: 1.0
 In-Reply-To: <CAH=xXfEFL7w7nsU3xjNubKJ1soYMqT-DbJBuyzfEX4Rv3rdFEA@mail.gmail.com>
 References: <CAH=xXfEFL7w7nsU3xjNubKJ1soYMqT-DbJBuyzfEX4Rv3rdFEA@mail.gmail.com>
-Date: Mon, 31 Aug 2026 07:33:04 +0200
-X-Gm-Features: AcwNN1UP2SdUhylKvGmActR2plqv3gUfsL3Vj15jH4GfWpwuHhfpwqDYVDc4EIM
-Message-ID: <CAH=xXfEjUKNZLkCAQk0yROU+TDQgKof9bNCFLo2Wan=dpLoM0g@mail.gmail.com>
+Date: Mon, 31 Aug 2026 07:33:07 +0200
+X-Gm-Features: AcwNN1WvreAJnWhyi2veeu8qfPXm9__-weXbPX3FxUPvB9d5Lp7UaIJm264I3jU
+Message-ID: <CAH=xXfHSniq9jrLUvAMO6y-wu2A6akF+QeyVEP0RbuiqzPNU9w@mail.gmail.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1x0uds-0008AA-IO
-Subject: [f2fs-dev] [PATCH v3 05/11] f2fs: describe dentry block layout
- dynamically
+X-Headers-End: 1x0udu-0008AE-Ri
+Subject: [f2fs-dev] [PATCH v3 06/11] f2fs: describe {i, d,
+ id}node block layout dynamically
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -141,335 +141,452 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-An on-disk directory block contains a bitmap, reserved padding, an
-array of directory entries (struct f2fs_dir_entry), and matching filename
-slots. A fixed compile-time structure couples their offsets to 4KB blocks
-and relies on static reserved-space definitions.
+An inode block ends with five i_nid entries followed by a node footer.
+Data block address pointers (i_addr[]) precede them. Similarly, direct and
+indirect node blocks contain data addresses or node IDs followed by a node
+footer at the end of the block.
 
-Remove struct f2fs_dentry_block and compute region offsets (bitmap
-bytes, directory-entry count, and filename slots) dynamically from the
-filesystem block size. Access directory blocks through
-struct f2fs_dentry_ptr views initialized with the runtime geometry.
+Describe struct f2fs_inode, struct direct_node, and
+struct indirect_node using flexible array members. Compute the locations
+of i_nid and node footers dynamically from the filesystem block size.
+Introduce F2FS_INODE_NIDS() and F2FS_NODE_FOOTER() helpers to access these
+tail fields.
 
-Update directory operations, inline dentry handling, and recovery paths
-to use the dynamic block layout. No functional change is introduced for
-4KB blocks.
+Compute sbi->addrs_per_inode, sbi->addrs_per_block, and
+sbi->nids_per_block in init_sb_info(), and update node management, file
+mapping, and recovery paths accordingly.
 
 Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
 ---
- fs/f2fs/dir.c           | 51 +++++++++++++++++++++--------------------
- fs/f2fs/f2fs.h          | 31 ++++++++++++++++---------
- fs/f2fs/inline.c        |  2 +-
- fs/f2fs/super.c         |  6 +++++
- include/linux/f2fs_fs.h | 31 ++++++++++++-------------
- 5 files changed, 68 insertions(+), 53 deletions(-)
+ fs/f2fs/data.c          |  2 +-
+ fs/f2fs/f2fs.h          | 32 ++++++++++++++++++-------
+ fs/f2fs/gc.c            |  2 +-
+ fs/f2fs/inline.c        |  3 +--
+ fs/f2fs/inode.c         |  5 ++--
+ fs/f2fs/node.c          |  4 +---
+ fs/f2fs/node.h          | 53 +++++++++++++++++++----------------------
+ fs/f2fs/super.c         |  5 ++++
+ include/linux/f2fs_fs.h | 26 +++++++++++++++-----
+ 9 files changed, 79 insertions(+), 53 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index fd0e2cd31a81..75ff36a13f60 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -195,7 +195,7 @@ static struct f2fs_dir_entry *find_in_block(struct
-inode *dir,
- 				int *max_slots,
- 				bool use_hash)
- {
--	struct f2fs_dentry_block *dentry_blk;
-+	void *dentry_blk;
- 	struct f2fs_dentry_ptr d;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6ae0eb37d20f..751b7a457d9a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2027,7 +2027,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
 
- 	dentry_blk = folio_address(dentry_folio);
-@@ -518,7 +518,7 @@ static int make_empty_dir(struct inode *inode,
- 		struct inode *parent, struct folio *folio)
- {
- 	struct folio *dentry_folio;
--	struct f2fs_dentry_block *dentry_blk;
-+	void *dentry_blk;
- 	struct f2fs_dentry_ptr d;
+ 		phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
+ 		offset = offsetof(struct f2fs_inode, i_addr) +
+-					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
++					sizeof(__le32) * (DEF_ADDRS_PER_INODE_SBI(sbi) -
+ 					get_inline_xattr_addrs(inode));
 
- 	if (f2fs_has_inline_dentry(inode))
-@@ -530,7 +530,7 @@ static int make_empty_dir(struct inode *inode,
-
- 	dentry_blk = folio_address(dentry_folio);
-
--	make_dentry_ptr_block(NULL, &d, dentry_blk);
-+	make_dentry_ptr_block(inode, &d, dentry_blk);
- 	f2fs_do_make_empty_dir(inode, parent, &d);
-
- 	folio_mark_dirty(dentry_folio);
-@@ -690,7 +690,7 @@ int f2fs_add_regular_entry(struct inode *dir,
-const struct f2fs_filename *fname,
- 	unsigned long bidx, block;
- 	unsigned int nbucket, nblock;
- 	struct folio *dentry_folio = NULL;
--	struct f2fs_dentry_block *dentry_blk = NULL;
-+	void *dentry_blk = NULL;
- 	struct f2fs_dentry_ptr d;
- 	struct folio *folio = NULL;
- 	int slots, err = 0;
-@@ -727,9 +727,9 @@ int f2fs_add_regular_entry(struct inode *dir,
-const struct f2fs_filename *fname,
- 			return PTR_ERR(dentry_folio);
-
- 		dentry_blk = folio_address(dentry_folio);
--		bit_pos = f2fs_room_for_filename(&dentry_blk->dentry_bitmap,
--						slots, NR_DENTRY_IN_BLOCK);
--		if (bit_pos < NR_DENTRY_IN_BLOCK)
-+		make_dentry_ptr_block(dir, &d, dentry_blk);
-+		bit_pos = f2fs_room_for_filename(d.bitmap, slots, d.max);
-+		if (bit_pos < d.max)
- 			goto add_dentry;
-
- 		f2fs_folio_put(dentry_folio, true);
-@@ -750,7 +750,6 @@ int f2fs_add_regular_entry(struct inode *dir,
-const struct f2fs_filename *fname,
- 		}
- 	}
-
--	make_dentry_ptr_block(NULL, &d, dentry_blk);
- 	f2fs_update_dentry(ino, mode, &d, &fname->disk_name, fname->hash,
- 			   bit_pos);
-
-@@ -887,7 +886,8 @@ void f2fs_drop_nlink(struct inode *dir, struct inode *inode)
- void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct folio *folio,
- 					struct inode *dir, struct inode *inode)
- {
--	struct f2fs_dentry_block *dentry_blk;
-+	void *dentry_blk;
-+	struct f2fs_dentry_ptr d;
- 	unsigned int bit_pos;
- 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
- 	pgoff_t index = folio->index;
-@@ -905,18 +905,17 @@ void f2fs_delete_entry(struct f2fs_dir_entry
-*dentry, struct folio *folio,
- 	f2fs_folio_wait_writeback(folio, DATA, true, true);
-
- 	dentry_blk = folio_address(folio);
--	bit_pos = dentry - dentry_blk->dentry;
-+	make_dentry_ptr_block(dir, &d, dentry_blk);
-+	bit_pos = dentry - d.dentry;
- 	for (i = 0; i < slots; i++)
--		__clear_bit_le(bit_pos + i, &dentry_blk->dentry_bitmap);
-+		__clear_bit_le(bit_pos + i, d.bitmap);
-
- 	/* Let's check and deallocate this dentry page */
--	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
--			NR_DENTRY_IN_BLOCK,
--			0);
-+	bit_pos = find_next_bit_le(d.bitmap, d.max, 0);
- 	folio_mark_dirty(folio);
-
--	if (bit_pos == NR_DENTRY_IN_BLOCK &&
--		!f2fs_truncate_hole(dir, index, index + 1)) {
-+	if (bit_pos == d.max &&
-+	    !f2fs_truncate_hole(dir, index, index + 1)) {
- 		f2fs_clear_page_cache_dirty_tag(folio);
- 		folio_clear_dirty_for_io(folio);
- 		folio_clear_uptodate(folio);
-@@ -938,7 +937,8 @@ bool f2fs_empty_dir(struct inode *dir)
- {
- 	unsigned long bidx = 0;
- 	unsigned int bit_pos;
--	struct f2fs_dentry_block *dentry_blk;
-+	void *dentry_blk;
-+	struct f2fs_dentry_ptr d;
- 	unsigned long nblock = dir_blocks(dir);
-
- 	if (f2fs_has_inline_dentry(dir))
-@@ -959,17 +959,16 @@ bool f2fs_empty_dir(struct inode *dir)
- 		}
-
- 		dentry_blk = folio_address(dentry_folio);
-+		make_dentry_ptr_block(dir, &d, dentry_blk);
- 		if (bidx == 0)
- 			bit_pos = 2;
- 		else
- 			bit_pos = 0;
--		bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
--						NR_DENTRY_IN_BLOCK,
--						bit_pos);
-+		bit_pos = find_next_bit_le(d.bitmap, d.max, bit_pos);
-
- 		f2fs_folio_put(dentry_folio, false);
-
--		if (bit_pos < NR_DENTRY_IN_BLOCK)
-+		if (bit_pos < d.max)
- 			return false;
-
- 		bidx++;
-@@ -1066,10 +1065,12 @@ static int f2fs_readdir(struct file *file,
-struct dir_context *ctx)
- {
- 	struct inode *inode = file_inode(file);
- 	unsigned long npages = dir_blocks(inode);
--	struct f2fs_dentry_block *dentry_blk = NULL;
-+	void *dentry_blk = NULL;
- 	struct file_ra_state *ra = &file->f_ra;
- 	loff_t start_pos = ctx->pos;
--	unsigned int n = ((unsigned long)ctx->pos / NR_DENTRY_IN_BLOCK);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int entries = sbi->dentries_per_block;
-+	unsigned int n = (unsigned long)ctx->pos / entries;
- 	struct f2fs_dentry_ptr d;
- 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
- 	int err = 0;
-@@ -1089,7 +1090,7 @@ static int f2fs_readdir(struct file *file,
-struct dir_context *ctx)
- 		goto out_free;
- 	}
-
--	for (; n < npages; ctx->pos = n * NR_DENTRY_IN_BLOCK) {
-+	for (; n < npages; ctx->pos = n * entries) {
- 		struct folio *dentry_folio;
- 		pgoff_t next_pgofs;
-
-@@ -1122,7 +1123,7 @@ static int f2fs_readdir(struct file *file,
-struct dir_context *ctx)
- 		make_dentry_ptr_block(inode, &d, dentry_blk);
-
- 		err = f2fs_fill_dentries(ctx, &d,
--				n * NR_DENTRY_IN_BLOCK, &fstr);
-+				n * entries, &fstr);
- 		f2fs_folio_put(dentry_folio, false);
- 		if (err)
- 			break;
+ 		phys += offset;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2a4ba7d4ec0e..d2e54573ed34 100644
+index d2e54573ed34..247e56522441 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -669,17 +669,6 @@ struct f2fs_dentry_ptr {
- 	int nr_bitmap;
- };
-
--static inline void make_dentry_ptr_block(struct inode *inode,
--		struct f2fs_dentry_ptr *d, struct f2fs_dentry_block *t)
--{
--	d->inode = inode;
--	d->max = NR_DENTRY_IN_BLOCK;
--	d->nr_bitmap = SIZE_OF_DENTRY_BITMAP;
--	d->bitmap = t->dentry_bitmap;
--	d->dentry = t->dentry;
--	d->filename = t->filename;
--}
--
- static inline void make_dentry_ptr_inline(struct inode *inode,
- 					struct f2fs_dentry_ptr *d, void *t)
- {
-@@ -1866,6 +1855,9 @@ struct f2fs_sb_info {
+@@ -1853,6 +1853,9 @@ struct f2fs_sb_info {
+ 	unsigned int log_blocksize;		/* log2 block size */
+ 	unsigned int blocksize;			/* block size */
  	unsigned int nat_entries_per_block;	/* NAT entries in a block */
++	unsigned int addrs_per_inode;		/* addresses in an inode block */
++	unsigned int addrs_per_block;		/* addresses in a direct node block */
++	unsigned int nids_per_block;		/* node IDs in an indirect node block */
  	unsigned int sit_entries_per_block;	/* SIT entries in a block */
  	unsigned int orphans_per_block;	/* orphan inodes in a block */
-+	unsigned int dentries_per_block;	/* dentries in a block */
-+	unsigned int dentry_bitmap_size;	/* dentry bitmap size in bytes */
-+	unsigned int dentry_reserved_size;	/* dentry reserved bytes */
- 	unsigned int root_ino_num;		/* root inode number*/
- 	unsigned int node_ino_num;		/* node inode number*/
- 	unsigned int meta_ino_num;		/* meta inode number*/
-@@ -2268,6 +2260,23 @@ f2fs_orphan_footer(void *orphan_block, struct
-f2fs_sb_info *sbi)
- 		 sizeof(struct f2fs_orphan_footer));
+ 	unsigned int dentries_per_block;	/* dentries in a block */
+@@ -2248,6 +2251,7 @@ static inline struct f2fs_sb_info
+*F2FS_F_SB(const struct folio *folio)
+
+ #define SIT_ENTRY_PER_BLOCK(sbi)	((sbi)->sit_entries_per_block)
+ #define NAT_ENTRY_PER_BLOCK(sbi)	((sbi)->nat_entries_per_block)
++#define DEF_ADDRS_PER_INODE_SBI(sbi)	((sbi)->addrs_per_inode)
+ #define F2FS_ORPHANS_PER_BLOCK(sbi)	((sbi)->orphans_per_block)
+ #define GET_ORPHAN_BLOCKS(sbi, n)	DIV_ROUND_UP((n), \
+ 					F2FS_ORPHANS_PER_BLOCK(sbi))
+@@ -2297,6 +2301,12 @@ static inline struct f2fs_checkpoint
+*F2FS_CKPT(struct f2fs_sb_info *sbi)
+ 	return (struct f2fs_checkpoint *)(sbi->ckpt);
  }
 
-+static inline void make_dentry_ptr_block(struct inode *inode,
-+				struct f2fs_dentry_ptr *d, void *t)
++static inline struct node_footer *F2FS_NODE_FOOTER(const struct folio *folio)
 +{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int entries = sbi->dentries_per_block;
-+	unsigned int bitmap_size = sbi->dentry_bitmap_size;
-+	unsigned int reserved_size = sbi->dentry_reserved_size;
-+
-+	d->inode = inode;
-+	d->max = entries;
-+	d->nr_bitmap = bitmap_size;
-+	d->bitmap = t;
-+	d->dentry = t + bitmap_size + reserved_size;
-+	d->filename = t + bitmap_size + reserved_size +
-+					SIZE_OF_DIR_ENTRY * entries;
++	return folio_address(folio) + F2FS_BLKSIZE -
++		sizeof(struct node_footer);
 +}
 +
- static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
+ static inline struct f2fs_node *F2FS_NODE(const struct folio *folio)
  {
- 	return (struct f2fs_super_block *)(sbi->raw_super);
+ 	return (struct f2fs_node *)folio_address(folio);
+@@ -2307,6 +2317,12 @@ static inline struct f2fs_inode
+*F2FS_INODE(const struct folio *folio)
+ 	return &((struct f2fs_node *)folio_address(folio))->i;
+ }
+
++static inline __le32 *F2FS_INODE_NIDS(const struct folio *folio)
++{
++	return folio_address(folio) + F2FS_BLKSIZE - sizeof(struct node_footer) -
++		SIZE_OF_I_NID;
++}
++
+ static inline struct f2fs_nm_info *NM_I(struct f2fs_sb_info *sbi)
+ {
+ 	return (struct f2fs_nm_info *)(sbi->nm_info);
+@@ -3277,13 +3293,11 @@ static inline void
+f2fs_radix_tree_insert(struct radix_tree_root *root,
+ 		cond_resched();
+ }
+
+-#define RAW_IS_INODE(p)	((p)->footer.nid == (p)->footer.ino)
+-
+ static inline bool IS_INODE(const struct folio *folio)
+ {
+-	struct f2fs_node *p = F2FS_NODE(folio);
++	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+
+-	return RAW_IS_INODE(p);
++	return footer->nid == footer->ino;
+ }
+
+ static inline int offset_in_addr(struct f2fs_inode *i)
+@@ -3292,9 +3306,11 @@ static inline int offset_in_addr(struct f2fs_inode *i)
+ 			(le16_to_cpu(i->i_extra_isize) / sizeof(__le32)) : 0;
+ }
+
+-static inline __le32 *blkaddr_in_node(struct f2fs_node *node)
++static inline __le32 *blkaddr_in_node(const struct folio *folio)
+ {
+-	return RAW_IS_INODE(node) ? node->i.i_addr : node->dn.addr;
++	struct f2fs_node *node = F2FS_NODE(folio);
++
++	return IS_INODE(folio) ? node->i.i_addr : node->dn.addr;
+ }
+
+ static inline int f2fs_has_extra_attr(struct inode *inode);
+@@ -3311,7 +3327,7 @@ static inline unsigned int get_dnode_base(struct
+inode *inode,
+ static inline __le32 *get_dnode_addr(struct inode *inode,
+ 					struct folio *node_folio)
+ {
+-	return blkaddr_in_node(F2FS_NODE(node_folio)) +
++	return blkaddr_in_node(node_folio) +
+ 			get_dnode_base(inode, node_folio);
+ }
+
+@@ -3639,7 +3655,7 @@ void *inline_xattr_addr(struct inode *inode,
+const struct folio *folio)
+ {
+ 	struct f2fs_inode *ri = F2FS_INODE(folio);
+
+-	return (void *)&(ri->i_addr[DEF_ADDRS_PER_INODE -
++	return (void *)&(ri->i_addr[DEF_ADDRS_PER_INODE_SBI(F2FS_I_SB(inode)) -
+ 					get_inline_xattr_addrs(inode)]);
+ }
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index c15c6ba91597..f15ab07a7347 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1176,7 +1176,7 @@ static bool is_alive(struct f2fs_sb_info *sbi,
+struct f2fs_summary *sum,
+
+ 	if (IS_INODE(node_folio)) {
+ 		base = offset_in_addr(F2FS_INODE(node_folio));
+-		max_addrs = DEF_ADDRS_PER_INODE;
++		max_addrs = DEF_ADDRS_PER_INODE_SBI(sbi);
+ 	} else {
+ 		base = 0;
+ 		max_addrs = DEF_ADDRS_PER_BLOCK;
 diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index aec06fb4fd76..718dd785865a 100644
+index 718dd785865a..73cd9b6ddcc5 100644
 --- a/fs/f2fs/inline.c
 +++ b/fs/f2fs/inline.c
-@@ -415,7 +415,7 @@ static int f2fs_move_inline_dirents(struct inode
-*dir, struct folio *ifolio,
- {
- 	struct folio *folio;
- 	struct dnode_of_data dn;
--	struct f2fs_dentry_block *dentry_blk;
-+	void *dentry_blk;
- 	struct f2fs_dentry_ptr src, dst;
- 	int err;
+@@ -36,14 +36,13 @@ bool f2fs_may_inline_data(struct inode *inode)
 
+ static bool inode_has_blocks(struct inode *inode, struct folio *ifolio)
+ {
+-	struct f2fs_inode *ri = F2FS_INODE(ifolio);
+ 	int i;
+
+ 	if (F2FS_HAS_BLOCKS(inode))
+ 		return true;
+
+ 	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
+-		if (ri->i_nid[i])
++		if (F2FS_INODE_NIDS(ifolio)[i])
+ 			return true;
+ 	}
+ 	return false;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 96cc0e777567..fda9ee3bfc61 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -150,9 +150,8 @@ bool f2fs_enable_inode_chksum(struct f2fs_sb_info
+*sbi, struct folio *folio)
+
+ static __u32 f2fs_inode_chksum(struct f2fs_sb_info *sbi, struct folio *folio)
+ {
+-	struct f2fs_node *node = F2FS_NODE(folio);
+-	struct f2fs_inode *ri = &node->i;
+-	__le32 ino = node->footer.ino;
++	struct f2fs_inode *ri = F2FS_INODE(folio);
++	__le32 ino = F2FS_NODE_FOOTER(folio)->ino;
+ 	__le32 gen = ri->i_generation;
+ 	__u32 chksum, chksum_seed;
+ 	__u32 dummy_cs = 0;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 960c6657d0d6..e3f594f7bcce 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -3001,7 +3001,6 @@ int f2fs_recover_inode_page(struct f2fs_sb_info
+*sbi, struct folio *folio)
+ int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct f2fs_summary_block *sum)
+ {
+-	struct f2fs_node *rn;
+ 	struct f2fs_summary *sum_entry;
+ 	block_t addr;
+ 	int i, idx, last_offset, nrpages;
+@@ -3023,8 +3022,7 @@ int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 			if (IS_ERR(folio))
+ 				return PTR_ERR(folio);
+
+-			rn = F2FS_NODE(folio);
+-			sum_entry->nid = rn->footer.nid;
++			sum_entry->nid = F2FS_NODE_FOOTER(folio)->nid;
+ 			sum_entry->version = 0;
+ 			sum_entry->ofs_in_node = 0;
+ 			sum_entry++;
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 0dce97aac5fc..6a2b7c63f4a3 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -252,73 +252,68 @@ static inline void set_to_next_nat(struct
+f2fs_sb_info *sbi,
+
+ static inline nid_t ino_of_node(const struct folio *node_folio)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(node_folio);
+-	return le32_to_cpu(rn->footer.ino);
++	return le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->ino);
+ }
+
+ static inline nid_t nid_of_node(const struct folio *node_folio)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(node_folio);
+-	return le32_to_cpu(rn->footer.nid);
++	return le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->nid);
+ }
+
+ static inline unsigned int ofs_of_node(const struct folio *node_folio)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(node_folio);
+-	unsigned flag = le32_to_cpu(rn->footer.flag);
++	unsigned int flag = le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->flag);
+ 	return flag >> OFFSET_BIT_SHIFT;
+ }
+
+ static inline __u64 cpver_of_node(const struct folio *node_folio)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(node_folio);
+-	return le64_to_cpu(rn->footer.cp_ver);
++	return le64_to_cpu(F2FS_NODE_FOOTER(node_folio)->cp_ver);
+ }
+
+ static inline block_t next_blkaddr_of_node(const struct folio *node_folio)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(node_folio);
+-	return le32_to_cpu(rn->footer.next_blkaddr);
++	return le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->next_blkaddr);
+ }
+
+ static inline void fill_node_footer(const struct folio *folio, nid_t nid,
+ 				nid_t ino, unsigned int ofs, bool reset)
+ {
+ 	struct f2fs_node *rn = F2FS_NODE(folio);
++	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+ 	unsigned int old_flag = 0;
+
+ 	if (reset)
+-		memset(rn, 0, sizeof(*rn));
++		memset(rn, 0, F2FS_BLKSIZE);
+ 	else
+-		old_flag = le32_to_cpu(rn->footer.flag);
++		old_flag = le32_to_cpu(footer->flag);
+
+-	rn->footer.nid = cpu_to_le32(nid);
+-	rn->footer.ino = cpu_to_le32(ino);
++	footer->nid = cpu_to_le32(nid);
++	footer->ino = cpu_to_le32(ino);
+
+ 	/* should remain old flag bits such as COLD_BIT_SHIFT */
+-	rn->footer.flag = cpu_to_le32((ofs << OFFSET_BIT_SHIFT) |
++	footer->flag = cpu_to_le32((ofs << OFFSET_BIT_SHIFT) |
+ 					(old_flag & OFFSET_BIT_MASK));
+ }
+
+ static inline void copy_node_footer(const struct folio *dst,
+ 		const struct folio *src)
+ {
+-	struct f2fs_node *src_rn = F2FS_NODE(src);
+-	struct f2fs_node *dst_rn = F2FS_NODE(dst);
+-	memcpy(&dst_rn->footer, &src_rn->footer, sizeof(struct node_footer));
++	memcpy(F2FS_NODE_FOOTER(dst), F2FS_NODE_FOOTER(src),
++	       sizeof(struct node_footer));
+ }
+
+ static inline void fill_node_footer_blkaddr(struct folio *folio,
+block_t blkaddr)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_F_SB(folio));
+-	struct f2fs_node *rn = F2FS_NODE(folio);
++	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+ 	__u64 cp_ver = cur_cp_version(ckpt);
+
+ 	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+ 		cp_ver |= (cur_cp_crc(ckpt) << 32);
+
+-	rn->footer.cp_ver = cpu_to_le64(cp_ver);
+-	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
++	footer->cp_ver = cpu_to_le64(cp_ver);
++	footer->next_blkaddr = cpu_to_le32(blkaddr);
+ }
+
+ static inline bool is_recoverable_dnode(const struct folio *folio)
+@@ -378,11 +373,12 @@ static inline bool IS_DNODE(const struct folio
+*node_folio)
+ static inline int set_nid(struct folio *folio, int off, nid_t nid, bool i)
+ {
+ 	struct f2fs_node *rn = F2FS_NODE(folio);
++	__le32 *inode_nids = F2FS_INODE_NIDS(folio);
+
+ 	f2fs_folio_wait_writeback(folio, NODE, true, true);
+
+ 	if (i)
+-		rn->i.i_nid[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
++		inode_nids[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
+ 	else
+ 		rn->in.nid[off] = cpu_to_le32(nid);
+ 	return folio_mark_dirty(folio);
+@@ -391,9 +387,10 @@ static inline int set_nid(struct folio *folio,
+int off, nid_t nid, bool i)
+ static inline nid_t get_nid(const struct folio *folio, int off, bool i)
+ {
+ 	struct f2fs_node *rn = F2FS_NODE(folio);
++	const __le32 *inode_nids = F2FS_INODE_NIDS(folio);
+
+ 	if (i)
+-		return le32_to_cpu(rn->i.i_nid[off - NODE_DIR1_BLOCK]);
++		return le32_to_cpu(inode_nids[off - NODE_DIR1_BLOCK]);
+ 	return le32_to_cpu(rn->in.nid[off]);
+ }
+
+@@ -406,8 +403,7 @@ static inline nid_t get_nid(const struct folio
+*folio, int off, bool i)
+
+ static inline int is_node(const struct folio *folio, int type)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(folio);
+-	return le32_to_cpu(rn->footer.flag) & BIT(type);
++	return le32_to_cpu(F2FS_NODE_FOOTER(folio)->flag) & BIT(type);
+ }
+
+ #define is_cold_node(folio)	is_node(folio, COLD_BIT_SHIFT)
+@@ -416,14 +412,13 @@ static inline int is_node(const struct folio
+*folio, int type)
+
+ static inline void __set_mark(const struct folio *folio, bool mark, int type)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(folio);
+-	unsigned int flag = le32_to_cpu(rn->footer.flag);
+-
++	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
++	unsigned int flag = le32_to_cpu(footer->flag);
+ 	if (mark)
+ 		flag |= BIT(type);
+ 	else
+ 		flag &= ~BIT(type);
+-	rn->footer.flag = cpu_to_le32(flag);
++	footer->flag = cpu_to_le32(flag);
+ }
+
+ static inline void set_cold_node(const struct folio *folio, bool is_dir)
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f9811d571ae5..8d2224e585d3 100644
+index 8d2224e585d3..fcaeaacaab33 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -4388,6 +4388,12 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+@@ -4384,6 +4384,11 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->blocksize = BIT(sbi->log_blocksize);
+ 	sbi->nat_entries_per_block = sbi->blocksize /
+ 		sizeof(struct f2fs_nat_entry);
++	sbi->addrs_per_inode = (sbi->blocksize - OFFSET_OF_END_OF_I_EXT -
++		SIZE_OF_I_NID - sizeof(struct node_footer)) / sizeof(__le32);
++	sbi->addrs_per_block = (sbi->blocksize -
++		sizeof(struct node_footer)) / sizeof(__le32);
++	sbi->nids_per_block = sbi->addrs_per_block;
+ 	sbi->sit_entries_per_block = sbi->blocksize /
  		sizeof(struct f2fs_sit_entry);
  	sbi->orphans_per_block = (sbi->blocksize -
- 		sizeof(struct f2fs_orphan_footer)) / sizeof(__le32);
-+	sbi->dentries_per_block = (BITS_PER_BYTE * sbi->blocksize) /
-+		((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * BITS_PER_BYTE + 1);
-+	sbi->dentry_bitmap_size = DIV_ROUND_UP(sbi->dentries_per_block,
-+		BITS_PER_BYTE);
-+	sbi->dentry_reserved_size = sbi->blocksize - sbi->dentry_bitmap_size -
-+		(SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * sbi->dentries_per_block;
- 	sbi->log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
- 	sbi->blocks_per_seg = BIT(sbi->log_blocks_per_seg);
- 	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
 diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 7d2cbceb42d5..d1059a27e1b9 100644
+index d1059a27e1b9..3d0fe2c78e12 100644
 --- a/include/linux/f2fs_fs.h
 +++ b/include/linux/f2fs_fs.h
-@@ -601,15 +601,7 @@ typedef __le32	f2fs_hash_t;
-  * dentry, when converting inline dentry we should handle this carefully.
-  */
-
--/* the number of dentry in a block */
--#define NR_DENTRY_IN_BLOCK	((BITS_PER_BYTE * F2FS_BLKSIZE) / \
--					((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * BITS_PER_BYTE + 1))
- #define SIZE_OF_DIR_ENTRY	11	/* by byte */
--#define SIZE_OF_DENTRY_BITMAP	((NR_DENTRY_IN_BLOCK + BITS_PER_BYTE - 1) / \
--					BITS_PER_BYTE)
--#define SIZE_OF_RESERVED	(F2FS_BLKSIZE - ((SIZE_OF_DIR_ENTRY + \
--				F2FS_SLOT_LEN) * \
--				NR_DENTRY_IN_BLOCK + SIZE_OF_DENTRY_BITMAP))
- #define MIN_INLINE_DENTRY_SIZE		40	/* just include '.' and '..' entries */
-
- /* One directory entry slot representing F2FS_SLOT_LEN-sized file name */
-@@ -620,14 +612,21 @@ struct f2fs_dir_entry {
- 	__u8 file_type;		/* file type */
+@@ -16,6 +16,7 @@
+ #define F2FS_MAX_LOG_SECTOR_SIZE	PAGE_SHIFT	/* Max is Block Size */
+ #define F2FS_LOG_SECTORS_PER_BLOCK	(PAGE_SHIFT - 9) /* log number for
+sector/blk */
+ #define F2FS_BLKSIZE			PAGE_SIZE /* support only block == page */
++#define F2FS_MAX_BLKSIZE		PAGE_SIZE
+ #define F2FS_BLKSIZE_BITS		PAGE_SHIFT /* bits for F2FS_BLKSIZE */
+ #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+ #define F2FS_EXTENSION_LEN		8	/* max size of extension */
+@@ -343,18 +344,25 @@ struct f2fs_inode {
+ 						 */
+ 			__le32 i_extra_end[0];	/* for attribute size calculation */
+ 		} __packed;
+-		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
++		DECLARE_FLEX_ARRAY(__le32, i_addr); /* data block pointers */
+ 	};
+-	__le32 i_nid[DEF_NIDS_PER_INODE];	/* direct(2), indirect(2),
+-						double_indirect(1) node id */
++	/*
++	 * __le32 i_nid[DEF_NIDS_PER_INODE];
++	 *
++	 * It is stored immediately before the node footer at the end of the
++	 * filesystem block. Its offset depends on the filesystem block size, so
++	 * locate it dynamically with F2FS_INODE_NIDS().
++	 */
  } __packed;
 
--/* Block-sized directory entry block */
--struct f2fs_dentry_block {
--	/* validity bitmap for directory entries in each block */
--	__u8 dentry_bitmap[SIZE_OF_DENTRY_BITMAP];
--	__u8 reserved[SIZE_OF_RESERVED];
--	struct f2fs_dir_entry dentry[NR_DENTRY_IN_BLOCK];
--	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
--} __packed;
-+/*
-+ * A dentry block is laid out as follows, where the number of entries and all
-+ * offsets are determined by the filesystem block size at runtime:
-+ *
-+ * 0                                                         blocksize
-+ * +--------+----------+-------------------+-----------------------+
-+ * | bitmap | reserved | dir_entry[entries]| filename[entries][8] |
-+ * +--------+----------+-------------------+-----------------------+
-+ *
-+ * entries = (BITS_PER_BYTE * blocksize) /
-+ *           ((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * BITS_PER_BYTE + 1)
-+ * bitmap_size = DIV_ROUND_UP(entries, BITS_PER_BYTE)
-+ * reserved_size = blocksize - bitmap_size -
-+ *                 (SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * entries
-+ */
+ struct direct_node {
+-	__le32 addr[DEF_ADDRS_PER_BLOCK];	/* array of data block address */
++	/* The address count depends on the filesystem block size. */
++	DECLARE_FLEX_ARRAY(__le32, addr); /* array of data block address */
+ } __packed;
 
- #define	F2FS_DEF_PROJID		0	/* default project ID */
+ struct indirect_node {
+-	__le32 nid[NIDS_PER_BLOCK];	/* array of data block address */
++	/* The node ID count depends on the filesystem block size. */
++	DECLARE_FLEX_ARRAY(__le32, nid); /* array of data block address */
+ } __packed;
 
+ enum {
+@@ -373,7 +381,13 @@ struct f2fs_node {
+ 		struct direct_node dn;
+ 		struct indirect_node in;
+ 	};
+-	struct node_footer footer;
++	/*
++	 * struct node_footer footer;
++	 *
++	 * It is stored at the end of the filesystem block, after the inode or
++	 * direct/indirect node data. Its offset depends on the filesystem block
++	 * size, so locate it dynamically with F2FS_NODE_FOOTER().
++	 */
+ } __packed;
+
+ /*
 -- 
 2.53.0
 
