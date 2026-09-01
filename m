@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65938C61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 20:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2EB6DC61DD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 20:30:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=mgUN7ZGJe7UfyVKZcu0kR/2udVZdeLTE5ps0prxEgQE=; b=jzAyKm7XJBtuZ1SoNcVIepdINN
-	JGOg1xJxFFEcHcGp65UlBiO2o4TPdNqdQzdlcfidBFZXSknCzURd+vr31PRW/R5f/NDvV0rTWWrXs
-	R++wRnm7k2S15FPjTSvWRINTuVR5TTIomXovTzehV+dfI0qaiUr99bm/EcWzqDFOYqAc=;
+	bh=KOwyKyyvpISvMGdWyU554Z6/4u9Hq1u1kC0hhY0ZvQU=; b=aSswTsVWVZxGgW0ZX4+00iHfz6
+	l9/xnThVrvudPelfENKAEqx65UaYREbDSYNdlCjlDm1gTob3FsjeIjmkveOWx6zqz7nVb5W8wa/nS
+	KqEQ/yljq9yGA3/QXuR/I7I2x8Vdi6CsKBTYR7mC9NcNRaoVY0U1DlHtftHPjIeNDlog=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1V6w-0007rA-Dm;
-	Tue, 01 Sep 2026 20:29:39 +0000
+	id 1x1V7z-0007ts-VB;
+	Tue, 01 Sep 2026 20:30:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zlang@kernel.org>) id 1x1V6s-0007r1-LB
+ (envelope-from <zlang@kernel.org>) id 1x1V7y-0007tj-Dg
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 20:29:35 +0000
+ Tue, 01 Sep 2026 20:30:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=; b=Aw7+SfO86yNdZCHF72l5vGVibm
- KBNBj7X9mewI80TqzZiatTah4pRimXL5+mymN4PS7IlRBvMfnlj7cpyo84YmexxQ0ojvzGHenAVAO
- Da3iF909O28/c8F7KTP+vE1ZUBWiSw+7UFv+XC7dDEkEcMvvZOgxPYiIrhkEPqCtzMjA=;
+ bh=rKxIIP5PkuS4vkzJXkQJBUfKdiqUK3/TwzXzoEBcn1M=; b=MjaTEhms6dSf+J+6O2uwaG1haT
+ jOrfDsxIEJ1Mm7DRuFPmHTHd14n4dcdD3uFjBxbd7VWERzTSMD3+jsztK/fvMp5exM7rsA202cMrl
+ zafAkjk3p9mkGFkuTbYj6zIMoFNbfYN/rx2ekCeQYNBAKUe6kugMwa42TZczrZGdOM7E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,33 +42,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=; b=K1EEMLCVCtPajOKhdv5MKjexpM
- TFChRVsKfnu03/dGQ1Hf40JgoXjXHhlpdORSPIZ8dIsSqofOuykE7a+AUXrBnN73kTlCq0XfIWFbW
- +2P/IpJGe0iOWSjBK13kTOq+HFu1OeMnvaojZSK/Ny63Q/eiURR1BkqJSrE+tQq7ttLs=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=rKxIIP5PkuS4vkzJXkQJBUfKdiqUK3/TwzXzoEBcn1M=; b=FtjGcMlN6HDVahFwYiCgDd0VAo
+ 1rU/Mr3a88loSy4tLuAyF8MEbQDv28zljG7QB5aPRMN8FLvT/eyhMjqPoH9stJa+4V16saw9hnLck
+ E0kBDZGyZDWJCEAyPX0FeT7XcOyC0zjLXxGNdMt9Fjg1fZ5TJhlB8s2J9WmkZHdmhvBo=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x1V6s-00042V-2X for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 20:29:35 +0000
+ id 1x1V7x-0005dS-Nn for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 01 Sep 2026 20:30:43 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id B2D6D4369E
+ by tor.source.kernel.org (Postfix) with ESMTP id 122D6600D9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  1 Sep 2026 20:29:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E891F000E9;
- Tue,  1 Sep 2026 20:29:25 +0000 (UTC)
+ Tue,  1 Sep 2026 20:30:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F7C1F000E9;
+ Tue,  1 Sep 2026 20:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788294568;
- bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+ s=k20260515; t=1788294635;
+ bh=rKxIIP5PkuS4vkzJXkQJBUfKdiqUK3/TwzXzoEBcn1M=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=GHnc9AkMu8ce9n+HMBvbAn8Krm1Gsxh5hDD1NQ1ORMazndd1HS5Sx8sLT4L0ZVE85
- CjFJ/EADfsbbqTS6ffNi/Tftm43kSBjFiscGjTIImubwVFY7HfXlidLB/pZhTRnliN
- a4XWeiCk73rMN8fgQfKvj8ArcdQnl/BKJVWrgjwLh5Ze909jVnfMlyygkCQ0ws2z+u
- ww1ByKFUujuPbPMQYWK8uTlkh/ALd36LoWiM9JuqcNk52ddaFNHjyu1rmKl9v6Azrg
- C6tsysr8aheQGci7u4LU1KK9m+vZKCbkcBNcRqrRXQ3xxq2Am7n9VmXEBsBxvuCPYh
- X9AChjoqqLvjA==
-Date: Wed, 2 Sep 2026 04:29:22 +0800
+ b=RHlrdHe2uQopFVcfoSEPzRjR43pmmEpmDSPwiJDme+xi+gzFee2Jj0X+9zoN4ns1i
+ ZDLxilXfmQ+NAFxhia7IvlU858S2U/TeuzNtkr55yeqOBz9QfYZImWlE+Sk9GRB8mB
+ QavpCtMFgNjICty5IbUB9euLCkPC1Kwvt+lkbgZdQKtMU/piMDdxiqriyljnf+4u2V
+ bmFsnuxOyQJDdeZoiBZ52XgFSDgJZzoM0t3pteU/hJtPNux4IYdDfj+Qyz/kS1eGP9
+ mMnsdAjeUM1mEec1NmJuB7tRlzFLlWWSGKT64XpsiAMv+Is9bPqP1xNC3xoSf4Lr+g
+ ClPu4+F1Gp/4w==
+Date: Wed, 2 Sep 2026 04:30:29 +0800
 To: Anand Jain <asj@kernel.org>
-Message-ID: <apc0FKW7Zuez4SeB@zlang-mailbox>
+Message-ID: <apc1uPbA2hKofHA6@zlang-mailbox>
 Mail-Followup-To: Anand Jain <asj@kernel.org>, fstests@vger.kernel.org, 
  linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-xfs@vger.kernel.org, 
@@ -78,7 +78,7 @@ References: <cover.1784949154.git.asj@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <7afe9c82cce1540ea0f8cc1f3d1306c24b6cc84d.1784949155.git.asj@kernel.org>
-X-Headers-End: 1x1V6s-00042V-2X
+X-Headers-End: 1x1V7x-0005dS-Nn
 Subject: Re: [f2fs-dev] [PATCH v8 11/13] fstests: verify exportfs file
  handles on cloned filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -101,6 +101,119 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+On Sat, Jul 25, 2026 at 03:39:08PM +0800, Anand Jain wrote:
+> Ensure that exportfs can correctly decode file handles on a cloned
+> filesystem across a mount cycle, by file handles generated on a
+> cloned device remain valid after mount cycle.
+> 
+> Signed-off-by: Anand Jain <asj@kernel.org>
+> ---
+>  tests/generic/805     | 80 +++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/805.out |  2 ++
+>  2 files changed, 82 insertions(+)
+>  create mode 100644 tests/generic/805
+>  create mode 100644 tests/generic/805.out
+> 
+> diff --git a/tests/generic/805 b/tests/generic/805
+> new file mode 100644
+> index 000000000000..5827eee039df
+> --- /dev/null
+> +++ b/tests/generic/805
+> @@ -0,0 +1,80 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2026 Anand Jain <asj@kernel.org>.  All Rights Reserved.
+> +#
+> +# FS QA Test No. 805
+> +# Verify that file handles encoded on a cloned filesystem remain valid and
+> +# resolvable via open_by_handle across a mount cycle and mount order swap.
+> +
+> +. ./common/preamble
+> +
+> +_begin_fstest auto quick exportfs clone
+> +
+> +_require_test
+> +_require_block_device $TEST_DEV
+> +_require_exportfs
+> +_require_loop
+> +_require_test_program "open_by_handle"
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -r -f $tmp.*
+> +	_unmount $mnt1 2>/dev/null
+> +	_unmount $mnt2 2>/dev/null
+> +	_loop_image_destroy "${devs[@]}" 2> /dev/null
+> +}
+> +
+> +# Create test dir and test files, encode file handles and store to tmp file
+> +create_test_files()
+> +{
+> +	rm -rf $testdir
+> +	mkdir -p $testdir
+> +	$here/src/open_by_handle -cwp -o $tmp.handles_file $testdir $NUMFILES
+> +}
+> +
+> +# Attempt to read and decode the saved file handles on the targeted mount point.
+> +test_file_handles()
+> +{
+> +	local opt=$1
+> +	local when=$2
+> +
+> +	echo test_file_handles after $when
+> +	$here/src/open_by_handle $opt -i $tmp.handles_file $mnt2 $NUMFILES
+> +}
+> +
+> +# Setup base loop device and its clone
+> +devs=()
+> +_loop_image_create_clone devs
+> +mkdir -p $TEST_DIR/$seq
+> +mnt1=$TEST_DIR/$seq/mnt1
+> +mnt2=$TEST_DIR/$seq/mnt2
+> +mkdir -p $mnt1
+> +mkdir -p $mnt2
+> +
+> +# Mount both identical UUID filesystems simultaneously
+> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
+> +						_fail "Failed to mount dev1"
+> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
+> +						_fail "Failed to mount dev2"
+> +
+> +NUMFILES=1
+
+NUMFILES=${LOAD_FACTOR} ?
+
+> +testdir=$mnt2/testdir
+> +
+> +# Decode file handles of files/dir after cycle mount
+> +create_test_files
+> +
+> +# Cycle mounts and reverse initialization sequence to check if
+> +# file handle lookups are okay
+> +_unmount $mnt1
+> +_unmount $mnt2
+> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
+> +						_fail "Failed to mount dev2"
+> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
+> +						_fail "Failed to mount dev1"
+> +
+> +# Verify file handles can still be resolved post-mount-cycle
+> +test_file_handles -rp "cycle mount"
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/805.out b/tests/generic/805.out
+> new file mode 100644
+> index 000000000000..29b11ec77ffb
+> --- /dev/null
+> +++ b/tests/generic/805.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 805
+> +test_file_handles after cycle mount
+> -- 
+> 2.43.0
+> 
 
 
 _______________________________________________
