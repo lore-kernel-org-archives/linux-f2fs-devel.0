@@ -4,131 +4,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A7604C61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 16:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C53A3C624D0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 18:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:References:In-Reply-To:MIME-Version:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=EuAgeT9d7s3vXcBkLfwXCaRfEig0asTCKV+1XrKw7sM=; b=U++llsPMVb1smy5yCeOFVfMEoq
-	89sFMjg7J7GZgJwy/3iTHuKZ0rKCJ2inhGF8tt37bt2TVWKSPswk5uBMP7JbtfnueitOOQBawEK3s
-	tEPf5389lEmAgkrYBE7BodwUepAiUVPSjDDcHo7Vy4KQntl/hfMqq5aFQb6Vb9zXxgkY=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=+h9aCIspQfEGQdcthO39+MwvlH0/bZ7AfRuYEUpw/GU=; b=K4Hip0WiqABvwGxK2DV5mcef6e
+	Hedp9OikkLFlbDETYY33UDJ4klQNBJtifqneyFcXndV0VOD66DWNzm6KYTSsASqIbxnHkC+OtL3vA
+	PrGXMheyeTfN5beIbUbyTvH7CWlfPUO3rv2BeqVAohhIHqMrvfoBp3LVpSQZT/e+xad4=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1RVM-0007qh-Ot;
-	Tue, 01 Sep 2026 16:38:34 +0000
+	id 1x1T8l-00088Q-BU;
+	Tue, 01 Sep 2026 18:23:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangxp1998@gmail.com>) id 1x1RVL-0007oM-5Z
+ (envelope-from <zlang@kernel.org>) id 1x1T8j-00088J-9L
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 16:38:32 +0000
+ Tue, 01 Sep 2026 18:23:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:
- References:In-Reply-To:MIME-Version:From:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u0EQz9qaj+AKu3AT8419jngzyzUGX7Hmro0f+xTswWY=; b=FCNr3w3Oe9nv8EpX0qx6M1r8e5
- 7xdI2jliBKvtpY6Y566Ys+6qVvU4LeyUj/SFRwcYH0cNkwpdaG/RAmwVbzIqLj6Hxvw1ixbMUTtGp
- /Duu/jf5xmgTWLvKXJX5utOEim/jgv+gyB/gCeNKyCqxwoudrNMklcsRBdU3GEYp7zK4=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=YWNLINKhjPJWLv/lBwmEZnXi8vQ2jRvujbGQ2x962u4=; b=GNKTaZhkwIoGNyLe+KZeemTfrQ
+ 2C9Ar/LyUFrUysYwiB8SWw0645jdp9H71Br7sWaTs/QUYye93utbCimdg0fO8cxkVl8cwEHUvE5Sr
+ s/m/N8ccKLPt5LhgYRg7Gy33KA0x5Xx6BW/A9600TwgHZ4M79MUgb1UAAY23a8fHUuIM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:References:In-Reply-To:
- MIME-Version:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=u0EQz9qaj+AKu3AT8419jngzyzUGX7Hmro0f+xTswWY=; b=Y++nzRL4oQ2hijPQZHz/2YY2JX
- ltNvgWyq3NlrorCtPOUh1OaXyLqFRsam0pZYouO57B+hYbGHgzB2n19WnP2U/3nKrjyo5AfQHf1Q4
- NEpRr13FD0KqvmtrAXyD9ThXWO+7KWkYc4ajWIOGt1oTWyOniU/gs/4yCMQ0HX0wtcdQ=;
-Received: from mail-ed1-f51.google.com ([209.85.208.51])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x1RVF-0007Ls-16 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 16:38:32 +0000
-Received: by mail-ed1-f51.google.com with SMTP id
- 4fb4d7f45d1cf-6a611ba5130so33351a12.1
+ bh=YWNLINKhjPJWLv/lBwmEZnXi8vQ2jRvujbGQ2x962u4=; b=NQ3MUItLY/WS0vpoIUBQxgfH4D
+ VW4bM4cdUmV0p66Gm4Xj5qY2k4IIMh8BNQUQ8ODMVPaYBQ4fjLRxz+g/y7DaxzTL1YeFa1/kM6bTC
+ kWtvr9pmIewFxcSsFVdEo6AwWbI82hrH5JQgNK/eXazmi7tKIOojkJBsoh2XcuUl4RRA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x1T8d-00014n-UP for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 01 Sep 2026 18:23:18 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 5131C600D2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 01 Sep 2026 09:38:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788280702; cv=none;
- d=google.com; s=arc-20260327;
- b=c4hP1dCAiWbXEPx3A/8KzMhXdQ3juPUfUEcIRCXq+WkjaFiXdrYYHn3OsdopGiuf/n
- LFHH6l66dV16Jhd1ZNebv2WABNHI5veZADXM1q3aJpi/u9BqxK7JlseZzyr7RQijU6Oc
- TNq6tTwQVELW5PwIZh9MJm3eE743iI+lQTepAjfBQxEr7LH8SxAXAiearGNgU7vu4FqC
- eZz+MnqsqXPcYVuYQmW5VA3UNV3F0nncodFc45pPRPQuVyzKHWP/mzG1602UsaEIdkY7
- pRquDbUy+Nt+TUiQIKKmp072jjQJA/nm7iwD9WYiGOcccxTHDS1HY9ffIl9D7D2QaSgH
- HOCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
- :from:dkim-signature;
- bh=u0EQz9qaj+AKu3AT8419jngzyzUGX7Hmro0f+xTswWY=;
- fh=x/YN2Z3WGZ9iZP1/MFFGQepSJhdOoWIqq4VdAXaU3ck=;
- b=sHxbWRzmCSOCGdX52Xjxm43r8KYKpuyXO2vbmAX8Ox6pa9tXsjLJVtV5YS9io4EI/W
- PtYG8xmHkLrxUm/ceiO6LOcRaw7MSj9AgArTRFB+Sc9Ny1Z065zjyAksgVTXST1x6RgV
- cQDWovulfvIodabh+8ucpFOVs0csNhG0QpFt10EaBxeORfYERn4Osfk+rIafU6dv1+rX
- Rd/+mF9FNxWMWAZ7HuhQXC6a7oNlnfVT/jno5N5ChrNx9am7V5lguR7/xBZq9QylDChW
- SwRQGxEJx7Ed6KIQ6i211qqFYHxKRzu9CGr2MLCkITT0jlzSvjGclPLihyziO0HhzdkC
- q1/g==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788280702; x=1788885502; darn=lists.sourceforge.net;
- h=content-type:cc:to:subject:message-id:date:references:in-reply-to
- :mime-version:from:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=u0EQz9qaj+AKu3AT8419jngzyzUGX7Hmro0f+xTswWY=;
- b=WYMllkp5u+kz0Kfc04Y24b2RzSf/nPfH3x1duk9lSVUz0vvZBT7mKjSqPpANlOAknd
- UHRTuKD9+lnT5+zI8KE69awgETvaQI4jGixc4oL6JGGZeLb1bfNw6HGtbSYcotqnJyPb
- M9+vjBMh/S1eVhQqnttV7LnSDhZbnEJLaLxYlJUP+XzRpf78529bkwaU0S7oF9H+EzSO
- lq5/B95/PzpjgeuavlltoTkgxV+Bfo+/pcr+wTn/6wK5LZf4xVvclGzDqWhUUnwtGVul
- evygFQc2X3W1vUqIHYM444giaP4zB0hNaUhKvHKuooiKna+tJLpuriBmPQM1t/fYiwsu
- R4Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788280702; x=1788885502;
- h=content-type:cc:to:subject:message-id:date:references:in-reply-to
- :mime-version:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=u0EQz9qaj+AKu3AT8419jngzyzUGX7Hmro0f+xTswWY=;
- b=MEciSv7BGLYE4BQE3Vt4bHz0rSu3tCfMtAGzPiCZh0/mctbTwa+J14YMpmKm3CTd4F
- 18Mi2oUN+UC+cXYAnUqFewn43mg//zYe2wdHtY+fRxeduxqIJD4vnWu19t2Gt0bVwuMH
- FUjqDVxgL6zBtGtynsmwdjjkU8yOTJ/LY/ELQI0cj9LTo3i8qbyOhkDc7lSynCgDCGjz
- gtiy87XOf73dnSBZZDK0VuU/IJCemIEGDvocJVZgwBH0DlwcT1Ff4X7dKh8jINTMddp5
- bv0SVAhfEQhUkUwh5wUfTlYFCr+Mxi0vhNLbdaVdlCzPnzVFsPPoMNDb/nDAWBy20Fa7
- /p0A==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzjz8k/4kGPLXmVLKALKGj8NXGyRg9vw1EGhKF2tqu2gV76BjgtbZbTmYch+3+jMOwFfpIA/QaNpsxnnw5Ww4jx@lists.sourceforge.net
-X-Gm-Message-State: AFuF++k84VFroViKVd5Lc8DKitm0WiAtnNelAjndMxkMJHoeToP8cgAS
- 2zOzUbjyzmJPFtqgRXdqOzCOwPn5MQ2uvF7f6gNFSE/xW74rd0BOvTu5yy7+6l27JTP0mVEaNsT
- +JyzlAGW6RD0coOAGlZiezcrUKWT2Yz4=
-X-Gm-Gg: AYBFou0LP+cmIHfDP2EwKsKrQkeuFIrip3lbMRQ/zF1IsCAEIzQrFCuQqNm4lfSFW9O
- H9A6jch6ODv/BlleXErb1RBdUEL9DRkN/JhV6rQtBmJ0H4llUa51VQmxmW0ReYoJgVm9zROV5nq
- gvXXpYwV8YX5xzqpxm4oaRcPaBkEPReX0f5GXyABkxE318gcpqgW6RyfCs0L4naR6fgrCFgs3Z5
- I95kWfZS+dEwB7jqeps4FfxDhq0hzM/uIwqYy01FThab5XllS17L+TVg9DN+5Kr3RHSdRhwosd7
- 13uyPGGbZ7xHPkXyIjFmfuY4Ag/zhMbIMPdz/BDyWjvV+YSA0by7BNFxYXp9JbghqNE1vjwRwZJ
- AwA==
-X-Received: by 2002:a05:6402:1d49:b0:6a6:4783:b6ff with SMTP id
- 4fb4d7f45d1cf-6a663a0c7cfmr6781899a12.4.1788280702075; Tue, 01 Sep 2026
- 09:38:22 -0700 (PDT)
-Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 1 Sep 2026 09:38:21 -0700
-Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 1 Sep 2026 09:38:21 -0700
-From: Xinping Zhang <zhangxp1998@gmail.com>
+ Tue,  1 Sep 2026 18:23:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A872E1F000E9;
+ Tue,  1 Sep 2026 18:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1788286990;
+ bh=YWNLINKhjPJWLv/lBwmEZnXi8vQ2jRvujbGQ2x962u4=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=cgo/r/NGsnwevb1/ngCmGeIDbqZ0YPPCNiMWyLr20nCNrP3mJFV3QxwrZRLGjAamH
+ zK6teivQpmEjthIjm2OoS8PsIYuxdKOpubNOxHsW/AGOZTvCOA0397t/yFnP/MVGRa
+ VtPgmF3BLuNpt+/JpcZejp4njVgJvS6GdIEhCp7BxHzrbcI9ZfRY09Ki+H49XmWlgX
+ L97PLNs31ZYzj3xa413tQ9TbfqQ+TrgCaBIBf+BF2r8SY8QScZrFScL4dyUzY1IEjG
+ KlFMFB0kFnRdtbyP8Cdo+eke/7/ccYDBuR9cbN3PtYJXAFgMMgvPTwqZ/FlNtXkOs7
+ 4Fgp4qXvIBJlA==
+Date: Wed, 2 Sep 2026 02:23:03 +0800
+To: Anand Jain <asj@kernel.org>
+Message-ID: <apb8S8g3Zqf1XpZ9@zlang-mailbox>
+Mail-Followup-To: Anand Jain <asj@kernel.org>, fstests@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, djwong@kernel.org
+References: <cover.1784949154.git.asj@kernel.org>
+ <96599abcd6e3264a088ea2f34947de6496f33359.1784949155.git.asj@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87c8adb7-17ff-4bd5-98f5-9628c2e344b1@kernel.org>
-References: <cover.1788213716.git.zhangxp1998@gmail.com>
- <c570b8ce22c1e2732b3319a4ca9c2642aa5f523f.1788213716.git.zhangxp1998@gmail.com>
- <87c8adb7-17ff-4bd5-98f5-9628c2e344b1@kernel.org>
-Date: Tue, 1 Sep 2026 09:38:21 -0700
-X-Gm-Features: AcwNN1V1w7TeJTUNgS89fh7liMFDjMccSCxQKWpVFv6_5xgSAnxJyqX9ZyBC_rY
-Message-ID: <CAH=xXfF1iiu3t4ug6EgAWp9svPYX2o3GxTf8mDMHCvhWFjotQg@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1x1RVF-0007Ls-16
-Subject: Re: [f2fs-dev] [PATCH v7 10/11] f2fs: parameterize block size and
- mask macros
+Content-Disposition: inline
+In-Reply-To: <96599abcd6e3264a088ea2f34947de6496f33359.1784949155.git.asj@kernel.org>
+X-Headers-End: 1x1T8d-00014n-UP
+Subject: Re: [f2fs-dev] [PATCH v8 07/13] fstests: verify fanotify isolation
+ on cloned filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,23 +92,234 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org
+From: Zorro Lang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Zorro Lang <zlang@kernel.org>
+Cc: djwong@kernel.org, fstests@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Thanks for the detailed review. I have reworded the truncated-looking
-source comment, dropped the unrelated const change to F2FS_I_SB(),
-removed the unused F2FS_P_SB(), and reverted the whitespace-only
-changes.
+On Sat, Jul 25, 2026 at 03:39:04PM +0800, Anand Jain wrote:
+> Verify that fanotify events are correctly routed to the appropriate
+> watcher when cloned filesystems are mounted.
+> Helps verify kernel's event notification distinguishes between devices
+> sharing the same FSID/UUID.
+> 
+> Signed-off-by: Anand Jain <asj@kernel.org>
+> ---
+>  tests/generic/801     | 143 ++++++++++++++++++++++++++++++++++++++++++
 
-For the temporary PAGE_SIZE substitutions, I reordered the final two
-patches so node-tree geometry is parameterized before the no-argument
-F2FS_BLKSIZE macro is removed. This avoids those intermediate
-PAGE_SIZE changes entirely.
+`g/801` is already taken. To avoid merge conflicts, you can use a higher
+temporary number, and I'll assign the proper number when merging.
+
+>  tests/generic/801.out |   7 +++
+>  2 files changed, 150 insertions(+)
+>  create mode 100644 tests/generic/801
+>  create mode 100644 tests/generic/801.out
+> 
+> diff --git a/tests/generic/801 b/tests/generic/801
+> new file mode 100644
+> index 000000000000..904ba9440b3d
+> --- /dev/null
+> +++ b/tests/generic/801
+> @@ -0,0 +1,143 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2026 Anand Jain <asj@kernel.org>.  All Rights Reserved.
+> +#
+> +# FS QA Test 801
+> +# Verify fanotify FID functionality on cloned filesystems by setting up
+> +# watchers and making sure notifications are in the correct logs files.
+> +
+> +. ./common/preamble
+> +
+> +_begin_fstest auto quick mount clone
+> +
+> +_require_test
+> +_require_block_device $TEST_DEV
+
+Which test condition requires `TEST_DEV` to be a block device?
+
+> +_require_loop
+> +_require_command "$SEMANAGE_PROG" semanage
+> +_require_command "$FSNOTIFYWAIT_PROG" fsnotifywait
+> +_require_fanotify_function
+> +_require_unique_f_fsid
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	[[ -n $pid1 ]] && { kill -TERM "$pid1" 2> /dev/null; wait $pid1; }
+> +	[[ -n $pid2 ]] && { kill -TERM "$pid2" 2> /dev/null; wait $pid2; }
+> +
+> +	if [ "$semanage_added" = "yes" ]; then
+> +		semanage permissive -d unconfined_t >/dev/null 2>&1 || true
+> +	fi
+> +
+> +	umount $mnt1 $mnt2 >/dev/null 2>&1
+> +	_loop_image_destroy "${devs[@]}" 2> /dev/null
+> +	rm -r -f $tmp.*
+> +}
+> +
+> +# Run fsnotifywait in unbuffered mode to watch filesystem-wide create events
+> +monitor_fanotify()
+> +{
+> +	local mmnt=$1
+> +	exec stdbuf -oL $FSNOTIFYWAIT_PROG -m -F -S -e create "$mmnt" 2>&1
+> +}
+> +
+> +# Transform f_fsid into the hi.lo format used in fanotify FID logs
+> +fsid_to_fid_parts()
+> +{
+> +	local fsid=$1
+> +	# Pad to 16 hex chars (64-bit), then split into two 32-bit halves
+> +	local padded=$(printf '%016x' "0x${fsid}")
+> +	local hi=$(printf '%x' "0x${padded:0:8}")   # strips leading zeros
+> +	local lo=$(printf '%x' "0x${padded:8:8}")   # strips leading zeros
+> +	echo "${hi}.${lo}"
+> +}
+> +
+> +# Create base loop device and its clone
+> +devs=()
+> +_loop_image_create_clone devs
+> +mkdir -p $TEST_DIR/$seq
+> +mnt1=$TEST_DIR/$seq/mnt1
+> +mnt2=$TEST_DIR/$seq/mnt2
+> +mkdir -p $mnt1
+> +mkdir -p $mnt2
+> +
+> +# Mount both base and clone filesystems using required clone mount options
+> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
+> +						_fail "Failed to mount dev1"
+> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
+> +						_fail "Failed to mount dev2"
+> +
+> +# Fetch filesystem IDs to verify the kernel can differentiate between them
+> +fsid1=$(stat -f -c "%i" $mnt1)
+> +fsid2=$(stat -f -c "%i" $mnt2)
+> +
+> +log1=$tmp.fanotify1
+> +log2=$tmp.fanotify2
+> +
+> +pid1=""
+> +pid2=""
+> +echo "Setup FID fanotify watchers on both mnt1 and mnt2"
+> +
+> +# Permit unconfined_t domains when SELinux is enforcing to prevent fanotify
+> +# blockages
+> +semanage_added="no"
+> +if [ "$(getenforce 2>/dev/null)" = "Enforcing" ]; then
+> +    if ! semanage permissive -l | grep -q "unconfined_t"; then
+> +        semanage permissive -a unconfined_t >/dev/null 2>&1 && semanage_added="yes"
+> +    fi
+> +fi
+
+Looks like semanage/SELinux isn't a necessary requirement of this test case,
+if so that `_require_command "$SEMANAGE_PROG" semanage` also can be:
+
+  if [ "$(getenforce 2>/dev/null)" = "Enforcing" ]; then
+      _require_command "$SEMANAGE_PROG" semanage
+  fi
+
+right? And please replace semanage with $SEMANAGE_PROG.
+
+> +
+> +# Start asynchronous fanotify monitors
+> +( monitor_fanotify "$mnt1" > "$log1" ) &
+> +pid1=$!
+> +( monitor_fanotify "$mnt2" > "$log2" ) &
+> +pid2=$!
+> +sleep 2
+
+Are you using `sleep 2` to ensure `fsnotifywait` is fully set up?
+I'm not sure if `sleep 2` is 100% reliable here. Since the subsequent tests
+strictly depend on `fsnotifywait` starting up properly, is there a more
+robust approach than `sleep 2`? For example, could we check the output
+in `$log1` and `$log2` to make sure that? Or any other better idea?
+
+> +
+> +if ! kill -0 "$pid1" 2>/dev/null || ! kill -0 "$pid2" 2>/dev/null; then
+
+`kill 0` only can make sure the process is running, can't make sure it's
+fully set up, right?
+
+> +	cat "$log1"
+> +	cat "$log2"
+> +	_fail "$FSNOTIFYWAIT_PROG setup failed"
+> +fi
+> +
+> +echo "Trigger file creation on mnt1"
+> +touch $mnt1/file_on_mnt1
+> +sync
+> +sleep 1
+> +
+> +echo "Trigger file creation on mnt2"
+> +touch $mnt2/file_on_mnt2
+> +sync
+> +sleep 1
+> +
+> +echo "Verify fsid in the fanotify"
+> +kill $pid1 $pid2
+> +wait $pid1 $pid2 2>/dev/null
+> +pid1=""
+
+unset pid1
+
+> +pid2=""
+
+unset pid2
+
+> +
+> +e_fsid1=$(fsid_to_fid_parts "$fsid1")
+> +e_fsid2=$(fsid_to_fid_parts "$fsid2")
+> +
+> +# Dump debug details to the full log
+> +echo $fsid1 $e_fsid1 $fsid2 $e_fsid2 >> $seqres.full
+> +cat $log1 >> $seqres.full
+> +cat $log2 >> $seqres.full
+> +
+> +# Ensure monitor 1 only captured events belonging to mnt 1 and fsid 1
+> +if grep -qF "$e_fsid1" "$log1" && ! grep -qF "$e_fsid2" "$log1"; then
+> +	echo "SUCCESS: mnt1 events found"
+> +else
+> +	[ ! -s "$log1" ] && echo "  - mnt1 received no events."
+> +	grep -qF "$e_fsid2" "$log1" && echo "  - mnt1 received event from mnt2."
+> +fi
+> +
+> +# Ensure monitor 2 only captured events belonging to mnt 2 and fsid 2
+> +if grep -qF "$e_fsid2" "$log2" && ! grep -qF "$e_fsid1" "$log2"; then
+> +	echo "SUCCESS: mnt2 events found"
+> +else
+> +	[ ! -s "$log2" ] && echo "  - mnt2 received no events."
+> +	grep -qF "$e_fsid1" "$log2" && echo "  - mnt2 received event from mnt1."
+> +fi
+> +
+> +status=0
+> +exit
+
+_exit 0
 
 Thanks,
-Kelvin
+Zorro
+
+> diff --git a/tests/generic/801.out b/tests/generic/801.out
+> new file mode 100644
+> index 000000000000..d7b318d9f27c
+> --- /dev/null
+> +++ b/tests/generic/801.out
+> @@ -0,0 +1,7 @@
+> +QA output created by 801
+> +Setup FID fanotify watchers on both mnt1 and mnt2
+> +Trigger file creation on mnt1
+> +Trigger file creation on mnt2
+> +Verify fsid in the fanotify
+> +SUCCESS: mnt1 events found
+> +SUCCESS: mnt2 events found
+> -- 
+> 2.43.0
+> 
 
 
 _______________________________________________
