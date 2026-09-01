@@ -4,110 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AC8A3C624A4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 03:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9C813C61DD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 07:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=teDKrCim8K+q0gxyjV+5LxrkXZyE0o8zqvsTdgCQdyk=; b=dxbwGUW06Fw0cCqABkTvnO6tFP
-	HQBnqg8bUjfD+0ayoxypeOpEnSvdwXiS3q53ZGjlMcpjC+XM7SBeevKtWHz1Zoke5NFVsx+IH4hAt
-	PjvHZefT6P+YVJVm0yM54739F160Sx7Eb0ZNC/LBGHLrrqJqX/P4XCUGnFyiyU/pS4rw=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=W+DKrZ/CKFVpcCkFbeFTD3A+WLtrn3MSzHgvhaLF7AM=; b=Jl0Aag/WHjteTqih2xJifRxuPR
+	TMOQePN+qOX/WLGQFhc1uIsqS2ftvePArpvdiRGeDwb3ByOpwsGwVamqDP/Tip2BHkbn67yb0L0bF
+	OwLfYsQ8P9/wORwVZ4SxY3Mi26oucxUcU12VJ226Wzk0b+u0LU4KDr36EdOxCNqvB75o=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1Et3-0004yn-JL;
-	Tue, 01 Sep 2026 03:10:14 +0000
+	id 1x1JH9-0006MU-VU;
+	Tue, 01 Sep 2026 07:51:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1x1Et1-0004yS-HX
+ (envelope-from <qwjhust@gmail.com>) id 1x1JH9-0006MO-36
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 03:10:12 +0000
+ Tue, 01 Sep 2026 07:51:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=S2rSlvlJ6/XqKt2WEd0a/Wwq0kiDGRS7GpjIC1W/pmU=; b=cdclWrTWx6bWo4w8jtlO2ApeNz
- xV0l3t76mkECfOvrhtPsR/xuHu+10VM3I8ICQZ+xMlyiftnxCzi4kXcOpYN6AfL6vi6XNUUz3GcHo
- +5owtel8jZ3UDfGyMPB43MS4E/23HMWvdQJysnj7yL3bBI8ttp5s9qz1U0EKXqZPuU38=;
+ bh=xs/mCqlBgr2P5MMu2vHv+vaDaaGAyN68pI/BVuaAGSk=; b=I45B+DcHPQ4Gbh6Fvm/4IA4vng
+ esEVnqXRRnMukXvVs1NqXDLFCUkyQmhM/QFrisgdEnVIDnkNrKwYlcts9zX6ofKqVwCEBdZX0aSN7
+ SrdxFkUPaeXo//NHS2augm78ivGkTCK9LLtHtSOnjd73C+9t9R65mp8I/r5izxACYtoc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=S2rSlvlJ6/XqKt2WEd0a/Wwq0kiDGRS7GpjIC1W/pmU=; b=L
- 2L21wZ0RKej/edTeae4RFTZbKLRs05zm2I6IUJBrMTJP4GnLCegTudSqIQ1Gc1Ke4ohnI5DYkl7Tw
- XimJSMHeWCIM702lWM8nasDEfH1VtteXV/uT2oe8ue9MpOZAXoKshT4kgFU+3GktMTKShYssa26yW
- fhQYvQKYcJoXCbXU=;
-Received: from mail-pj1-f49.google.com ([209.85.216.49])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=xs/mCqlBgr2P5MMu2vHv+vaDaaGAyN68pI/BVuaAGSk=; b=lDXRVEZ8Osn8UDJobjKz6RmEeX
+ ZMcjaGzrZhti3MUpnerORa9gqBHqCZKUFi9lOFFc886dvm52gJNKQyvDMf4J83I2gHONeG8kThSkj
+ xnG2uAZy2LcjrxhTjF+R3GT+TPeJK0+m8EyCbHv8PzexARB4b6lQW8gbLH9p0DjI/pXI=;
+Received: from mail-pl1-f178.google.com ([209.85.214.178])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x1Et1-0001Y1-1m for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 03:10:12 +0000
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-3964dfb5b9aso4612620a91.1
+ id 1x1JH2-0006kb-S5 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 01 Sep 2026 07:51:20 +0000
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2d7195706f1so43962405ad.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 31 Aug 2026 20:10:11 -0700 (PDT)
+ Tue, 01 Sep 2026 00:51:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788232205; x=1788837005; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=S2rSlvlJ6/XqKt2WEd0a/Wwq0kiDGRS7GpjIC1W/pmU=;
- b=BJ+hhNZgbAUL3jfpuev1XhCM9j4tIgCGNJbPABUv2nDIUnjq4XnsGG0nxC6mqdw6QX
- aWvHMOgmCiKfmMZP4Oi8dz74MoE35epc/+oitP9Ha3sYMbh5DTdHjp4fHqKffr1tMzFW
- rXQ5VLjhkG1mj9C8FElMu7yDrQZ5mkK4Rz7IyIEk3g6cdU/qL3eo3ToHR81ca3EFRDG9
- C+s0fgFc0SwyzhhSEMq93EsU9I0+athWyupSMc8VUbQ6YCNHXOKHXroaf3XZlKJZOurj
- gZiFfTHJ3h4mCI9xq40RdqOu9fGJ7Fd75gSXX0bHRI5r8BMCoBapzv1pGkdGOmiht8UN
- bfug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788232205; x=1788837005;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1788249071; x=1788853871; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=S2rSlvlJ6/XqKt2WEd0a/Wwq0kiDGRS7GpjIC1W/pmU=;
- b=KX+WAGzmqgj8tXMhLkYs4k+J/4H0jogyPUfcn7+jOlJIcmfONJ2pQsEA7ZpsNRG0RF
- tjHyEluGSrUspKu8GGkkV/R7sEVn5UEsVmunea61liHtnJfdJ8vNVAE9k9raocpUpajG
- TaPtjT8moMfl9tkISc/Ojoj07F/UVVZDsQukeWC5fD79ymwnbZ97JPGWN8rQkXwEToka
- 9xKmLhBC+nZ8IOPL8/QpGxPJR9ykGmNgtYtuGXWer0TqYXCbWsgMxuqGhrquzJz6WckV
- tS5hIm/6h5afuv4tZiIG76PQ1oGfCAsMqGpZumXPGuMtkRd9lOwQT/GS5aPjQWMn0jVa
- MtYw==
+ bh=xs/mCqlBgr2P5MMu2vHv+vaDaaGAyN68pI/BVuaAGSk=;
+ b=UbwjRBqONhaBIN+aZh24aAzxOnw7yNOfKMPL+FSNmWeUYRnWYxd29ZOhfqUFQqdSpu
+ xVQSDSPaBjkjBEY6QNKOSJOym4jXgDT8wvaqMCMDiuRkDd6xTYgGSoInUqhwpHcFo66J
+ dfIQ8AKt+k5FOgBq+V3LJmv/adTYYq0uZxdOxxupUO9qiwehf3533DhB0B9DjIyg34z9
+ dsuSyAeWt5dcTU1Qq0gsuhqFvg9Stp7B3NCgbiQXlizFiyC3/MuEOu+qkXihn/9L6ZF3
+ HVwkZyDxFJUU2sIo8G5d3E9qIBIjl5nUTR8LZKDBYdYnJytlc6xqJ8ZjSxxCk9mMyKte
+ lliA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788249071; x=1788853871;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=xs/mCqlBgr2P5MMu2vHv+vaDaaGAyN68pI/BVuaAGSk=;
+ b=rnqciXJScUeE9Ld9es8GgEKXao52TJCio+ZS4dE5QAriPArX8OUY+c2ygDXgNixGfZ
+ BUXh8U/XNeFJ/ihYdTY39G5ZS2m9bZLalMLIZHrePMsj5LijVHAjZqR1vFebtG0Gs19y
+ wZDgUKHfXoTX1iUVsHKV+46Ol1pm2Ku2baEC6qvLSfma3PAECgsiZ6ndEDENm8DPZLrD
+ fiFfKXC6JHIEshwkYJ67ct8NuCd8+nG7YIxt4XD1w4iPH4DoHAq3WzJ0KkaMPQgk1q0v
+ sy5NYXgDe/PBQ5y7VlpShP+FLLmlGgc3+TBBSKFgcmHynzviVahnNJmdibwD37qXPzfc
+ nBHQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBxf+LYGrCFI3v5Dnx4WtMiawnFr/q29KeGmWgVERVuxGmPNTdtbBASpujz4zDdyoUaFFAK+A1NuLyiTp224Vbij@lists.sourceforge.net
-X-Gm-Message-State: AFuF++nNRcoyYLRYR1a/FCBkseWiRahWpqf9s49HZXD8QfS6iTcZMq3D
- YxEduDhYUx6CqeIyK0e8xQlLxfMovoRp5a4wQdfmjEeiAIPZGPtC/ZwE
-X-Gm-Gg: AYBFou2A9jcOz3Maj00Zq+MboEacfUpOTbcHgEjP32vusSn0k3CQvmI4kmRxzQbM+Pi
- SW/kjF2TOu913ubotOOoO0t+A+vG2xU+8MJdb36J8tTKE6AjLbfYd3LAlJwXA/+jAwYlXx9fw7X
- k7Lc5aNPUWcr/39JryzHGRXKLAesfJa40vdx2ctbIqBuAXdCM8OR4/AbzFlJ5ou012Mqjd3L/8z
- FUr9D7fBM33VOUZsd84/W5vxewhV3SMSXZGEJkK/6DxLi/lxGCtOW4jVPe91MvRjqRGpTpOeVDt
- 7HBHCXX5Zarw54DCLq2WHuEldJaI0dSUVPKRYfvXEBdKnGZOHUZv/dzv7eF/d07tD091etRPymg
- 5mVkNxNmeoa0/HD54BRhz+oQ1hK50AIwhL2ZyeBxQhnYH0Ht7NEz36VeuG1bjucvvynPrfTT34E
- f/QcIkVGKmIBIfCOne0f0JPd5g9iqhXz19nJ4ARrg1x5DVVftD1FP1HLf94zfIudRgZIvrqRJ8G
- ho4pUxGzI1jyV/GXmQ7iKwNd2xiDjk4Waqsj4CDRNgtG5t3XKvXlLf4RccR7CZosbgXgYOpW1JC
- 5I+d7duPgFhK
-X-Received: by 2002:a17:90b:1d05:b0:396:65dd:4093 with SMTP id
- 98e67ed59e1d1-396d0ff519cmr47226275a91.14.1788232205233; 
- Mon, 31 Aug 2026 20:10:05 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com
- ([2a00:79e0:2e7c:8:94f2:e160:f659:7f83])
+ AKwUvBy0oIsbesajsmuI/9zjiE3yBGS5xcpbcEMEHYseAPpiuqIVpmfZnNHdptm8Iu29J4FCUWC+cjn6kIbec39BaQ9q@lists.sourceforge.net
+X-Gm-Message-State: AFuF++kMwC2BYCxpKtgw0BaXnZydyK1hf+CzFxkxcxj7fg6heuSxP47G
+ JFWZvmdq24R3gNn6HHMR1Oo7teiLPIyI3J6PWLVje+XzAveJIh3DgU1k
+X-Gm-Gg: AYBFou2A4FmeL3tIJIWSHQ+Glf6wGsDcqbM+8BDbqWr6vhiKrVPreWs1MbTxxlyX3Vw
+ XlgGaMJ5d8fbj3kLypMTeiIxCILI3tvwXHTJchMV41XMIMzz+bl5M9xWl/PNaOA5bjadZJZOYzL
+ m4suJMGgx2Y7DoKcyEHp75S3Z37A6Vti3dixWxxuPZLaAX3AuDQC6s+y+S8ygW3kUwkeqzlwdBf
+ hgKOdkTEZ0fh4fl4/qa0Kg5BAuAKaQCXcJmkcwQIp6dDdLN5cV/dZ1LE/TWTU7hxc9ntHy8Ly/d
+ z4vWfd9Q13kWBySoeZUhQ5vVutCzKYNRtahI+6bsNeARHRZo0ZuXEaolRktnz70r6DXmIZGmQM9
+ aNUSgiBpk/avL7/KUhLfs+YIbvJMH30yMHWkFL+waM9cj1EeUdGLROBlgr2391KVl8grEKCqB4m
+ 3+rQN3fqMnRRuIT+pkaCM43n/EEIiaqSA7jg5WumTFcylHyrj2rMxuA6D8XLDB3j8K7+4mTKY0P
+ 7vk4mmKBmBsB8fXCg/mF7z2
+X-Received: by 2002:a17:903:3d0e:b0:2d8:d4d7:f055 with SMTP id
+ d9443c01a7336-2d94a930d44mr91544595ad.22.1788249071183; 
+ Tue, 01 Sep 2026 00:51:11 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-142e0df264csm55297430c88.14.2026.08.31.20.10.03
+ d9443c01a7336-2d7598c3da2sm47760825ad.82.2026.09.01.00.51.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 31 Aug 2026 20:10:04 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Mon, 31 Aug 2026 20:10:00 -0700
-Message-ID: <20260901031000.786214-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.55.0.897.gb25b4bd76c-goog
+ Tue, 01 Sep 2026 00:51:10 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: daehojeong@google.com
+Date: Tue,  1 Sep 2026 15:51:04 +0800
+Message-ID: <20260901075104.1158778-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260901031000.786214-1-daeho43@gmail.com>
+References: <20260901031000.786214-1-daeho43@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1x1Et1-0001Y1-1m
-Subject: [f2fs-dev] [PATCH] f2fs: drop pending discard commands before
+X-Headers-End: 1x1JH2-0006kb-S5
+Subject: Re: [f2fs-dev] [PATCH] f2fs: drop pending discard commands before
  reserving device alias
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -120,125 +121,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, stable@vger.kernel.org,
- Wenjie Qi <qiwenjie@xiaomi.com>
+Cc: qwjhust@gmail.com, jaegeuk@kernel.org, qiwenjie@xiaomi.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+Hi Daeho,
 
-When reserving a device alias via f2fs_ioc_reserve_dev_alias(),
-f2fs_reserve_device_alias() bulk-marks all blocks in the target device
-range as valid in SIT.
+There is a use-after-free in the new helper:
 
-However, if the device was previously in the released state, stale
-pending discard commands covering that range may still exist in dcc->root.
-When f2fs_issue_discard_thread later processes those commands,
-__check_sit_bitmap() detects valid blocks in the discard range and
-triggers a kernel BUG().
+    if (dc->state == D_PREP) {
+        start = dc->di.lstart + dc->di.len;
+        __remove_discard_cmd(sbi, dc);
+        continue;
+    }
+    ...
+    if (dc)
+        __wait_one_discard_bio(sbi, dc);
 
-To fix this:
-1. Introduce f2fs_drop_discard_cmd_range() to traverse the discard rbtree,
-   drop all pending D_PREP discard commands in the range,
-   and wait for any in-flight discard bios under dcc->cmd_lock.
-2. Call f2fs_drop_discard_cmd_range() in f2fs_ioc_reserve_dev_alias()
-   before f2fs_reserve_device_alias().
+__remove_discard_cmd() frees a D_PREP command. If the last command in the
+requested range is D_PREP, dc remains non-NULL when the loop exits, so the
+following __wait_one_discard_bio() dereferences the freed object.
 
-Reported-by: Wenjie Qi <qiwenjie@xiaomi.com>
-Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
-Cc: stable@vger.kernel.org
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/file.c    |  1 +
- fs/f2fs/segment.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 48 insertions(+)
+The range arithmetic also needs care. block_t end = start + len and
+start = dc->di.lstart + dc->di.len can wrap at the 32-bit block-address limit,
+and the RB-tree lookup still compares against a 32-bit command end. A range
+ending at 2^32 blocks would therefore be skipped.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 511286432483..ae109d3ae571 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4122,6 +4122,8 @@ void f2fs_reserve_device_alias(struct f2fs_sb_info *sbi, block_t addr,
- bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
- int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
- void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
-+void f2fs_drop_discard_cmd_range(struct f2fs_sb_info *sbi,
-+					block_t start, block_t len);
- void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
- bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi, bool need_check);
- void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 29cf82d02c77..0b2d173d9597 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3855,6 +3855,7 @@ static int f2fs_ioc_reserve_dev_alias(struct file *filp)
- 	write_unlock(&et->lock);
- 	clear_inode_flag(inode, FI_NO_EXTENT);
- 
-+	f2fs_drop_discard_cmd_range(sbi, ei.blk, ei.len);
- 	f2fs_reserve_device_alias(sbi, ei.blk, ei.len);
- 
- 	i_size_write(inode, (loff_t)ei.len << sbi->log_blocksize);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ac0ed8609c1f..bc36af1a4247 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1873,6 +1873,51 @@ static unsigned int __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
- 	return discard_blks;
- }
- 
-+void f2fs_drop_discard_cmd_range(struct f2fs_sb_info *sbi,
-+					block_t start, block_t len)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-+	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-+	struct discard_cmd *dc;
-+	block_t end = start + len;
-+
-+	if (!f2fs_realtime_discard_enable(sbi))
-+		return;
-+
-+next:
-+	dc = NULL;
-+
-+	mutex_lock(&dcc->cmd_lock);
-+	while (start < end) {
-+		dc = __lookup_discard_cmd_ret(&dcc->root, start,
-+				&prev_dc, &next_dc, &insert_p, &insert_parent);
-+		if (!dc)
-+			dc = next_dc;
-+
-+		if (!dc || dc->di.lstart >= end) {
-+			dc = NULL;
-+			break;
-+		}
-+
-+		if (dc->state == D_PREP) {
-+			start = dc->di.lstart + dc->di.len;
-+			__remove_discard_cmd(sbi, dc);
-+			continue;
-+		}
-+
-+		dc->ref++;
-+		start = dc->di.lstart + dc->di.len;
-+		break;
-+	}
-+	mutex_unlock(&dcc->cmd_lock);
-+
-+	if (dc) {
-+		__wait_one_discard_bio(sbi, dc);
-+		goto next;
-+	}
-+}
-+
- /* This should be covered by global mutex, &sit_i->sentry_lock */
- static void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
--- 
-2.55.0.897.gb25b4bd76c-goog
-
+Thanks,
+Wenjie
 
 
 _______________________________________________
