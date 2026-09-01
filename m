@@ -4,83 +4,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE77DC61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 16:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ACE86C61DD3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 16:38:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=t34G/pPMWR2k/jQXtgD6b8pBtK8df5NmgZji4xPEC64=; b=dfm15BsB1DF/m68+SJ3Ijfmsgf
-	ut2r5EGROGt+NV8WT2bn3a1Nx7vWtMZ13tnPJMYWCs/15ycHe8wlDxs7niJtjgzz2urnLCDACerLZ
-	wi9OpbPHbwLW0Rzq0fTVTctsZnHNfJFpChhquG4yWySe4SjIhiyGG4aS67OCF6oISXnY=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:Message-ID:Date:References:In-Reply-To:MIME-Version:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=zj7+m7sbzPjRmgyaSlnik04gn7EtUgE7o35cRcgPeSI=; b=Gu6xrO+ttorAMrEKHD6qnkPZ2f
+	rXhjgmEIKuzMuB9s+rp9byET/FRgiBHqLb201KwjTQS5mQQpT4Ad8Gn1HiHxQgs8mcynjlaM7pJaG
+	G+Ms3cuY759XhOdfAHMqKboKWLfKcJumwXxOh3DwpYFzrsViWrAOLD68Wt85MzipZ5LE=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1R3W-0002nQ-IA;
-	Tue, 01 Sep 2026 16:09:50 +0000
+	id 1x1RUy-0003U3-S4;
+	Tue, 01 Sep 2026 16:38:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zlang@kernel.org>) id 1x1R3V-0002nK-KM
+ (envelope-from <zhangxp1998@gmail.com>) id 1x1RUx-0003Tw-S8
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 16:09:49 +0000
+ Tue, 01 Sep 2026 16:38:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9CE5RSBHk34ry3w4PuiZHGozADtZbhYGgw45lpA0o2o=; b=C4K242T7kLkd59M2G+O027DkDb
- eYaX/QHSQvirMV+IjWQgJFHFGB2knd38lJ7q1uBUB/2Rq3fp4AjPiaxZnC0oB2AkMbdTShKhsEf4w
- iKBsz5C1Q4qch1v9XzGBCYsKqrj7Rnhbh9DXqct0v+M5eu/LLtW4N1LCNIzmlC1ed3XI=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:
+ References:In-Reply-To:MIME-Version:From:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=nOa1RhCOWow5Q4Zd1s2ylWpbZQcLPTfR3gq4oCCRnno=; b=BhgBoXzCQReaJ/laPRGutqhNXv
+ B/VftwvoNumG4lwNJ7ZZqu02zHR5EazYdEdD6Vo+1IcV8GGepnyWUMT24JYu6Y4te0P0xtCmpr5JY
+ r3qiwYtPyjRFsuWWRJ6OhhXg8+HZIL/s+KxN4Bz8q3+jpSec8O3pRQpR7eoha8MCToDM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:References:In-Reply-To:
+ MIME-Version:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9CE5RSBHk34ry3w4PuiZHGozADtZbhYGgw45lpA0o2o=; b=cvorHDoLcnTKg9dMUN4jStW4CM
- GisXTPhvVAR0nRut3/N76VKBxfXn3T5Aoukl1bhFlHDS4/EdgzGbX1pvCZo9A7WtToH4YQpdKyeuc
- 8a8OPWBStRQ58Q3ksabV+PFovRFOevyNTeT6DPz6+xwVhaWqbqIbf9tIQZWnWjZTa66E=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=nOa1RhCOWow5Q4Zd1s2ylWpbZQcLPTfR3gq4oCCRnno=; b=kbLR8w624pEpjwdMjChtAlxUfI
+ stu+7bCuJn7GKR7vXJ9okPOOsx8dbM4mYWrjJhp2ZtVbmsAiIRG05VujI9mPccFOpqrN2KyjbJU/o
+ z9NA3CNJbCqZJ4PSzjLpHWZnOUKijV/8YzAy3aJc32K0HvNQJrR1wweqbp5J9l8EQUDM=;
+Received: from mail-ed1-f45.google.com ([209.85.208.45])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x1R3U-0005J1-6L for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 16:09:49 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id C2340435A3
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1x1RUw-00062F-Gx for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 01 Sep 2026 16:38:11 +0000
+Received: by mail-ed1-f45.google.com with SMTP id
+ 4fb4d7f45d1cf-6a18840e2abso53633a12.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  1 Sep 2026 16:09:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753F51F000E9;
- Tue,  1 Sep 2026 16:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788278982;
- bh=9CE5RSBHk34ry3w4PuiZHGozADtZbhYGgw45lpA0o2o=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=m1Tz6oRtFZ0zUWOQmm82EJl+t4YdeTXhXnnxypQmE9R6Ru0zkt0Hso2BJowL+tSNT
- pZAW9+UGBe2OXzNpyJPIVyejvTQoRCwqFR6UOShqbLh1KEA4oVMMzAbC2vUqJxjjo5
- ahtQ3Z6ajxhqhsQwLedC1wGjJ4dPpKAtO1Zd1ViJ3ET0wv7lhKbv+izI0OIYMPH1KY
- MkZHbpY5MDwrOuE3Nm7Lb06drbVK5har0KcGJUVSFMWfYiUwY8NCm9/Leumz0OwmHm
- pPfbpBXXENrKeo36Y6e+YJt3nv7/odzaDiHakUXIgsu8ePE1TFyiGwJ4C20dyl10EC
- UPQuRVM6uVcEQ==
-Date: Wed, 2 Sep 2026 00:09:35 +0800
-To: Anand Jain <asj@kernel.org>
-Message-ID: <apb19-FLJv9dRFDS@zlang-mailbox>
-Mail-Followup-To: Anand Jain <asj@kernel.org>, fstests@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, djwong@kernel.org
-References: <cover.1784949154.git.asj@kernel.org>
- <878a21ea507cb955ed414072c82ab5e5493b8ae0.1784949155.git.asj@kernel.org>
+ Tue, 01 Sep 2026 09:38:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788280684; cv=none;
+ d=google.com; s=arc-20260327;
+ b=ot9C3bKtDIvpa5wpvdCNddCW5H6z9dAZmgKa+IEhg5xQtZ6mtlG/qhGbA58dExDFe6
+ UtOwuGJEDohL/PYLrZbcm6DOj0JNlsUZSBuSuPTdZ0Tl86wD4Jp71EcFCJAMYxsbfKIu
+ wYd+kjTlv0D2xDaZFr+ggnz3tOQjscog+lz41t7VzPI6dmDQCHF/tyO2hALhSo0GvRSs
+ NsnOKE6DPZzOhrC+eLSNywWsu2dbzJK+brhPJe5d79Ua6vdbwOi5yO2rz6SS84rN204E
+ oQ+shAlF+DbGACNxRKlWlLBMfacRk3Df2mAL4YVrLe1FIkrsw5nlr+GLiOcokSeBioqP
+ NBYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
+ :from:dkim-signature;
+ bh=nOa1RhCOWow5Q4Zd1s2ylWpbZQcLPTfR3gq4oCCRnno=;
+ fh=kvjpwkBcgEqH3ZekWAj94/WmUzZIE3xVBsEweZe7TwE=;
+ b=JL4Nk+nwHVGYURgE6l3o7fgaiswMugj/juKcwH0OIfMoAlM8MYMi/W6nCtr2tvNLeB
+ aKKpL64rSsBiRBgaZKiIFxXH8m+ruRB+3zZj0Yiku2A7kDdyYGzNpEvqPG4xHUrDGNeR
+ 6Jl8cFz/JU52Oy6HqCF9D7ar8JAcwy2dF768TwADpSaGSK9bchMdE7rAW64Q/E8VEsRG
+ eyZamNpiMV6vFAqXxl3tl0OUZMfVf5Xfha/1P6iTKJ7pzpER6a1+xL3fIbEYiGjIibq1
+ 7xRpzx+CrdgFdRWbICqUeGeqWCFwJz836DGZD8xlMsPwD9c35mhIIoqurc1g6B4oiQQH
+ jWkg==; darn=lists.sourceforge.net
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1788280684; x=1788885484; darn=lists.sourceforge.net;
+ h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+ :mime-version:from:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=nOa1RhCOWow5Q4Zd1s2ylWpbZQcLPTfR3gq4oCCRnno=;
+ b=gNYzCFMfromtMjqS3kPWggFG2i1+GNV8+l1FqTYfC58BKOTT3GGJ6SpfhZw3448UFZ
+ Ad9JtKEHoOh1vKu7llMWszP9SAtDD9hwksfsKY8n/M6QMnl+2599Oe14usNmgwpxo/YF
+ akt3v7TnxfeASJHjGLwfGMl5w9MBuK/PaF3vOGUMpD9sDz3U9Sx/2riD9E8GYh4hgolM
+ sko6MafkFCxr5vo8uZugC4ZW+Vrjg+TvcP3Ec+3J8oDrQUrDlZP78fr6e1j3bwKQ7OsB
+ uujhQ3dcvH2x4Au7LfsgQDv2ta/n1M2unuwpaQDzLSwUOolZIgU265cuB75RkLn0xsxc
+ 3TXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788280684; x=1788885484;
+ h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+ :mime-version:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=nOa1RhCOWow5Q4Zd1s2ylWpbZQcLPTfR3gq4oCCRnno=;
+ b=Zs6cRNo9U7ajrE8ue631WmVriUM3nTbwNIlhhUoACMOuOPMK2JhBlQTrPUDetm1KzG
+ ckstdhxlstKjLhDdBfi7gpAsXqkHtW8xDaUplwVPHJZinC0Fo4/3AxMsSLYcgJl9qM+D
+ nKhqQOSdCfVluK1KYOrzK3OtNAwBdxdnJoiuiybMoGDrEG1R/Ry6rhO0afhuhDYPSt3h
+ TZktpnNPncYJ4ipmFhYQc4L8e3X7SQdNY4HEW7ygbOiMSVk7oj9+dbPHX7xqgIVsTiqc
+ 7zZyS+prSL2z3MMGChVZERVH8ix8zN3BJbNaqBguU4WtR84K8Xi/CPV+SYHBnInQAyQh
+ Sm/g==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxxfMEDUvz0784gbRtJFnwRiJAZJsTvSayLaPtYqWhm6onDjkuLXpmd2GCEJ+SFGrXxxx0xaNuUN9q6fxww3lDM@lists.sourceforge.net
+X-Gm-Message-State: AFuF++k1FJnuk98EikEZRrFq8t/oktv+WU1RZXB7oeUk/FIUmdhJSh+4
+ SQKcBb3Bp4LCQZEj/aqpDhEoM3BDpBzD14ttuDfT2F4La5/Ois3ACCuF4ghkhWtHPvbaNMPGouc
+ VryNn1tUg7UNbhWQ5+1vtDTLgMXpq0hc=
+X-Gm-Gg: AYBFou0nluiTzN5mheeC3ghIdE02Z1ZyEK5epjuIhZ0d0rNkHdhqlndhwJfQ780zwjk
+ 9lJEPNzj3+kATukvtA0/KPtYtx9SDOqiCQh1zutgV7QUqKiEz+CsuQg8qQcNdJrntaSiQKfZhUY
+ KezvhArtjrn01juVrHQZJoLo22QPDdwJMsv7aMmb29KHemF9AqR3VtrLo8CluOXro3kTPC/V0PH
+ jT6RpA2M+HY3z38vfb/TIytVkT8WmQwnqKHO83dH2WIUsTPgEOxB2p9ksjkHGGxee3jZpZK7YSW
+ 5Uy1HQVQNgoITbFjUWKYs1CcdhvKqhRXjiYyTrybdN7I/Xok8rLH2n7dQrRp/BmDglpUwAs+J6H
+ nlw==
+X-Received: by 2002:a05:6402:5107:b0:6a5:dfb6:3618 with SMTP id
+ 4fb4d7f45d1cf-6a60d318ddamr20562239a12.5.1788280683620; Tue, 01 Sep 2026
+ 09:38:03 -0700 (PDT)
+Received: from 637551599889 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 1 Sep 2026 09:38:03 -0700
+Received: from 637551599889 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 1 Sep 2026 09:38:03 -0700
+From: Xinping Zhang <zhangxp1998@gmail.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <878a21ea507cb955ed414072c82ab5e5493b8ae0.1784949155.git.asj@kernel.org>
-X-Headers-End: 1x1R3U-0005J1-6L
-Subject: Re: [f2fs-dev] [PATCH v8 05/13] fstests: add
- _require_unique_f_fsid() helper
+In-Reply-To: <7ab51a29-a214-4e39-b684-4c4b3b87eca4@kernel.org>
+References: <cover.1788213716.git.zhangxp1998@gmail.com>
+ <d3fa15836c409ac6028956c06dbe11a8e0149734.1788213716.git.zhangxp1998@gmail.com>
+ <7ab51a29-a214-4e39-b684-4c4b3b87eca4@kernel.org>
+Date: Tue, 1 Sep 2026 09:38:03 -0700
+X-Gm-Features: AcwNN1WxuIF_MdQAaftvkanhT2uP5XsVUqxVS_gAOomGkZ8JkMrI3Z9K18QQNtY
+Message-ID: <CAH=xXfHzwJwo-R=neWSHAQkni4OOyT8LKug6T9kbZmkhH6WA_Q@mail.gmail.com>
+To: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1x1RUw-00062F-Gx
+Subject: Re: [f2fs-dev] [PATCH v7 01/11] f2fs: initialize sb_info early in
+ f2fs_fill_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,90 +140,16 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Zorro Lang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Zorro Lang <zlang@kernel.org>
-Cc: djwong@kernel.org, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sat, Jul 25, 2026 at 03:39:02PM +0800, Anand Jain wrote:
-> Add a helper to check if the target filesystem supports unique f_fsid
-> tracking across cloned or snapshot instances.
-> 
-> Certain filesystems like XFS, Btrfs, and F2FS ensure unique f_fsid
-> identifiers per filesystem instance. However, Ext4 derives its f_fsid
-> directly from its superblock UUID, which leads to identical f_fsid
-> values on cloned images until the UUID is manually modified by userspace.
-> 
-> Introduce _require_unique_f_fsid() to allow test cases requiring strict
-> f_fsid uniqueness to skip gracefully on unsupported filesystems.
-> 
-> Signed-off-by: Anand Jain <asj@kernel.org>
-> ---
->  common/rc | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/common/rc b/common/rc
-> index 21b516accdf7..f73251365a60 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -6356,6 +6356,33 @@ _require_fanotify_ioerrors()
->  	_notrun "$FSTYP does not support fanotify ioerrors"
->  }
->  
-> +# Skip the test if the filesystem does not enforce unique f_fsids
-> +# natively. Checking this dynamically requires recreating a clone
-> +# layout, so we use a static lookup based on FSTYP.
-> +#
-> +# Across all filesystems, a UUID collision causes libblkid tools to return
-> +# non-deterministic device mappings. It is ultimately the responsibility
-> +# of the userspace utility or use-case to enforce uniqueness when a clone
-> +# diverges. For details, see mailing list thread discussions:
-> +#   Link: https://lore.kernel.org/linux-ext4/20260409131238.GC18443@macsyma-wired.lan/
-> +_require_unique_f_fsid()
-> +{
-> +	case "$FSTYP" in
-> +	ext*)
-> +		# Ext4 derives f_fsid from the superblock UUID, meaning
-> +		# clones share the same f_fsid until their UUIDs
-> +		# diverge.
-> +		_notrun "Target filesystem ($FSTYP) does not guarantee unique f_fsid on clones."
-> +		;;
-> +	*)
-> +		# Conversely, XFS, Btrfs, and F2FS ensure f_fsid remains
-> +		# unique per filesystem instance (often by deriving it
-> +		# from the UUID and underlying block device.)
-> +		;;
-> +	esac
-
-I would prefer to let the experts of each filesystem confirm whether their
-fs guarantees a unique f_fsid. How about switching this logic to an *allowlist*
-*(whitelist)* approach, where we _notrun by default and only allow filesystems
-that explicitly guarantee unique f_fsid support?
-
-  case "$FSTYP" in
-  btrfs|xfs|f2fs)
-        ;;
-  *)
-        _notrun "Target filesystem ($FSTYP) does not guarantee unique f_fsid on clones."
-        ;;
-  esac
+Thanks for pointing this out. I have restored unlikely() around the
+sb_set_blocksize() failure check for v8.
 
 Thanks,
-Zorro
-
-> +}
-> +
-> +
->  # Computes a percentage of the available space in a filesystem and
->  # returns that quantity in MB. The percentage must not contain a percent
->  # sign ("%").
-> -- 
-> 2.43.0
-> 
+Kelvin
 
 
 _______________________________________________
