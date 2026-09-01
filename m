@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 21BC8C61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 11:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0EB7C61DD3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Sep 2026 11:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=yELADYv63zgl3M6jfTZJNzsZKuzcoHQgzO7lMc21zZk=; b=GsrXRyQ0ybpcPURVmPWqgRBO1w
-	wfB/rpeO2JWkd7YEm9WpwG8IaCzat8QGlWFt2V4NxWMowKYLpkZQpyZleRzOudZcDh+lEIVp0OsDa
-	2H4adJG3jDaEYTyRThwHpnw/JsSAqUc22FcphmRUb1BxyjRb+pY4RsoPLxSl2KWeaf8g=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=SsBtzR3t530EBbJ8wLcm3NSWNCgjZbVq3Ch6HArVoFs=; b=kfPIT0b7ic24Cil1a90sbiXe2R
+	rRG86S8pjlP6yVk7cR9OagVg/CcyShFn2ZFpIjmNQwj4kM+1jjyjOpCaf+YsGncgfF98kB/DyRm2p
+	AmYJYvzIr8bNw4QQVvwf7GhMOrLcaQEFHBM2yAaMZGjQkU+Rc2J74MEo7+bBilwjphlE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1Mld-0005B7-Dc;
-	Tue, 01 Sep 2026 11:35:06 +0000
+	id 1x1Mz3-0002Ny-Ma;
+	Tue, 01 Sep 2026 11:48:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x1Mlb-0005Az-Jc
+ (envelope-from <chao@kernel.org>) id 1x1Mz2-0002Nr-NS
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 11:35:04 +0000
+ Tue, 01 Sep 2026 11:48:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XSzlaEbCf5TZb583dCKIeDAaq0/Cs9e2FUUlpk0ufU0=; b=lOedziuB/4cRTHb/9VmYBwER+x
- OSuih2vcbNl3YA7Tkbg6ubzeFnY9tSWb/bsYsv6HbCnkpUjwtHRNg+hr6d1xAR8NvAF3L5xIMfB/Z
- UZvKi/IrU7wyXN3Vk/6zJ/WCgGlkJbJRZVGJ0rhqxpTJdWmjKn3d16Tf8WC2Q/oF2my0=;
+ bh=OTIJKezHBFM/U98rr6J9IfB/cemhLkCTwUb1zFg2+Lg=; b=fag/G9p6ecKfT/N8iIktevNqGF
+ NIPwKPTw/dqgUZIbf7uPoZA1sAyvkIqzOy8eeDYbKLJ7q9kuRKLmpS3R2gicEkXvjCpX6BmoWIW5M
+ lLyi5jH/tbh2ehg1nbuS7wg0TXwfTcPHwPMofPgiXxi41i8czoYm7gIbaY03FUSgMrCQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XSzlaEbCf5TZb583dCKIeDAaq0/Cs9e2FUUlpk0ufU0=; b=iTSwKYG5mk6UMAbGBOTm+dOvMw
- 9VT7IIbA/WwPP1yGQgGDnhtaRMCneG7KxTKp0GYrSfSg77W8LU+2bg1zLkOuh2GP4eVIXzxopU8mK
- RP3xs7SBqhrAzvrKPERMmcMoo9BmuqosT4uvoCG8KEDxeyfK9t58P/gtAvXjrnHJ75aA=;
+ bh=OTIJKezHBFM/U98rr6J9IfB/cemhLkCTwUb1zFg2+Lg=; b=ipHe9Xux9n0di6kE1VjRBVWP1N
+ U25aNWmre2/EuZMcKSvxbh8ce3/X4FJQOlp5xhhgdG63LiwgzGJcHA4gbCwPsY8iehPwnu8LaFn9B
+ cU8RjpdKxS4YP2Gt3YXbvXr6QGznvAlfSKzz62ewzYYCwszEDXZoEWVBCxODP1lJeVNE=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x1Mlb-0006Ks-D3 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 01 Sep 2026 11:35:04 +0000
+ id 1x1Mz0-0007Sk-9i for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 01 Sep 2026 11:48:57 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id B737D6020B;
- Tue,  1 Sep 2026 11:34:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53891F000E9;
- Tue,  1 Sep 2026 11:34:56 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 916A96013A;
+ Tue,  1 Sep 2026 11:48:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A1B51F000E9;
+ Tue,  1 Sep 2026 11:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788262497;
- bh=XSzlaEbCf5TZb583dCKIeDAaq0/Cs9e2FUUlpk0ufU0=;
+ s=k20260515; t=1788263328;
+ bh=OTIJKezHBFM/U98rr6J9IfB/cemhLkCTwUb1zFg2+Lg=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=AAtYmkiEtFoPcBJIr6Fs4drQrAN7sp3Z/KzEG0n6IAYV3vRXghuXmCrAloE9YJFvi
- 7cHwHUUpaL+dnmYtJg1kPKbljrOP3OnvY2kg4w+N7ZxxdARjo+Ub0JvbhfAQ0QF5rZ
- +o5UzCnEF7gge8s9XiyXlD6oe43ggzMyn7eHek+qMJxSibofpaHl2HW7RwW7rz28kU
- nU48FsWt36Q+5d5tnzZGROa2qPApHBoTMRCT+jcoudGimyRAAStMuseVCiznN6Wg1v
- Pe3+lyQ1HsxaePyxnkFMpFK9W0c2YYD5lc4+dq8MIe/aOCIKC8OwjVyVmZ4sw/t6vF
- TzbS0ajPPvjwQ==
-Message-ID: <47f696a1-1efc-4e8e-90fe-22e1ea2feaea@kernel.org>
-Date: Tue, 1 Sep 2026 19:34:55 +0800
+ b=jRL96uGR88hSdH2F9pBiGRXJ/u0Qd4LVD44uVJU69sLuHOlGLD17DJyx48o0P3fe8
+ HCBQGgBv8s5mugz4gWiJOl6XjJl0XBbdccUbF4UKuAqQWsjoML0Qlnx1d/VcL5rDGR
+ m6foM7fayuc+BxeqNeJ0rERIhyZncwVujo+Qr/ef6F/QjnKEPIHtb7FCUPMo15gTHo
+ 46w0bOJB5V1j82zco153h552UvXh7jDyei+/rWktuF+fq/AvJb9bYDts2t12HCfi3o
+ 6qbUZxDoK3zkI83Y1g7JU9ZMbqAPcWVBeFFsHs1TMTifAhxc/e4BswGqPBFsRIK7r3
+ 5AUizHpuPGz8w==
+Message-ID: <63f1e1ae-444f-406f-b76d-312cd0b76bdb@kernel.org>
+Date: Tue, 1 Sep 2026 19:48:45 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Kelvin Zhang <zhangxp1998@gmail.com>,
  linux-f2fs-devel@lists.sourceforge.net
 References: <cover.1788213716.git.zhangxp1998@gmail.com>
- <f05b57691fdc4c186b08010314f8085aeb868e04.1788213716.git.zhangxp1998@gmail.com>
+ <a21bc0d17ce657d0ccd86fd398785b946fa268d6.1788213716.git.zhangxp1998@gmail.com>
 Content-Language: en-US
-In-Reply-To: <f05b57691fdc4c186b08010314f8085aeb868e04.1788213716.git.zhangxp1998@gmail.com>
-X-Headers-End: 1x1Mlb-0006Ks-D3
-Subject: Re: [f2fs-dev] [PATCH v7 04/11] f2fs: describe orphan block layout
- dynamically
+In-Reply-To: <a21bc0d17ce657d0ccd86fd398785b946fa268d6.1788213716.git.zhangxp1998@gmail.com>
+X-Headers-End: 1x1Mz0-0007Sk-9i
+Subject: Re: [f2fs-dev] [PATCH v7 06/11] f2fs: describe {i, d,
+ id}node block layout dynamically
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,233 +97,447 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 9/1/26 06:08, Kelvin Zhang wrote:
-> An on-disk orphan block contains a variable-length array of 32-bit
-> inode numbers followed by a fixed footer at the end of the block. A
-> compile-time whole-block structure cannot represent the footer position
-> when the block size varies at runtime.
+> An inode block ends with five i_nid entries followed by a node footer.
+> Data block address pointers (i_addr[]) precede them. Similarly, direct and
+> indirect node blocks contain data addresses or node IDs followed by a node
+> footer at the end of the block.
 > 
-> Remove struct f2fs_orphan_block, introduce
-> struct f2fs_orphan_block_footer, and compute sbi->orphans_per_block
-> dynamically in init_sb_info(). Add helpers to access the inode entry array
-> and footer from a block buffer.
+> Describe struct f2fs_inode, struct direct_node, and
+> struct indirect_node using flexible array members. Compute the locations
+> of i_nid and node footers dynamically from the filesystem block size.
+> Introduce F2FS_INODE_NIDS() and F2FS_NODE_FOOTER() helpers to access these
+> tail fields.
 > 
-> Update orphan inode recovery, checkpointing, and mount paths to use the
-> parameterized helpers. This preserves the on-disk format while decoupling
-> orphan handling from compile-time constants.
+> Compute sbi->addrs_per_inode, sbi->addrs_per_block, and
+> sbi->nids_per_block in init_sb_info(), and update node management, file
+> mapping, and recovery paths accordingly.
 > 
 > Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
 > ---
->  fs/f2fs/checkpoint.c    | 44 ++++++++++++++++++++++-------------------
->  fs/f2fs/f2fs.h          | 12 +++++++++++
->  fs/f2fs/super.c         |  2 ++
->  include/linux/f2fs_fs.h | 18 ++++++++++-------
->  4 files changed, 49 insertions(+), 27 deletions(-)
+>  fs/f2fs/data.c          |  2 +-
+>  fs/f2fs/f2fs.h          | 32 ++++++++++++++++++-------
+>  fs/f2fs/gc.c            |  2 +-
+>  fs/f2fs/inline.c        |  3 +--
+>  fs/f2fs/inode.c         |  5 ++--
+>  fs/f2fs/node.c          |  4 +---
+>  fs/f2fs/node.h          | 53 +++++++++++++++++++----------------------
+>  fs/f2fs/super.c         |  5 ++++
+>  include/linux/f2fs_fs.h | 26 +++++++++++++++-----
+>  9 files changed, 79 insertions(+), 53 deletions(-)
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 3ecced9b4d57..37a72b693545 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1041,7 +1041,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 6ae0eb37d20f..751b7a457d9a 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2027,7 +2027,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
 >  
->  	for (i = 0; i < orphan_blocks; i++) {
->  		struct folio *folio;
-> -		struct f2fs_orphan_block *orphan_blk;
-> +		__le32 *orphan_inos;
-> +		struct f2fs_orphan_footer *footer;
->  		unsigned int entry_count;
+>  		phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
+>  		offset = offsetof(struct f2fs_inode, i_addr) +
+> -					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
+> +					sizeof(__le32) * (DEF_ADDRS_PER_INODE_SBI(sbi) -
+>  					get_inline_xattr_addrs(inode));
 >  
->  		folio = f2fs_get_meta_folio(sbi, start_blk + i);
-> @@ -1050,9 +1051,10 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->  			goto out;
->  		}
->  
-> -		orphan_blk = folio_address(folio);
-> -		entry_count = le32_to_cpu(orphan_blk->entry_count);
-> -		if (entry_count > F2FS_ORPHANS_PER_BLOCK) {
-> +		orphan_inos = folio_address(folio);
-> +		footer = f2fs_orphan_footer(orphan_inos, sbi);
-> +		entry_count = le32_to_cpu(footer->entry_count);
-> +		if (entry_count > F2FS_ORPHANS_PER_BLOCK(sbi)) {
->  			f2fs_err(sbi, "invalid orphan inode entry count %u",
->  				 entry_count);
->  			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> @@ -1063,7 +1065,7 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->  		}
->  
->  		for (j = 0; j < entry_count; j++) {
-> -			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
-> +			nid_t ino = le32_to_cpu(orphan_inos[j]);
->  
->  			err = recover_orphan_inode(sbi, ino);
->  			if (err) {
-> @@ -1084,7 +1086,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->  static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
->  {
->  	struct list_head *head;
-> -	struct f2fs_orphan_block *orphan_blk = NULL;
-> +	__le32 *orphan_inos = NULL;
-> +	struct f2fs_orphan_footer *footer = NULL;
->  	unsigned int nentries = 0;
->  	unsigned short index = 1;
->  	unsigned short orphan_blocks;
-> @@ -1092,7 +1095,7 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
->  	struct ino_entry *orphan = NULL;
->  	struct inode_management *im = &sbi->im[ORPHAN_INO];
->  
-> -	orphan_blocks = GET_ORPHAN_BLOCKS(im->ino_num);
-> +	orphan_blocks = GET_ORPHAN_BLOCKS(sbi, im->ino_num);
->  
->  	/*
->  	 * we don't need to do spin_lock(&im->ino_lock) here, since all the
-> @@ -1105,21 +1108,22 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
->  	list_for_each_entry(orphan, head, list) {
->  		if (!folio) {
->  			folio = f2fs_grab_meta_folio(sbi, start_blk++);
-> -			orphan_blk = folio_address(folio);
-> -			memset(orphan_blk, 0, sizeof(*orphan_blk));
-> +			orphan_inos = folio_address(folio);
-> +			footer = f2fs_orphan_footer(orphan_inos, sbi);
-> +			memset(orphan_inos, 0, sbi->blocksize);
->  		}
->  
-> -		orphan_blk->ino[nentries++] = cpu_to_le32(orphan->ino);
-> +		orphan_inos[nentries++] = cpu_to_le32(orphan->ino);
->  
-> -		if (nentries == F2FS_ORPHANS_PER_BLOCK) {
-> +		if (nentries == F2FS_ORPHANS_PER_BLOCK(sbi)) {
->  			/*
-> -			 * an orphan block is full of 1020 entries,
-> +			 * an orphan block is full,
->  			 * then we need to flush current orphan blocks
->  			 * and bring another one in memory
->  			 */
-> -			orphan_blk->blk_addr = cpu_to_le16(index);
-> -			orphan_blk->blk_count = cpu_to_le16(orphan_blocks);
-> -			orphan_blk->entry_count = cpu_to_le32(nentries);
-> +			footer->blk_addr = cpu_to_le16(index);
-> +			footer->blk_count = cpu_to_le16(orphan_blocks);
-> +			footer->entry_count = cpu_to_le32(nentries);
->  			folio_mark_dirty(folio);
->  			f2fs_folio_put(folio, true);
->  			index++;
-> @@ -1129,9 +1133,9 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
->  	}
->  
->  	if (folio) {
-> -		orphan_blk->blk_addr = cpu_to_le16(index);
-> -		orphan_blk->blk_count = cpu_to_le16(orphan_blocks);
-> -		orphan_blk->entry_count = cpu_to_le32(nentries);
-> +		footer->blk_addr = cpu_to_le16(index);
-> +		footer->blk_count = cpu_to_le16(orphan_blocks);
-> +		footer->entry_count = cpu_to_le32(nentries);
->  		folio_mark_dirty(folio);
->  		f2fs_folio_put(folio, true);
->  	}
-> @@ -1824,7 +1828,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  		__clear_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
->  	spin_unlock_irqrestore(&sbi->cp_lock, flags);
->  
-> -	orphan_blocks = GET_ORPHAN_BLOCKS(orphan_num);
-> +	orphan_blocks = GET_ORPHAN_BLOCKS(sbi, orphan_num);
->  	ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
->  			orphan_blocks);
->  
-> @@ -2080,7 +2084,7 @@ void f2fs_init_ino_entry_info(struct f2fs_sb_info *sbi)
->  
->  	sbi->max_orphans = (BLKS_PER_SEG(sbi) - F2FS_CP_PACKS -
->  			NR_CURSEG_PERSIST_TYPE - __cp_payload(sbi)) *
-> -			F2FS_ORPHANS_PER_BLOCK;
-> +			F2FS_ORPHANS_PER_BLOCK(sbi);
->  }
->  
->  int __init f2fs_create_checkpoint_caches(void)
+>  		phys += offset;
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 8e6000e7d766..2a4ba7d4ec0e 100644
+> index d2e54573ed34..247e56522441 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -1865,6 +1865,7 @@ struct f2fs_sb_info {
+> @@ -1853,6 +1853,9 @@ struct f2fs_sb_info {
+>  	unsigned int log_blocksize;		/* log2 block size */
 >  	unsigned int blocksize;			/* block size */
 >  	unsigned int nat_entries_per_block;	/* NAT entries in a block */
+> +	unsigned int addrs_per_inode;		/* addresses in an inode block */
+> +	unsigned int addrs_per_block;		/* addresses in a direct node block */
+> +	unsigned int nids_per_block;		/* node IDs in an indirect node block */
 >  	unsigned int sit_entries_per_block;	/* SIT entries in a block */
-> +	unsigned int orphans_per_block;	/* orphan inodes in a block */
->  	unsigned int root_ino_num;		/* root inode number*/
->  	unsigned int node_ino_num;		/* node inode number*/
->  	unsigned int meta_ino_num;		/* meta inode number*/
-> @@ -2255,6 +2256,17 @@ static inline struct f2fs_sb_info *F2FS_F_SB(const struct folio *folio)
+>  	unsigned int orphans_per_block;	/* orphan inodes in a block */
+>  	unsigned int dentries_per_block;	/* dentries in a block */
+> @@ -2248,6 +2251,7 @@ static inline struct f2fs_sb_info *F2FS_F_SB(const struct folio *folio)
 >  
 >  #define SIT_ENTRY_PER_BLOCK(sbi)	((sbi)->sit_entries_per_block)
 >  #define NAT_ENTRY_PER_BLOCK(sbi)	((sbi)->nat_entries_per_block)
-> +#define F2FS_ORPHANS_PER_BLOCK(sbi)	((sbi)->orphans_per_block)
-> +#define GET_ORPHAN_BLOCKS(sbi, n)	DIV_ROUND_UP((n), \
-> +					F2FS_ORPHANS_PER_BLOCK(sbi))
-> +
-> +static inline struct f2fs_orphan_footer *
-> +f2fs_orphan_footer(void *orphan_block, struct f2fs_sb_info *sbi)
-> +{
-> +	return (struct f2fs_orphan_footer *)
-> +		((char *)orphan_block + sbi->blocksize -
-> +		 sizeof(struct f2fs_orphan_footer));
-> +}
+> +#define DEF_ADDRS_PER_INODE_SBI(sbi)	((sbi)->addrs_per_inode)
+
+#define DEF_ADDRS_PER_INODE
+
+>  #define F2FS_ORPHANS_PER_BLOCK(sbi)	((sbi)->orphans_per_block)
+>  #define GET_ORPHAN_BLOCKS(sbi, n)	DIV_ROUND_UP((n), \
+>  					F2FS_ORPHANS_PER_BLOCK(sbi))
+> @@ -2297,6 +2301,12 @@ static inline struct f2fs_checkpoint *F2FS_CKPT(struct f2fs_sb_info *sbi)
+>  	return (struct f2fs_checkpoint *)(sbi->ckpt);
+>  }
 >  
->  static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
+> +static inline struct node_footer *F2FS_NODE_FOOTER(const struct folio *folio)
+> +{
+> +	return folio_address(folio) + F2FS_BLKSIZE -
+> +		sizeof(struct node_footer);
+> +}
+> +
+>  static inline struct f2fs_node *F2FS_NODE(const struct folio *folio)
 >  {
+>  	return (struct f2fs_node *)folio_address(folio);
+> @@ -2307,6 +2317,12 @@ static inline struct f2fs_inode *F2FS_INODE(const struct folio *folio)
+>  	return &((struct f2fs_node *)folio_address(folio))->i;
+>  }
+>  
+> +static inline __le32 *F2FS_INODE_NIDS(const struct folio *folio)
+> +{
+> +	return folio_address(folio) + F2FS_BLKSIZE - sizeof(struct node_footer) -
+> +		SIZE_OF_I_NID;
+> +}
+> +
+>  static inline struct f2fs_nm_info *NM_I(struct f2fs_sb_info *sbi)
+>  {
+>  	return (struct f2fs_nm_info *)(sbi->nm_info);
+> @@ -3277,13 +3293,11 @@ static inline void f2fs_radix_tree_insert(struct radix_tree_root *root,
+>  		cond_resched();
+>  }
+>  
+> -#define RAW_IS_INODE(p)	((p)->footer.nid == (p)->footer.ino)
+> -
+>  static inline bool IS_INODE(const struct folio *folio)
+>  {
+> -	struct f2fs_node *p = F2FS_NODE(folio);
+> +	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+>  
+> -	return RAW_IS_INODE(p);
+> +	return footer->nid == footer->ino;
+>  }
+>  
+>  static inline int offset_in_addr(struct f2fs_inode *i)
+> @@ -3292,9 +3306,11 @@ static inline int offset_in_addr(struct f2fs_inode *i)
+>  			(le16_to_cpu(i->i_extra_isize) / sizeof(__le32)) : 0;
+>  }
+>  
+> -static inline __le32 *blkaddr_in_node(struct f2fs_node *node)
+> +static inline __le32 *blkaddr_in_node(const struct folio *folio)
+>  {
+> -	return RAW_IS_INODE(node) ? node->i.i_addr : node->dn.addr;
+> +	struct f2fs_node *node = F2FS_NODE(folio);
+> +
+> +	return IS_INODE(folio) ? node->i.i_addr : node->dn.addr;
+>  }
+>  
+>  static inline int f2fs_has_extra_attr(struct inode *inode);
+> @@ -3311,7 +3327,7 @@ static inline unsigned int get_dnode_base(struct inode *inode,
+>  static inline __le32 *get_dnode_addr(struct inode *inode,
+>  					struct folio *node_folio)
+>  {
+> -	return blkaddr_in_node(F2FS_NODE(node_folio)) +
+> +	return blkaddr_in_node(node_folio) +
+>  			get_dnode_base(inode, node_folio);
+>  }
+>  
+> @@ -3639,7 +3655,7 @@ void *inline_xattr_addr(struct inode *inode, const struct folio *folio)
+>  {
+>  	struct f2fs_inode *ri = F2FS_INODE(folio);
+>  
+> -	return (void *)&(ri->i_addr[DEF_ADDRS_PER_INODE -
+> +	return (void *)&(ri->i_addr[DEF_ADDRS_PER_INODE_SBI(F2FS_I_SB(inode)) -
+>  					get_inline_xattr_addrs(inode)]);
+>  }
+>  
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index c15c6ba91597..f15ab07a7347 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1176,7 +1176,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  
+>  	if (IS_INODE(node_folio)) {
+>  		base = offset_in_addr(F2FS_INODE(node_folio));
+> -		max_addrs = DEF_ADDRS_PER_INODE;
+> +		max_addrs = DEF_ADDRS_PER_INODE_SBI(sbi);
+>  	} else {
+>  		base = 0;
+>  		max_addrs = DEF_ADDRS_PER_BLOCK;
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index 718dd785865a..73cd9b6ddcc5 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -36,14 +36,13 @@ bool f2fs_may_inline_data(struct inode *inode)
+>  
+>  static bool inode_has_blocks(struct inode *inode, struct folio *ifolio)
+>  {
+> -	struct f2fs_inode *ri = F2FS_INODE(ifolio);
+>  	int i;
+>  
+>  	if (F2FS_HAS_BLOCKS(inode))
+>  		return true;
+>  
+>  	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
+> -		if (ri->i_nid[i])
+> +		if (F2FS_INODE_NIDS(ifolio)[i])
+>  			return true;
+>  	}
+>  	return false;
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 96cc0e777567..fda9ee3bfc61 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -150,9 +150,8 @@ bool f2fs_enable_inode_chksum(struct f2fs_sb_info *sbi, struct folio *folio)
+>  
+>  static __u32 f2fs_inode_chksum(struct f2fs_sb_info *sbi, struct folio *folio)
+>  {
+> -	struct f2fs_node *node = F2FS_NODE(folio);
+> -	struct f2fs_inode *ri = &node->i;
+> -	__le32 ino = node->footer.ino;
+> +	struct f2fs_inode *ri = F2FS_INODE(folio);
+> +	__le32 ino = F2FS_NODE_FOOTER(folio)->ino;
+>  	__le32 gen = ri->i_generation;
+>  	__u32 chksum, chksum_seed;
+>  	__u32 dummy_cs = 0;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 960c6657d0d6..e3f594f7bcce 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -3001,7 +3001,6 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct folio *folio)
+>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+>  			unsigned int segno, struct f2fs_summary_block *sum)
+>  {
+> -	struct f2fs_node *rn;
+>  	struct f2fs_summary *sum_entry;
+>  	block_t addr;
+>  	int i, idx, last_offset, nrpages;
+> @@ -3023,8 +3022,7 @@ int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+>  			if (IS_ERR(folio))
+>  				return PTR_ERR(folio);
+>  
+> -			rn = F2FS_NODE(folio);
+> -			sum_entry->nid = rn->footer.nid;
+> +			sum_entry->nid = F2FS_NODE_FOOTER(folio)->nid;
+>  			sum_entry->version = 0;
+>  			sum_entry->ofs_in_node = 0;
+>  			sum_entry++;
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 0dce97aac5fc..6a2b7c63f4a3 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -252,73 +252,68 @@ static inline void set_to_next_nat(struct f2fs_sb_info *sbi,
+>  
+>  static inline nid_t ino_of_node(const struct folio *node_folio)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(node_folio);
+> -	return le32_to_cpu(rn->footer.ino);
+> +	return le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->ino);
+>  }
+>  
+>  static inline nid_t nid_of_node(const struct folio *node_folio)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(node_folio);
+> -	return le32_to_cpu(rn->footer.nid);
+> +	return le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->nid);
+>  }
+>  
+>  static inline unsigned int ofs_of_node(const struct folio *node_folio)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(node_folio);
+> -	unsigned flag = le32_to_cpu(rn->footer.flag);
+> +	unsigned int flag = le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->flag);
+>  	return flag >> OFFSET_BIT_SHIFT;
+>  }
+>  
+>  static inline __u64 cpver_of_node(const struct folio *node_folio)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(node_folio);
+> -	return le64_to_cpu(rn->footer.cp_ver);
+> +	return le64_to_cpu(F2FS_NODE_FOOTER(node_folio)->cp_ver);
+>  }
+>  
+>  static inline block_t next_blkaddr_of_node(const struct folio *node_folio)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(node_folio);
+> -	return le32_to_cpu(rn->footer.next_blkaddr);
+> +	return le32_to_cpu(F2FS_NODE_FOOTER(node_folio)->next_blkaddr);
+>  }
+>  
+>  static inline void fill_node_footer(const struct folio *folio, nid_t nid,
+>  				nid_t ino, unsigned int ofs, bool reset)
+>  {
+>  	struct f2fs_node *rn = F2FS_NODE(folio);
+> +	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+>  	unsigned int old_flag = 0;
+>  
+>  	if (reset)
+> -		memset(rn, 0, sizeof(*rn));
+> +		memset(rn, 0, F2FS_BLKSIZE);
+>  	else
+> -		old_flag = le32_to_cpu(rn->footer.flag);
+> +		old_flag = le32_to_cpu(footer->flag);
+>  
+> -	rn->footer.nid = cpu_to_le32(nid);
+> -	rn->footer.ino = cpu_to_le32(ino);
+> +	footer->nid = cpu_to_le32(nid);
+> +	footer->ino = cpu_to_le32(ino);
+>  
+>  	/* should remain old flag bits such as COLD_BIT_SHIFT */
+> -	rn->footer.flag = cpu_to_le32((ofs << OFFSET_BIT_SHIFT) |
+> +	footer->flag = cpu_to_le32((ofs << OFFSET_BIT_SHIFT) |
+>  					(old_flag & OFFSET_BIT_MASK));
+>  }
+>  
+>  static inline void copy_node_footer(const struct folio *dst,
+>  		const struct folio *src)
+>  {
+> -	struct f2fs_node *src_rn = F2FS_NODE(src);
+> -	struct f2fs_node *dst_rn = F2FS_NODE(dst);
+> -	memcpy(&dst_rn->footer, &src_rn->footer, sizeof(struct node_footer));
+> +	memcpy(F2FS_NODE_FOOTER(dst), F2FS_NODE_FOOTER(src),
+> +	       sizeof(struct node_footer));
+>  }
+>  
+>  static inline void fill_node_footer_blkaddr(struct folio *folio, block_t blkaddr)
+>  {
+>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_F_SB(folio));
+> -	struct f2fs_node *rn = F2FS_NODE(folio);
+> +	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+>  	__u64 cp_ver = cur_cp_version(ckpt);
+>  
+>  	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+>  		cp_ver |= (cur_cp_crc(ckpt) << 32);
+>  
+> -	rn->footer.cp_ver = cpu_to_le64(cp_ver);
+> -	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
+> +	footer->cp_ver = cpu_to_le64(cp_ver);
+> +	footer->next_blkaddr = cpu_to_le32(blkaddr);
+>  }
+>  
+>  static inline bool is_recoverable_dnode(const struct folio *folio)
+> @@ -378,11 +373,12 @@ static inline bool IS_DNODE(const struct folio *node_folio)
+>  static inline int set_nid(struct folio *folio, int off, nid_t nid, bool i)
+>  {
+>  	struct f2fs_node *rn = F2FS_NODE(folio);
+> +	__le32 *inode_nids = F2FS_INODE_NIDS(folio);
+>  
+>  	f2fs_folio_wait_writeback(folio, NODE, true, true);
+>  
+>  	if (i)
+> -		rn->i.i_nid[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
+> +		inode_nids[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
+>  	else
+>  		rn->in.nid[off] = cpu_to_le32(nid);
+>  	return folio_mark_dirty(folio);
+> @@ -391,9 +387,10 @@ static inline int set_nid(struct folio *folio, int off, nid_t nid, bool i)
+>  static inline nid_t get_nid(const struct folio *folio, int off, bool i)
+>  {
+>  	struct f2fs_node *rn = F2FS_NODE(folio);
+> +	const __le32 *inode_nids = F2FS_INODE_NIDS(folio);
+>  
+>  	if (i)
+> -		return le32_to_cpu(rn->i.i_nid[off - NODE_DIR1_BLOCK]);
+> +		return le32_to_cpu(inode_nids[off - NODE_DIR1_BLOCK]);
+>  	return le32_to_cpu(rn->in.nid[off]);
+>  }
+>  
+> @@ -406,8 +403,7 @@ static inline nid_t get_nid(const struct folio *folio, int off, bool i)
+>  
+>  static inline int is_node(const struct folio *folio, int type)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(folio);
+> -	return le32_to_cpu(rn->footer.flag) & BIT(type);
+> +	return le32_to_cpu(F2FS_NODE_FOOTER(folio)->flag) & BIT(type);
+>  }
+>  
+>  #define is_cold_node(folio)	is_node(folio, COLD_BIT_SHIFT)
+> @@ -416,14 +412,13 @@ static inline int is_node(const struct folio *folio, int type)
+>  
+>  static inline void __set_mark(const struct folio *folio, bool mark, int type)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(folio);
+> -	unsigned int flag = le32_to_cpu(rn->footer.flag);
+> -
+> +	struct node_footer *footer = F2FS_NODE_FOOTER(folio);
+> +	unsigned int flag = le32_to_cpu(footer->flag);
+>  	if (mark)
+>  		flag |= BIT(type);
+>  	else
+>  		flag &= ~BIT(type);
+> -	rn->footer.flag = cpu_to_le32(flag);
+> +	footer->flag = cpu_to_le32(flag);
+>  }
+>  
+>  static inline void set_cold_node(const struct folio *folio, bool is_dir)
 > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index fdc2b0c51c06..f9811d571ae5 100644
+> index 8d2224e585d3..fcaeaacaab33 100644
 > --- a/fs/f2fs/super.c
 > +++ b/fs/f2fs/super.c
-> @@ -4386,6 +4386,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+> @@ -4384,6 +4384,11 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>  	sbi->blocksize = BIT(sbi->log_blocksize);
+>  	sbi->nat_entries_per_block = sbi->blocksize /
 >  		sizeof(struct f2fs_nat_entry);
+> +	sbi->addrs_per_inode = (sbi->blocksize - OFFSET_OF_END_OF_I_EXT -
+> +		SIZE_OF_I_NID - sizeof(struct node_footer)) / sizeof(__le32);
+> +	sbi->addrs_per_block = (sbi->blocksize -
+> +		sizeof(struct node_footer)) / sizeof(__le32);
+> +	sbi->nids_per_block = sbi->addrs_per_block;
 >  	sbi->sit_entries_per_block = sbi->blocksize /
 >  		sizeof(struct f2fs_sit_entry);
-> +	sbi->orphans_per_block = (sbi->blocksize -
-> +		sizeof(struct f2fs_orphan_footer)) / sizeof(__le32);
->  	sbi->log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
->  	sbi->blocks_per_seg = BIT(sbi->log_blocks_per_seg);
->  	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+>  	sbi->orphans_per_block = (sbi->blocksize -
 > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> index 061f906a7b94..7d2cbceb42d5 100644
+> index d1059a27e1b9..3d0fe2c78e12 100644
 > --- a/include/linux/f2fs_fs.h
 > +++ b/include/linux/f2fs_fs.h
-> @@ -220,14 +220,18 @@ struct f2fs_checkpoint {
+> @@ -16,6 +16,7 @@
+>  #define F2FS_MAX_LOG_SECTOR_SIZE	PAGE_SHIFT	/* Max is Block Size */
+>  #define F2FS_LOG_SECTORS_PER_BLOCK	(PAGE_SHIFT - 9) /* log number for sector/blk */
+>  #define F2FS_BLKSIZE			PAGE_SIZE /* support only block == page */
+> +#define F2FS_MAX_BLKSIZE		PAGE_SIZE
+
+It's unused in this patch?
+
+>  #define F2FS_BLKSIZE_BITS		PAGE_SHIFT /* bits for F2FS_BLKSIZE */
+>  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+>  #define F2FS_EXTENSION_LEN		8	/* max size of extension */
+> @@ -343,18 +344,25 @@ struct f2fs_inode {
+>  						 */
+>  			__le32 i_extra_end[0];	/* for attribute size calculation */
+>  		} __packed;
+> -		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+> +		DECLARE_FLEX_ARRAY(__le32, i_addr); /* data block pointers */
+>  	};
+> -	__le32 i_nid[DEF_NIDS_PER_INODE];	/* direct(2), indirect(2),
+> -						double_indirect(1) node id */
+
+Can you please keep the comments?
+
+/* direct(2), indirect(2), double_indirect(1) node id */
+
+> +	/*
+> +	 * __le32 i_nid[DEF_NIDS_PER_INODE];
+> +	 *
+> +	 * It is stored immediately before the node footer at the end of the
+> +	 * filesystem block. Its offset depends on the filesystem block size, so
+> +	 * locate it dynamically with F2FS_INODE_NIDS().
+> +	 */
+>  } __packed;
+>  
+>  struct direct_node {
+> -	__le32 addr[DEF_ADDRS_PER_BLOCK];	/* array of data block address */
+> +	/* The address count depends on the filesystem block size. */
+> +	DECLARE_FLEX_ARRAY(__le32, addr); /* array of data block address */
+>  } __packed;
+>  
+>  struct indirect_node {
+> -	__le32 nid[NIDS_PER_BLOCK];	/* array of data block address */
+> +	/* The node ID count depends on the filesystem block size. */
+> +	DECLARE_FLEX_ARRAY(__le32, nid); /* array of data block address */
+>  } __packed;
+>  
+>  enum {
+> @@ -373,7 +381,13 @@ struct f2fs_node {
+>  		struct direct_node dn;
+>  		struct indirect_node in;
+>  	};
+> -	struct node_footer footer;
+> +	/*
+> +	 * struct node_footer footer;
+> +	 *
+> +	 * It is stored at the end of the filesystem block, after the inode or
+> +	 * direct/indirect node data. Its offset depends on the filesystem block
+> +	 * size, so locate it dynamically with F2FS_NODE_FOOTER().
+> +	 */
+>  } __packed;
 >  
 >  /*
->   * For orphan inode management
-> + *
-> + * An orphan block has no fixed-size C structure because the number of inode
-> + * entries depends on the filesystem block size.  Its exact on-disk layout is:
-> + *
-> + * 0                           blocksize - 16             blocksize
-> + * +--------------------------+--------------------------+
-> + * | ino[0] ... ino[n - 1]    | struct f2fs_orphan_footer |
-> + * +--------------------------+--------------------------+
-> + *
-> + * n = (blocksize - sizeof(struct f2fs_orphan_footer)) / sizeof(__le32)
->   */
-> -#define F2FS_ORPHANS_PER_BLOCK	((F2FS_BLKSIZE - 4 * sizeof(__le32)) / sizeof(__le32))
-> -
-> -#define GET_ORPHAN_BLOCKS(n)	(((n) + F2FS_ORPHANS_PER_BLOCK - 1) / \
-> -					F2FS_ORPHANS_PER_BLOCK)
-> -
-> -struct f2fs_orphan_block {
-> -	__le32 ino[F2FS_ORPHANS_PER_BLOCK];	/* inode numbers */
-
-Oh, maybe we can leave this structure like we did for f2fs_{nat,sit}_block ?
-
- struct f2fs_sit_block {
--	struct f2fs_sit_entry entries[SIT_ENTRY_PER_BLOCK];
-+	DECLARE_FLEX_ARRAY(struct f2fs_sit_entry, entries);
- } __packed;
-
-Something like this:
-
-struct f2fs_orphan_block {
-	DECLARE_FLEX_ARRAY(__le32, ino);
-} __packed;
-
-> +struct f2fs_orphan_footer {
->  	__le32 reserved;	/* reserved */
->  	__le16 blk_addr;	/* block index in current CP */
->  	__le16 blk_count;	/* Number of orphan inode blocks in CP */
 
 
 
