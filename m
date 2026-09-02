@@ -4,78 +4,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 40F3BC61DFD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Sep 2026 09:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 54DE2C624D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Sep 2026 11:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=jZOhtn67Pf0hOG/hSTPqttM0HXpqDqm+DEbku+BC8uI=; b=iNvleQZ+TPwWQe+XoqtQQ58x6E
-	L4JqhlfP6M1YJamYh0wY1M5oUn5qu9jd06oEiQhJxzIWIxzu2MmtZowHSYkkeayr6QGSmkoX30WGr
-	9Pf5O72LltBUGQitYQetkx9ZsentDT0RNV82jZ/Iy9eKAp5fZrhL5QE3r4BSvGDhB6zY=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=AmswqBkFowVnpeX+ylDqDg4ecEPUtgNypwvUJnumUWs=; b=ZIV1Y1s3w+W9sgFYCou9HewEAX
+	5sY9YyTIJ+c9p+60X2X5qcIysA+d7yBKP/tE/Kz0Bra3oamcCdTohxR6oHzJUx9y7yhDlazvor4QU
+	IqlQ812gRnyKsi+FNArESf9/O0X75Ne3HMVnAWpYajzHmsLT9+XpW1fLVUsADBnrefm8=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1hL3-00086I-0r;
-	Wed, 02 Sep 2026 09:33:01 +0000
+	id 1x1jaH-0000Pi-Aj;
+	Wed, 02 Sep 2026 11:56:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x1hL1-000868-Ek
+ (envelope-from <qwjhust@gmail.com>) id 1x1jaG-0000PP-5E
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Sep 2026 09:33:00 +0000
+ Wed, 02 Sep 2026 11:56:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sLNkN45zgCTnCwe7uN6wLY+RNmxWk6frEwpG0oaL1aU=; b=GTO/IjLgbCDvt04czdwws9ArnR
- j4L1PXenP0b/LWy4uu6HP1+mAxGqzUBWN5RbzP7m6Qwh8lRwBYk2HzUnDfi2muogsOFwjaAnpjygA
- g0i/iIW6kEF/r3kRoh2Y/OqC0irkMDotB+JPfmF0HvNGuXEXi9gLu2bBzQ7JSQH7KVCA=;
+ bh=wNEuPqEuWyvOeNnRKiDgQZ4g2yOI3cJx1FKCZezy4uc=; b=Ov5s29Ic5Pokp6pfcp6ulvC/9z
+ eJ0NRVE9jf8mMXJcaF+myCZiaujCAg2eQAoC85SgVB0RcxMEQ0CsiQuBu+vYsgrBSeBuVMlIQSNPF
+ QDZwYx66sArzmq/Txi83bjuJjJ7lYylYvynUpDJ0R5DEhEg1rSXQW0yigM3wRXdnmQMU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=sLNkN45zgCTnCwe7uN6wLY+RNmxWk6frEwpG0oaL1aU=; b=i8AjEusjqGYspeNmqoE6aGiIO0
- 6MKh+9tNnHzMWawfxeqZVmMTTnS384lyIPeFjvdPYMpfipEXSWwaVSKvZXfL/uZAN+vCW7GERUJ+J
- Cwftj8mV2dlgfscRr3joecKAHlwfzjvXpAHZfWAacpqN3Kl5vSJcPl8zMFg1K1b/WqD0=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x1hL0-0007UW-Ls for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Sep 2026 09:33:00 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id DCC50600C8;
- Wed,  2 Sep 2026 09:32:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C1891F000E9;
- Wed,  2 Sep 2026 09:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788341572;
- bh=sLNkN45zgCTnCwe7uN6wLY+RNmxWk6frEwpG0oaL1aU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=DS9oslsq7i1jpGVXJ0KnNOxZQkn9Uk/+7eR3lYTrD6crgklC+XzVtiPCaxsi7eWxv
- afk+WuI78ObkOCdSh4sZ5FpscfFKd4lbJ5cDYOVyFKkC8SpRN8HB2ljwa0+qzTv+Gl
- d5e7O91XRNefR3KrrMlLz3iqu7kjcAonL4XUboexYMmW3JxZ4p8Z8bR4Xn5h7RVAG+
- HoCSTrnFyUZSMWn6Hr92AREnbWcrHh34jp0AwIm3gpCEF5ENzY36cDqhJbqUiqaihA
- FC98JQ3QPhK9nfP5aEl2+pFnDD9T3uCybV5d8WI14lcYKnTamCgxYRH/U1roN/4R0R
- 0KK94W4n/rADA==
-Message-ID: <2c4fedee-7cd8-4377-803d-a3b5406bd003@kernel.org>
-Date: Wed, 2 Sep 2026 17:32:49 +0800
+ bh=wNEuPqEuWyvOeNnRKiDgQZ4g2yOI3cJx1FKCZezy4uc=; b=dksTkREESI3xLQ+BWoB0ox3+ih
+ VEkOiEdYIZB04tVMgMZSdCzMEgDjaeYnPY+j5wnnyCnPpxPdKY2d/IKfBaZbu9WT66FsWTjWG8G7N
+ mjoMxggTvxbW51KGHUqN65R2cn8UD8lcqFm9MHA55xnL3wUsWYc5jl7DuWBZky61UEkc=;
+Received: from mail-pl1-f179.google.com ([209.85.214.179])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1x1jaG-0008Mi-D0 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 02 Sep 2026 11:56:52 +0000
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2d6d28aa26cso5854705ad.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 02 Sep 2026 04:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1788350207; x=1788955007; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=wNEuPqEuWyvOeNnRKiDgQZ4g2yOI3cJx1FKCZezy4uc=;
+ b=MtdLmXOACG0qhohPDZKjl6VuaBE3As/6f2ohPH0641qyUHyk8ss5rdv4nEFonv3Lr3
+ ZkF+HuFIBYRjtkQLa8Z0C6qyIzuikt8G+P1lcaGVTNIeFBZFensXi1NI+0dbMwQ72sHJ
+ gXTMRNP40eTm6uUeD4VnyGKOsgq4uaFehHaiYJ9YDBiQ+4tZUke1gyk0YlEt/7asXS5c
+ gjk7ngwSqb6kiP5U2JVGfSjxZg/P9mlO8cz6Rd+pgktGAxnI8VwcssILu++IUW+LhRun
+ E6sxxiwgzzaC/1X7M0AEMVVkWymjTlWrUxrSy7vpnW56dxjnqRm0fG3nbhUSQZhCE8ls
+ MvvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788350207; x=1788955007;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=wNEuPqEuWyvOeNnRKiDgQZ4g2yOI3cJx1FKCZezy4uc=;
+ b=Vtkax/4xT2j8ZdU9UjnqmC+TlkNXJmqvHrn2BdkwRD2kXBpVu6q/9yRN6lg3WoTXlK
+ 5cXau0sBwG/3ZlwkldGw0e3WEV4RJnDozHVGOgsOWIeDfmiSPGrtFi/R1y9Jkl7KDT4t
+ p7wOiL6Hn8GMnVqQ5qkNMNHl2wF5aSgzJG4jxxoW4dpHHBdPoGFu0Xo9mXL71mGHgvw2
+ 2x+VtJ+kA9ijAHCilxonDV03SN8sMrDj+mkYZZWkhZinSERLkf8XtGjY0XVwOWzFbFCI
+ hogKOLtmEnljiM75alGygdz5U62nucR8mQWKTu6dJokmHAXXzkgCde8G3v8oqmlriGhp
+ VN3w==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBysPOU85dvacbsY/aBOiYNaaDT9SS+2+IJPbUXV6ScvjS4Fcs5GSoXpLpxCklWtHPJoA7gdWLipTnI2HHNj5rP+@lists.sourceforge.net
+X-Gm-Message-State: AFuF++mUqlgO4y1kbg2Y39it1dUl0bUKicHONESV4d8z71u4LJTLWUFm
+ ARX0VOn7u8olK611jfd3mH5yzGZr9ox5a5re+ZFWhNIn2g3yZxTIzAm7yv5dpbOe
+X-Gm-Gg: AYBFou0GPqHLVaHh6hzy4dS/VWe2r5pH2CASOuFFIfzrHtb8O2wNz2O264sy/z3lF9Q
+ PeWon2Og31aZSsdnb7x0WYSMSjejm/cZXnDPXACMCSZN/1DF/woq+a9fxd++dq9TfQOXjavZrql
+ yWv7RYxe6CyhOMhfzn01LOHzBZmOu2C4TsxEUIV4ZgO3HBKsKA/6hxDJfEuB3LovlnCzzR+0kWG
+ PG0sSkb5UmAiTkIb4QwgPQsPhSUUh650NOoR/RrF9uK3bLpsqZ9+ArlMrCat8AY8VOQwKZpAPJd
+ INIBhoYBp5CCGxa6eftWpy9kgbC+06LG+aiby5dSvEs9HvQq0RhE9/e5VgHKeoOLwZ8KwTZBQhk
+ IENsE1N4g4W20oK0b0s7pWHm0NzYEY03Dze0accYWloOyMJUWxdoViL7oSZK7UlTpj1WDGOcCsi
+ ZD8p0C5nrcB7p5xauypyDHdG+7m9naHkcH2YN2RgyHXgX3kmjx6imNySYP8igq33n6Z6DQw+/z+
+ 8535VngV4AnraGLvhQ2UFl2
+X-Received: by 2002:a17:903:19ec:b0:2d6:e4ff:9cad with SMTP id
+ d9443c01a7336-2daec5ab9c5mr67402435ad.3.1788350206638; 
+ Wed, 02 Sep 2026 04:56:46 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2dadd488af8sm11847865ad.44.2026.09.02.04.56.42
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 02 Sep 2026 04:56:45 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: Chao Yu <chao@kernel.org>
+Date: Wed,  2 Sep 2026 19:56:36 +0800
+Message-ID: <20260902115636.691796-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260831092227.739737-5-chao@kernel.org>
+References: <20260831092227.739737-1-chao@kernel.org>
+ <20260831092227.739737-5-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20260902090611.564876-1-qiwenjie@xiaomi.com>
-Content-Language: en-US
-In-Reply-To: <20260902090611.564876-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1x1hL0-0007UW-Ls
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: wait for inode record work before
- clearing ino bitmaps
+X-Headers-End: 1x1jaG-0008Mi-D0
+Subject: Re: [f2fs-dev] [PATCH v5 04/12] f2fs: cache: introduce writeback
+ thread
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,33 +123,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: qwjhust@gmail.com, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com,
+ linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/2/26 17:06, Wenjie Qi wrote:
-> APPEND/UPDATE inode state recording was moved to the inode eviction
-> workqueue. These entries were later converted to bitmap values stored in
-> XArrays, but the workqueue drain was left behind in the list cleanup loop
-> where it is now a no-op.
-> 
-> During unmount, inode eviction work can therefore remain queued when
-> f2fs_release_ino_entry() destroys the bitmap XArrays. A delayed worker can
-> repopulate them before the workqueue is finally destroyed, leaking newly
-> allocated XArray nodes when the F2FS superblock is freed.
-> 
-> Wait for APPEND/UPDATE inode record work before destroying each bitmap
-> XArray, restoring the required ordering.
-> 
-> Fixes: 9a9ee7408a1f ("f2fs: reduce memory footprint of ino management")
-> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
+Hi Chao,
 
-Thanks,
+> static int f2fs_cache_writeback_kthread(void *data)
+> {
+> 	unsigned int interval = cache_thread->cache_wb_interval;
+> }
+
+and startup initializes the field after `kthread_run()`:
+
+> task = kthread_run(f2fs_cache_writeback_kthread, sbi, "%s", name);
+> if (IS_ERR(task))
+> 	return PTR_ERR(task);
+>
+> cache_thread->cache_wb_task = task;
+> cache_thread->cache_wb_interval = DEF_DIRTY_CACHE_TIMEOUT;
+
+`kthread_run()` wakes the new thread before returning, while
+`cache_wb_interval` is initially zero.  The worker copies the field only
+once, and the sysfs store later updates the field rather than the local
+`interval`.
+
+Can the worker observe zero at startup, and can a later
+`cache_wb_interval` write change the interval used by that worker?
 
 
 _______________________________________________
