@@ -4,87 +4,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 71BB6C61DFD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Sep 2026 04:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3921CC61DD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Sep 2026 05:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=wckbvauA4n76wny4c6b5Ojjmsv9kEP/gfTofs0D8myY=; b=JjKXpXEolseZap5FiQatOa0mN9
-	XUGtw6cD2DUOWn2nGfyVQKAZyNCvTSDud4AQ72lWKL17kTcQ5CEIzICk7S7pNJmgUx7KSO3C4J9Qj
-	bpYSR4+f2WVO80OPe42wPUwj6MGufBMPqc5lg2AppxrYWIONU28Bz4MdPw/zyKRZ3TBw=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=ZLL6ohdgs7vhPhnO2n3XJtaLLR0oa8TCyhIyF+fBKBs=; b=H9kjwN6MBtSNn4FU1Js3HY3ILv
+	BFOx5XGL7XGQbxqOtBrtiDWffTrlkkZTMPR+HEfwn+djsOl37YkwSSvNtOCjahLSPRqCfXwT1zleG
+	2ytzn/QQTk2CJpDzeQIyPQ8qFoA0Qd9ojJtwypx/1QHtSxs4vggEiVFH95sro/6qQl0Y=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1cGy-0006hy-7n;
-	Wed, 02 Sep 2026 04:08:29 +0000
+	id 1x1d6c-0002yW-F8;
+	Wed, 02 Sep 2026 05:01:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <39ZqXagkbAOQYefQGRRKXGVVOJ.MUUMRKaYKXIUTZKTZ.IUS@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1x1cGw-0006hj-Jx for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Sep 2026 04:08:27 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <prvs=1705562396=prabhakar.pujeri@dell.com>)
+ id 1x1d6b-0002xF-AP for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 02 Sep 2026 05:01:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WknVe6YbEwHTjQ8SnS3LNO11L5BkxkkKwGa2maUHawk=; b=mnRVVwl3llSo9SQTHDNkbGobKp
- t2rCBL9E77wSY62Aj4APDv7cgN+0jwgkGp/hZnEg3MICccnWV+qyEmJ/oecNrqf+DVElPPzfvL4Y9
- EJgWrK1us25k7fdyfCKM2uZidyXMWllW7LPREjc5BVXnQre9EHEHfGchQJyWpYIm7DsY=;
+ bh=1/KLKRiVPfcZsBxemYIk6m3oWKrc/kl7djnjssGxzRU=; b=PdzrJNK5vPmRtNBmyaIxVldxUn
+ JLIkM4sCw9JCC6ix2rpCbu634QKmWMnnTQ9qGHwGSGQVcsDHDQrhraf0kpffG6krlbv0gplX1HuGU
+ cUD4kyyS9QP4SvInhlNHWtUdXVi+FNlW6viFz+ukP6tF7MF0E69c1XkyTbuJZeDQTWyc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=WknVe6YbEwHTjQ8SnS3LNO11L5BkxkkKwGa2maUHawk=; b=I
- GKf27uVLDX3oQMd6rWtiljPYV1H7XzveTu6/Dvwt/CU0Qr0SJwxdK/ddCLcXpItNklFlWc42OTsnA
- q3GJXC3RF7ymefOrh/VWSGdte3pgWloGt0ATdswVxDOQG9OW4PENZhdy9Xwhxcd1SE62qlwRlvl7f
- f5m3/wrrviGJa5wc=;
-Received: from mail-qk2-f4.google.com ([74.125.230.196])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x1cGw-0006bp-Lt for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Sep 2026 04:08:27 +0000
-Received: by mail-qk2-f4.google.com with SMTP id
- d75a77b69052e-51c26eb5e81so2637251cf.1
+ List-Owner:List-Archive; bh=1/KLKRiVPfcZsBxemYIk6m3oWKrc/kl7djnjssGxzRU=; b=Q
+ IIaVooucBfXELgftCpdZpX5KE+855AMC3r9MFzOC4oKHN7CBW7sFMHx1VopVeV9fy6P9dXMmjYCwz
+ yBYyFRQHttg6c03Q+JKEhPs0Sfmf+w/yyqwn2Z6B+MlsOC4ALGZAZO1RSanxHRA/8zFLi5Zk33w/b
+ iBIxnQh2NwXUAB54=;
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x1d6Z-0005Bz-15 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 02 Sep 2026 05:01:49 +0000
+Received: from pps.filterd (m0170395.ppops.net [127.0.0.1])
+ by mx0b-00154904.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 681KS8Hq3620623
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 2 Sep 2026 01:01:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+ :content-transfer-encoding:date:from:message-id:mime-version
+ :subject:to; s=smtpout1; bh=1/KLKRiVPfcZsBxemYIk6m3oWKrc/kl7djnj
+ ssGxzRU=; b=sR5hM8S9Ix7cZFD6eh5diGTiFJ4Q6yPwLmreUj7PsQw7pntMMvbU
+ /HOr8A/ME1FCudz/OFjU4d3Lyxr0ZMfopEgKeMK+MJgAzFCpC0vfa+s6jC+Mt5Z/
+ sfsrJGAngze3OIv3rahXuGhBe+66Rn4Y4l3ns97x1vMr8mBq/4vxB+0e6JEsJZNG
+ pTnSra0D1TL07eA/zav44L2FqPa+uuVf0hZKAKxFxjUzaqKeBrlLkW7B8cl02uUi
+ OOazCbDN0sHL0R6/Ie48QblLU5n3417cYbHBQsZMhDtCaKddykI5LmDDNbgDQWT2
+ FIMqkV18gSP4cKpxCACgIExrbhs7VRQ7Kw==
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com
+ [67.231.149.39])
+ by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 4gbv3gfmd9-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 01 Sep 2026 21:08:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788322101; x=1788926901;
- h=content-type:to:from:subject:message-id:date:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=WknVe6YbEwHTjQ8SnS3LNO11L5BkxkkKwGa2maUHawk=;
- b=JAJLZUIC5H1inT7bF+4/Xq9gLgFwojMAX9YtSDISTWof4ja7blMpHPCBvg+9jEOcXC
- 1F5L73RferStL6AzKy6D6e82uVq7ZSEZJFI/2yDFms8aKSW1pub+Wo4SNDRfYMpiriVx
- aMZsPAYiu6S9Rj0fTB3fJZfkctmmCfsP1ZF4fbJoDbA/k8Z5dWu0BHpC2I7rAwb+oYsm
- ZsyX/wamvTtW1+YmkfToMuPyw1lNGLmmnjViqxzTpHbTFFL25xk6RbHtkvY9dij8/ywH
- jbt2RUbuTAwNzLm0iQLYlPCnBOPkIaiUmqTpDKvqJdmIo4emmoCYEEW+hoyHohcLf3sk
- Z/Cg==
-X-Forwarded-Encrypted: i=1;
- AHgh+RrlGEyDjvM3dFcbYKBv78giDEkMv/+IPc8sWZJglr8Oi6AIPCh9/pwyQzmTF6bJ0GHXHoZPY425xj31oZXYDocH@lists.sourceforge.net
-X-Gm-Message-State: AFuF++mH5ld7d3+6SU0J0yE5o+s25DnixitYvX1fnbablFnDiNg+Z2ik
- f1rfvlAimsoPDDi8GgRcSNUUrqu9/t67a0O1cq+eEyZ5YhAbxMoiJ3KL4Mf1Cx09JMiKyrPd7kb
- eZ4wnLoL5PjLtGbfAcZ6Ch4sF84ZOLGEyR5VJ74i9GFR97hAcmtJrTcGlDtY=
+ Wed, 02 Sep 2026 01:01:40 -0400 (EDT)
+Received: from pps.filterd (m0142699.ppops.net [127.0.0.1])
+ by mx0a-00154901.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6820vwO51525788
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 2 Sep 2026 01:01:40 -0400
+Received: from esapsmtplv06.us.dell.com (esapsmtplv06.us.dell.com
+ [143.166.203.146])
+ by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4ge9qc25u9-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=FAIL)
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 02 Sep 2026 01:01:39 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
+ t=1788325299; x=1819861299;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=1/KLKRiVPfcZsBxemYIk6m3oWKrc/kl7djnjssGxzRU=;
+ b=PMRScVaAsxnX6FQJXmNEroSVEH+M8QMpwTs6XntNLzUN1EnGPDbbX049
+ e3vMaTgJnTTcJUGR5r3e/oNJKU0MdtN3f7II4XxJL1fz4F+RLfOF7dD6v
+ YlCl2LV+rWTat/WuBpgtXHEX82uKqYWTzl6v32foo99t+SceDq241NYtu
+ k766otfKMIx8VA/dctEc1yz8qXujiWUZRdk2xxk9nruWOsLvK5gTtsj1r
+ Iu+hRvXw+wK9Blg4whJWIpx9salKtLg3SXqVva5jN1taAZXy4yiCWY7B4
+ f4qTtQnFWHffVxj2UOF7divQE8R7q5YI2NYp7jfOEdAIz4T8vLBAYiSaZ Q==;
+X-CSE-ConnectionGUID: xmtYXp9vS+ifyVFkURmwYg==
+X-CSE-MsgGUID: 6PYL9kzaTbmITLdTWme2FQ==
+X-LoopCount0: from 10.94.14.196
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+Received: from w-96j1th4.apac.dell.com (HELO W-96J1TH4.blr.amer.dell.com)
+ ([10.94.14.196])
+ by esapsmtplv06.us.dell.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 02 Sep 2026 05:01:37 +0000
+To: fstests@vger.kernel.org
+Date: Wed,  2 Sep 2026 05:01:33 +0000
+Message-ID: <20260902050133.2413-1-prabhakar.pujeri@dell.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:c84:b0:6b1:6136:956a with SMTP id
- 006d021491bc7-6b47fc2dfa3mr1688847eaf.15.1788320501447; Tue, 01 Sep 2026
- 20:41:41 -0700 (PDT)
-Date: Tue, 01 Sep 2026 20:41:41 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a979af5.e163c37b.143a1.0004.GAE@google.com>
-From: syzbot <syzbot+ae5b8eb92ed40411ce16@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-X-Headers-End: 1x1cGw-0006bp-Lt
-Subject: [f2fs-dev] [syzbot] [f2fs?] general protection fault in new_curseg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-01_06,2026-09-01_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020042
+X-Proofpoint-ORIG-GUID: uqMEuZeznnWJAmo6ohBmH46ZPCTJhoIX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDA0MyBTYWx0ZWRfX/1XG15zmbbQz
+ g99Jtpjn+gjPn+q29Da57qnYqd+zpRwWa9XR/HqrpjaIaLxqrSrkoJTcAOyyDOUTc+ZE2/BSo0e
+ YLGjl7FA0GDQKPoL26IfI2BMr34WmA+u69tQFhhP4Lc+AJvynd87rb90Z6qRD/JM+y1d5syzpMI
+ sIylmWtdXu7P3Gc68QPLD1LprFUWNh4ZMnh8331fs0hKd4wto6DiQqtDNOFMLqnWYVey9cMJadm
+ g91B0RFvq4qIPxJ/lfyWf+CrJE4bCTScQ61Pebs84lB92h3yoZkRzBfGywYqVOayIhZGe09HjPj
+ AsxSycixw9g2rFbo9I7cvaWMPGtpOv9m9VFFvkhnoSAAdRXvBMUc25jx/wnusbq4dmexfw9W0N8
+ qqkAErKUPrPnfFz9SOPU0q6N1O9HvZdHeGnJHASOum+86Lehaz8mjooWD1CR3BbkE7NeV5c0Ixm
+ PoI+CeZnaEkVCV2R8cg==
+X-Proofpoint-GUID: uqMEuZeznnWJAmo6ohBmH46ZPCTJhoIX
+X-Authority-Analysis: v=2.4 cv=B7SJFutM c=1 sm=1 tr=0 ts=6a97adb4 cx=c_pps
+ a=j0++y401J6f/BxNAf5EDow==:117 a=in+AvElAwLqdjTPPAWhuvg==:17
+ a=VdqzKS8jKosA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=6gNNCFAoQcIphELLPWWu:22 a=Qy6CKLcU0MZ4grw4BCWD:22 a=iLNU1ar6AAAA:8
+ a=mO6Rr1tav0zkpb9LypEA:9 a=gbU3OgOOxF9bX48Letew:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDA0MyBTYWx0ZWRfXwgWWxLsn8SWZ
+ mGs0uYFDQFW19/tDfT8rW4ae90Xw2QpKGwiIFQ4kok0eHm8ZcvCJKVe4Rmd8spMrq/JC+1SphOG
+ JRWaCm79uBkRsmgx+LyFiYPPnUg2O8A=
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
+ suspectscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 phishscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020043
+X-Headers-End: 1x1d6Z-0005Bz-15
+Subject: [f2fs-dev] [PATCH] f2fs/015,
+ 016: add missing _require_scratch checks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,128 +149,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Prabhakar Pujeri via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Prabhakar Pujeri <prabhakar.pujeri@dell.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+ Prabhakar Pujeri <prabhakar.pujeri@dell.com>, Zorro Lang <zlang@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+Both tests run _scratch_mkfs in a loop without first requiring a scratch device, so they fail messily instead of skipping when no scratch device is configured.
 
-syzbot found the following issue on:
-
-HEAD commit:    89a312991dc6 Merge tag 'cifs-fixes-7.3-rc2' of https://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1075e779580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e909ffe6b35dddb7
-dashboard link: https://syzkaller.appspot.com/bug?extid=ae5b8eb92ed40411ce16
-compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-89a31299.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/114a4744ab8e/vmlinux-89a31299.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c65021627f2c/bzImage-89a31299.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ae5b8eb92ed40411ce16@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
-CPU: 0 UID: 0 PID: 12 Comm: kworker/u4:0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Workqueue: writeback wb_workfn (flush-7:0)
-RIP: 0010:f2fs_dev_is_alloc_blocked fs/f2fs/segment.h:956 [inline]
-RIP: 0010:get_new_segment fs/f2fs/segment.c:2964 [inline]
-RIP: 0010:new_curseg+0x1134/0x3580 fs/f2fs/segment.c:3110
-Code: e8 21 ab ce fd 48 8b 7c 24 30 48 8b 07 49 6b cf 70 4c 8d 34 08 49 83 c6 61 4c 89 f0 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 0f 85 73 11 00 00 41 80 3e 00 0f 84 e6 00 00 00
-RSP: 0018:ffffc9000025e628 EFLAGS: 00010206
-RAX: 000000000000000c RBX: 0000000000008000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: ffff888012125a88
-RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff5200004bcb4 R12: ffff888052be0000
-R13: 0000000000000004 R14: 0000000000000061 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88808c2cf000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200001000000 CR3: 000000004fe72000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- f2fs_allocate_data_block+0x229c/0x43c0 fs/f2fs/segment.c:3979
- do_write_page+0x13f/0x880 fs/f2fs/segment.c:4099
- f2fs_outplace_write_data+0x11a/0x220 fs/f2fs/segment.c:4175
- f2fs_write_compressed_pages fs/f2fs/compress.c:1403 [inline]
- f2fs_write_multi_pages+0x43bb/0x6370 fs/f2fs/compress.c:1602
- f2fs_write_cache_pages fs/f2fs/data.c:3351 [inline]
- __f2fs_write_data_pages fs/f2fs/data.c:3603 [inline]
- f2fs_write_data_pages+0x19bb/0x36f0 fs/f2fs/data.c:3641
- do_writepages+0x338/0x560 mm/page-writeback.c:2560
- __writeback_single_inode+0x136/0x1220 fs/fs-writeback.c:1788
- writeback_sb_inodes+0x9de/0x1b00 fs/fs-writeback.c:2099
- __writeback_inodes_wb+0x114/0x240 fs/fs-writeback.c:2175
- wb_writeback+0x42f/0xad0 fs/fs-writeback.c:2286
- wb_check_start_all fs/fs-writeback.c:2412 [inline]
- wb_do_writeback fs/fs-writeback.c:2459 [inline]
- wb_workfn+0x980/0x10f0 fs/fs-writeback.c:2497
- process_one_work kernel/workqueue.c:3396 [inline]
- process_scheduled_works+0xc3d/0x1630 kernel/workqueue.c:3479
- worker_thread+0xa47/0xfb0 kernel/workqueue.c:3560
- kthread+0x38b/0x480 kernel/kthread.c:436
- ret_from_fork+0x514/0xb70 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:f2fs_dev_is_alloc_blocked fs/f2fs/segment.h:956 [inline]
-RIP: 0010:get_new_segment fs/f2fs/segment.c:2964 [inline]
-RIP: 0010:new_curseg+0x1134/0x3580 fs/f2fs/segment.c:3110
-Code: e8 21 ab ce fd 48 8b 7c 24 30 48 8b 07 49 6b cf 70 4c 8d 34 08 49 83 c6 61 4c 89 f0 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 0f 85 73 11 00 00 41 80 3e 00 0f 84 e6 00 00 00
-RSP: 0018:ffffc9000025e628 EFLAGS: 00010206
-RAX: 000000000000000c RBX: 0000000000008000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: ffff888012125a88
-RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff5200004bcb4 R12: ffff888052be0000
-R13: 0000000000000004 R14: 0000000000000061 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88808c2cf000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200001000000 CR3: 000000004fe72000 CR4: 0000000000352ef0
-----------------
-Code disassembly (best guess):
-   0:	e8 21 ab ce fd       	call   0xfdceab26
-   5:	48 8b 7c 24 30       	mov    0x30(%rsp),%rdi
-   a:	48 8b 07             	mov    (%rdi),%rax
-   d:	49 6b cf 70          	imul   $0x70,%r15,%rcx
-  11:	4c 8d 34 08          	lea    (%rax,%rcx,1),%r14
-  15:	49 83 c6 61          	add    $0x61,%r14
-  19:	4c 89 f0             	mov    %r14,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	0f b6 04 08          	movzbl (%rax,%rcx,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	0f 85 73 11 00 00    	jne    0x11a9
-  36:	41 80 3e 00          	cmpb   $0x0,(%r14)
-  3a:	0f 84 e6 00 00 00    	je     0x126
-
-
+Signed-off-by: Prabhakar Pujeri <prabhakar.pujeri@dell.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ tests/f2fs/015 | 1 +
+ tests/f2fs/016 | 1 +
+ 2 files changed, 2 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/tests/f2fs/015 b/tests/f2fs/015
+index 54cada4a..75ae91f2 100755
+--- a/tests/f2fs/015
++++ b/tests/f2fs/015
+@@ -12,6 +12,7 @@ _begin_fstest auto quick mount
+ _require_kernel_config CONFIG_F2FS_FS_XATTR
+ _require_kernel_config CONFIG_F2FS_FS_POSIX_ACL
+ _require_kernel_config CONFIG_F2FS_FAULT_INJECTION
++_require_scratch
+ 
+ options=(
+ #	mount_option			mkfs_option
+diff --git a/tests/f2fs/016 b/tests/f2fs/016
+index a6df827d..e0857e0a 100755
+--- a/tests/f2fs/016
++++ b/tests/f2fs/016
+@@ -15,6 +15,7 @@ _require_kernel_config CONFIG_F2FS_FS_LZORLE
+ _require_kernel_config CONFIG_F2FS_FS_LZ4
+ _require_kernel_config CONFIG_F2FS_FS_LZ4HC
+ _require_kernel_config CONFIG_F2FS_FS_ZSTD
++_require_scratch
+ 
+ options=(
+ #	mount_option			mkfs_option
+-- 
+2.55.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
 
 _______________________________________________
