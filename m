@@ -4,126 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B70E0C624D4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Sep 2026 23:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93EE1C624D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Sep 2026 01:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:References:In-Reply-To:MIME-Version:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0h7LuBhXugf7019rWbcwmtFmeaCHEpIA7zXatNqjpVc=; b=DXpAfTMAMUMClIMkeHB7Tskm5r
-	zIdYINqWcpZs5R9F3Yzl68vmX0XtRIORmiKDPml46MgDSTxf3974Fil47FLjFmtsGQf2h7ftAErNW
-	H50Q5xdydJIYqLu0Q+i3RiukorEereI0348OzQYw8G1s6K85ZDVHvZlGzMaHRFS2IoXw=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=17rSLkkWEhIGMwJfopv+rMIzR2+Cmb1HuhIoCotFf3g=; b=S9tQwuUC5FUC14oE261e9puJ2d
+	5DyAmGtISAd3MJw9Lk6hCpbPpP6AWx1DzBJjqo62gTXSzIJn0zY/Nt3YsA+cn1o0GQp3n1cW+UCBb
+	g3nBaE82lTAH8AAOv+j5NhtwfpvPXomsgvDbq1x6NdIaMEFCjMSbjZUFHGrj4yH64e80=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1ukd-0005R0-Hz;
-	Wed, 02 Sep 2026 23:52:17 +0000
+	id 1x1wfh-0001hP-C3;
+	Thu, 03 Sep 2026 01:55:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangxp1998@gmail.com>) id 1x1ukZ-0005Qs-QR
+ (envelope-from <chao@kernel.org>) id 1x1wff-0001hJ-FZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Sep 2026 23:52:13 +0000
+ Thu, 03 Sep 2026 01:55:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:
- References:In-Reply-To:MIME-Version:From:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MG3QiDYwnYyRJX/WbpqNA8DU22zfZF7tRC7pS5LrDa0=; b=g7nO24cILLzwybNRYVPSrTy/q6
- TYxMBxkjcJ9CwC/CqkKz2WanmZXbuG2e9jw2Ory1jdcFv78yNb2A5T16JeTr2vNHmI5R8ZViHzkkC
- BiwRG/hesXaoF18Y3anWgrKshZt4JOJ/OcKRme1zU4zOm3kaWN9mgMdTUDQBIWicDu68=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=o/7WxrjjY9F8d70xdLQPvDsjqzk1/OszqklUcwt+2YM=; b=BjjuJQA4AOg048J00tR/PEKXeW
+ XfXN0zuI5L31pdZny5Ah5HW2+kF/Yvk2CoTP65vTyfnXtIi2UA7LeF5vTumNcoHLAWgtGMwRwqiF/
+ J4u9Zx9roDADHLk2QtKYKk/JeyD9GMUhEGNgm4gkoxxamCmQhs0gJXQL+GAMWwJKyAOc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:References:In-Reply-To:
- MIME-Version:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=MG3QiDYwnYyRJX/WbpqNA8DU22zfZF7tRC7pS5LrDa0=; b=fc9glPrgfuaD4PtFKaGI609fqW
- lj3sP9TgAtwMkCzl2VEPNAALlDErOHPjQHgShGQNK25ExDtBzO9FYWOnYY0f5k/fvVwy9JxG9JPSN
- zqVYzGZGESAnJjr8bNsbTGtzbnCZNFTD7L6Why83/XFKQ+c30KWn3/hjRsbIKejvhcOQ=;
-Received: from mail-ed1-f50.google.com ([209.85.208.50])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x1ukS-0002mV-4u for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Sep 2026 23:52:13 +0000
-Received: by mail-ed1-f50.google.com with SMTP id
- 4fb4d7f45d1cf-6a051b737d8so1740141a12.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 02 Sep 2026 16:52:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788393121; cv=none;
- d=google.com; s=arc-20260327;
- b=Ik7wxMmOmOJ2Z5xgq7tYZCvLnbkw3NvoKT0nQd5a5q8vPhH2C5CyKptRpCHyOGnvAX
- lHbOhCGKKnBjMD8wp4kiUKHE9jISLo/CJmBXl28ROHz8xwsaS0Up6tkTXzcYrzbMjm3d
- jQnOmuma7U1pwrCyz1r6qWMPeiG317vnC+9EkYOmRmhugypIbOLcrQpzYRxA1cUMuf4Z
- UOgtqXq1rjbRnPBZS8VhKzLEoX+1BIT/Q5bZayBsVsqiQ1d7rcu378azoFr3mpGfZBJs
- qSkwFyyn9qbdSaEXZOkciDLedA68WKcHaNA7jGc9PCgFilpD9G/8hXc/IDlH00E8oNPW
- eKjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
- :from:dkim-signature;
- bh=MG3QiDYwnYyRJX/WbpqNA8DU22zfZF7tRC7pS5LrDa0=;
- fh=a2sNCG01Qj4Cnjs/1Xa7TE+P9wFJWjng52pFYO+JsoM=;
- b=O49tMlSaoYNYED5leL8UdWu5qotXsdht8k4U2vIs48E8ixA/ASJtrsQ2zdvUSgK9hZ
- tBLglTMGBvjFqt7Iz/Us8BwJxI2O5zO/Qew39sr6t18siuYplHhpwlNtGOmEzS4fafqX
- iK6dP6UeYslKRJzIfe4P3Nr1Skl8XssxCOKJrn+iefVVfz1Aclnj8UXyoN3dgg44FMfI
- 7SSn5055Gikz92rLiz4VvI61TgORUKM59xec2V2zVM/Ld6YkZrKgyzaZnrM14DSZj0SX
- KsjfDBAfRKV5Sbip9hORyX+t6sVcFgU+uHGxX2cy5vH1Q/zsdwl2mqY/fodTYvrWoNdh
- 2IAg==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788393121; x=1788997921; darn=lists.sourceforge.net;
- h=content-type:cc:to:subject:message-id:date:references:in-reply-to
- :mime-version:from:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=MG3QiDYwnYyRJX/WbpqNA8DU22zfZF7tRC7pS5LrDa0=;
- b=obOJt6FvYETAzK+bXn6FNb2mldh1pcau7nr4YT9o7xYo3kTHyetKxAjWshbVM8d+KT
- lcztwh7Xk9f5yhWonxgip43hZabycALXoD+yy1bIOLtdYB2b+kGsSo2AMBntUrV3l4I/
- e7Sv+GgOf07q76udRGr4AaFcaX/pyXlmc9WjxodtSOlutcB2q3Irv6AjJ9bymb+/xCVs
- USaM37vglSvMl/ijGZHPq1I7sJHYgnLo6Au0RBff4HRd/XNC+MtdZw1Oovf0ubRzxv/Y
- sqq7wrnDHn5R/qgGGAAJnmuwebF/UlvosuaBEIP8TfijPa+W1RpYdyE+Z9pCzMdLtXWn
- Rotg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788393121; x=1788997921;
- h=content-type:cc:to:subject:message-id:date:references:in-reply-to
- :mime-version:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=MG3QiDYwnYyRJX/WbpqNA8DU22zfZF7tRC7pS5LrDa0=;
- b=AyBLKtICk6N69lziEL4KYanoLG+KBxxjftF+SOJk5rdYWL4PvCSWixRNUZuMaMpecF
- B9HjoMRPZYB9zr8vnUChLPfTtN1H1faa9XVHF1V1LjymXsqlfcR2FZDuNDGNFQsZfReM
- gnUQvH4XUARRsELOk+bpHPBwHY1BxnqvatIBeKBR+4S31r49k1hxSrTIfiYUNM6YRpDn
- baUvnEy92NB6WD5cr0LoqHOK91XXBNL+lgtMBpMluqoTmt4+MgVfe2tJ2KXlmlrcq/n7
- dwRCvhBF1K3DfQS+6d5tgcLnTYAzkXydGZkmgnlyAYBW1j61Nbf+q+wbzMMlonkw1JMi
- hlAQ==
-X-Gm-Message-State: AFuF++nCZGKwPHTwTcB3DzSRTuOJoaj9iGN9wLPYlFWRjCGq45FE6rwd
- 2IGnmu/LNo/A+T3yTc+P3193DS39FydSOe2RY5AMJ1Q3jX9Yh8pC86eYmgG5/jxYIZFHiBqVBzy
- 6NGgPjTgTwZ+i/nje/PrEZL8JyNhxAKA=
-X-Gm-Gg: AYBFou1MMLGm0M6WOv6YQMDxmbfAy9L15jxu0FirsYBd4yFl89D2jFfgt9h8UIJ+tpW
- dz6j8ZOKGAnWG2Y+QidyVJwQ9dZPkRHAN2lBE63PvcmSo87+1K2nRlJJX5zzqZayVD1fZ78QJ2P
- yHJA1BuvMyzEBsCbogryl0mRAO4grpHq+y+GvVgps/+Jo1rOsJH8Q7s3WadVRUxh6DSTH7mmqNj
- 1az+Xy4oz2q5/eXt/0hoegVelx16cG/Epq3HtvtNbXvTkOtpcMCvZUbxpy4g1QjYYPQkTlycSwe
- 2RloHnJS/eu+7BwBbnMO6F0ay9d9Mo+nBGW2hG6SDhPonWt3VSHtHDW7ekgeqmDssdIz478IuWi
- A
-X-Received: by 2002:a05:6402:371a:b0:6a5:f4eb:1085 with SMTP id
- 4fb4d7f45d1cf-6a682aee057mr5780340a12.15.1788393121346; Wed, 02 Sep 2026
- 16:52:01 -0700 (PDT)
-Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 2 Sep 2026 16:52:00 -0700
-Received: from 637551599889 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 2 Sep 2026 16:52:00 -0700
-From: Xinping Zhang <zhangxp1998@gmail.com>
+ bh=o/7WxrjjY9F8d70xdLQPvDsjqzk1/OszqklUcwt+2YM=; b=Ci5qFZkAUh2j/5aKyLK2458a4O
+ iVZtn3i/TYmhR24Sg5K6MGXi0HKOAW56KgrQ3RnswYf/kNPPHXv1hkc5Yf8DTSRHyHiNsKyNjXIWh
+ xdSzC5kPCEHBdYiyfabSBnYmZ80zcJHS8gb+C7KREFe/1bkSJIsqiKQE9KRSI/ENne9M=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x1wfa-0000wY-4x for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 03 Sep 2026 01:55:19 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 3038C600C8;
+ Thu,  3 Sep 2026 01:55:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9891F000E9;
+ Thu,  3 Sep 2026 01:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1788400507;
+ bh=o/7WxrjjY9F8d70xdLQPvDsjqzk1/OszqklUcwt+2YM=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=YBpVCBrfbPIUvAD1s4k+JPNbAg/tY5qRFWDFAq27gA6gU4TyRtAAEmBPP+zL0QZcT
+ AVNK5ci7RD5k27X8Sp5eQwHhpmBENS5/FJinYTVrsaiWf7s7/kxdVo5MYFd4nTkrbv
+ xTUK4Ar7EWTY7YHFzF2YrhI/NtOH3s0A6uyxuJZ9OWePKNzuoy8bZEJuzjEDG/9EBm
+ LLFrQsPXrWebZX/TMcHvyWB3JJ26tW+xBz+PICEO9aLyUZlbuZCAhute1wQFZrQCrq
+ nNowBOT3xHnNjIlzkP4bENivw/6nzniJrRhwfO10AspCKTxRA+U0uj2XhoypqoshL7
+ 31gYKphhDpuag==
+Message-ID: <fecb1fb8-316e-4da6-9504-608d69edf342@kernel.org>
+Date: Thu, 3 Sep 2026 09:55:05 +0800
 MIME-Version: 1.0
-In-Reply-To: <a21bc0d17ce657d0ccd86fd398785b946fa268d6.1788213716.git.zhangxp1998@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Xinping Zhang <zhangxp1998@gmail.com>
 References: <cover.1788213716.git.zhangxp1998@gmail.com>
  <a21bc0d17ce657d0ccd86fd398785b946fa268d6.1788213716.git.zhangxp1998@gmail.com>
-Date: Wed, 2 Sep 2026 16:52:00 -0700
-X-Gm-Features: AcwNN1X2wTr2PORB6BsTY-uCscv85cT3JQy32UzZoMMqaRMzmpuL9ftwzZj3Z6s
-Message-ID: <CAH=xXfHZuQ2s1rQLdQ1tWSSVPTs9SX9GuNZ2kf3znjY2YyexPw@mail.gmail.com>
-To: chao@kernel.org
-X-Headers-End: 1x1ukS-0002mV-4u
+ <CAH=xXfHZuQ2s1rQLdQ1tWSSVPTs9SX9GuNZ2kf3znjY2YyexPw@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAH=xXfHZuQ2s1rQLdQ1tWSSVPTs9SX9GuNZ2kf3znjY2YyexPw@mail.gmail.com>
+X-Headers-End: 1x1wfa-0000wY-4x
 Subject: Re: [f2fs-dev] [PATCH v7 06/11] f2fs: describe {i, d,
  id}node block layout dynamically
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -137,47 +89,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+Kelvin,
 
-The 0-day build failure on feature/subpage (lkp report; 6/11,
-include/linux/f2fs_fs.h:355: "expected specifier-qualifier-list before
-'*' token") is a nested comment in struct f2fs_inode.
+On 9/3/26 07:52, Xinping Zhang wrote:
+> Hi Chao,
+> 
+> The 0-day build failure on feature/subpage (lkp report; 6/11,
+> include/linux/f2fs_fs.h:355: "expected specifier-qualifier-list before
+> '*' token") is a nested comment in struct f2fs_inode.
+> 
+> The applied commit keeps the old inline comment "/* direct(2)... node
+> id */" inside the new block comment, so the inner "*/" closes the comment
+> early and the following lines get parsed as struct members:
+> 
+>     /*
+>      * __le32 i_nid[DEF_NIDS_PER_INODE];  /* direct(2), indirect(2),
+>      *                  double_indirect(1) node id */
+>      *
+>      * It is stored immediately before the node footer ...
+>      */
+> 
+> That's a hard compile error on every arch, not just m68k-allmodconfig.
+> 
+> The version I posted in v7 6/11 doesn't have this; it drops the old
+> inline comment. The applied commit (35efac5) looks like an earlier
+> revision -- its subject is "{i, d, id}node" (with spaces) vs
+> "{i,d,id}node" in v7. Could you re-apply v7's 6/11, or de-nest the
+> comment, e.g.:
+> 
+>     /*
+>      * __le32 i_nid[DEF_NIDS_PER_INODE];
+>      * direct(2), indirect(2), double_indirect(1) node IDs
+>      *
+>      * It is stored immediately before the node footer at the end of
+>      * the filesystem block. Its offset depends on the filesystem block
+>      * size, so locate it dynamically with F2FS_INODE_NIDS().
+>      */
 
-The applied commit keeps the old inline comment "/* direct(2)... node
-id */" inside the new block comment, so the inner "*/" closes the comment
-early and the following lines get parsed as struct members:
-
-    /*
-     * __le32 i_nid[DEF_NIDS_PER_INODE];  /* direct(2), indirect(2),
-     *                  double_indirect(1) node id */
-     *
-     * It is stored immediately before the node footer ...
-     */
-
-That's a hard compile error on every arch, not just m68k-allmodconfig.
-
-The version I posted in v7 6/11 doesn't have this; it drops the old
-inline comment. The applied commit (35efac5) looks like an earlier
-revision -- its subject is "{i, d, id}node" (with spaces) vs
-"{i,d,id}node" in v7. Could you re-apply v7's 6/11, or de-nest the
-comment, e.g.:
-
-    /*
-     * __le32 i_nid[DEF_NIDS_PER_INODE];
-     * direct(2), indirect(2), double_indirect(1) node IDs
-     *
-     * It is stored immediately before the node footer at the end of
-     * the filesystem block. Its offset depends on the filesystem block
-     * size, so locate it dynamically with F2FS_INODE_NIDS().
-     */
+Done, let me know if you have a new version, I can help to cache in my tree
+for lkp build test.
 
 Thanks,
-Kelvin
+
+> 
+> Thanks,
+> Kelvin
+
 
 
 _______________________________________________
