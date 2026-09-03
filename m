@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F63BC61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Sep 2026 23:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FBE8C624D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Sep 2026 23:36:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=idtbz5MZQpGrtFsheQrjv0PpRBiLDUGU3DZYznn8Lek=; b=Fsse2r0Jveo7CfH62a/ANQwCJi
-	tPEIIsH83tUu+L7x4/M0SnBDq5+muiPiaqn9LK4Ar4KtUxPQVI6EgKRUyGqhMIYnD4DpBrSOiF4Zl
-	W5JC4lm+oHtKiaZtMk3gruvpkM7L1vqyPrSowMafxhS8/Qcs7EqWLV15XHtdKfpwpV0A=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=3SDhFjzhWtk4lKztrkUkxZuZYBpZfhaah9yXtkQG9XU=; b=ZfjIEnUS5h7ku+2VT5KKDFdJ1k
+	1+JQnxz+nX0pQ7cLb8viDxXMEFNha1jphM+2GwMM+lGNNNDvLLEBxOVlpLp82i5vR9VlxuLYv6pev
+	Tn6uihSbGYlotQ0vuRloj7edw0tcohI+6ZbE5cBdXvK1TWuSVYOxPRDFLd7CN5aTgBo4=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x2Gy1-0003Dh-OG;
-	Thu, 03 Sep 2026 23:35:37 +0000
+	id 1x2GyW-0003mi-MP;
+	Thu, 03 Sep 2026 23:36:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x2Gy0-0003Da-0J
+ (envelope-from <chao@kernel.org>) id 1x2GyV-0003mb-Mg
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Sep 2026 23:35:36 +0000
+ Thu, 03 Sep 2026 23:36:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wgqEUxliYrFxQGsD1XhQ1lqH4ox71paP4RLruXC57lg=; b=JW1ejvjiVQ33WMrYkGbaWYJOC1
- 9IyJ3rGGixL9fJR1OZdjdnDXtnCSix/+5p3vuIchK0EzjkLnwUGNDATeEW4DTGxF+fUn6UVm0hpIx
- gaIIPE2fuli8PdehZlZZTvpyftD5QgU9kAYURcvgb8LJ7JISsZwbq3yQEAS3xPhmBa0I=;
+ bh=v8aIrl8FVNE6aDkNh/Sn9rVod9l059Np9k7ejf2G7Kg=; b=L2lIpQjZQHkfoc1v+XowpRgc2z
+ DxYmfrxnmOmH/RQCJcFWRl3ownS5iGc5V9iC6uxOXsihUfLa6+j6FBXja3/R3T6D6n+An1Quuj+Ql
+ z8wht3GoxN6nuUZvQVGudim49Wl2l/CeWk+j2E2jYr2M2SdHMl5I8xmPhxfSygYZD0qI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=wgqEUxliYrFxQGsD1XhQ1lqH4ox71paP4RLruXC57lg=; b=OQp1C2ocLDCV/I3ZuWc9QlkauA
- VJ7GcGIWvAoiYAWADq5evPxLBJt26QcU26kZi/+cRpD4LZ98uoehhkpFRlYULydBnVQs1Eql+25KX
- W2yyIPREV1RRvjXCygo80/hclnwp5TtAAN/AfDx4Tf7u4cEU2XYuPVuZWMFx6XDh7hVU=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=v8aIrl8FVNE6aDkNh/Sn9rVod9l059Np9k7ejf2G7Kg=; b=QZvNDrVPfgKmGHQahygsMRBAEY
+ G/jwRa0u8XRGlnYHGPWO/pAZFi2oOHmD+9gHyrAYRDWTE5LM0eIh6CteilEHNe5/BELVUFMjAI6wr
+ eqOipaKpB0Ksa0Bk+DEGx2GieR8MXXbGQKxUrdj7u9cKMoqX7MDjALwKwmGwoPb6yThk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x2Gxz-00080H-Ej for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Sep 2026 23:35:35 +0000
+ id 1x2GyV-00025Y-Uu for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 03 Sep 2026 23:36:08 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 0DC29435A8;
- Thu,  3 Sep 2026 23:35:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931591F000E9;
- Thu,  3 Sep 2026 23:35:28 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1C48C60234;
+ Thu,  3 Sep 2026 23:36:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79781F000E9;
+ Thu,  3 Sep 2026 23:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788478529;
- bh=wgqEUxliYrFxQGsD1XhQ1lqH4ox71paP4RLruXC57lg=;
+ s=k20260515; t=1788478561;
+ bh=v8aIrl8FVNE6aDkNh/Sn9rVod9l059Np9k7ejf2G7Kg=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=erh43BEykPb8tfzknpnDINUwC5ogzKPZQJiMSdGQxgJRN2ebF81K+1sEYaUAGpAIj
- lYXNnfX/jJgxeWLGJZoVsVrutlJksUdi6cvnHdehKxG7so2scFdpRAyiF16VmNV/CM
- R4ZTML3LGfZLgrgudmVV64P3ETx7BObG7+4PQtoNewQdYa77NEXCc/SER/0SlfCMXs
- SSMVQ/guDhXkrVpZt0iBx7G+wu5sf0AZZ37s+m1V2lJEjUYv9NppfZb9WCE10CA9YR
- ADHJyR3+gXWLG/ZyHGgFOU9l2J4d6nFtSVvpwV7LS4OMNtntva+xIXkdi8CSwTEQxC
- v+gr1MQToHeSA==
-Message-ID: <c46d8ed3-3d3e-4ab1-81ba-4a2696daf410@kernel.org>
-Date: Fri, 4 Sep 2026 07:35:26 +0800
+ b=KJBsWWAgiY7bZAdczjlBKPK+A+g1bSw2Ltmet+yOfXViPWPT9nX85sPgD4susLSRB
+ SkF48OCrzoj+9cls+B1it4Mqr41KoGYgUuh4it0Ajm8fHW5HsEeWX7lwU/lQI31JMs
+ 1+1AcLS0Jv1xgCN2wYbVnxZ5Z51nD9lCXt+YGJK9dLcrWXIfd05OhNjNlhpCurpKPH
+ JQ2i7XQ1uQd3psgHkQpCR6oW3CpWLddkm7jCG/cFpiZc79fZkynsA4Va3xTFrzVmSS
+ Sx9QmP2hQfxDeqTbqciEaufKQbVKcxgxSwQLS0VlSwUdEwL78ely9l6StNubupGunq
+ I+n9a1mBe7YGA==
+Message-ID: <4875d343-78ed-4a44-a479-f96b3847e8bd@kernel.org>
+Date: Fri, 4 Sep 2026 07:35:58 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Prabhakar Pujeri <prabhakar.pujeri@dell.com>, fstests@vger.kernel.org
-References: <20260903035344.752-1-prabhakar.pujeri@dell.com>
- <20260903035344.752-4-prabhakar.pujeri@dell.com>
+References: <20260831104142.2229-1-prabhakar.pujeri@dell.com>
 Content-Language: en-US
-In-Reply-To: <20260903035344.752-4-prabhakar.pujeri@dell.com>
-X-Headers-End: 1x2Gxz-00080H-Ej
-Subject: Re: [f2fs-dev] [PATCH v2 3/3] f2fs/015,
- 016: add missing _require_scratch checks
+In-Reply-To: <20260831104142.2229-1-prabhakar.pujeri@dell.com>
+X-Headers-End: 1x2GyV-00025Y-Uu
+Subject: Re: [f2fs-dev] [PATCH] f2fs/024: add missing execute permission
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,18 +88,16 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Zorro Lang <zlang@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Zorro Lang <zlang@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/3/26 11:53, Prabhakar Pujeri via Linux-f2fs-devel wrote:
-> Both tests run _scratch_mkfs in a loop without first requiring a
-> scratch device, so they fail messily instead of skipping when no
-> scratch device is configured.
+On 8/31/26 18:41, Prabhakar Pujeri via Linux-f2fs-devel wrote:
+> The test script was committed with mode 100644 while all other test
+> scripts are 100755, so check fails to execute it directly with
+> "Permission denied".  Fix the file mode.
 > 
-> Reviewed-by: Zorro Lang <zlang@kernel.org>
 > Signed-off-by: Prabhakar Pujeri <prabhakar.pujeri@dell.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
