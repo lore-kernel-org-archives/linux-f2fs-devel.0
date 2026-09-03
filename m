@@ -4,80 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93EE1C624D6
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Sep 2026 01:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 125F7C61DD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Sep 2026 03:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=17rSLkkWEhIGMwJfopv+rMIzR2+Cmb1HuhIoCotFf3g=; b=S9tQwuUC5FUC14oE261e9puJ2d
-	5DyAmGtISAd3MJw9Lk6hCpbPpP6AWx1DzBJjqo62gTXSzIJn0zY/Nt3YsA+cn1o0GQp3n1cW+UCBb
-	g3nBaE82lTAH8AAOv+j5NhtwfpvPXomsgvDbq1x6NdIaMEFCjMSbjZUFHGrj4yH64e80=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:Message-ID:MIME-Version:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=NutKRoM3kl3w8JojUfK3C2l1hQAk52ERnsGtCakmsBM=; b=AQhXlTNVk4/tt7Zfxc+TDtKOCa
+	travyEu1OMR0AXjdMZf0HO+0wGmUjLeNsOnUD+MZf8eM/i+t7i7WiMKiNGFLjRxGoVPoLr55nmP1I
+	tNxjyTn8QJhDBBloj2l6XZH7oJUj2kmSYdHHDU4YBlKTZyb7z4Zb9gCvF0Cg3i8uCj1M=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x1wfh-0001hP-C3;
-	Thu, 03 Sep 2026 01:55:21 +0000
+	id 1x1xui-0003Bd-Oi;
+	Thu, 03 Sep 2026 03:14:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x1wff-0001hJ-FZ
+ (envelope-from <firefly0158@163.com>) id 1x1xug-0003BU-GR
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Sep 2026 01:55:19 +0000
+ Thu, 03 Sep 2026 03:14:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-ID:MIME-Version:Content-Type:
+ Content-Transfer-Encoding:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o/7WxrjjY9F8d70xdLQPvDsjqzk1/OszqklUcwt+2YM=; b=BjjuJQA4AOg048J00tR/PEKXeW
- XfXN0zuI5L31pdZny5Ah5HW2+kF/Yvk2CoTP65vTyfnXtIi2UA7LeF5vTumNcoHLAWgtGMwRwqiF/
- J4u9Zx9roDADHLk2QtKYKk/JeyD9GMUhEGNgm4gkoxxamCmQhs0gJXQL+GAMWwJKyAOc=;
+ bh=HVaqmg8FV1YZ0q2hhsoEALM5vnRSY6kXKAfukQJc6dk=; b=CJ1u/Jlv+vvg6gjRsYVUCLP7C8
+ H259xtsdXDHkEnkzB8QoDx6Rqb8Bgen2Kwljlbk9c1rhSh8Xh49a2tWEFiej1U4fPXgyMzBOLSPHv
+ HKChsDmsOzDBd6Prox2HgP0+vNJdOocL31Y0mI1tHHiCPON4JiN/WmyDIyCa9Qmt2FkQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=o/7WxrjjY9F8d70xdLQPvDsjqzk1/OszqklUcwt+2YM=; b=Ci5qFZkAUh2j/5aKyLK2458a4O
- iVZtn3i/TYmhR24Sg5K6MGXi0HKOAW56KgrQ3RnswYf/kNPPHXv1hkc5Yf8DTSRHyHiNsKyNjXIWh
- xdSzC5kPCEHBdYiyfabSBnYmZ80zcJHS8gb+C7KREFe/1bkSJIsqiKQE9KRSI/ENne9M=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:Cc
+ :To:From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=HVaqmg8FV1YZ0q2hhsoEALM5vnRSY6kXKAfukQJc6dk=; b=i
+ lOkJYEsKrgopO8t9e2zvonffnqItYP+/aRGuEtRoPr/j0ZAai0GfRB5PvfP8S7GBYO6RrF7sNp5/i
+ arB8B9C6Th3b6lK1per4wIszIls1tj7JzbQK8YDIPShKszfmSgwpfQ0PomiTUqpONIAF89GgQB5RG
+ I6eLrnKflymO2kOE=;
+Received: from m16.mail.163.com ([117.135.210.2])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x1wfa-0000wY-4x for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Sep 2026 01:55:19 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 3038C600C8;
- Thu,  3 Sep 2026 01:55:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9891F000E9;
- Thu,  3 Sep 2026 01:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788400507;
- bh=o/7WxrjjY9F8d70xdLQPvDsjqzk1/OszqklUcwt+2YM=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=YBpVCBrfbPIUvAD1s4k+JPNbAg/tY5qRFWDFAq27gA6gU4TyRtAAEmBPP+zL0QZcT
- AVNK5ci7RD5k27X8Sp5eQwHhpmBENS5/FJinYTVrsaiWf7s7/kxdVo5MYFd4nTkrbv
- xTUK4Ar7EWTY7YHFzF2YrhI/NtOH3s0A6uyxuJZ9OWePKNzuoy8bZEJuzjEDG/9EBm
- LLFrQsPXrWebZX/TMcHvyWB3JJ26tW+xBz+PICEO9aLyUZlbuZCAhute1wQFZrQCrq
- nNowBOT3xHnNjIlzkP4bENivw/6nzniJrRhwfO10AspCKTxRA+U0uj2XhoypqoshL7
- 31gYKphhDpuag==
-Message-ID: <fecb1fb8-316e-4da6-9504-608d69edf342@kernel.org>
-Date: Thu, 3 Sep 2026 09:55:05 +0800
+ id 1x1xub-0002mt-5y for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 03 Sep 2026 03:14:54 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+ s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+ Message-ID; bh=HVaqmg8FV1YZ0q2hhsoEALM5vnRSY6kXKAfukQJc6dk=; b=m
+ c1CDzvjINjEcW2elr9Tp7veyQoq7G4J/7Klzg1/ANOcz385GzSUHR51FbBW49IwM
+ vUYquoZ5cTGtMl6FJ3giKQUQliYC6igTZ5j6yiF9LJTW846iHWIOtj6y89blipE8
+ mRjMeaH65N3vieIi6CK1nm9IZTTkphh1WVwwdhJ5ow=
+Date: Thu, 3 Sep 2026 11:14:28 +0800 (CST)
+From: CJ <firefly0158@163.com>
+To: jaegeuk@kernel.org, chao@kernel.org
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+X-NTES-SC: AL_Qu2TCvibukot7iacYOkdnk8aj+g+UcCwufkj24Bfc+8GgRv84DoEfW1FPnbL6uekLwG0vT6TaBlX0txmU4J4jMFR5/diWdSgtB0CSgq1zQ==
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Xinping Zhang <zhangxp1998@gmail.com>
-References: <cover.1788213716.git.zhangxp1998@gmail.com>
- <a21bc0d17ce657d0ccd86fd398785b946fa268d6.1788213716.git.zhangxp1998@gmail.com>
- <CAH=xXfHZuQ2s1rQLdQ1tWSSVPTs9SX9GuNZ2kf3znjY2YyexPw@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAH=xXfHZuQ2s1rQLdQ1tWSSVPTs9SX9GuNZ2kf3znjY2YyexPw@mail.gmail.com>
-X-Headers-End: 1x1wfa-0000wY-4x
-Subject: Re: [f2fs-dev] [PATCH v7 06/11] f2fs: describe {i, d,
- id}node block layout dynamically
+Message-ID: <d1f8ae2.2f3a.1a06542c0ac.Coremail.firefly0158@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: kygvCgDXPzcV5phq5FI+AA--.6945W
+X-CM-SenderInfo: piluvw1o1qikqy6rljoofrz/xtbC+hV-MWqY5hV0+QAA3t
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-Headers-End: 1x1xub-0002mt-5y
+Subject: [f2fs-dev] [BUG] f2fs: possible KASAN use-after-free in f2fs_iget
+ on v7.2-rc3
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,61 +83,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: syzbot+0b1e85354f790743db08@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Kelvin,
 
-On 9/3/26 07:52, Xinping Zhang wrote:
-> Hi Chao,
-> 
-> The 0-day build failure on feature/subpage (lkp report; 6/11,
-> include/linux/f2fs_fs.h:355: "expected specifier-qualifier-list before
-> '*' token") is a nested comment in struct f2fs_inode.
-> 
-> The applied commit keeps the old inline comment "/* direct(2)... node
-> id */" inside the new block comment, so the inner "*/" closes the comment
-> early and the following lines get parsed as struct members:
-> 
->     /*
->      * __le32 i_nid[DEF_NIDS_PER_INODE];  /* direct(2), indirect(2),
->      *                  double_indirect(1) node id */
->      *
->      * It is stored immediately before the node footer ...
->      */
-> 
-> That's a hard compile error on every arch, not just m68k-allmodconfig.
-> 
-> The version I posted in v7 6/11 doesn't have this; it drops the old
-> inline comment. The applied commit (35efac5) looks like an earlier
-> revision -- its subject is "{i, d, id}node" (with spaces) vs
-> "{i,d,id}node" in v7. Could you re-apply v7's 6/11, or de-nest the
-> comment, e.g.:
-> 
->     /*
->      * __le32 i_nid[DEF_NIDS_PER_INODE];
->      * direct(2), indirect(2), double_indirect(1) node IDs
->      *
->      * It is stored immediately before the node footer at the end of
->      * the filesystem block. Its offset depends on the filesystem block
->      * size, so locate it dynamically with F2FS_INODE_NIDS().
->      */
+Hi,
 
-Done, let me know if you have a new version, I can help to cache in my tree
-for lkp build test.
+I am reporting a possible recurrence of a KASAN use-after-free triggered
+by a syzkaller reproducer on Linux 7.2-rc3. The issue is reproducible
+with HEAD commit a13c140cc289c0b7b3770bce5b3ad42ab35074aa.
 
-Thanks,
+The reproducer mounts a crafted F2FS filesystem image and invokes
+open_by_handle_at() with a malformed file handle. This reaches
+f2fs_nfs_get_inode() and f2fs_iget(), where the inode and its extent
+cache are initialized and validated.
 
-> 
-> Thanks,
-> Kelvin
+The archived target crash report shows a use-after-free read in
+sanity_check_inode(), called from do_read_inode() and f2fs_iget(). The
+affected object belongs to the f2fs_extent_tree cache. It was allocated
+by f2fs_init_extent_tree() and freed by f2fs_destroy_extent_tree()
+during inode eviction.
 
+This looks like an extent-tree lifetime issue in an f2fs_iget() error
+path. A stale extent_tree pointer may remain accessible after a failed
+inode lookup causes the inode and its extent tree to be evicted.
 
+This appears related to the following previously reported issue, which
+was originally observed on Linux 5.15:
 
+https://syzkaller.appspot.com/bug?extid=0b1e85354f790743db08
+
+Reproducer:
+
+syz reproducer: https://pastebin.com/raw/LGCbYiqL
+
+console output: https://pastebin.com/raw/FzSecFbT
+kernel config: https://pastebin.com/raw/PZsF562V
+
+Kernel:
+
+HEAD commit: a13c140cc289c0b7b3770bce5b3ad42ab35074aa
+git tree: torvalds/linux
+kernel version: 7.2.0-rc3 #1 PREEMPT(full)
+tested tag: v7.2-rc3
+
+Let me know if you need more details or testing.
+
+Best regards
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
