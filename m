@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5B328C61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Sep 2026 02:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03555C624DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Sep 2026 02:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=/zUWfdhDZff5xlj8vx0p8Uk2EEnHA5+zjM/Laint+bA=; b=jvJNx3LXnrQwsfj6Nc2jTYpYM3
-	NsgBqeLhgIusu90pf3CyeatAirf9S2KFC69HRzPIkYMH0oRKlYep1XJC/U7p3UFsRVSKezPkIMNNh
-	wuBKeeAHsh4xOImQiavV+X3a2TjE41k4fugcxQeVdumi1vYPCtUo9QAjo8i6b+vxp85k=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=DhjUd5FpJlPXnUsk8OMEz2ctXRrQcGkJJ6Jy01J/jog=; b=ISHS+XaAWE3J+6PzkHgqkglwiJ
+	t7wnu6Xkni9qHaWZHSQO0gSSqSFsRgAKaYn6B1YhjgNUqd93LXy5FI3tPCYlzg/zl8tneErJLk3E0
+	dKCIt6b42iwlgc7RpRQ5UjU6FUXbvOegasC8raIrFMP9+ks6m/Lda0vhANnmVSC+yBA4=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x2JTW-0006bM-0n;
-	Fri, 04 Sep 2026 02:16:18 +0000
+	id 1x2JUn-0000It-Sd;
+	Fri, 04 Sep 2026 02:17:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x2JTU-0006bG-O3
+ (envelope-from <chao@kernel.org>) id 1x2JUm-0000Ig-KG
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 04 Sep 2026 02:16:16 +0000
+ Fri, 04 Sep 2026 02:17:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+uOjma6qbQXyrn/wv3REYNOrxR5VeJUIcYohXLMkdqE=; b=PT1asNaRsFgi629wsqwS2WhNy4
- Ipw5LjHce8UgKl3IQGQ3QUQ9B9adn9rv3W8NfnoBhGYQ7heLp0FXTUxpZO3QKudzRdN2/dNBfG7Ec
- TPkH8yAwsRrfYow7vFdmh0K+mnBwX5de77gCS4iVoH67l8GbeFlCdxmC2StlpPtbZorQ=;
+ bh=zmzW9Jc2q4GsNO5akc/QprJ0qoZqw0IR6+xzuvi2p1k=; b=fvDrrE+URhdeSIl42xYxsiyfJ2
+ XUBpjh6N4LcpUg67y++uXG0ptAxztMqgatVQGZgjR7UFu1HlTF9xuQxdo10+SMi+nFA2yDkmV0lcZ
+ Don7af7FlRXeVDk9Y0AeZ7dcMQfiRa9i612Z9YcVBWDXrlj8QoMRJvrG17HK88wIbZNE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+uOjma6qbQXyrn/wv3REYNOrxR5VeJUIcYohXLMkdqE=; b=DO92MWoKyDiJFqs4JJf24SZcWe
- 0cHFfdld10ap9gTcnAxDlWNM+x3JFuQsstp7KL1xLpHve6KQGylAF6xfIxhUN3OFdeKsA2PEr2NPa
- dcIb2gux28xyDT7TEWqdQBP2+MkTEnfOR/aFA+uHHswM95VOiNE8Fyf0H4HPUOPAhIzA=;
+ bh=zmzW9Jc2q4GsNO5akc/QprJ0qoZqw0IR6+xzuvi2p1k=; b=NyBPb8WEVzBUlU0Mz2TdYL8QnH
+ L8kyyslksv1JYWHKkPgyMf83lrsAP3fwu4jdrbQSYr8WNVEGSlPqLyELIpeTR/+1emcxA3tZIL+WR
+ esVcKRsE21KOXjFuOh5s5SSGzaZA62HY8Vd+r3ybiS/Q7i/HxxVlBDmSBqkln7TR8Udc=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x2JTU-0003dX-AY for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 04 Sep 2026 02:16:16 +0000
+ id 1x2JUm-0003gT-1S for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 04 Sep 2026 02:17:37 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id E9BF1419B6;
- Fri,  4 Sep 2026 02:16:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804E61F000E9;
- Fri,  4 Sep 2026 02:16:09 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id AF0BB41A9D;
+ Fri,  4 Sep 2026 02:17:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CFF1F000E9;
+ Fri,  4 Sep 2026 02:17:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788488170;
- bh=+uOjma6qbQXyrn/wv3REYNOrxR5VeJUIcYohXLMkdqE=;
+ s=k20260515; t=1788488250;
+ bh=zmzW9Jc2q4GsNO5akc/QprJ0qoZqw0IR6+xzuvi2p1k=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=QorHhvvikgtlSaiiHTTFK3bAbSfAlGeOM/+b24us9fnvQNew/NiWWj40lYuTSThdD
- N+Y4s0CAjeLaHGk1ZTFNmUIzZ4GN/IoF0pszooMdBYRCJBZz8dJccZU6nC5wVtbYuq
- 4et0Wepe6Vib4FWR8tAjgVIy5FPB90eTZ1FxpeTFjMmh+dwcZoCkLd2xgOXAMiArVZ
- jEQjbSxCHdxZR3gM9fQcFugrcgMzDIuTlYfgNF8pYQyfWF6r4tbeSfcGgFr+z4sNvB
- J2C9XfnD/g3TvuqdZ0GKX5aIPg5Q6HbRme4Rujzhoug/7MkhKztlJJhGKn1h0c+6Gx
- 8cVii0hhR+/+g==
-Message-ID: <1004a0bc-2321-45dd-aed5-e2d35133cd8f@kernel.org>
-Date: Fri, 4 Sep 2026 10:16:07 +0800
+ b=YGXc8VC1ReuOK/q0lW9iyKjjCoMjbiew7Ma/QcxW0w27SXa4GsfWh0HRP5iEP/uwH
+ X9eouJrP7jB6u4AKBJVuYKVsD3TTGu87hWp+c74hTMr+Pmq+7IMLSL+XbEqPSg7kah
+ P2E58OkoJaO3Di9Rhq8dircjkmRnuqj17lvk3JRYCUdtzLvaar70CbcXhKhk3vX+J4
+ 2Czbs2sd9QK/iEHFIr7hvh+w+fLJyQQJZtuztADiQ2V7r4ZL56LNtLPDS90P60WxxT
+ abVsmOVYHK47hBrQhyjt7fgKSLBKf8NYJQZ96snFjny6XuHZ01NzlSLWcpxzwHXS0h
+ fT0dutAN1mARQ==
+Message-ID: <601938ee-c5b1-4cac-889a-1b16e1615517@kernel.org>
+Date: Fri, 4 Sep 2026 10:17:27 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Kelvin Zhang <zhangxp1998@gmail.com>,
  linux-f2fs-devel@lists.sourceforge.net
 References: <cover.1788479509.git.zhangxp1998@gmail.com>
- <534c0147c80d739938e90cc9f1c349fc9ae3f6fd.1788479509.git.zhangxp1998@gmail.com>
+ <7b563b3096652abe81f77edc886ab98c416f189f.1788479509.git.zhangxp1998@gmail.com>
 Content-Language: en-US
-In-Reply-To: <534c0147c80d739938e90cc9f1c349fc9ae3f6fd.1788479509.git.zhangxp1998@gmail.com>
-X-Headers-End: 1x2JTU-0003dX-AY
-Subject: Re: [f2fs-dev] [PATCH v9 08/11] f2fs: parameterize sector
+In-Reply-To: <7b563b3096652abe81f77edc886ab98c416f189f.1788479509.git.zhangxp1998@gmail.com>
+X-Headers-End: 1x2JUm-0003gT-1S
+Subject: Re: [f2fs-dev] [PATCH v9 09/11] f2fs: parameterize byte and block
  conversion macros
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -97,15 +97,15 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 9/4/26 07:56, Kelvin Zhang wrote:
-> Sector-to-block and block-to-sector conversion helpers previously
-> assumed a fixed sector count per block derived from 4KB pages.
+> Byte-to-block and block-to-byte conversion helpers previously relied on
+> global PAGE_SIZE, PAGE_SHIFT, or F2FS_BLKSIZE_BITS.
 > 
-> Parameterize F2FS_LOG_SECTORS_PER_BLOCK, SECTOR_FROM_BLOCK, and
-> SECTOR_TO_BLOCK with struct f2fs_sb_info *sbi, using
-> sbi->log_sectors_per_block.
+> Parameterize F2FS_BYTES_TO_BLK, F2FS_BLK_TO_BYTES, F2FS_BLK_END_BYTES,
+> F2FS_BLK_ALIGN, and max_file_blocks with struct f2fs_sb_info *sbi using
+> sbi->log_blocksize.
 > 
-> Update all call sites across metadata I/O, data mapping, discard
-> operations, and zoned block device reporting.
+> Update all call sites across data mapping, file operations, fiemap queries,
+> fsverity checks, NAT bitmap allocations, and truncate paths.
 > 
 > Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
 
