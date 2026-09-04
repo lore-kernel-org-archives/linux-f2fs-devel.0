@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D500CC61DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Sep 2026 01:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BEC29C624DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Sep 2026 01:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=IWUIKlDaqH02zwSCoy6BxNFEAq7vYUH+f9xhfbs9WFI=; b=jVG3kn0R7wZlYA935h6/SXvxhj
-	zRPeJ5UenV119em46dTOA+UK9FFPrPvDl7AwaaEHeCwcopiG64nMcs20riH/WnH10fpd/F/tuGz9v
-	R9daWMssOCJcBLtaTE/rYzC/dNSPamxw2rMOm++FtmBHAyrhTHtnRRnCft+w59LLxgAw=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=uO71/eLktEyEulE2ni3MKJ+2PMRPGVr0cgLgUd5ebCA=; b=et3Aez92jcgRHTRIfTBuXpxs69
+	15hPwN3JZDV7lmY8V5v3Bx8danFUCkT5VR9nFzk65CmrsZSnUAYOwhw8be/2szNesFcx84pn3fPpa
+	48NLdLTzLM6U+OAsdnPMp2R+1FXfWJ6G88CUTqYnm7M4rroExNpNbBUtbsUJ9ZIjyhPk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x2JAD-00071p-Bs;
-	Fri, 04 Sep 2026 01:56:22 +0000
+	id 1x2JC4-0003gB-Tc;
+	Fri, 04 Sep 2026 01:58:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x2JA2-00071d-2F
+ (envelope-from <chao@kernel.org>) id 1x2JC3-0003g1-D9
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 04 Sep 2026 01:56:10 +0000
+ Fri, 04 Sep 2026 01:58:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Suo1Ecr1VzKsfn3mGXhGaibOPyeH7RYyKh+Q65B/hIc=; b=U1XFDG4DT9cUb3Px3bTUqw5ok+
- 5luqSa4ufO/ybPJ8TgjrQzK74kxaJ69L8guTGJzc97kX/2Msv6QGcz2r+d46utRc/ScQrAmKrwxRg
- iRELSEGc+l+1cs7tuHzV4TNMHVG/fei2+dxXAEkJbieZaByoMhUiRqy4MdF7ubPBrSKM=;
+ bh=5jRoPi4cTptirujGl8tv0MSWyBrX8XHDykK0aOfJU6s=; b=TUEaDAmChiYnFU5noaHWvwjXXm
+ ++/0HkpsrULg6R8ijWC3QnRPHH/qBgLqH+iynpZulHcYCC6ct9WS88k8ykRjUx8qRNY+pPgfXQm4W
+ lQd1YWYeditj+cAwTdMWCXa9fWvCVCpntbZXCvQ5hcScHSea1z7LmOJ54jhqxlXJV8Yk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Suo1Ecr1VzKsfn3mGXhGaibOPyeH7RYyKh+Q65B/hIc=; b=OrYCVRR/NXFzv3uJXIg1VoMGDz
- 9MvLL6GFU99DBZ1/y+m4qls6bETLR6ImIVb5FiNeaGaMkSPh+d/5d6Wr4yxcscXPK3akvirsJ6Ax1
- mbR0bzsZE3AHPBGbvtsxpHqje+vtfGbAFLHoz80Bw3khtgRgrp962zwT5nWiM96IClMU=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=5jRoPi4cTptirujGl8tv0MSWyBrX8XHDykK0aOfJU6s=; b=aWwLhCWIZ9ORipBMy5wFF+1r7M
+ nsvBKPUqjqT+T+W0PrSFWX30IuG5jwWqCvrx3fW5nUiA9gY1YJeaIZQHAzU8yfD5bsY0brfqvmo0/
+ 90KW7Ne0rwbuzX6CIgqSO+rq2ncvsszCy4M6sstGsgtWYOOtwY90NSfEGQ6OrDQpEuGU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x2JA2-00059Z-EA for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 04 Sep 2026 01:56:10 +0000
+ id 1x2JBz-0002yJ-2X for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 04 Sep 2026 01:58:12 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 96C9B60A62;
- Fri,  4 Sep 2026 01:56:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F10FD1F000E9;
- Fri,  4 Sep 2026 01:56:02 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id ADD4C40258;
+ Fri,  4 Sep 2026 01:58:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388E51F000E9;
+ Fri,  4 Sep 2026 01:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788486964;
- bh=Suo1Ecr1VzKsfn3mGXhGaibOPyeH7RYyKh+Q65B/hIc=;
+ s=k20260515; t=1788487085;
+ bh=5jRoPi4cTptirujGl8tv0MSWyBrX8XHDykK0aOfJU6s=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=GrQyCcYWDgmZSb6m0HXIj1WPeg/f1R8mqKS5en+IBl3l2N3VTFLUUpXchRgNF4PG6
- S1U+v0Tct3w4bTBINPXB12z8w+U90lXN4g08DBI3rmQrZNt4pHWW29/FzNxQw9Ryx0
- B+XJXGdr5h8JKNcVkarJQncKaGyv1qJyfu85Jh/aCnArtdBQuKyW4bqhZmdZAGv5/F
- hmu4+jtU/UdfKLN3ig3MGJRaCofFgCSMBSUoMsKWGMfu79SZzl6NtZt66gYxiZ0sff
- xbvgZz6J3a2KpCjsfI/W6P4Da9a1yNajPGcyr5F5Pkld3JdT3ouA6D/LRP8ajiCNlh
- Yn5nDecf6CdUA==
-Message-ID: <d0293f62-e999-4339-8bd2-b321551825b1@kernel.org>
-Date: Fri, 4 Sep 2026 09:56:00 +0800
+ b=GHzZFcibisKvc3McRLctaer1hVGVRWmT9Gg5rW4UE5d+dHNsCPkRsSL02nz0FZGfS
+ q7fjUQRn02KHmiFBm6vqLi8XLjQQ06i2HRnhAdWqxAEeIuHBqlrntJJqXTVApFx9M5
+ oHoSBfQlrNIpbsP7dbje+/RtXhCvhRfaICoyLcjb8ghH8FAiZ02jj9J0erXYfSIoBl
+ 8+me/L2HyES8KCLKuTKnOF2plowHOYYGOat4f/VVHAhZr2i1BgRKX1w5uSgLvN3SWD
+ 67Z0ji2zhw60pehjW31wwjIC9FRtrJ1zAc93b927kiFm8ZXw3W86QQvRRkb6v81o/y
+ FWX+0lX/YnQNw==
+Message-ID: <e491de3c-b377-4530-9ecf-f12796705779@kernel.org>
+Date: Fri, 4 Sep 2026 09:58:02 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Kelvin Zhang <zhangxp1998@gmail.com>,
  linux-f2fs-devel@lists.sourceforge.net
 References: <cover.1788479509.git.zhangxp1998@gmail.com>
- <99c37e861d74328fa6203c58284dc33505d326ad.1788479509.git.zhangxp1998@gmail.com>
+ <3a430f1eaa7b07583d83828477adff5a90ede9e8.1788479509.git.zhangxp1998@gmail.com>
 Content-Language: en-US
-In-Reply-To: <99c37e861d74328fa6203c58284dc33505d326ad.1788479509.git.zhangxp1998@gmail.com>
-X-Headers-End: 1x2JA2-00059Z-EA
-Subject: Re: [f2fs-dev] [PATCH v9 04/11] f2fs: describe orphan block layout
+In-Reply-To: <3a430f1eaa7b07583d83828477adff5a90ede9e8.1788479509.git.zhangxp1998@gmail.com>
+X-Headers-End: 1x2JBz-0002yJ-2X
+Subject: Re: [f2fs-dev] [PATCH v9 05/11] f2fs: describe dentry block layout
  dynamically
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -97,19 +97,19 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 9/4/26 07:56, Kelvin Zhang wrote:
-> An on-disk orphan block contains a variable-length array of 32-bit
-> inode numbers followed by a fixed footer at the end of the block. A
-> compile-time whole-block structure cannot represent the footer position
-> when the block size varies at runtime.
+> An on-disk directory block contains a bitmap, reserved padding, an
+> array of directory entries (struct f2fs_dir_entry), and matching filename
+> slots. A fixed compile-time structure couples their offsets to 4KB blocks
+> and relies on static reserved-space definitions.
 > 
-> Remove struct f2fs_orphan_block, introduce
-> struct f2fs_orphan_block_footer, and compute sbi->orphans_per_block
-> dynamically in init_sb_info(). Add helpers to access the inode entry array
-> and footer from a block buffer.
+> Remove struct f2fs_dentry_block and compute region offsets (bitmap
+> bytes, directory-entry count, and filename slots) dynamically from the
+> filesystem block size. Access directory blocks through
+> struct f2fs_dentry_ptr views initialized with the runtime geometry.
 > 
-> Update orphan inode recovery, checkpointing, and mount paths to use the
-> parameterized helpers. This preserves the on-disk format while decoupling
-> orphan handling from compile-time constants.
+> Update directory operations, inline dentry handling, and recovery paths
+> to use the dynamic block layout. No functional change is introduced for
+> 4KB blocks.
 > 
 > Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
 
