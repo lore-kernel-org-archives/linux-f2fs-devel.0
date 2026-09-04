@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BF466C624DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Sep 2026 02:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5B328C61DD3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Sep 2026 02:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Ms+LD6M4xRgW8IU5Of7iAX2sfwB4yz1SmeJKbrfw1rw=; b=GKm0zGkDMhPXQuJSwTvER2EQKh
-	5qQXk3Q8UY/nRwACCZ5wrQN4SObYxv4/thevCvfC13alnM+jvX9SToHlc2kyHyhnI0t2eeD53cYiG
-	KoDTcMN9bOEK6DDA2ktL2MD3Bq72YTmQhHj5XPxzR7Ja4k6ktOiyJ5j/ZeVvdZPYeaEE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=/zUWfdhDZff5xlj8vx0p8Uk2EEnHA5+zjM/Laint+bA=; b=jvJNx3LXnrQwsfj6Nc2jTYpYM3
+	NsgBqeLhgIusu90pf3CyeatAirf9S2KFC69HRzPIkYMH0oRKlYep1XJC/U7p3UFsRVSKezPkIMNNh
+	wuBKeeAHsh4xOImQiavV+X3a2TjE41k4fugcxQeVdumi1vYPCtUo9QAjo8i6b+vxp85k=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x2JT5-0004rm-Q1;
-	Fri, 04 Sep 2026 02:15:49 +0000
+	id 1x2JTW-0006bM-0n;
+	Fri, 04 Sep 2026 02:16:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x2JT3-0004rf-TA
+ (envelope-from <chao@kernel.org>) id 1x2JTU-0006bG-O3
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 04 Sep 2026 02:15:47 +0000
+ Fri, 04 Sep 2026 02:16:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TGpc85ZmL7Rumy/c7HrWsK71idv1/TYxsvl542ShOPI=; b=fIHNPBfHOGFz6k06B7UK74CZFp
- scdALoSQL1CFQdv+W8MTR9Yg6DnYUxU+QKp7DRKjLfdinZCmJlNPOf0jaZI1NQUawBGGky8MOCvBH
- SbnMJkCHjFMsKL8UoD4PzIXsAe4Wqb1a7TJI7geBgk/mCA46bZUdFz9CRB0cjkWTqGF4=;
+ bh=+uOjma6qbQXyrn/wv3REYNOrxR5VeJUIcYohXLMkdqE=; b=PT1asNaRsFgi629wsqwS2WhNy4
+ Ipw5LjHce8UgKl3IQGQ3QUQ9B9adn9rv3W8NfnoBhGYQ7heLp0FXTUxpZO3QKudzRdN2/dNBfG7Ec
+ TPkH8yAwsRrfYow7vFdmh0K+mnBwX5de77gCS4iVoH67l8GbeFlCdxmC2StlpPtbZorQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TGpc85ZmL7Rumy/c7HrWsK71idv1/TYxsvl542ShOPI=; b=hNzXebc6i7UcWUGezyk+HuUdjl
- w8BVBVARyA6IATToRMeq5Du/+aEY+fr7F3EG0p4pfRlvNG/BZRuOycTNJ72dJACnVWPE1296Cbpil
- UeU+EtpMRnDcxdBr8mVEvZEM2rddRzAfHSYO7su4Mv7lzRs0ruaCczGG9napycwV8bWk=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=+uOjma6qbQXyrn/wv3REYNOrxR5VeJUIcYohXLMkdqE=; b=DO92MWoKyDiJFqs4JJf24SZcWe
+ 0cHFfdld10ap9gTcnAxDlWNM+x3JFuQsstp7KL1xLpHve6KQGylAF6xfIxhUN3OFdeKsA2PEr2NPa
+ dcIb2gux28xyDT7TEWqdQBP2+MkTEnfOR/aFA+uHHswM95VOiNE8Fyf0H4HPUOPAhIzA=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x2JT0-0005h9-UA for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 04 Sep 2026 02:15:47 +0000
+ id 1x2JTU-0003dX-AY for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 04 Sep 2026 02:16:16 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 28E3C60234;
- Fri,  4 Sep 2026 02:15:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 871211F000E9;
- Fri,  4 Sep 2026 02:15:39 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id E9BF1419B6;
+ Fri,  4 Sep 2026 02:16:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804E61F000E9;
+ Fri,  4 Sep 2026 02:16:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788488140;
- bh=TGpc85ZmL7Rumy/c7HrWsK71idv1/TYxsvl542ShOPI=;
+ s=k20260515; t=1788488170;
+ bh=+uOjma6qbQXyrn/wv3REYNOrxR5VeJUIcYohXLMkdqE=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=NdM8SVsLClnOeDdnodVRrwGf6ah7Ov9ggd1UmD0mT+nf9MpN7kCLf57pQ+d3T7TY9
- w0q9itrzPREtsm34ThHC+NKakuKLFRbMPrNYyqmaw7ldYzVIwnGHiGiigW2SAc2X22
- ofGNCLGOX8lxIWQt5UA2jXrmBSIByHGb7MwEaagppYd1PPc1UEeqmUHwXQZg1tkGs5
- JQU2xF2tnvpQb52a+I6ZWObA8uvpd7k5FevLhwZD8ZvG/ZJpy0aDs6xjebAu+cGBhX
- 089jf/KFIR3kVes5/J38UGcq8DZx4eOaccNOIsId6zFweCWtBTmD3NzxcekTwYBlRH
- wJuitvkBUcCpw==
-Message-ID: <e179d20c-4ba7-46dd-8835-29ba00247998@kernel.org>
-Date: Fri, 4 Sep 2026 10:15:37 +0800
+ b=QorHhvvikgtlSaiiHTTFK3bAbSfAlGeOM/+b24us9fnvQNew/NiWWj40lYuTSThdD
+ N+Y4s0CAjeLaHGk1ZTFNmUIzZ4GN/IoF0pszooMdBYRCJBZz8dJccZU6nC5wVtbYuq
+ 4et0Wepe6Vib4FWR8tAjgVIy5FPB90eTZ1FxpeTFjMmh+dwcZoCkLd2xgOXAMiArVZ
+ jEQjbSxCHdxZR3gM9fQcFugrcgMzDIuTlYfgNF8pYQyfWF6r4tbeSfcGgFr+z4sNvB
+ J2C9XfnD/g3TvuqdZ0GKX5aIPg5Q6HbRme4Rujzhoug/7MkhKztlJJhGKn1h0c+6Gx
+ 8cVii0hhR+/+g==
+Message-ID: <1004a0bc-2321-45dd-aed5-e2d35133cd8f@kernel.org>
+Date: Fri, 4 Sep 2026 10:16:07 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Kelvin Zhang <zhangxp1998@gmail.com>,
  linux-f2fs-devel@lists.sourceforge.net
 References: <cover.1788479509.git.zhangxp1998@gmail.com>
- <c7005ebefcad46d6a0bf3b0653fbd3692b86a360.1788479509.git.zhangxp1998@gmail.com>
+ <534c0147c80d739938e90cc9f1c349fc9ae3f6fd.1788479509.git.zhangxp1998@gmail.com>
 Content-Language: en-US
-In-Reply-To: <c7005ebefcad46d6a0bf3b0653fbd3692b86a360.1788479509.git.zhangxp1998@gmail.com>
-X-Headers-End: 1x2JT0-0005h9-UA
-Subject: Re: [f2fs-dev] [PATCH v9 07/11] f2fs: describe xattr block layout
- dynamically
+In-Reply-To: <534c0147c80d739938e90cc9f1c349fc9ae3f6fd.1788479509.git.zhangxp1998@gmail.com>
+X-Headers-End: 1x2JTU-0003dX-AY
+Subject: Re: [f2fs-dev] [PATCH v9 08/11] f2fs: parameterize sector
+ conversion macros
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,15 +97,15 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 9/4/26 07:56, Kelvin Zhang wrote:
-> The usable capacity of dedicated on-disk extended attribute blocks and
-> inline xattr regions scales with the filesystem block size.
+> Sector-to-block and block-to-sector conversion helpers previously
+> assumed a fixed sector count per block derived from 4KB pages.
 > 
-> Parameterize VALID_XATTR_BLOCK_SIZE and MAX_INLINE_XATTR_SIZE to
-> calculate usable xattr limits dynamically from sbi->blocksize rather than
-> hardcoding PAGE_SIZE or DEF_ADDRS_PER_INODE.
+> Parameterize F2FS_LOG_SECTORS_PER_BLOCK, SECTOR_FROM_BLOCK, and
+> SECTOR_TO_BLOCK with struct f2fs_sb_info *sbi, using
+> sbi->log_sectors_per_block.
 > 
-> Update mount option consistency validation for inline_xattr_size to
-> evaluate allowed boundaries dynamically against the runtime block size.
+> Update all call sites across metadata I/O, data mapping, discard
+> operations, and zoned block device reporting.
 > 
 > Signed-off-by: Kelvin Zhang <zhangxp1998@gmail.com>
 
