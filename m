@@ -4,107 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED8CEC624D3
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  5 Sep 2026 11:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B8478C79F8B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  5 Sep 2026 13:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=YGPVZth3X9ueET+YiPIT2M13qtWgCV9AHpZdNhSyAVI=; b=VsfTm+MGE8VwHM4MuIl5HJlVFL
-	sDXS3Eik5VUVvcZPD+COqqw5OYrL3PzCGpZELJa9dPIygvccoVNS9L1TgGcc/juebQhvykC+ROhrN
-	zir/bmZdO+p4dSC3gMw+zX+7QCtSvRmUIoO2mc3zmcQ4FlZ1hg3bTQksKgVginL7gJ54=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=YGXkEtIsGNxRdAIBYUb352KPA/dF4KpPMz5VlaOuv74=; b=jzzcbHWY1XLeTEzv23D6JlBCR6
+	a27dhbqBPwc8p0MWKGPzpGqKwdUne96VrJ1SuzcGRy7b6dgTZJqhCFCLUrxgHsRj2W4o2+qPZzi6M
+	HYBNwPX4F4vFp6PfWsYaPFrdF7KCpuZa4F/OxE1dNCIM/BkLdwFjA9DPLP0UeMUWMGh4=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x2oOV-0006gE-VJ;
-	Sat, 05 Sep 2026 11:17:12 +0000
+	id 1x2qT2-0007c5-Nq;
+	Sat, 05 Sep 2026 13:30:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jinbaoliu365@gmail.com>) id 1x2oOV-0006g3-5I
+ (envelope-from <qwjhust@gmail.com>) id 1x2qSx-0007bt-Jr
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 05 Sep 2026 11:17:11 +0000
+ Sat, 05 Sep 2026 13:29:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VRfLue6LbHST/tEsX4qzbZ5YqoOYwYrthx4a3NE3Mzs=; b=QtaCgVR8Cab+Fl9iMGSxTwr4+5
- UY9PihDsA1fu622DxmnfsiHflkSR/I1+qgRZJ8sHr+1zdqaRKJSsDg46+V48pUPbymnkvkgbVBubW
- T9AE7ZGwgbLxcYZgdS1uIRrUcO7lUIS3A6VyCS4GTqkdjRReYSjXwyPAQUQYq+ESD/dc=;
+ bh=y4u0GWyaTeRSvMtQ0YnsmqSEps2foZyTtNF0hC2tn64=; b=YE+XR4whZU2MGSnlIDoNKDFeM3
+ x5jxQqhB++DQJm+OjUGH2jwzaZmuDGnVhLHPDcW7suOzKnc0g3DtsiJiKsN9x0VQXLnyi2IyNwMcH
+ MfusbIAGF88o+F6Er0B8LC6pK6o3E5vlWojW9jaFjJHutzqIIE+LGMYKL+DQnfC82PaE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=VRfLue6LbHST/tEsX4qzbZ5YqoOYwYrthx4a3NE3Mzs=; b=L
- DXDv3h0kz09sKANs8zQeTetsS57Ms2zoWABCzNiKhlfEl4m4m67KYka59bChlSTO4TwxyOuDyKixQ
- ihcVbtqXJPJIMS9cQvDxDQIf5jAn6vAG0jEiPDayFm5RjrmeWYJMyJyofUDHdUaU+R3nipXYkwgeg
- vhxPnYE+i9V/d8vE=;
-Received: from mail-pl1-f170.google.com ([209.85.214.170])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=y4u0GWyaTeRSvMtQ0YnsmqSEps2foZyTtNF0hC2tn64=; b=DaGdbtTFCEZvZVbEvZE4m26hky
+ bG1Y/AUn4caCyipSlnyjZxvwVTdwrDkb0URH1jPhfoTbPf71XzBxQz9QKMBxr3pM9tkxg0bgaun7p
+ /gvp3WyJ/e+rNsYHBLI45Lvq7TnCvOuEm1yF7fFODZMJDjO/Sg8fl9uQcbzSlwPdpric=;
+Received: from mail-pg1-f175.google.com ([209.85.215.175])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x2oOV-0003Zl-7O for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 05 Sep 2026 11:17:11 +0000
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2d91518a63fso14350705ad.0
+ id 1x2qSw-0006kO-Ue for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 05 Sep 2026 13:29:55 +0000
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-cc439bfb2d8so1314213a12.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 05 Sep 2026 04:17:11 -0700 (PDT)
+ Sat, 05 Sep 2026 06:29:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788607025; x=1789211825; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=VRfLue6LbHST/tEsX4qzbZ5YqoOYwYrthx4a3NE3Mzs=;
- b=i441kYLndSC9JJFGXLsYxnDobSgNPOHmiKQYGgGNIsqOFHErfLejTVTjhAXKVJRijm
- HdOCEM1IYHkDihc1w0SaGmeLruefk4OJEEOgQNZn3xYV4EyfJlRy2lj07H7zNHdD2cVe
- /2gIek50Ysv0b8xrqiMteagZwx+N+z79nksjo5zHgKBobBSWgEqWesQVFfO+zbGymOf1
- 5GpPi5tBUwKDliow9ZpunHOSJwz97w6tyO1gzAhxtKkmUQ+WneXu3pfdQ8kMX0oxZIZn
- NMkgBI9E7D0j0Wuz6kTDJT0GuAmTsBXb+e2I2VlooWR6iYMlYVNX5OUkNy6N4/SgxFQB
- st/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788607025; x=1789211825;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1788614989; x=1789219789; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=VRfLue6LbHST/tEsX4qzbZ5YqoOYwYrthx4a3NE3Mzs=;
- b=RK8znOEIS6sfH82UVKmohAMR3De6i5MAqVFbCRdfsWsFormLf3udWu20ZRQTHH92AT
- +0e0bcLm3tyoKn34xWbdhwepFhyA+Ey5f3cJf9tdnSsFxLJ7KoV9/wFMtxAYq84JbHeR
- dNr7Aq9wU+6ZCZzR6USbGbAnF7PirMTqGAufudXPKL4itCpn2fcE7Vu9ch0Lbi4vCUh3
- GCuTw1IRyyH1WbP899pVIIuWpMCCwVtjAl8ObIJCTns8VjUAVtbengGzC++gJtA5+AnD
- OTi/ahELcxhf4O+PkW2OvXqk60mCCRZT6v9BDmtAGRvr/7gOtrkCPdLyvgrP0HdX05N+
- LaMw==
+ bh=y4u0GWyaTeRSvMtQ0YnsmqSEps2foZyTtNF0hC2tn64=;
+ b=MHXzdcrRmHFTKAXFcetjnrjCyzM2Ke1I7TlE6C06UEgpebjiHR+5ABjcxVWev36Zt2
+ +6FEsDE1JNrUB3belCXU5iPYx2VTreD3KvsSFcsAWgzPRN9OpIjP55bHu0Cr7jLhZRxn
+ +ggQATrQuYO33aBOxVA1VDiBoEBgXeklL+IMjynatP0sCW8jwv1PG41baBNxRUqFs7VG
+ I+1ARBYio7iY+7Pednt5hkr2wecaau8HMIwVhyQGfKHQrMEfaZoeWRw+zRcDZuoc8pQn
+ zcn+10LK7CXzJe3yv/jR/rg3coFx3ypsj2qNqTjP9Rk80PRGaf5lng+W5tJqWk2pip1a
+ c8UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788614989; x=1789219789;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=y4u0GWyaTeRSvMtQ0YnsmqSEps2foZyTtNF0hC2tn64=;
+ b=UbykHWIuj2tkT6hYd9lrUO8zkr8vb09uKNc3fwYD+/HhpFh4I2Gt1YVqxA3Y6AdxGj
+ v0kGanLsbX2rMpNn9mO//7ZnrtkeaCyZVmypCK7D0jIZp+WtzDl1WIbCCkbwBOqLr1+2
+ rl2r2CZOyu/ep6roBu9azMnZikkMD2xdfkiqX7CRxwEODmgr5O0M0ZYFb/8j/SxYWIs/
+ JVyuAIGLjLK1XT7GgUl1cBbwr6Lyh4wfRuBSVsgjXifh7eJxLmF3WPDvCO4H0Cq6mKtT
+ 6IubXYkRtsQYtPiCWQXrLasneUFzU0/ZGlGr8gDH3bAqCaKpfKTg1MkxATcWJotz6yIa
+ 7Byg==
 X-Forwarded-Encrypted: i=1;
- AKwUvByYZGKkVIvPoJVZPLv56OMGCRSKY66m991H/5TMGdm20tWQss3KEqGuzAb1UAOI5/20U74MLIoRZ0mBsK5BtlXe@lists.sourceforge.net
-X-Gm-Message-State: AFuF++kZYOZ2xvlg5JTh3zhhATCcafR/f6TaDEV7cIzQHteX/CmUIF5+
- vkjo7dGoUCsxqM4chyqvK3Bziqj0ylB0dOC4FaPRmQMIDG4oIpvHbfLVxJfjZQ==
-X-Gm-Gg: AYBFou2LVT1+uJ20qfUZ2VfrXWGSVIJo38J9yacCiEXXD7yNaLT1qOs3UQ3+T2UbOSa
- Xr8lfdwaZSmBwKJbAbb1hX+/Efzt06k58kjb347qwnFwqSPYOVDDPRNF8x6da7UnZSdWEObjTfZ
- XT6Qu9kWbtYEC6bPM+YG+qVmx3gOMjORQKei4FO0ytkDitLjDDWWT6TuFGdYc+S0MLhLiyTcq3z
- n/+sBHXSxrlBUsnNDXeTxCWcggwfEx11N1Eswq9xsR6hV3df1x9+ZDiU3RDHJ0huFjvhzlU8wAu
- XkzMCDY5vx8qj3+IGNGUf3PM1tPHwS1mnJ6BkOJ2qM+RIEJWLtMQjV1w2jJXTOl6qYB3DrRbjsf
- npPT8aEB65tY5ongZxE0Xy0b6bDg3+8VahvO24KE2WhRE47PXqX5QbSpDeNBn4i+1wE1SsaDtzd
- +E1+RR1gi4rcHjWAAFVK6hdKgw2gzkgwXLKSld6NbiPkSNv2lIrEnGrU8xaKk/jpi5Ij4=
-X-Received: by 2002:a17:903:11c8:b0:2d8:d4de:fa80 with SMTP id
- d9443c01a7336-2db1235721dmr161030505ad.4.1788607025429; 
- Sat, 05 Sep 2026 04:17:05 -0700 (PDT)
-Received: from mi.mioffice.cn ([2408:8607:1b00:8:a021:f0de:2ec0:e856])
+ AKwUvByjn0btD+KQWrVNGEnbFl86RXgeeGIeZWe/qlJGvYt18a7IVrBjTC2c5NJFDJn+CgoBjCGLuUo2ruPbQxaXEkJU@lists.sourceforge.net
+X-Gm-Message-State: AFuF++nIMmMuWB5bSvAPTGciIHQ5oLTSC9wyiF2jpNLVSsbnnT3tykE1
+ x8zlIT4j3pHjJsm8+Rn4LunAWF2BFAxEAK5SnTEjlGdE7/0WMuEYQV+I
+X-Gm-Gg: AYBFou05NeN+yOPd1LTkqbYgZ5i6HOpsS0Yp3b9HFjqVeaCBbqj8TSfWiu7WVcWgp+R
+ DC2Ypo8UWG7/j0ctA4INcZDab2qGI6ebpvPG0SMYu2eAlz+aV7IUmah2AWTHY+JGIhOXjZAnvNL
+ 9wcvAV3cJfd/NGDfc+sAKwSE77pANizN0bG1N14XbtuaohZulQgTx7cEwlS4iAFM0uRRmt1F6nX
+ g0GmYsPk5MBc/uYibEjWOemPCnOCFT/HyLKoIzw8if+AlHcrj6AHTFA6/5uex5IMCqh1Y+Kd27d
+ OhHM0pFuKETIh0KpMndfpt2qfPWxfA14fvtHAXno+U5zyK7YCmrgP5em/0G7MYc3H60cp2DPPxF
+ qM3J4pP3m0AjBFCzzgQCdhTBMNMHdKD5xZNjB8+Cas6JBlGpolMSDTL8CaUaTHoG5/wam+B8hle
+ lc1Xy936b26DOCnHukzuMZB1S8NoZm1PhGdYnJ4nPVcnb4i3+WSLJroBD1E0keE6dmn0v+OeBn9
+ 1pxfdlEB3B9aEffQzSICw==
+X-Received: by 2002:a17:90b:4d06:b0:366:10f1:3d91 with SMTP id
+ 98e67ed59e1d1-39b2614df74mr17583898a91.1.1788614988974; 
+ Sat, 05 Sep 2026 06:29:48 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2db1497da0fsm21370635ad.37.2026.09.05.04.17.01
+ 98e67ed59e1d1-39b08c397b1sm16146499a91.8.2026.09.05.06.29.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 05 Sep 2026 04:17:05 -0700 (PDT)
-From: liujinbao1 <jinbaoliu365@gmail.com>
-To: jaegeuk@kernel.org
-Date: Sat,  5 Sep 2026 19:16:52 +0800
-Message-ID: <20260905111652.43148-1-jinbaoliu365@gmail.com>
+ Sat, 05 Sep 2026 06:29:47 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+To: syzbot+cid5582b8164122eda@syzkaller.appspotmail.com
+Date: Sat,  5 Sep 2026 21:29:40 +0800
+Message-ID: <5fdd4d960a6b47ab7cfa6ef0f44fb575fc45d1ca.1788611415.git.qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6a9bbf94.a5e650b3.26d8a.0006.GAE@google.com>
+References: <cover.1788438786.git.qiwenjie@xiaomi.com>
+ <6a9bbf94.a5e650b3.26d8a.0006.GAE@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1x2oOV-0003Zl-7O
-Subject: [f2fs-dev] [PATCH] f2fs: force discard when undiscard_blks exceeds
- threshold
+X-Headers-End: 1x2qSw-0006kO-Ue
+Subject: [f2fs-dev] [PATCH] f2fs: handle NULL kiocb in write_begin
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,166 +120,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jinbaoliu365@gmail.com, liujinbao1 <liujinbao1@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: axboe@kernel.dk, baohua@kernel.org, syzbot@lists.linux.dev, jack@suse.cz,
+ qwjhust@gmail.com, syzkaller-bugs@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, linux-mm@kvack.org, qiwenjie@xiaomi.com,
+ linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, tz2294@columbia.edu,
+ hch@lst.de
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: liujinbao1 <liujinbao1@xiaomi.com>
+From: Wenjie Qi <qiwenjie@xiaomi.com>
 
-Asynchronous discard issuance can build up a backlog.
-Force discard when undiscard_blks is large relative to free space,
-or when undiscard_blks is too large under high utilization.
-This reclaims pending discards in time and keeps UFS performance stable.
+The address-space write_begin callback is also used by internal callers
+that pass a NULL kiocb, including page_symlink().
 
-Signed-off-by: liujinbao1 <liujinbao1@xiaomi.com>
+Check iocb before propagating IOCB_DONTCACHE into the F2FS-specific folio
+lookup flags.
+
+Fixes: cd5bc4fbb900 ("f2fs: enable buffered RWF_DONTCACHE")
+Reported-by: syzbot+cid5582b8164122eda@syzkaller.appspotmail.com
+Closes: https://ci.syzbot.org/series/cbb9ded8-1388-4a7b-bfa7-44082b04025b
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs | 14 +++++++++++++
- fs/f2fs/f2fs.h                          |  4 ++++
- fs/f2fs/segment.c                       | 28 ++++++++++++++++++++++++-
- fs/f2fs/sysfs.c                         | 11 ++++++++++
- 4 files changed, 56 insertions(+), 1 deletion(-)
+#syz test
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 0cebc89799dd..be1ced3dc8db 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -791,6 +791,20 @@ Contact:	"Chao Yu" <chao@kernel.org>
- Description:	It controls to enable/disable IO aware feature for background discard.
- 		By default, the value is 1 which indicates IO aware is on.
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6e816c9349a..63625ab3f1e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3890,7 +3890,7 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	block_t blkaddr = NULL_ADDR;
+ 	int err = 0;
  
-+What:		/sys/fs/f2fs/<disk>/discard_free_ratio
-+Date:		September 2026
-+Contact:	"Jinbao Liu" <liujinbao1@xiaomi.com>
-+Description:	Controls when background discard should switch to forced mode
-+		when storage utilization is low, based on the amount of undiscard_blks
-+		relative to free blocks.
-+
-+What:		/sys/fs/f2fs/<disk>/discard_blks_thresh
-+Date:		September 2026
-+Contact:	"Jinbao Liu" <liujinbao1@xiaomi.com>
-+Description:	Controls when background discard should switch to forced mode
-+		when storage utilization is high, based on the number of pending
-+		undiscard blocks.
-+
- What:		/sys/fs/f2fs/<disk>/blkzone_alloc_policy
- Date:		July 2024
- Contact:	"Yuanhong Liao" <liaoyuanhong@vivo.com>
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2f7ab5888b07..36f2c58b0671 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -325,6 +325,8 @@ enum {
- #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
- #define DEF_DISABLE_QUICK_INTERVAL	1	/* 1 secs */
- #define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
-+#define DEF_DISCARD_FREE_RATIO		80	/* force discard over 80% free blocks */
-+#define DEF_DISCARD_BLKS_THRESH		13107200	/* 50GB in 4KB blocks */
+-	if (iocb->ki_flags & IOCB_DONTCACHE)
++	if (iocb && iocb->ki_flags & IOCB_DONTCACHE)
+ 		fgp_flags |= FGP_DONTCACHE;
  
- enum cp_time {
- 	CP_TIME_START,		/* begin */
-@@ -542,6 +544,8 @@ struct discard_cmd_control {
- 	unsigned int max_ordered_discard;	/* maximum discard granularity issued by lba order */
- 	unsigned int discard_io_aware;		/* io_aware policy */
- 	unsigned int undiscard_blks;		/* # of undiscard blocks */
-+	unsigned int discard_free_ratio;	/* discard ratio of free blocks to force discard */
-+	unsigned int discard_blks_thresh;	/* discard threshold to force discard, in blocks */
- 	unsigned int next_pos;			/* next discard position */
- 	atomic_t issued_discard;		/* # of issued discard */
- 	atomic_t queued_discard;		/* # of queued discard */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 63b712d3d599..da4ed7e71c0b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1957,6 +1957,29 @@ bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi, bool need_check)
- 	return !dropped;
- }
- 
-+static bool f2fs_available_free_space(struct f2fs_sb_info *sbi)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	unsigned int avail_user_block_count;
-+	unsigned int total_free_blocks;
-+
-+	spin_lock(&sbi->stat_lock);
-+	avail_user_block_count = sbi->user_block_count -
-+					sbi->current_reserved_blocks;
-+	total_free_blocks = avail_user_block_count - (unsigned int)valid_user_blocks(sbi);
-+	spin_unlock(&sbi->stat_lock);
-+
-+	if (utilization(sbi) < dcc->discard_urgent_util) {
-+		if (dcc->undiscard_blks >=
-+			div_u64((u64)total_free_blocks * dcc->discard_free_ratio, 100))
-+			return false;
-+	} else if (dcc->undiscard_blks > dcc->discard_blks_thresh) {
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static int issue_discard_thread(void *data)
- {
- 	struct f2fs_sb_info *sbi = data;
-@@ -1974,7 +1997,8 @@ static int issue_discard_thread(void *data)
- 				msecs_to_jiffies(wait_ms));
- 
- 		if (sbi->gc_mode == GC_URGENT_HIGH ||
--			!f2fs_available_free_memory(sbi, DISCARD_CACHE))
-+			!f2fs_available_free_memory(sbi, DISCARD_CACHE) ||
-+			!f2fs_available_free_space(sbi))
- 			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE,
- 						MIN_DISCARD_GRANULARITY);
- 		else
-@@ -2393,6 +2417,8 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	dcc->mid_discard_issue_time = DEF_MID_DISCARD_ISSUE_TIME;
- 	dcc->max_discard_issue_time = DEF_MAX_DISCARD_ISSUE_TIME;
- 	dcc->discard_urgent_util = DEF_DISCARD_URGENT_UTIL;
-+	dcc->discard_free_ratio = DEF_DISCARD_FREE_RATIO;
-+	dcc->discard_blks_thresh = DEF_DISCARD_BLKS_THRESH;
- 	dcc->undiscard_blks = 0;
- 	dcc->next_pos = 0;
- 	dcc->root = RB_ROOT_CACHED;
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 811e350a1430..ff12df62e83f 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -642,6 +642,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "discard_free_ratio")) {
-+		if (t > 100)
-+			return -EINVAL;
-+		*ui = t;
-+		return count;
-+	}
-+
- 	if (!strcmp(a->attr.name, "discard_io_aware")) {
- 		if (t >= DPOLICY_IO_AWARE_MAX)
- 			return -EINVAL;
-@@ -1250,6 +1257,8 @@ DCC_INFO_GENERAL_RW_ATTR(discard_urgent_util);
- DCC_INFO_GENERAL_RW_ATTR(discard_granularity);
- DCC_INFO_GENERAL_RW_ATTR(max_ordered_discard);
- DCC_INFO_GENERAL_RW_ATTR(discard_io_aware);
-+DCC_INFO_GENERAL_RW_ATTR(discard_free_ratio);
-+DCC_INFO_GENERAL_RW_ATTR(discard_blks_thresh);
- 
- /* NM_INFO ATTR */
- NM_INFO_RW_ATTR(max_roll_forward_node_blocks, max_rf_node_blocks);
-@@ -1430,6 +1439,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(discard_granularity),
- 	ATTR_LIST(max_ordered_discard),
- 	ATTR_LIST(discard_io_aware),
-+	ATTR_LIST(discard_free_ratio),
-+	ATTR_LIST(discard_blks_thresh),
- 	ATTR_LIST(pending_discard),
- 	ATTR_LIST(gc_mode),
- 	ATTR_LIST(ipu_policy),
+ 	trace_f2fs_write_begin(inode, pos, len);
 -- 
 2.43.0
-
 
 
 _______________________________________________
