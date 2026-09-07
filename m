@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 41668C79F9E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Sep 2026 09:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 384FFC79F9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Sep 2026 09:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=C16Py769ExPvCDodjjel4reiEwh9DyvxpWF22QQ/cIU=; b=GNnws9XM2ov/B6MnwQ/6Ll8elJ
-	iVFtgN7kdOFY7gORazQ/6H++8n4g6msEkZFKkjk+4b3MX3uaLlnrLWGXuhs3tRxhMSFhXLd/U1QRe
-	SbsRKYJ6/nIMcQLddNMKPUr6TtR5lbg2108N4ohTiwsRZweVjCiHK++tIxw2828OahCc=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=icPJmcDVZkQdgJfKLdf0xdaRkSSh3o4euHuwMXlee+I=; b=Fz2adDU5oPhYiUudabkwO/P7j/
+	kXBeEFEn9ku0LGFti72NI76rqm7/bwo2N1x4YZxTn2NFehNwu6/dsgn1gnBG4YSG4ORxLQ0jNqRve
+	Wvq9/C+DmUUv2O7W0yG3d9tehwzd8r5udN/IYObTZolsKwPXAqPNEIPWxnjI2PByvoJE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x3VhR-0000Qu-3C;
-	Mon, 07 Sep 2026 09:31:37 +0000
+	id 1x3W7F-0001Zt-Lw;
+	Mon, 07 Sep 2026 09:58:15 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao.sigma@gmail.com>) id 1x3VhP-0000Qm-C5
+ (envelope-from <nzzhao.sigma@gmail.com>) id 1x3W7F-0001Zn-1s
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Sep 2026 09:31:36 +0000
+ Mon, 07 Sep 2026 09:58:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=arhJRzLGcFh7QxAKla9Gy2qjsP8Vk5xX1TysHcLnx40=; b=BMmKuHtJv6Mp+08Ouo+XDRTU+D
- z0BfcjN19E/VnBJ70nZn2p/PpcmPRKvbrrjrJUdwGDZXo3sj6azT0A9Ttlp8HDfLN/Un+WCvSWLaA
- vLPz+vBAC9JLOXF6ErKpb1mwmGhXB3Hbs2M5cw+ILnhB0syh0cPO0bCAaROHJ+k3rY6U=;
+ bh=IAp4ART9Vww7RNr3R7LHs7YtaKcM1bWQu00EHChcxAI=; b=g6J7cNg/xFdwRKLMJ69oMJSiwe
+ D/qCCGu0UJmxr7nnncBW73ev0p1rIUzxU02ywBhEX1+V+/tBt4qqyL5UGfGRpxKAe/sADVMIXmX02
+ 7mz2wEYSWu1iP2VG1ud6xkroCE5cbKOMrhKcK+wZF4E/jfMtYUkMtYag/NmjmJvUNkM4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,74 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=arhJRzLGcFh7QxAKla9Gy2qjsP8Vk5xX1TysHcLnx40=; b=g47z8AIj1G2ZMv1qWoMSMqt3RL
- n8Le59WIxDa91814OF4DMlhSQ8ea7DK6xm7mI50V7WFfOmcRgE+jliJxbtce+n9HLcNtNitM4mvOy
- rjXQvyagoqzv8525eCYjw5smikc7WiTkEEbqDTFdcoCOabPA1Fir9vD7VSsTgN2IE5bY=;
-Received: from mail-pj2-f8.google.com ([74.125.227.136])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=IAp4ART9Vww7RNr3R7LHs7YtaKcM1bWQu00EHChcxAI=; b=jOXO5aPiHFXD8QT45rcyyZSf6J
+ EDXnA7lL/bb6lnAzSOyYEvORAwOerbefWA6od+txeVYxnQZR/yQQHA9IPT92J2GeDzH5Ltz6wqF41
+ CP2yHi1CD/VcwJ5qDm+z+IgyqooVJriM8cyh6Xg6AVTPOO9QNDGWWzyjSA4ghskkEHec=;
+Received: from mail-pz2-f2.google.com ([74.125.228.2])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x3VhP-0004Fg-N7 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Sep 2026 09:31:36 +0000
-Received: by mail-pj2-f8.google.com with SMTP id
- 98e67ed59e1d1-39b456fc4cbso1369568a91.1
+ id 1x3W7B-0000q3-8c for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 07 Sep 2026 09:58:14 +0000
+Received: by mail-pz2-f2.google.com with SMTP id
+ 41be03b00d2f7-cc1bf4744e6so1640716a12.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Sep 2026 02:31:35 -0700 (PDT)
+ Mon, 07 Sep 2026 02:58:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788773490; x=1789378290; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1788775087; x=1789379887; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=arhJRzLGcFh7QxAKla9Gy2qjsP8Vk5xX1TysHcLnx40=;
- b=JlRo5WeL+34xT0XrFIYbsMZ13nwW/YirofouqswvyZkQgNXD+66QWFMw1XD3ePArWa
- hcSnnE1gdRzqTWPSON7yVFlN3QzifxiykXB56e+tRDE7mjFzBvtilcVV74xAy4uU+ODl
- MJDsDCsU0RiCqLhakQRHEETrLaTPsX7OF5OeAQg70jysj78kCnKFVg35tVdf3zYzdzVI
- whNHD+1kKGFbRu9WQCAXz9C+bic8wpkWELaLrhUvwKiDDejkJ+wz5R/gM4DCq6UBl0Ed
- nOwMv+YDxOd7QwvwtHskiGeray5d+VqfNzE+/lD2h4iR56ijA2xqdn0anb50PSMswYFq
- jwZw==
+ bh=IAp4ART9Vww7RNr3R7LHs7YtaKcM1bWQu00EHChcxAI=;
+ b=V0LOjm0IeRm/5DptJbARx0Pu7MC8DQUBh1UK+TmqXLZeig1SiMGfvzi97DceL33j5F
+ 3PUufiRlI1gMAwMLg0Hg32vyvq2FGbLOmuDd5drDDkqFFLIzb5DJdWMpYu2VwVKNqF2R
+ biZTItxlvvyCy3sAmQSKtgOvw5H/W6md/y+22tM/pud6ISDpjGO6eamjA0IcyifFfNaz
+ lxUR+/yGnKqlW7EqMxi0RB7EHmCY35CWeLuKBvRYC0rzMDfKx5/GBjnQQu87TdJIMmko
+ 9Hj2s/KgNvaMFUK1LSgVFjbPY9l4xG2pR2Qq6ktw1H5xejCfsP8HOxxGEuIghzM6sFej
+ faWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788773490; x=1789378290;
+ d=1e100.net; s=20251104; t=1788775087; x=1789379887;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=arhJRzLGcFh7QxAKla9Gy2qjsP8Vk5xX1TysHcLnx40=;
- b=f+zVsKbdsxAZCsNSqfhdhcGdjWQ8etsz3pS2bUgtEO8N+/xGJBtB4nWLg5ZjzD2RIR
- wIlVEy9q5eFlAzazBK5dzBSndUi6u7Rk8xzrXHjk6WpirgVhfAvaXadMHiZOhmjJkBYL
- CkpTPqUEppktPtDH6ii2h/R+3YouIlG7FneL34WltCBu15S5WaYsBENS9X0Ex/ZPe2hJ
- 6LpeevU+PpWROKhOQoBX+PO+ooSDbZT2QpNviNDJVyI3Oly6UX26OZCPuUfKuu1FeGxs
- eMEfKawtSYn7amtNuxpvUvKowfGF+325+g80rfTIpjuz5tAp8XeF49W4wTqXrXVJrLAS
- gfqQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwSUKhFxif61O/NkKTowLMETwmg8Ms1F8DMmAlpwLV0Qc4+B25Z6N71SMd+nUAkNaDjiMnRxV7utAERIXuo4Ecw@lists.sourceforge.net
-X-Gm-Message-State: AFuF++mf+ot1VeV+hA0juVBICp6Nr0hIMkdqgWMzzeWPPUp3WV+HwWlE
- HyOCzNDGnvUxGrX6ctKeI14ERppP2tbCNY2igaENwOOe3H6OML5WAJhJ
-X-Gm-Gg: AYBFou2XfDA1E9xOcuv0jKUszArW6xcTBgeJOIXYp3G5UHV6kqx4dtOxUZG77aWTq1O
- ujvp80KkVTGogZymI5Ak+VsW/AsPxTFFl9WQ2Z/La67xLbqSU7CbzVQSIDevWM8O1ZwQdOajrCd
- dVE00J+kk8erSu+Pm5q1VBXRE/Ebk48KkG17tq48f/fOgN2lWYstTgz3nPVUihvelMMCe2tPsh9
- b6volNUUdzZN6MWKtLjijsQ9W3TnAWerJ6zgzVibew6pRpOC+NmxD1vP4kSRVkLnLxlkjgzFTpc
- As8n3ZCMS/qezti04/T3673DMqjaouY0m+O/88dgx6VI5f+I8YChfSzxRP68J12T5cYPlsD96QT
- abJIE54jEasTMtj5xhuyYk8r5BxmBTF7gKoQSneBw1SdQBSqt7XiXdtSPeCM+grCT/LllLSEkGC
- WXs+O/EXnTwTQqohMlA1bpj141n1tNbM9bc7/JUNiQDaWKkS6UkLWxZwOsHQr6i1cLybFIhYKn7
- ctyJFXBk51BwyZjjDqBO6X5Ag==
-X-Received: by 2002:a17:90b:1343:b0:38e:9eb2:9d43 with SMTP id
- 98e67ed59e1d1-39b261b1bcfmr38517893a91.16.1788773489864; 
- Mon, 07 Sep 2026 02:31:29 -0700 (PDT)
+ bh=IAp4ART9Vww7RNr3R7LHs7YtaKcM1bWQu00EHChcxAI=;
+ b=Xca/ORzzCK4yrLkkulO5zSEIRfhYWf+6fsm9KTDolP+PgbZkPsWfgztZf7zNcbfLSk
+ ZusMwt5lWN4iXypC1qNgBhsbNsvuhMQ9JOogiE+yDBfdN02Xz2reVhDHzhQ2h/GKIbSB
+ C0E7JxZVhv+4pnef1sTDMOMVqVvCmMmu4nwqrfM2OiuABSHaaWiW8SiLRMN7t+UYQ2A8
+ 6Oo2NxvxplKKQdhjrvZDjRFskjaJuLECX1+62aPhYL9V6Vi1cMGZsU6rQ46Cv8oyBWc8
+ ldKiNt2GE52nWQZa+EfCnD0wmvy5fYcxpRqNz+xNv+dE2wIkMLHvmKcd/1+Ql5uH7vK5
+ pIbw==
+X-Gm-Message-State: AFuF++kT9wBc0Ma7oG3gTfKoIhl9i+YUaCriSAyshFHwJ4+z3GCp2XWA
+ 2fi6r/AJlvLmfLT+A/apgdWz8OkWEhJ77N6q0gWMd7ISy3yC+aJDfJwo
+X-Gm-Gg: AYBFou0k5y/RbqNLpT1tVJWo5VJ4Ho+/n30FKYV0cem2mGdltOpZ42mPKCmPcWBqJJX
+ ghEtFD+90lQG0fPne3EawSnW9ux0E0Dc8iTODcOubV+8dvVKNJXu6TRuxZELmX9edvAipaPk85a
+ dmrg9g6gj8W36g+d5YzllxcX9smZWWcUy+PVpe/TZEjnynEKUcEScV+ToMH8G8N4xXq2w/NuNwA
+ L9Rk69akkuQotsfxHHYi2qaMAiNQExWYJdTdqsmOfX+Ay8P/MfkLRIjqDx+rkXJcBdhw9b5bl43
+ tBCdKHiwOHGsyVaDW4X0ZjkN6au1H+vIucLCAsIJdIHjIeMW80tRs5i/Ltsf0jGB8dYEmFyUyPO
+ xgruaPFWbhymAd0ApzTru3+GXkNEXAwrFLRBqEvPSNYRIMHKKCj353GJWppuB7rkBWC+UO3EesZ
+ vGZ0Hjko/RdAni06XyuqINHDPuB/7slgnUPjF7Oj2T7H0cfyEqxrDekDdQUK9FuxuQ1DkMms9sj
+ Jd69OxFMIkOuzvQ/saOOYrbSA==
+X-Received: by 2002:a05:6a00:2c97:b0:857:7337:5db9 with SMTP id
+ d2e1a72fcca58-8616af6486fmr28939025b3a.23.1788775087454; 
+ Mon, 07 Sep 2026 02:58:07 -0700 (PDT)
 Received: from nzzhao-ThinkCentre-M760t.mioffice.cn ([43.224.245.179])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b08c397b1sm25503181a91.8.2026.09.07.02.31.26
+ d2e1a72fcca58-86152d32addsm4065080b3a.34.2026.09.07.02.58.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 02:31:29 -0700 (PDT)
+ Mon, 07 Sep 2026 02:58:07 -0700 (PDT)
 From: Nanzhe Zhao <nzzhao.sigma@gmail.com>
 X-Google-Original-From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-To: Daeho Jeong <daeho43@gmail.com>
-Date: Mon,  7 Sep 2026 17:31:22 +0800
-Message-ID: <20260907093123.2438228-1-zhaonanzhe@xiaomi.com>
+To: Chao Yu <chao@kernel.org>
+Date: Mon,  7 Sep 2026 17:57:59 +0800
+Message-ID: <20260907095759.2461366-1-zhaonanzhe@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CACOAw_zD_a32UCJZ+F7zD61o0K8QAh7QKJVuag4fm98qWy7SRQ@mail.gmail.com>
-References: <CACOAw_zD_a32UCJZ+F7zD61o0K8QAh7QKJVuag4fm98qWy7SRQ@mail.gmail.com>
+In-Reply-To: <f1ffd3a5-9fdc-4f26-bd9d-5f55e563f800@kernel.org>
+References: <f1ffd3a5-9fdc-4f26-bd9d-5f55e563f800@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1x3VhP-0004Fg-N7
-Subject: Re: [f2fs-dev] [PATCH 01/14] f2fs: extend folio state for large
- folio write path
+X-Headers-End: 1x3W7B-0000q3-8c
+Subject: Re: [f2fs-dev] [PATCH 12/14] f2fs: handle block cloning within the
+ same large folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -131,47 +129,91 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, 27 Aug 2026 13:51:06 -0700, Daeho Jeong wrote:
-> +		ffs->private_flags |= flags;
->
-> Is this field protected by holding a lock properly?
+On Mon, 31 Aug 2026 16:19:05 +0800, Chao Yu wrote:
+> A lot of codes are redundant, can we add fdst = fsrc;
+> So that we can replace fsrc w/ fdst, and clean up the redundant codes
+> below:
+> Thanks,
 
-Thanks for the review.
-No, it doesn't. Thanks for pointing out.
+Thanks for the review. I'll restructure the else branch as suggested:
 
-I want to change this using per-field atomic read-modify-write ops
-instead, to avoid taking state_lock, like below:
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-@@ f2fs_folio_get_private_flags()  (f2fs.h:2719)
- 	if (f2fs_folio_has_ffs(folio)) {
- 		struct f2fs_folio_state *ffs = folio->private;
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -56,25 +56,66 @@
+ 			f2fs_put_dnode(&dn);
+ 		} else {
+ 			struct folio *fsrc, *fdst;
++			size_t src_off, dst_off;
++			bool same_folio;
  
--		return ffs->private_flags;
-+		return READ_ONCE(ffs->private_flags);
- 	}
-@@ f2fs_folio_set_private_flags()  (f2fs.h:2730)
- 	if (f2fs_folio_has_ffs(folio)) {
- 		struct f2fs_folio_state *ffs = folio->private;
+ 			fsrc = f2fs_get_lock_data_folio(src_inode,
+ 							src + i, true);
+ 			if (IS_ERR(fsrc))
+ 				return PTR_ERR(fsrc);
+-			fdst = f2fs_get_new_data_folio(dst_inode, NULL, dst + i,
+-								true);
+-			if (IS_ERR(fdst)) {
+-				f2fs_folio_put(fsrc, true);
+-				return PTR_ERR(fdst);
++
++			src_off = offset_in_folio(fsrc,
++						(loff_t)(src + i) << PAGE_SHIFT);
++
++			/*
++			 * For same-inode operations (collapse/insert), src and
++			 * dst may fall within the same large folio.  Detect this
++			 * to avoid self-deadlock on folio lock: in that case the
++			 * destination folio is fsrc itself and only its block
++			 * needs reservation.
++			 */
++			same_folio = src_inode == dst_inode &&
++					folio_contains(fsrc, dst + i);
++			if (same_folio) {
++				struct dnode_of_data dn;
++
++				/* Reserve block for dst before copying */
++				set_new_dnode(&dn, dst_inode, NULL, NULL, 0);
++				ret = f2fs_reserve_block(&dn, dst + i);
++				if (ret) {
++					f2fs_folio_put(fsrc, true);
++					return ret;
++				}
++				fdst = fsrc;
++			} else {
++				fdst = f2fs_get_new_data_folio(dst_inode, NULL,
++							      dst + i, true);
++				if (IS_ERR(fdst)) {
++					f2fs_folio_put(fsrc, true);
++					return PTR_ERR(fdst);
++				}
+ 			}
  
--		ffs->private_flags |= flags;
-+		if (flags)
-+			__atomic_or_fetch(&ffs->private_flags, flags,
-+					  __ATOMIC_RELAXED);
- 		return;
- 	}
-@@ f2fs_folio_clear_private_flags()  (f2fs.h:2746)
- 	if (f2fs_folio_has_ffs(folio)) {
- 		struct f2fs_folio_state *ffs = folio->private;
++			dst_off = offset_in_folio(fdst,
++					(loff_t)(dst + i) << PAGE_SHIFT);
+ 			f2fs_folio_wait_writeback(fdst, DATA, true, true);
+-
+-			memcpy_folio(fdst, 0, fsrc, 0, PAGE_SIZE);
++			memcpy_folio(fdst, dst_off, fsrc, src_off, PAGE_SIZE);
++			if (folio_test_large(fdst)) {
++				f2fs_ffs_find_or_alloc(fdst);
++				f2fs_ffs_mark_subrange_uptodate(fdst,
++							dst_off, PAGE_SIZE);
++				f2fs_ffs_mark_subrange_dirty(fdst, dst_off,
++							    PAGE_SIZE);
++			}
+ 			folio_mark_dirty(fdst);
++			if (same_folio && i_size_read(dst_inode) <
++			    ((loff_t)(dst + i + 1) << PAGE_SHIFT))
++				f2fs_i_size_write(dst_inode,
++					((loff_t)(dst + i + 1) << PAGE_SHIFT));
+ 			folio_set_f2fs_gcing(fdst);
+ 			f2fs_folio_put(fdst, true);
+-			f2fs_folio_put(fsrc, true);
++			if (!same_folio)
++				f2fs_folio_put(fsrc, true);
  
--		ffs->private_flags &= ~flags;
-+		if (flags)
-+			__atomic_and_fetch(&ffs->private_flags, ~flags,
-+					   __ATOMIC_RELAXED);
- 		return;
- 	}
-
-Please let me know if this lock-free approach looks acceptable.
+ 			ret = f2fs_truncate_hole(src_inode,
+ 						src + i, src + i + 1);
 
 Thanks,
 Nanzhe
