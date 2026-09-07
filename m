@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 066CDC79F89
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Sep 2026 10:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70D54C79F9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Sep 2026 10:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=kjZzXin/Jal6/5JoFUUtl5AFgDWp86cn9e2jkA9Iwus=; b=PfAG/j3TO1OIQ/cICr570YYZ0p
-	GenzaYEWT0lM6ZHtnbSTUJcR4442U/lyH+1YbtDtr07Y+72k0Jm0PvupYLsHR7xZrzKduShAXDwfk
-	HBrK5z6WoNCZRUdHDM+TzEqbP1Gnn6/GZce3RERK7fw8rj5DbuvVrG7/Xtxt7oFu05SY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=eR2FwXC/3eLaob+6LMNhsTln/LW6f5UD8xHKTzyvdXk=; b=FSAhO/PIIUw8zgYJ4y/PA3gjOH
+	L1frJUF0cK5u7F2LeS8uJUT3NNSuZddKsRwWz/6xl/2binWLVwjwyZyXOyrur6dAO0fh+KM14kUh6
+	42iUdOeqSswyeUSeBwz7rI2CdoXXpkeNf+oT6lE/foiEGNXDhvUmN/Kiig4s7Z+igU3A=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x3WVN-0006Pa-Ce;
-	Mon, 07 Sep 2026 10:23:14 +0000
+	id 1x3WWr-0001TE-4j;
+	Mon, 07 Sep 2026 10:24:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x3WVL-0006PN-VF
+ (envelope-from <chao@kernel.org>) id 1x3WWq-0001T8-5g
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Sep 2026 10:23:12 +0000
+ Mon, 07 Sep 2026 10:24:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=s6i5gTlzacx4tlzxnVzf43YuXi8+VX8VultCr/Bh7jY=; b=OtGc4ZzNIuCLFQNCGpwRUisG06
- hlQxtNsevf4dWSCWebSGevtEpfHCjLX4iKFverkdRw0/CEQDyJ75KfMH2enc2EYCDcDHfJ5XIqikV
- Np0kyG6rTmqx9F3to+T+rta/vx3ASL3blGIhPBWxPfCL3PCI2tHGx7NMisjuKr0SevDg=;
+ bh=9BqDLmGnAkMHp9vwRniiZuI/ddgBPW2A/NeBEBZzQS8=; b=VwBp0/7uBx+ywYxL5VrU6LlOG6
+ uO4nWGkJMe9ypjFlUXpyMZ6SS2xSKmAUEQOrr8huulUVLCrTeOBZdbUHUN9evDJ9Dcbvfbhc2InjY
+ yacD9z2ToVOAXlKB9Hd5Bvho7wZBtlIi6JYBzCDqPcvjxbJpaji49Ku2r596bi5m2GWU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=s6i5gTlzacx4tlzxnVzf43YuXi8+VX8VultCr/Bh7jY=; b=X8hL15pYsjV1OhLR2e6m4MEfJA
- g0d7R4dJ/eWtKrgOe2+tgZSwZ1Jyp4h/du/iMTaDq03Ztc6du4wegOtnnWkOqP2BqPwtFAYjy9Pgg
- kB8mfDQyGQu4CFJ5JrDJhqoLga+BokzGhFKlYgvNcCtixBgxeSC0JdQA9nXzDAMtSC6E=;
+ bh=9BqDLmGnAkMHp9vwRniiZuI/ddgBPW2A/NeBEBZzQS8=; b=iUSkQ6MdbDpF2+Unp/RoYUlkQ2
+ 6bxwDhuRcei0i46LIPo/g6uUHjSm2SUxCa6Sh/fzRCDDJF3FQusOVD1p2iUHHVRV7bXvOwp8Fg/+Y
+ cul2MZyttaUUhTJskjf1seSKFIJER/F+qtsBrW2BYcSczhpimRrY5pV0hgqeLR2p8iQo=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x3WVL-0001N8-A2 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Sep 2026 10:23:12 +0000
+ id 1x3WWo-0005QS-72 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 07 Sep 2026 10:24:44 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A57DE601F9;
- Mon,  7 Sep 2026 10:23:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60BDE1F00A3A;
- Mon,  7 Sep 2026 10:23:04 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 58BCF60D8D;
+ Mon,  7 Sep 2026 10:24:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09EF11F00A3F;
+ Mon,  7 Sep 2026 10:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788776585;
- bh=s6i5gTlzacx4tlzxnVzf43YuXi8+VX8VultCr/Bh7jY=;
+ s=k20260515; t=1788776676;
+ bh=9BqDLmGnAkMHp9vwRniiZuI/ddgBPW2A/NeBEBZzQS8=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=bjfVB5YA+9bBQbOCfv5RYwcgTL5DOHs9/KcA8It6jg6fiobBGR6cG3UJmoOmlJf5p
- GOElVkZMTkpdjigW/9SQFo+cavKq7NBDHE47kckEX69fIV7KU/xuo66K4fMkYwfOxv
- JKDBF8xwOIRB/DIHhHzqFv0UZ/x/aatIKeK7JRtlCdYrpn4viJvZFQGckAgeAGu94Y
- Naz6z2v4ivSlkmabt5FZiftdu4rcFaDhLjKKs7psgjMFmOmo+DayAvjosneJNxZajp
- h8lhMMeNwvBOGh6v07NS2GHaISzJ/SYq0DU9DU+94/rIezR9KyMUN/quUHv3RF2YJK
- PjzR1d56//SyA==
-Message-ID: <90c7fbe0-3f06-48a1-a9df-6b9ae6a3d9d1@kernel.org>
-Date: Mon, 7 Sep 2026 18:23:02 +0800
+ b=FtXN28sxVnTxLlot/tbGgKn54hYdfQDVpBNPETtLXAunDWU81VOHQTOLlu26rJ8WQ
+ aBy1Zh9dPjbQ2OgxR53PQGQnJIoVSfKdt727BvlCEnKArD8P8/Yo+RQ68sqkxGMa28
+ lgGBGLU+yHp3Tu5zZru6roNOjkq2b94KRXI0D0HW+Su4rY+xjIz0lzaziOZXZ4NY/f
+ K/BkA98SIlMqgtlofTMtwLDBbYwiVgufOcnhPYcXpZqy5H3CJ5ytWYOxumDkkwRFPH
+ QS1OCHzkLfTNoWT6s+6lUxGwFwgAjdYSA0JOKmV0SGHpdV5izJ/V1VSuV1FfYN8fPn
+ FiyIrl8nP5cOA==
+Message-ID: <f9839ca2-1554-450d-9e98-72d686a8402d@kernel.org>
+Date: Mon, 7 Sep 2026 18:24:32 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20260904145923.1936598-1-daeho43@gmail.com>
+To: Nanzhe Zhao <nzzhao.sigma@gmail.com>
+References: <f1ffd3a5-9fdc-4f26-bd9d-5f55e563f800@kernel.org>
+ <20260907095759.2461366-1-zhaonanzhe@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260904145923.1936598-1-daeho43@gmail.com>
-X-Headers-End: 1x3WVL-0001N8-A2
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix livelock in f2fs_sync_inode_meta()
+In-Reply-To: <20260907095759.2461366-1-zhaonanzhe@xiaomi.com>
+X-Headers-End: 1x3WWo-0005QS-72
+Subject: Re: [f2fs-dev] [PATCH 12/14] f2fs: handle block cloning within the
+ same large folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,70 +90,107 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
+ Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
+ David Hildenbrand <David.Hildenbrand@arm.com>,
+ Pengfei Li <lipengfei28@xiaomi.com>, Bo Zhang <zhangbo56@xiaomi.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Ryan Roberts <Ryan.Roberts@arm.com>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/4/26 22:59, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> During checkpoint, f2fs_sync_inode_meta() iterates over dirty inodes in
-> the DIRTY_META list. If igrab() fails on an inode (e.g. because it is in
-> the freeing state), the loop continues without moving the current inode to
-> the tail of the list. As a result, subsequent iterations pick the same
-> inode repeatedly, preventing other ready dirty inodes in the list from
-> making forward progress and leading to a livelock.
-> 
-> Fix this by moving the current inode to the tail of the list
-> (list_move_tail(&fi->gdirty_list, head)) before attempting igrab().
-> 
-> Additionally, if igrab() fails, the freeing inode may be waiting for its
-> pending writeback data pages to complete during eviction.
-> Submit any pending merged data writes and yield the
-> CPU with cond_resched() to allow the eviction to make progress.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->   fs/f2fs/checkpoint.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index ef22692cef0a..5597033533b0 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1460,6 +1460,7 @@ static int f2fs_sync_inode_meta(struct f2fs_sb_info *sbi)
->   		}
->   		fi = list_first_entry(head, struct f2fs_inode_info,
->   							gdirty_list);
-> +		list_move_tail(&fi->gdirty_list, head);
+Thanks, better.
 
-Seems fine, if so, do we need to do this in f2fs_sync_dirty_inodes() as well?
-
->   		inode = igrab(&fi->vfs_inode);
->   		spin_unlock(&sbi->inode_lock[DIRTY_META]);
->   		if (inode) {
-> @@ -1469,6 +1470,13 @@ static int f2fs_sync_inode_meta(struct f2fs_sb_info *sbi)
->   			if (is_inode_flag_set(inode, FI_DIRTY_INODE))
->   				f2fs_update_inode_page(inode);
->   			iput(inode);
-> +		} else {
+On 9/7/26 17:57, Nanzhe Zhao wrote:
+> On Mon, 31 Aug 2026 16:19:05 +0800, Chao Yu wrote:
+>> A lot of codes are redundant, can we add fdst = fsrc;
+>> So that we can replace fsrc w/ fdst, and clean up the redundant codes
+>> below:
+>> Thanks,
+> 
+> Thanks for the review. I'll restructure the else branch as suggested:
+> 
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -56,25 +56,66 @@
+>   			f2fs_put_dnode(&dn);
+>   		} else {
+>   			struct folio *fsrc, *fdst;
+> +			size_t src_off, dst_off;
+> +			bool same_folio;
+>   
+>   			fsrc = f2fs_get_lock_data_folio(src_inode,
+>   							src + i, true);
+>   			if (IS_ERR(fsrc))
+>   				return PTR_ERR(fsrc);
+> -			fdst = f2fs_get_new_data_folio(dst_inode, NULL, dst + i,
+> -								true);
+> -			if (IS_ERR(fdst)) {
+> -				f2fs_folio_put(fsrc, true);
+> -				return PTR_ERR(fdst);
+> +
+> +			src_off = offset_in_folio(fsrc,
+> +						(loff_t)(src + i) << PAGE_SHIFT);
+> +
 > +			/*
-> +			 * We should submit bio, since it exists several
-> +			 * writebacking pages in the freeing inode.
+> +			 * For same-inode operations (collapse/insert), src and
+> +			 * dst may fall within the same large folio.  Detect this
+> +			 * to avoid self-deadlock on folio lock: in that case the
+> +			 * destination folio is fsrc itself and only its block
+> +			 * needs reservation.
 > +			 */
-> +			f2fs_submit_merged_write(sbi, DATA);
-> +			cond_resched();
-
-It uses the same implementation from f2fs_sync_dirty_inodes(), after git blame on
-it, the implementation was introduce long time ago, I suspect we don't need this?
-because in .writepages, we will submit cached bio anyway, right?
-
-Thanks,
-
->   		}
->   	}
->   	return 0;
+> +			same_folio = src_inode == dst_inode &&
+> +					folio_contains(fsrc, dst + i);
+> +			if (same_folio) {
+> +				struct dnode_of_data dn;
+> +
+> +				/* Reserve block for dst before copying */
+> +				set_new_dnode(&dn, dst_inode, NULL, NULL, 0);
+> +				ret = f2fs_reserve_block(&dn, dst + i);
+> +				if (ret) {
+> +					f2fs_folio_put(fsrc, true);
+> +					return ret;
+> +				}
+> +				fdst = fsrc;
+> +			} else {
+> +				fdst = f2fs_get_new_data_folio(dst_inode, NULL,
+> +							      dst + i, true);
+> +				if (IS_ERR(fdst)) {
+> +					f2fs_folio_put(fsrc, true);
+> +					return PTR_ERR(fdst);
+> +				}
+>   			}
+>   
+> +			dst_off = offset_in_folio(fdst,
+> +					(loff_t)(dst + i) << PAGE_SHIFT);
+>   			f2fs_folio_wait_writeback(fdst, DATA, true, true);
+> -
+> -			memcpy_folio(fdst, 0, fsrc, 0, PAGE_SIZE);
+> +			memcpy_folio(fdst, dst_off, fsrc, src_off, PAGE_SIZE);
+> +			if (folio_test_large(fdst)) {
+> +				f2fs_ffs_find_or_alloc(fdst);
+> +				f2fs_ffs_mark_subrange_uptodate(fdst,
+> +							dst_off, PAGE_SIZE);
+> +				f2fs_ffs_mark_subrange_dirty(fdst, dst_off,
+> +							    PAGE_SIZE);
+> +			}
+>   			folio_mark_dirty(fdst);
+> +			if (same_folio && i_size_read(dst_inode) <
+> +			    ((loff_t)(dst + i + 1) << PAGE_SHIFT))
+> +				f2fs_i_size_write(dst_inode,
+> +					((loff_t)(dst + i + 1) << PAGE_SHIFT));
+>   			folio_set_f2fs_gcing(fdst);
+>   			f2fs_folio_put(fdst, true);
+> -			f2fs_folio_put(fsrc, true);
+> +			if (!same_folio)
+> +				f2fs_folio_put(fsrc, true);
+>   
+>   			ret = f2fs_truncate_hole(src_inode,
+>   						src + i, src + i + 1);
+> 
+> Thanks,
+> Nanzhe
 
 
 
