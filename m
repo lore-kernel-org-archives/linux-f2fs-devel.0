@@ -4,106 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0FB8C79F99
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Sep 2026 03:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F19B2C79F99
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Sep 2026 03:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=6MmkqNjcfPCrlcYUasPDLYq91AxdNgI3+FbJcW0yb0w=; b=Fs7V6VfzBM4Ubw4v9RVXbuZ3Ww
-	oodAJ+HnGsU8WKMZJuFvszNpxbH5M8SmbvZ07WRl6+i8FqwkLaAA3KNTCoHfWDevHlzK0O0sgO7PA
-	+tz3+215/TsCHo8YgfUeG0Er2UrDrgXAXc5y7BsoVZZmUXWSTR/khVGG2Hzch1UrGFOg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=yKjhQFITiQBia//eMHgDThlGJsBPETdiGbMtyAg88pc=; b=EzydoFAjRdGNGj1ILfDTUzq/jf
+	zDuchIqZ3HDB83bxXKkBtQaI20NzMuJUkN7O31IJV0aeBTbDNHQiifjAJdXmMs8/UL8Ybl/BsMTQh
+	WCYsV1p8tBY6+IoUvTD34HY6C3hTB7puHu9Wof1B6k0lhRrerqInxEgMlPy+wTpYuy8w=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x3mom-00066r-S5;
-	Tue, 08 Sep 2026 03:48:21 +0000
+	id 1x3mwB-0005Nk-2r;
+	Tue, 08 Sep 2026 03:55:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jnhuang95@gmail.com>) id 1x3mom-00066i-9E
+ (envelope-from <qwjhust@gmail.com>) id 1x3mw9-0005Ne-Ml
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Sep 2026 03:48:21 +0000
+ Tue, 08 Sep 2026 03:55:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8AgWnHN03bHYfDkr5aQ12DPzDcM0xtDPZaSW4EywM+Y=; b=TD6A3Y2LKGGKFGplRG650WGktW
- o1QWuAMIh5FEZQDSXyfIuaABArBG+5I9FGJAErG7iqbd12AkFAvvgy0w5+QYOlv9J3+J+WBFVi9rr
- vpYfcXPO0hmO13/ys2H0hhJ/SF9WfNOEfQ2lEZH28NE4Jsn1jRrKDikiwiSXEPV0vxR8=;
+ bh=PPQzWxuhw7pZTs+zszzFmSn4KI/x61XrCe5D1SPsyZk=; b=Psqfo1TnsG/9dtYxq1It418ITw
+ xBEaw/YJtGGhyxIa2G2gjLTwUKi4bl4YCni6yGr48OX/ub3+VKsqs9dHr2VELXY0Mi0WDL/ZjC7vD
+ 9uRQsvoy2wpkmEPFT9Vt5vHnbR/s3xTN2W/TBweml6L8UT6dot3YO4VeLxVSXwzTQrac=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=8AgWnHN03bHYfDkr5aQ12DPzDcM0xtDPZaSW4EywM+Y=; b=Q
- QTXxqtcYWVeCiKrlGVwGSyGpL/awu7lRA0/vfRT7EpO0u8FfUasZ9Cng2dIgLWP2wxBlfAyOxYPv1
- wp66n9wOwANLcYL3iqnB6djA5cdAEIIvGOJTnhLQFHFeX6FxBQT01J2NCsc9dopG5IAit65QuRXjB
- wCEkP8h2heCXarxY=;
-Received: from mail-pg1-f169.google.com ([209.85.215.169])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=PPQzWxuhw7pZTs+zszzFmSn4KI/x61XrCe5D1SPsyZk=; b=FURZ/WduxRgY0iETbJGTz6EIAH
+ lBL0oagXmj8HafrG4rc25MtsuPcWFIa8Krxk6Dx5QoYAhibyYgjyhpUEanaK3y6ZRgfJ2Dn05xCpu
+ g5Giu7CEzz+Clnz4jIxui1ukojHQqFjlusNm0WCBGWRQYUHCIfNvJi48NZIraSHKqAEU=;
+Received: from mail-pl1-f180.google.com ([209.85.214.180])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x3mom-0007Kv-BI for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Sep 2026 03:48:21 +0000
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-cbedf433a99so3950840a12.2
+ id 1x3mw9-0004B8-QM for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Sep 2026 03:55:58 +0000
+Received: by mail-pl1-f180.google.com with SMTP id
+ d9443c01a7336-2d944747d41so43408055ad.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Sep 2026 20:48:20 -0700 (PDT)
+ Mon, 07 Sep 2026 20:55:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788839295; x=1789444095; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=8AgWnHN03bHYfDkr5aQ12DPzDcM0xtDPZaSW4EywM+Y=;
- b=qLsHzFlp/sQL/R5F5zSQnIdjme7d408Mkar0hRBTMyY/VELUJJUgdqC33+3in0Iou5
- oWX6C5dkdCSNi0u1F3o5kigk2REwbFbKj20XRfe9QRxkpCrqpaVCLn+pdjZTmmNzTwJB
- ClLT1VdZ7U3olBUIdHJDKuRZhSlNsIjnEZDYOp6ai5jpxyit+LcZncDU4T+Y3NRrJA4A
- D4oBDj4SUodpiYHY2Uz8ZSqND9rb3Jgu+qadO+0+ZXiNIKfY5d1ItZVLUXe+RAJ+rxMS
- C+4AWQHooJftoaM6TdNkp5lqSfKlEmm+rW7bsp7/UqZ8RHq2XnpX2B+ivjbiYy6EUh+q
- ts3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788839295; x=1789444095;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1788839752; x=1789444552; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=8AgWnHN03bHYfDkr5aQ12DPzDcM0xtDPZaSW4EywM+Y=;
- b=CvwQTpq8dwlqQGMYV3BZ+xnpzitqXXIvCcQUD4Hyypd/Z+wYHk26b9y7lt5iG5Mv+R
- AxhSrRjddO1bomQIX/Fc2Kocej9VtsVKbGP4TuQ3dn4jJRVnBqDVzEMU6rjl/US/bw31
- RlyjKFt8vKlheTcunJpW5VlVaZG0c1+Blhm6o1rQjGD/NvuocjkcrDRTBiWAcKf+giUN
- qO3T/mPkE90YIklSOm6XJUhBk4hi+u3JCofnRzWtxBsnTCfqgye19A35ETzGguLIfDMc
- TQhP2drcLwBlRvs3xPF8vlCVfo8kk3a8yt8IXIqlR7dwOfdPCHhYj7Ocp5AuYm/0hi1A
- K26w==
-X-Gm-Message-State: AFuF++moWt6qWpIVcx2DlKlmI3SeNSjfbgNqt/WOueOgdjA4HeEZwGko
- qQLfXIgC1lvake9KEi+1EPwzbcsh/gxXGFGBhP31+eHkO8fTt2PlMObDUZLvtz3//sM=
-X-Gm-Gg: AYBFou1Y7dUyMGZWuvZgVdS0VRtjj/OBopiAHwoc7BVu72hykJ2zpFBLpv206jIq6ZR
- qQw7uqL9z0d5kclN3AXjfBrro3ha+CRoprr9udEUeUXNKC4RA2aXZJrYTf/X2IVr7EDk391WYyQ
- Jrx1BwlBcNRwOCNZfTC1gnEdqT8sWIy+bVtj0ypYfbnNBVogCKe1ab1s5rUOKUAjmu7+8RyQkWB
- JZLx9QkYp19IRUEldV2zOzMZLWsZWJYhcNlHl1Xl/HXHD5RCRdUhNU5K9bErjnnZcocPqoYXQbj
- +86n35QMG58q5xWJBIlIH+4bUzOtOu7cHb72/CHT8BRQeCKBDoHsf/fV64o7d27O+HbyfSEySKi
- +T6t2LBnQLU+Gb8amqwyFjDT01ELx6ZCvv4yHZRKlBCJIa5TD8Vg/dhHr08S/D41yllvwJToqgK
- Auv0f7vztktNr1boJmIQHBG2RIvYiopq1Y/xje2bS7trZ4qorSnVsjZpdf21XRVPgyve5YG8bHG
- nHP2n0lbWwNXp8uBlHvkfn4IJFZ/tv9JJA+Ng==
-X-Received: by 2002:a05:6a20:9630:b0:3cc:ebeb:3efe with SMTP id
- adf61e73a8af0-3da39ee18ecmr41062832637.9.1788839294513; 
- Mon, 07 Sep 2026 20:48:14 -0700 (PDT)
-Received: from 4ce604c9y2.bytedance.net ([61.213.176.58])
+ bh=PPQzWxuhw7pZTs+zszzFmSn4KI/x61XrCe5D1SPsyZk=;
+ b=UIlf5R1SA1JO0artGAZE0k3wB28QwO+DucIAfkfKLN3n88vCnus74RasH3C6Z0mPia
+ LmIYA5+uaJ8N6Ga4OLU3B4MzNKAZ655FXAMYfImiXLSgHTD7xiKebcFp+YUevU/rZRXj
+ bX8NtcFwEzmETSuNHPlXrNVk9uKmbQapTwocVlw0kZXS2BLqe6i5D8RoeE+aO/dVxNws
+ pirSkqznNpl37TOxZtfu4iQ8NgYgzOIn4XTHSdL2cwqYhPBslyAFu5Nh93Gccp7KMxaz
+ cKfZqQlk0j//pUQlKtfpHyZBi/s6A+0CmpsEUrwPsSfZaPKg/uM2ddicwNj3JWbaYwhi
+ XvRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788839752; x=1789444552;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=PPQzWxuhw7pZTs+zszzFmSn4KI/x61XrCe5D1SPsyZk=;
+ b=NKHAHPZmedw8pIvBqUzfgTHOhDfttW9utWw9jGmnoSUW1aH/NJYGfI2Z6SDHuxiAM4
+ YecER2Q/IydiRV074G5wby62I8kKwpFOrJCwVqoKylPwnbRdFI0PfhRsCZSWasmAcjX7
+ gMzSdaeg6f3LNamVaWJBzdKks5eo3M1on77hrXwf2JWORe/4IOa8Db8c6EQx1FENdJvo
+ IboOSdRcmzIgMgDSiznHtArOwtg+Uir7opVGk518o0Tct0DnI4WqFnHnwVt6m2wIsts2
+ gDXnuKHpKDLuY/VT0NJ+Vcma/e8qrxq/eaEyXRXHBAg9C5gJ1Xs2733yUU+bpdu4mBQm
+ Bpxg==
+X-Gm-Message-State: AFuF++mwfF5jVsgqDRdaZPsYs5N8eJkiqy1LbFkwbYGTD99YoqXug9fT
+ hw0QmmOQVIbCbeeqj9E9GM2ih1C3BhQWOjJq4n4B4v6Z28fySqPwMIXw
+X-Gm-Gg: AYBFou0wCu/OL3pSQhBuziyc7e54s4Prjt96gjkjc4cckXI/HmyEwnpm8YGqwkwC5RD
+ EZ0BXELRMo4J3YaZ1ryTs1nlguiBwnKupVUB/+0VoBjivsAVabxBKIpzsH3+AiT1ekrgE9iXElJ
+ GKqNV95C15hKdSX7SJNOjp0CmDyiDXW7R0v3+k1Cfy60LSzZvr8HPzTIpIxYfGA5dTCXHcExkEd
+ 6rzycN3zI0clVQYc5kyYppdvdFpnHRtPJO5/fo9TxnbpVnFaJvmUWarLdJTIoERWg7qodfPf2w4
+ W4VwByt9W9ysIgTi19gB8+Z8IFdVp+/8iIvsJOJNLTosKlXsGd8ibtjvK946aiDDWTyP/dQ3mp9
+ LviTNVLV7bqEn39Edur4AONih8IUw3x9sWM4QjsgORoWb0rP91ow27MtxsMJPtu+FEzqJGMRpbe
+ 1EL3VYV2YK67xf/J/1HDo093pBVVbpJ6iG6tMub/c9yFREQSJo1oZbrdGAMVnhISRSZhmF0wufH
+ oZFap6CMmC7EGE6n9EtR6Br
+X-Received: by 2002:a17:902:fdab:b0:2d9:599e:df95 with SMTP id
+ d9443c01a7336-2db122edaa3mr386816705ad.3.1788839752025; 
+ Mon, 07 Sep 2026 20:55:52 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc45a6abaa2sm4424812a12.23.2026.09.07.20.48.12
+ d9443c01a7336-2db14aeaf74sm51899295ad.81.2026.09.07.20.55.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 20:48:14 -0700 (PDT)
-From: Jianan Huang <jnhuang95@gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net, chao@kernel.org, jaegeuk@kernel.org
-Date: Tue,  8 Sep 2026 11:48:09 +0800
-Message-ID: <20260908034809.616919-1-jnhuang95@gmail.com>
+ Mon, 07 Sep 2026 20:55:51 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Tue,  8 Sep 2026 11:55:41 +0800
+Message-ID: <cover.1788795700.git.qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1788438786.git.qiwenjie@xiaomi.com>
+References: <cover.1788438786.git.qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1x3mom-0007Kv-BI
-Subject: [f2fs-dev] [PATCH] f2fs: quota: fix quota flush failure during
- filesystem freeze
+X-Headers-End: 1x3mw9-0004B8-QM
+Subject: [f2fs-dev] [PATCH v5 0/2] f2fs: enable buffered RWF_DONTCACHE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,263 +119,168 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jianan Huang <jnhuang95@gmail.com>
+Cc: axboe@kernel.dk, baohua@kernel.org, jack@suse.cz, qwjhust@gmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, linux-mm@kvack.org, qiwenjie@xiaomi.com,
+ linux-fsdevel@vger.kernel.org, tz2294@columbia.edu, hch@lst.de
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Quota flush retries can be exhausted during filesystem freeze.
+This series enables buffered RWF_DONTCACHE on F2FS for sustained one-pass
+streaming writes, where retaining the written data can displace more useful
+cache.
 
-freeze_super() and the quota checkpoint may race as below.
+Patch 1 marks dropbehind write bios with BIO_COMPLETE_IN_TASK. Normal and
+dropbehind folios may share otherwise mergeable IPU and OPU bios; the flag
+is set monotonically when a dropbehind folio joins an existing bio. The
+block layer owns deferral from unsafe completion contexts.
 
-freeze_super()                       f2fs_ckpt
-- down_write(&sb->s_umount)
-- sb->s_writers.frozen = SB_FREEZE_PAGEFAULT
-- sync_filesystem()
- - f2fs_sync_fs()
-  - f2fs_issue_checkpoint()
-   - queue CP_SYNC -----------------> - block_operations()
-                                      - down_read_trylock(s_umount)
-                                        : fails; freeze holds write lock
-                                      - quota flush retries exhausted
-                                      - set CP_QUOTA_NEED_FSCK_FLAG
+Patch 2 passes FGP_DONTCACHE to the F2FS buffered write folio lookup,
+advertises FOP_DONTCACHE, and handles internal write_begin callers that
+pass a NULL kiocb.
 
-During the PAGEFAULT sync pass, freeze_super() holds s_umount for
-write, but umount_lock_holder is not set until f2fs_freeze().  Thus
-quota writeback tries to acquire s_umount again and can exhaust retries.
+Tests were run on a Xiaomi phone with 10.7 GiB of kernel-visible memory,
+running Android 16 and Linux 6.12.69 with 4 KiB pages. /data used F2FS.
 
-With checkpoint merge enabled, f2fs_issue_checkpoint() may dispatch
-CP_SYNC to f2fs_ckpt.  That thread also cannot acquire the freeze lock.
+The performance test wrote exactly 64 GiB per run at 4 KiB,
+8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, 256 KiB, 512 KiB, and 1 MiB.
+Two counterbalanced rounds ran ascending normal-first and descending
+dontcache-first. Values below are equal-weight means of both runs; N=2.
+The pwritev2() writer models the streaming workload; it does not show that
+an unchanged Android application already issues RWF_DONTCACHE.
 
-Split the F2FS-internal sync implementation from the super-operation
-callback.  For the VFS PAGEFAULT freeze sync, record current as holder
-around the internal sync.  This lets quota writeback use the existing
-lock and makes CP_SYNC run directly in the freeze caller.
+Android remained active with displays off. Each run started after a cache
+reset and at least 120 seconds of cooldown. Throughput and one-second
+kswapd0/global-memory samples cover the write loop.
 
-Convert F2FS-internal callers to the internal helper so they cannot be
-mistaken for the freeze owner while the filesystem is frozen.
+Write-loop throughput was:
 
-Fixes: eb85c2410d6f ("f2fs: quota: fix to avoid warning in dquot_writeback_dquots()")
-Signed-off-by: Jianan Huang <jnhuang95@gmail.com>
----
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/file.c    |  8 ++++----
- fs/f2fs/namei.c   | 16 ++++++++--------
- fs/f2fs/segment.c |  4 ++--
- fs/f2fs/super.c   | 25 ++++++++++++++++++++++---
- 5 files changed, 37 insertions(+), 18 deletions(-)
+          normal MiB/s              dontcache MiB/s
+ I/O      r1       r2      mean      r1       r2      mean     change
+ 4K      946.28   935.74   941.01   291.36   309.31   300.33   -68.08%
+ 8K     1077.05  1105.84  1091.45   477.79   479.79   478.79   -56.13%
+ 16K    1126.84  1118.49  1122.67   643.40   652.06   647.73   -42.30%
+ 32K    1150.62  1036.33  1093.48   762.24   751.45   756.84   -30.79%
+ 64K    1144.80  1163.82  1154.31   852.11   851.19   851.65   -26.22%
+ 128K   1166.29  1162.84  1164.57   867.47   865.05   866.26   -25.61%
+ 256K   1153.61  1172.78  1163.19   895.53   885.33   890.43   -23.45%
+ 512K   1173.61  1197.34  1185.48   903.09   903.01   903.05   -23.82%
+ 1M     1126.22  1154.59  1140.41   850.74   894.60   872.67   -23.48%
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9940a6cecf1a..169792a08a82 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3977,7 +3977,7 @@ void f2fs_quota_off_umount(struct super_block *sb);
- void f2fs_save_errors(struct f2fs_sb_info *sbi, unsigned char flag);
- void f2fs_handle_error(struct f2fs_sb_info *sbi, unsigned char error);
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
--int f2fs_sync_fs(struct super_block *sb, int sync);
-+int __f2fs_sync_fs(struct super_block *sb, int sync);
- int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
- 
- /*
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index edc352569e87..83546a053656 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -408,7 +408,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 
- 	if (cp_reason) {
- 		/* all the dirty node pages should be flushed for POR */
--		ret = f2fs_sync_fs(inode->i_sb, 1);
-+		ret = __f2fs_sync_fs(inode->i_sb, 1);
- 
- 		/*
- 		 * We've secured consistency through sync_fs. Following pino
-@@ -2548,7 +2548,7 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 		break;
- 	case F2FS_GOING_DOWN_METASYNC:
- 		/* do checkpoint only */
--		ret = f2fs_sync_fs(sb, 1);
-+		ret = __f2fs_sync_fs(sb, 1);
- 		if (ret) {
- 			if (ret == -EIO)
- 				ret = 0;
-@@ -2568,7 +2568,7 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 		set_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
- 		set_sbi_flag(sbi, SBI_IS_DIRTY);
- 		/* do checkpoint only */
--		ret = f2fs_sync_fs(sb, 1);
-+		ret = __f2fs_sync_fs(sb, 1);
- 		if (ret == -EIO)
- 			ret = 0;
- 		goto out;
-@@ -2988,7 +2988,7 @@ static int f2fs_ioc_write_checkpoint(struct file *filp)
- 	if (ret)
- 		return ret;
- 
--	ret = f2fs_sync_fs(sbi->sb, 1);
-+	ret = __f2fs_sync_fs(sbi->sb, 1);
- 
- 	mnt_drop_write_file(filp);
- 	return ret;
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index ff86ee07290d..5f6f5db9e849 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -403,7 +403,7 @@ static int f2fs_create(struct mnt_idmap *idmap, struct inode *dir,
- 	d_instantiate_new(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir)) {
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (err)
- 			return err;
- 	}
-@@ -459,7 +459,7 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
- 	d_instantiate(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir)) {
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (err)
- 			return err;
- 	}
-@@ -641,7 +641,7 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 		d_invalidate(dentry);
- 
- 	if (IS_DIRSYNC(dir))
--		err = f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
-+		err = __f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
- out:
- 	trace_f2fs_unlink_exit(d_inode(dentry), err);
- 	return err;
-@@ -729,7 +729,7 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	ret = filemap_write_and_wait_range(inode->i_mapping, 0,
- 					   disk_link.len - 1);
- 	if (!ret && IS_DIRSYNC(dir))
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 
- 	f2fs_balance_fs(sbi, true);
- out:
-@@ -787,7 +787,7 @@ static struct dentry *f2fs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	d_instantiate_new(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir)) {
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (err)
- 			return ERR_PTR(err);
- 	}
-@@ -845,7 +845,7 @@ static int f2fs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	d_instantiate_new(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir)) {
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (err)
- 			return err;
- 	}
-@@ -1148,7 +1148,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	f2fs_unlock_op(sbi, &lc);
- 
- 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (err)
- 			return err;
- 	}
-@@ -1318,7 +1318,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	f2fs_unlock_op(sbi, &lc);
- 
- 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (err)
- 			return err;
- 	}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 63b712d3d599..9a09f2525b70 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -550,7 +550,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, bool from_bg)
- 		mutex_unlock(&sbi->flush_lock);
- 	}
- 	stat_inc_cp_call_count(sbi, BACKGROUND);
--	f2fs_sync_fs(sbi->sb, 1);
-+	__f2fs_sync_fs(sbi->sb, 1);
- }
- 
- static int __submit_flush_wait(struct f2fs_sb_info *sbi,
-@@ -3478,7 +3478,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
- 				true, ZONED_PIN_SEC_REQUIRED_COUNT, true);
- 		if (err)
- 			return err;
--		err = f2fs_sync_fs(sbi->sb, 1);
-+		err = __f2fs_sync_fs(sbi->sb, 1);
- 		if (!err) {
- 			gc_required = false;
- 			goto retry;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1314b6ccced9..a82065146849 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2131,7 +2131,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	}
- }
- 
--int f2fs_sync_fs(struct super_block *sb, int sync)
-+int __f2fs_sync_fs(struct super_block *sb, int sync)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	int err = 0;
-@@ -2154,6 +2154,25 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
- 	return err;
- }
- 
-+static int f2fs_sync_fs(struct super_block *sb, int sync)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	bool freeze_sync = sync &&
-+			sb->s_writers.frozen == SB_FREEZE_PAGEFAULT;
-+	int err;
-+
-+	/* freeze_super() holds s_umount for write during this sync pass. */
-+	if (freeze_sync)
-+		sbi->umount_lock_holder = current;
-+
-+	err = __f2fs_sync_fs(sb, sync);
-+
-+	if (freeze_sync)
-+		sbi->umount_lock_holder = NULL;
-+
-+	return err;
-+}
-+
- static int f2fs_freeze(struct super_block *sb)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -2807,7 +2826,7 @@ static int f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 	f2fs_up_write_trace(&sbi->gc_lock, &lc);
- 
--	ret = f2fs_sync_fs(sbi->sb, 1);
-+	ret = __f2fs_sync_fs(sbi->sb, 1);
- 	if (ret)
- 		f2fs_err(sbi, "%s sync_fs failed, ret: %d", __func__, ret);
- 
-@@ -2993,7 +3012,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
- 
- 		set_sbi_flag(sbi, SBI_IS_DIRTY);
- 		set_sbi_flag(sbi, SBI_IS_CLOSE);
--		err = f2fs_sync_fs(sb, 1);
-+		err = __f2fs_sync_fs(sb, 1);
- 		if (err)
- 			goto restore_gc;
- 		clear_sbi_flag(sbi, SBI_IS_CLOSE);
+Average kswapd0 CPU and average global Cached were:
+
+ I/O      kswapd0 CPU, normal/DC        Cached MiB, normal/DC
+ 4K             18.45% / 0%                 4830.15 / 686.56
+ 8K             21.60% / 0%                 4862.35 / 591.48
+ 16K            22.75% / 0%                 4905.47 / 625.07
+ 32K            22.05% / 0%                 4945.82 / 561.59
+ 64K            23.46% / 0%                 4920.77 / 639.78
+ 128K           23.16% / 0%                 4971.37 / 693.26
+ 256K           23.68% / 0%                 4956.93 / 668.60
+ 512K           24.25% / 0%                 4972.22 / 663.92
+ 1M             22.01% / 0%                 5001.09 / 705.30
+
+Other global memory means were:
+
+          MemAvailable MiB       Dirty MiB          Writeback MiB
+ I/O       normal / DC          normal / DC          normal / DC
+ 4K      6513.08 / 6382.31     640.48 / 33.93       37.94 / 0.09
+ 8K      6560.77 / 6529.33     690.89 / 43.57       40.84 / 0.54
+ 16K     6587.46 / 6519.94     789.16 / 62.67       61.58 / 4.64
+ 32K     6571.95 / 6566.74     850.48 / 69.14       67.69 / 9.24
+ 64K     6600.64 / 6559.89    856.97 / 134.28      59.60 / 16.19
+ 128K    6627.03 / 6465.10    873.68 / 137.57      60.57 / 41.50
+ 256K    6615.58 / 6541.09    885.98 / 158.15      61.25 / 29.57
+ 512K    6625.52 / 6534.41    900.65 / 139.07      63.65 / 30.35
+ 1M      6677.09 / 6539.89    909.70 / 187.56      51.58 / 33.46
+
+          Active(file) MiB      Inactive(file) MiB
+ I/O       normal / DC             normal / DC
+ 4K       279.57 / 264.13         4426.38 / 183.12
+ 8K       262.32 / 260.97         4472.62 / 182.19
+ 16K      392.09 / 252.95         4392.78 / 195.82
+ 32K      254.30 / 248.44         4554.18 / 187.34
+ 64K      252.73 / 244.94         4545.40 / 267.28
+ 128K     322.02 / 243.95         4530.63 / 298.91
+ 256K     245.47 / 240.02         4586.64 / 303.92
+ 512K     254.75 / 232.05         4591.17 / 288.27
+ 1M       238.88 / 233.64         4638.81 / 341.00
+
+Dontcache left zero target-file pages resident at every size. Normal
+retained about 1.19--1.24 million pages. Normal runs incurred roughly
+15.6 million kswapd page scans and steals per run, while dontcache recorded
+zero. Direct scan and allocation-stall deltas were zero in both modes.
+
+A controlled explicit-dontcache model issued 64 KiB writes for 120 seconds
+at 64, 128, and 256 MiB/s. Both modes sustained all three rates in both
+rounds with no final schedule overrun. Between 0.02% and 0.41% of writes
+completed late, with a maximum schedule lag of 3.3--6.0 ms. Dontcache left
+zero target pages resident. This was a controlled model, not an unchanged
+Xiaomi application.
+
+Buffered read throughput was:
+
+ I/O       normal MiB/s   dontcache MiB/s   change
+ 4K          1825.50          1695.10        -7.14%
+ 8K          1901.46          1847.96        -2.81%
+ 16K         1941.60          1872.55        -3.56%
+ 32K         1960.95          1905.92        -2.81%
+ 64K         1951.35          1886.54        -3.32%
+ 128K        1960.03          1915.82        -2.26%
+ 256K        1976.01          1900.41        -3.83%
+ 512K        1973.31          1911.24        -3.15%
+ 1M          2230.91          2007.82       -10.00%
+
+Dontcache left zero source pages resident in all measured read runs.
+
+The normal-I/O control showed read-throughput differences of +0.67%,
+-0.90%, and -2.58%, and write-throughput differences of -1.75%, +0.33%,
+and +2.33%, at 4 KiB, 64 KiB, and 1 MiB respectively.
+
+As a separate memory-pressure supplement, I tested F2FS on x86-64 QEMU
+with the F2FS images backed by the host NVMe. Each run issued a 1-GiB
+homogeneous sequential write using 8-KiB or 1-MiB I/O. Normal and
+dontcache each ran in three counterbalanced rounds with
+memory.max=255852544, memory.swap.max=0, and formal tracing was disabled.
+Values below are medians of three completed runs.
+
+ I/O    N done  D done   MiB/s N/D        memcg MiB N/D
+ 8 KiB  3/3    3/3      236.259/227.634  160.867/2.075
+ 1 MiB  3/3    3/3      222.232/859.805  155.178/9.098
+
+ I/O    scan N/D            steal N/D
+ 8 KiB  270,821/0           201,227/0
+ 1 MiB  344,267/0           201,013/0
+
+Scan is the number of pages examined by reclaim, while steal is the number
+of pages successfully reclaimed. memcg MiB is average memory.current.
+
+At 8 KiB, dontcache throughput was 3.65% lower. The paired changes were
+-12.7%, +65.8%, and -3.65%, so the direction was not stable. At 1 MiB,
+dontcache throughput was 286.90% higher, and all three paired changes were
+positive: +96.1%, +257.8%, and +295.8%. Average memory.current decreased by
+98.71% at 8 KiB and 94.14% at 1 MiB. Dontcache recorded zero scan and steal
+in both profiles.
+
+Changes since v4:
+
+- allow normal and dropbehind folios to share write bios, following iomap,
+  and set BIO_COMPLETE_IN_TASK when a dropbehind folio joins an existing
+  bio;
+- handle internal write_begin callers that pass a NULL kiocb;
+- add QEMU memory-pressure and mixed-bio measurements.
+
+Wenjie Qi (2):
+  f2fs: complete dropbehind write bios in task context
+  f2fs: enable buffered RWF_DONTCACHE
+
+ fs/f2fs/data.c | 15 ++++++++++++---
+ fs/f2fs/file.c |  2 +-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
 -- 
 2.43.0
-
 
 
 _______________________________________________
