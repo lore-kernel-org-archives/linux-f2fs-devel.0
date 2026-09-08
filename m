@@ -4,110 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 21495C79F82
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Sep 2026 03:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 68AFFC79F99
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Sep 2026 03:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=uxUYpgbVvVnvJrCHcjR7g0MFw0851iG7e/ijZVndmgI=; b=CNJRCLcNy7rGhrFyVcXlCNGXmb
-	T88yNgVw7qsUMfAkhwvd6Jpr3NHQM603U2HG/vHQ+wRX5YPas241rUDQSdlzjMhi7/Durb3VWdJBQ
-	OrJTKyWmT0QKvereDcTEz/yGH3elJuYM7X8MslvSxelPbAa0OrOtdrLKFQMHWdyLSLOY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=gtszExuC1NR4CThPXSYzawwJ/arpYwzk/nNF7n3ZHQc=; b=bOY7AJ/HZfY4cRAfwltQIOis9T
+	TW7otLYy8wOOqhI1SwnQSN86z6ZJQqIKVZV8HtL3jEe7cDiUa7JWwhafqpZPBS1xTcXiRerYUcc7p
+	7PRQi3pF84tFFnu3mMbbfUX/trcW2UDKF6kIWwwGPdOlDR1L1TVzl2IAY3bynmNa7bm0=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x3miO-0000vi-At;
-	Tue, 08 Sep 2026 03:41:41 +0000
+	id 1x3mnD-0005Cl-2k;
+	Tue, 08 Sep 2026 03:46:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao.sigma@gmail.com>) id 1x3miN-0000vc-8k
+ (envelope-from <jnhuang95@gmail.com>) id 1x3mnB-0005Ce-Op
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Sep 2026 03:41:40 +0000
+ Tue, 08 Sep 2026 03:46:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=THA2lQIDtN1IMSLerCBySjfz7rEAuxrQfCu6ehzIHp8=; b=lOxqglAsB5C2eeqON3RF+CWMG5
- 6uyCSwdn+EonuQDaDduVT1Mt13SYQ/4jc6IRSiRc1Iy9RcajTZj0EIP5kCeLs3TLd2ZTIqeEs9VPl
- P7tPeHyLIDwdg8MYSnp/PELIlr9jTvkIVaJgB9uD6q/VmA/jkC4JAUjAn/BDqgMi8Y7I=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=THA2lQIDtN1IMSLerCBySjfz7rEAuxrQfCu6ehzIHp8=; b=jAABU/yiEmh3fRw5jBNYtEQsik
- HeEHpl6Jcw5061j9w5KM0omvCZqc0KXf+rOmWCL14BSG0IYGhdDf2egtU30ltml7wYVIDJ2Cfzps7
- dJFGPem7aYOF43b9/K+Sryzjf9lIUhgqD5Jti0YGqb+QJxMPltFbGYmFee9azOXXoSNY=;
-Received: from mail-pj2-f1.google.com ([74.125.227.129])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=V/tREbVz6WBPH5s5Ljt+Dg7/QxlQoVwLYGCAuo+tfHU=; b=Q6ImZLlrEmV92atXPPWhCDIlwz
+ 6Q5+9l90gkO9IjB/0Fq40mxlksM5AykAiJdxOXzzxnYELACwxuTmi0BsvsRzEhRkmsMffGZY6cF3j
+ NlMId8c59w8oQuFNdXe14MmJZp+6OivMFeYFJFmB5y9USOuUcehDcreeg1Ni+W3scCOA=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=V/tREbVz6WBPH5s5Ljt+Dg7/QxlQoVwLYGCAuo+tfHU=; b=Q
+ jq+1hcxD4RR7Ijc8jJg7A1aexy97oJT7sGIXCzRdqU9/vzQ9OMAKpevj/mT73P6A7xYuZen+cdruG
+ BK3JNhayyDxkpZBnVisVNCvTRwGmIzBh8cvYKB0FfgheGuFw9UvRPtnyiQoAdlQddyFUTg/ubGspi
+ 9lU/5DKZi0wWDYJc=;
+Received: from mail-pg1-f182.google.com ([209.85.215.182])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x3miJ-0003xi-FI for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Sep 2026 03:41:40 +0000
-Received: by mail-pj2-f1.google.com with SMTP id
- d9443c01a7336-2dae660f31bso27718665ad.1
+ id 1x3mnC-00042c-3k for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Sep 2026 03:46:42 +0000
+Received: by mail-pg1-f182.google.com with SMTP id
+ 41be03b00d2f7-cc147d86bebso3435574a12.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Sep 2026 20:41:39 -0700 (PDT)
+ Mon, 07 Sep 2026 20:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788838894; x=1789443694; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=THA2lQIDtN1IMSLerCBySjfz7rEAuxrQfCu6ehzIHp8=;
- b=DlMKBYArsjpaaZhi1EkpeMi95NtKpT9TIxjWYzuHPFY3gg6/yLLRWeivHhvACdAMc4
- 675Qq1nuaV7Mdnadf6Jl7R3q3+v6SyEou8FGhl47MjX2M1/yJlGUEPzBlNmVGi8fC1a0
- 4KIAwDWAqxdpH3bhbk5vIWjcRMQbD6rpaTTEnWRLtJ184IFJWBPk9TrmGjBtKa8akOcj
- 7v/hB8NgobA84oGLMM/U9RVp8yunVwuTqBAnbFZFKQLQgEpRK8W3MxFeZ3ULAjtWSOxJ
- 2PSFAHrDTMdXDGS2ySXYEF99mQCmYqeod4NG8vzWNI6+B6rNvg/t0IZqyvKH/HWSSffx
- ND1A==
+ d=gmail.com; s=20251104; t=1788839196; x=1789443996; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=V/tREbVz6WBPH5s5Ljt+Dg7/QxlQoVwLYGCAuo+tfHU=;
+ b=YTdvbXztkiwN82cTqLQnWTP9kes5gc92y9jLGgpvWOJIqFUq6sFXr0JfnaykVmhs2U
+ sH2yZQ4YgauaYohCWXEZwHsElU/0RR150+o7dAH1tL1ohkG7Kn5xV1uTBdy2NGEkWHWM
+ FtrV+ooi8y2pCDn9jCi9uK5mMCWdEfqPgqYggi3Bfv43jg1StE+FfnR7f2JLl5fv0q3F
+ CHM8hessmh4VswHAIsYW6gbg4jftRcY2sXCoS3DHEHtkvqWtgSUmuHmKFxhlvsvgYK9X
+ A5/zxasFmBLcaNOIk5DZjxD1EfTeutbG5aa/a6Z2YJhfbRgyZrh2/jFFzEGu6jWC+qVZ
+ VPXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788838894; x=1789443694;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=THA2lQIDtN1IMSLerCBySjfz7rEAuxrQfCu6ehzIHp8=;
- b=AE+dg7t3bhYSHh48c/0LzRvU49UlOebgDAFESWSAHfwBZPuONRAu0qdvpJOamsoegI
- 9ASRgrmtpvj81hgYBO7tkmhjQkmpO9yMXaY9pNM326AwsR3+1UJe2c269ZuzuokrVOow
- rdD8eRWNw8rfCUNd9jrSAw2njoqSIYMdyjbICwaI3bOYD1b2OHU6kMiYs9HmGdJA9cG1
- N/ViU1tRkUlaL11SDj0HvAEpFG0vxHdnWzw6e2JhVKmGgvSFC/Zhha/qaZbTyixItANX
- aWONw/poPOcYSJznJOwlDYCadkwYDljU+o8fvVtv0N8pIvjhL2BuyeUlpCQWYluh8nCA
- P7dw==
-X-Gm-Message-State: AFuF++nKLH4yAO5MDdhyoBQLdbZWNFb8gEd/Wg/p+c/ox4aEMGMhs4mt
- aHHSH5QTmoSRS6P0RSA8MtfM0BFdQV0ABu4pitwwhKclJR1EjhgPJUXr
-X-Gm-Gg: AYBFou28w7lQbk2wYV+rdYYmaxK4QT4JYG/j+zIO5VZeGTlNW2MuoJMqgHYRx2qBvtf
- 1LgEMI7cd03qg37nKD1GphcP3K8e5n70td6trTrCNBADWLoRARMpazYWg5pOOkuIH68lvY/Dww5
- URjTDBICZuxcPQOXx7KmkQEZ/a/gIs/kAGyZg3ygjNEgdS4DfpaZqJnifccUOzIPELoxYPRxR3c
- /x9dD81XULjiFEKx3yk7JWaOxO6NIXrufbX3+3WEp6ud9lmcoDW+Uviq61c2o6e8D2dyV+h9YVX
- USdKy3RENhGgYfC+sX4tLShn78TEHYf8yAiECHg4uW0YmkKCU2b5/aIqNyrnJb7u/11QZuSjx6r
- a2Wo8HrrJFNNXB0oQiBbxsGjDaqN+q3oRJGY7cuvseaDJ7je+HZmvNzGmkF07ZEvT4fYABlZ4Bk
- TSvbDfYY82eyQaobkQt6s7a8UMGRBkgWS3McpiMR56lc3JfJp+n1jx1a/tDt/PfMdxvgQhPA24E
- bgxFUQSgJdTFT22Ya6/Y3CZ1g==
-X-Received: by 2002:a17:903:26cc:b0:2db:56da:6a0b with SMTP id
- d9443c01a7336-2db56da6ebbmr159927625ad.13.1788838893763; 
- Mon, 07 Sep 2026 20:41:33 -0700 (PDT)
-Received: from nzzhao-ThinkCentre-M760t.mioffice.cn ([43.224.245.179])
+ d=1e100.net; s=20251104; t=1788839196; x=1789443996;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=V/tREbVz6WBPH5s5Ljt+Dg7/QxlQoVwLYGCAuo+tfHU=;
+ b=TqNwU4DEy3EQdfkxXNUPAv7DitRU93iTsPoLC+iefHxc8KlJwqMX552wX5StGRa4ii
+ ad1b6aKuuuT+ktpp5LAZMsPxYoZj+tZcIfXMGiskFcSmW0gmHMhjRt+V8g0Ffp2nbqwE
+ h89D1+jqP4eWYDU9hcKi3XOmeyfQfkeya7aguaxwKyMYgrxZ/xbKQFrPywBylK+g0Gk3
+ dDhar/grltjf1LdgVKJn2kdQb3kPMn/DcPWq0DacmI9fih0/k8wuID9B0dV68E27gDRZ
+ 3xpM29yEZptM1EZ+7Q1g27Fz8E6YRFY/9z+NTfuYsrIg/BWFnaeRPIKaffudHdLevi7x
+ +0Sg==
+X-Gm-Message-State: AFuF++n/N2ad/NgpcdcI8EVaYJMq/Gjo39glbDN3NEDN8cfT9+xP30+b
+ zylEqye5MI2UUTTOeMg2eJRRDP3M7qVMz3V8pH1PMelyheTmP/cimNHcGqwJdBb6Z2Q=
+X-Gm-Gg: AYBFou3kNL616I4ULELpUVgpwRP1rTqSvc+ar0zjtzCo/W1gSUj3odPdc49Hq6xUAuM
+ wAL5olinwQB1I/N3aIHNqih9JmrZKCUuyMQ0rQ9gCfUpTgWb9+w+pdsBb4n4RaEPbLVB4nr1STG
+ ZjfKYIcBfuXc0qTylkyQIY+fTkXvOkYKH4mxVcyWFw3KZXJDmc7i7JkFudRJ1jkNWxW3MOUsNQV
+ adOKLK2BDy1J4GgD1YWz/J637Pmm8Ihc4gYzRR/TpPBSLpt4dEESldWgp60UwUeTIBuHMlJdrQc
+ XEOSe0m7q4kUuAhkeOQ92Lk5w8hmneM1GeVekLLKF0bLKcCJssbodTbzKF4iUSii+B074Yf3oBp
+ YeCfaCMFWhN+6hzHRkFTbtrdL98DxLFqX0MBfvejnwvvUordt9TQ/LFcWZyblYZsDjZLS/PUpti
+ rSfmgV1mlpVu5cEpuGnXPJluWHqmhu0QxksnojQCAA2tOJJh8R8oJNifIZ60bBdPF+yi+oiqQ6i
+ nI9X0iIK4784lfFREKlDHpPslS/5aAglkjshA==
+X-Received: by 2002:a05:6a21:1b85:b0:3d3:aed2:6f25 with SMTP id
+ adf61e73a8af0-3da216513eamr31644625637.25.1788839196336; 
+ Mon, 07 Sep 2026 20:46:36 -0700 (PDT)
+Received: from 4ce604c9y2.bytedance.net ([61.213.176.58])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2db149ccf2esm51691435ad.73.2026.09.07.20.41.30
+ 41be03b00d2f7-cc4643936d0sm3665213a12.1.2026.09.07.20.46.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 20:41:33 -0700 (PDT)
-From: Nanzhe Zhao <nzzhao.sigma@gmail.com>
-X-Google-Original-From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-To: Daeho Jeong <daeho43@gmail.com>
-Date: Tue,  8 Sep 2026 11:41:26 +0800
-Message-ID: <20260908034126.3251396-1-zhaonanzhe@xiaomi.com>
+ Mon, 07 Sep 2026 20:46:35 -0700 (PDT)
+From: Jianan Huang <jnhuang95@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net, chao@kernel.org, jaegeuk@kernel.org
+Date: Tue,  8 Sep 2026 11:46:30 +0800
+Message-ID: <20260908034630.615415-1-jnhuang95@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CACOAw_zD_a32UCJZ+F7zD61o0K8QAh7QKJVuag4fm98qWy7SRQ@mail.gmail.com>
-References: <CACOAw_zD_a32UCJZ+F7zD61o0K8QAh7QKJVuag4fm98qWy7SRQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1x3miJ-0003xi-FI
-Subject: Re: [f2fs-dev] [PATCH 01/14] f2fs: extend folio state for large
- folio write path
+X-Headers-End: 1x3mnC-00042c-3k
+Subject: [f2fs-dev] [PATCH] f2fs: quota: fix stale lock holder on remount
+ failure
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,38 +115,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <David.Hildenbrand@arm.com>,
- Pengfei Li <lipengfei28@xiaomi.com>, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Ryan Roberts <Ryan.Roberts@arm.com>
+Cc: Jianan Huang <jnhuang95@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, 27 Aug 2026 13:51:06 -0700, Daeho Jeong wrote:
-> ...
->> +	ffs = kzalloc(struct_size(ffs, state, BITS_TO_LONGS(2 * nr_subpages)),
->> +			GFP_NOIO | __GFP_NOFAIL);
+F2FS remount can fail while duplicating a journalled quota file name.
 
-I think I can use f2fs_kmalloc() with __GFP_ZERO here, so that I can
-exercise the failure path with FAULT_KMALLOC injection during debugging?
+f2fs_remount()
+- sbi->umount_lock_holder = current
+- kstrdup(F2FS_OPTION(sbi).s_qf_names[i])
+  : fails
+- free previously duplicated names
+- return -ENOMEM
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2616,5 +2616,7 @@
--	ffs = kzalloc(struct_size(ffs, state, BITS_TO_LONGS(2 * nr_subpages)),
--			GFP_NOIO | __GFP_NOFAIL);
-+	ffs = f2fs_kmalloc(F2FS_F_SB(folio),
-+			struct_size(ffs, state, BITS_TO_LONGS(2 * nr_subpages)),
-+			GFP_NOFS | __GFP_ZERO);
-+	if (!ffs)
-+		return NULL;
+The direct return leaves umount_lock_holder pointing at the failed
+remount context.  A later checkpoint may then wrongly treat another
+context as the s_umount lock holder.
 
-Thanks,
-Nanzhe Zhao
+Clear umount_lock_holder before returning -ENOMEM.
+
+Fixes: eb85c2410d6f ("f2fs: quota: fix to avoid warning in dquot_writeback_dquots()")
+Signed-off-by: Jianan Huang <jnhuang95@gmail.com>
+---
+ fs/f2fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1314b6ccced9..e249ea19beaf 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2864,6 +2864,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 			if (!org_mount_opt.s_qf_names[i]) {
+ 				for (j = 0; j < i; j++)
+ 					kfree(org_mount_opt.s_qf_names[j]);
++				sbi->umount_lock_holder = NULL;
+ 				return -ENOMEM;
+ 			}
+ 		} else {
+-- 
+2.43.0
+
 
 
 _______________________________________________
