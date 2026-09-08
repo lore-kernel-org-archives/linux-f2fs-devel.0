@@ -4,110 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 178D7C79F9E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Sep 2026 13:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14817C79F9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Sep 2026 00:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xizlAgzlYjHXEs3ovIkr0BxhMqpc8I5/pnpKPioqe/0=; b=QA5LsoZqvuoiE/xSoHNuMXakI8
-	+UeNs9MQS2a8+4Wf1UiBrfXIWotyFO8XmTkZ2Al/2T4mqleqOYXhsyc115KgBjPUx37xvVmPjzjCM
-	rnF9qlDSuhQ5hQ3cJDDGnOD3IKarMCzFQ24ygyAL/f3L7K0ZK+P+9eNsUL6OlPlcfXBU=;
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=DQ44Wpj7l8b0yh94NFOnde2fzAGN/jIP8MmZN4g4KDY=; b=hq8tYzlE8PVT31KwhFt39/MCL/
+	H4Owtk+DeWCAm2bzZoBVyjBXo+jeGMhu+g/ndR1UDTBXneQZ1zL91nSKAllmunYgHgnTxLpE3rX8O
+	yezXZ3SZgZnonzJLof3DJtMKKFiXlD39Pn85Sk9seIOwRVpEXj+9xR4JIXyFxg7g8iD0=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x3Z0U-0002Jv-Re;
-	Mon, 07 Sep 2026 13:03:28 +0000
+	id 1x3jVM-000524-Ij;
+	Tue, 08 Sep 2026 00:16:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao.sigma@gmail.com>) id 1x3Z0T-0002Jn-SR
+ (envelope-from <chao@kernel.org>) id 1x3jVL-00051f-4m
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Sep 2026 13:03:27 +0000
+ Tue, 08 Sep 2026 00:16:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=X94qvMDwd78sy0TddN+J3BHx1gatheoLmhmvtOWGjgM=; b=TLv9dIZv2HuBMPOeyRg0mSEPq/
- 870qWtDHLxzcms7PhUvcI0Jc42F17Sl2XjLd25ioYcpg+I+L7Vb3EU26t8XlzcY6GxgMjACOw9OlB
- hWQWWbUSt1ru8yvPslchGFFd/2J1U3WrVfo8N9ZTH8M/a+mi+J8PxP1S90ojKOROEQJA=;
+ bh=u6vi8Rb6/gBzlGLkta4lZeRt2WHuRcBjCNqaFrwusn8=; b=Y9yLwokRyo1/VHsWFfN6dxLeq0
+ +z0Eq4GrAg/z5UjEQGUL4yy5bMIcKpKeXFz3GXer9PYRYz9WKpPdHs9PbM5wwImJ0tVBuGVrVwZwY
+ lBrw6VHOAFdYbCh8C+gOfKXxVRN49K33OrEygVWq6OiFZsIGWn0ry97dDV6tVuW16QOY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=X94qvMDwd78sy0TddN+J3BHx1gatheoLmhmvtOWGjgM=; b=meW6xrh2RZAPTPsjptWmIQq4xh
- wYDVKY4hCyNhZ/wB6OyOyNstKXcs8vPAVBxJFnt93E9C7YXfmS4e3TCpUh0l3asBOJvKAlMNeXmxh
- vubrA5QCbfEpkBrh38rHJ0KY1tvJvaQOkBNRMcF+q4jxpbaEex7uu/UE6wfMKaqy2VOU=;
-Received: from mail-pj2-f11.google.com ([74.125.227.139])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x3Z0Q-00053S-2h for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Sep 2026 13:03:27 +0000
-Received: by mail-pj2-f11.google.com with SMTP id
- 98e67ed59e1d1-398a384b5f7so1961901a91.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Sep 2026 06:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788786200; x=1789391000; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=X94qvMDwd78sy0TddN+J3BHx1gatheoLmhmvtOWGjgM=;
- b=p+ICd7B0dQrVPWUzYefm5IuHT0zBo5ZU8yOkp/PQrZHeo1l3GUoISNpHvmzt42bunh
- +0Pv16cmkeutuM3Vw2B4Qr2weyhR88fw0gwLU2Blvh2bbExdDABPzfoe9eH5adxwBJwa
- sRNRWK4NGq5RMWUK1Fa5f5QXrPafWvAP9zFYZsoNlNQGKeA7wK0M8eADRunxzjiMohFo
- koj3Nt1QPz6NLJtXaXMXU+qtcoaQuQOVNapCLkZ/sKpncqDNs5beMSDZhSt9hEg8vJ/t
- qvemkan8J0nreEMIAn1vIjleMI5ezqWYdIJMSkYCZ+tkcJzGCUA4Q5iycDBtthjKB2bQ
- 5C+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788786200; x=1789391000;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=X94qvMDwd78sy0TddN+J3BHx1gatheoLmhmvtOWGjgM=;
- b=cJ3F4U0XlDBh/ord6osMGt20OswlUQIHgogWvygczrumG2fydksWUs436gYoDpgI8i
- YEZj+cmeqTbI6n8k2wWvlr2CBjmJo1xZ5KYdurfDIToIyBjMddIvN6TsKs5h7c2+BapF
- bh0qWGmtZBK67AipMfZ72NrDSebVvb+xIt+shrTw2VyAT3q1RyKsJfFOFqropFm/+wt9
- a+1BLh1IeDhuFsWNkTUbZ71V/uipF1rLxVIAQ32aub/H2VrzT691ox9pgvZhTD5S2laB
- xg6WG0o+vSqLq81n6RmPl+U90BoJ9ucHV8JDgl6SdJDO2SZbYZ2UB8tjokM5gr4gJB+5
- 4Wwg==
-X-Gm-Message-State: AFuF++k4A91NkKqIMdzL0UxmuabzBn/yC1+d7dIEDUeMhQyEBYjM+HuG
- xovMeVQ/g36IGm8uFhq2KeANwE5WcTGnIMx7/EJnuuQ35ENStuhr52y8
-X-Gm-Gg: AYBFou0+dThoxPdOrPH4vUrBX7gtBmffd6hEuvGx/1teuzkuQ956DnlmKtVjXU/YE4n
- RAcEWNLWqjnah+HeaZI3dSPcIKLN0D9E2jrN+jDv8zgO0R2zlZTtPo47zu36DziJH38HcVSkQKL
- bAQc0DhqW3Ypcl/HKxGQRYtISoyOeKH0m/HHKQWPVXPRDVyIgeMr9h62GsHNHKKwn1/4ZVQXngQ
- jkNG0fc+KcvRceKppTAdiZa69rUM4/nWH3ZyVrQRSUn/dHEtrfQOTtfD3vRjUF3rpkwNi7t7apf
- miBgLg1ZRHD7UkxMo/wVe7LrB4oEJeEmvF+hfYLdRxHeh49UxNJ//ZF8S23dT4rr0tvAJYNr9NN
- OdDpc04SaCLM3D65VZKz8eD0EXn3REM3On2qppai2n/KnX5m0XZXMyGHcdoE8nQU0qso66XFV8W
- luqx+R9ubn8aqdA+V7kl1n7LR3pj+c01WGEGJIjgSqyPr3Car/7+WH/c201a3g07Fm7tjLsy6Q1
- ag7pzpg0S0lBFe4FYELqN64T/qsoPiFO2+h
-X-Received: by 2002:a17:90b:1343:b0:38e:9eb2:9d43 with SMTP id
- 98e67ed59e1d1-39b261b1bcfmr40426102a91.16.1788786199885; 
- Mon, 07 Sep 2026 06:03:19 -0700 (PDT)
-Received: from nzzhao-ThinkCentre-M760t.mioffice.cn ([43.224.245.179])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b08cacba5sm28259693a91.12.2026.09.07.06.03.16
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 06:03:19 -0700 (PDT)
-From: Nanzhe Zhao <nzzhao.sigma@gmail.com>
-X-Google-Original-From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-To: Chao Yu <chao@kernel.org>
-Date: Mon,  7 Sep 2026 21:03:13 +0800
-Message-ID: <20260907130313.2626386-1-zhaonanzhe@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <83fe187e-e3e8-4328-bbbf-a6751873b9e0@kernel.org>
-References: <83fe187e-e3e8-4328-bbbf-a6751873b9e0@kernel.org>
+ bh=u6vi8Rb6/gBzlGLkta4lZeRt2WHuRcBjCNqaFrwusn8=; b=caAplBPKi5qZFMqm8Oi5jKFHvp
+ iw3VF9bJuFp9gtwoWE4k4Oiq0OtPsmfGh33k+6S5uP6XPmKukS1XEJMpLgOJmhk/WbrdzFwOrl3mJ
+ n58UbckZk7HD0BPOdo27+VroXopOrBgr2Joq26eYPctyn7ixNU1QgxKeXwgvpNM9P0TE=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x3jVH-00008O-7r for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Sep 2026 00:16:00 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 98B9C601DB;
+ Tue,  8 Sep 2026 00:15:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DA21F00A3A;
+ Tue,  8 Sep 2026 00:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1788826553;
+ bh=u6vi8Rb6/gBzlGLkta4lZeRt2WHuRcBjCNqaFrwusn8=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=i1rXJ6DkJj2sMXRT3npeM6KrYNLTadUhqDz7uMKitdmKGXc4IY+0oKdBjPNXXJw1H
+ BJVHQWtvsh6G0gdgf3hKefVzpaqe1QyHA/7z8JEQK8Ne95SdeleOzKKKUQJQbct+Na
+ ELlLi6Y6av2MxaUTuWjbHFFkxMPs4eIwAp1M6/74VidlDoQHogNYiqfAXWoTjsDBq4
+ zO+52jfZ66AxotnRLF7wKV5ZSWu2C5zWiRkf5Letyvpdhpbx9ui8nSEDuTpm0vZZSH
+ 4LonR/3pSyR16zE6JC3bwyDVTQTXEFfzpBb2BRFZGOtiMXLbGVv2OE3qb9nl46X4tv
+ 0UmPmRq+MrMxQ==
+Message-ID: <3c4629c6-536b-44de-add4-39df3381e7d1@kernel.org>
+Date: Tue, 8 Sep 2026 08:15:49 +0800
 MIME-Version: 1.0
-X-Headers-End: 1x3Z0Q-00053S-2h
-Subject: Re: [f2fs-dev] [PATCH 03/14] f2fs: support regular file buffered
- writes
+User-Agent: Mozilla Thunderbird
+To: jiucheng.xu@amlogic.com, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260907-origin-dev-v1-1-85ae7ebc8c98@amlogic.com>
+Content-Language: en-US
+In-Reply-To: <20260907-origin-dev-v1-1-85ae7ebc8c98@amlogic.com>
+X-Headers-End: 1x3jVH-00008O-7r
+Subject: Re: [f2fs-dev] [PATCH] f2fs: force out-place update for all writes
+ on compressed file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,59 +87,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <David.Hildenbrand@arm.com>,
- Pengfei Li <lipengfei28@xiaomi.com>, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Ryan Roberts <Ryan.Roberts@arm.com>
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: jianxin.pan@amlogic.com, tuan.zhang@amlogic.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, tao.zeng@amlogic.com
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, 27 Aug 2026 16:56:53 +0800, Chao Yu wrote:
-> +	/* Wait for pending drops back to bias which indicates all bio have completed. */
-> +	while (READ_ONCE(ffs->read_pages_pending) != 1)
-> +		f2fs_io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
->
-> Suspect there will be potential performance issue, as timeout interval
-> is large.
->
-> Looks hacky.
+On 9/7/26 19:35, Jiucheng Xu via B4 Relay wrote:
+> From: Jiucheng Xu <jiucheng.xu@amlogic.com>
+> 
+> For compressed file, compressed write may fail and fall back to raw
+> write.
+> 
+> -Thread A                                         - Thread B
+>    - f2fs_write_multi_pages                          - f2fs_down_write(&sbi->cp_rwsem);
+>     - f2fs_write_compressed_pages                    - ...
+>      - f2fs_trylock_op                               - ...
+>       - f2fs_down_read_trylock(&sbi->cp_rwsem);      - ...
+>     - f2fs_write_raw_pages                           - ...
+> 
+> Thread B acquires the lock first, which causes Thread A to fail lock
+> acquisition and fall back to raw-data write.
+> IPU_FORCE is enabled on small-capacity storage devices (< 16GB),
+> so f2fs_write_raw_pages() overwrites the original compressed data
+> in-place.
+> 
+> The in-memory node has been updated with raw-data addresses, while the
+> node metadata stored on eMMC still remains in compressed state.
+> If a power-cut occurs before the node is flushed to disk, on-disk
+> inconsistency arises: disk data is raw, yet metadata treats it as a
+> compressed cluster, leading to decompression failure.
+> 
+> To eliminate this risk completely, force out-place update for all
+> write operations on compressed file.
+> 
 
-Thanks for the review.
+Cc: stable@kernel.org
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
 
-Maybe we can switch this to an event-driven wait instead:
+> Signed-off-by: Jiucheng Xu <jiucheng.xu@amlogic.com>
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ includes
- 	#include <linux/fiemap.h>
-+	#include <linux/wait_bit.h>	/* wait_var_event_io / wake_up_var */
- 	#include <linux/iomap.h>
-@@ f2fs_submit_page_read_sync()
--	/* Wait for pending drops back to bias which indicates all bio have completed. */
--	while (READ_ONCE(ffs->read_pages_pending) != 1)
--		f2fs_io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
-+	/* Wait until all bios have completed (pending drops back to our bias). */
-+	wait_var_event_io(&ffs->read_pages_pending,
-+			  READ_ONCE(ffs->read_pages_pending) == 1);
-@@ f2fs_finish_read_bio()
- 			ffs->read_pages_pending -= nr_pages;
- 			finished = !ffs->read_pages_pending;
- 			spin_unlock_irqrestore(&ffs->state_lock, flags);
-+
-+			/* Wake f2fs_submit_page_read_sync() waiters (if any). */
-+			wake_up_var(&ffs->read_pages_pending);
- 		}
-
-However, this requires an extra wake_up_var(&ffs->read_pages_pending)
-in f2fs_finish_read_bio(). I'm not sure whether adding an extra
-wake-up in the completion callback is a good practice - what do you
-think?
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-Nanzhe
 
 
 _______________________________________________
