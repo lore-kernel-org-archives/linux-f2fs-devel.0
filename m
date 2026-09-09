@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C9AEBC79F82
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 01:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 334C8C79FBB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 01:37:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Y+M7OzzYe0+asVUua4CvYTxtTT8fu6WsuHQ0ygDmRCk=; b=FYfl7wQYHKsLQORPgfmOGCoGAT
-	vOx7hBubizxdVJuNp94nujr+PXQMeuhZz1ezACno85kH0Y4DQU4ckxAmLB+TH74ZxQR0HMSSUtxbl
-	waEAN0GHKWzYUhH+revQSQhdZ5TVZeXXc4jJ61tziy/sNeHbEuQwiab0B321p6JkW2DI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=7ft8SQg8CGaZZB+d1W7xAwWYm9ywP0BLSjqGG7usoW4=; b=aVDARmgLaAV1qca3QVe/QWvXpp
+	ZMDGx/H3XRVMbyFzsNroP4xG0kU3hJroViqgNjCvXm1UuEW5a69graBgniJcpO2k/MHpTL7TAZoDW
+	68ULFlzaI6zL9f+VuS1ZS4/uMM+UZEUaggnoOjuCWlvpCd8stJT0/XwBPPQek9WZu3NE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x47FI-0007Qs-NU;
-	Wed, 09 Sep 2026 01:37:05 +0000
+	id 1x47FL-000085-51;
+	Wed, 09 Sep 2026 01:37:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x47FD-0007Q3-TN
+ (envelope-from <chao@kernel.org>) id 1x47FG-00006u-VY
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 09 Sep 2026 01:37:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ltvgpC+nMnPE/iQAztVfrc8xC7sSszBpHSlZ/oBovFQ=; b=TsSyL6+dNNRjJc3l1nvonzQfra
- WoVcJ45+uY/Pe1CqNuj+l5JYFHT+InSJ0K5s0VPzaLKWK37F7VrXJSEFZM2Mv9kxd6ldZVg726JDM
- 8OSjlrQEDYKo2sORe5PJJky6JCGRt5+Z8nZHZKqj3Zb0bQ4CxXcpyKEDpN2BU3fZOVzE=;
+ bh=XllkS7EiYFyAdu5uEytbrlt0OEplESq0dKQpkQz3uPk=; b=P64X9sCOMnWmPh5IhqA1c33Hcj
+ 09AjQW9AxL9kOO1JR3rDcYQp2nu0gTH9nRTkr7TWExCu//I98BXhyoLgHv5cnuXSwHNIPdQ82rB4H
+ SRBPyMhrI03ZBrr/7Fy6aHEeEanrg4P/xLow2DYMS4h5WLhz4o+JLeS8Dons2g60G+3c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ltvgpC+nMnPE/iQAztVfrc8xC7sSszBpHSlZ/oBovFQ=; b=XzAXKm9MGdg+pwaK/MMQsQpZU9
- 8MpC1i6MlKyjewXveV1NvwYY4MWh1Q3xRFf1xrxxRV+GmU56lWUzLVxIbHIXMjT5s2U6LfZehCaBa
- OOwlF46N2O+Sja8M8nqjkRvMSd+jzK7TGtw5qi4KttLK2ipGGN8aFDRjaj9Nk8YzInyQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=XllkS7EiYFyAdu5uEytbrlt0OEplESq0dKQpkQz3uPk=; b=QgowHvG1IEN+LTPhQX57+f3bid
+ 3frO68NEhpJdxAb2ak0cqr6xFJoHjFfvcYM/upYoUZXQahfOZPqY//zt3aiFcVwy6jt7Ytw1WJxqp
+ sJaaH/+blG/QhT8QlGg5J9EO8SV9KMWlXAu8f+42Wlf0/kSfKNw+4g7DcDAFOhI1VDGE=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x47Eu-0000XA-RA for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 01:36:42 +0000
+ id 1x47Ey-0006xQ-PE for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Sep 2026 01:36:45 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 89E2D41709
+ by tor.source.kernel.org (Postfix) with ESMTP id 38FF3601FF
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  9 Sep 2026 01:36:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5B81F00AC4;
- Wed,  9 Sep 2026 01:36:34 +0000 (UTC)
+ Wed,  9 Sep 2026 01:36:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C8F01F00A3E;
+ Wed,  9 Sep 2026 01:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788917795;
- bh=ltvgpC+nMnPE/iQAztVfrc8xC7sSszBpHSlZ/oBovFQ=;
+ s=k20260515; t=1788917798;
+ bh=XllkS7EiYFyAdu5uEytbrlt0OEplESq0dKQpkQz3uPk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=M5CK88mOZtNkELgxKn5yEO+4q0RRP5jqVciHPs4ZOwxBIJCbmEMxdRkV1//A6KGnb
- uzHstXruzzngP+o43f2HpVXyB4GynlAj+ce+QeBgyC0i2yYBblgoCtQ0VEr/hcmTsG
- eYGlbuuDW4uJ2XkKGnboWgyeBU2lvBJXnm7QGQ81sV19A/VNHFSbvjgnENyJ/9HJ15
- w74pcUwDGloR/awjWoEmVMuaw/u00yS/YvS7x/Jkw1W662ZWG0k9s1y0Q0n3cWg9cP
- lg02QQwKM5lsHYKF33n3tU4mua2hnlp2YC5cbNpQYRJhsZTdeB1xNFc4lbbPA069Fn
- dOuWSyTVaWSLA==
+ b=ZUsvwKPBVPdyHkoJWI7Yvvthu6Rb1EDrS7FbHVt25MBI6cuZZpxqJqDF/MFO8EZ/9
+ iFc0CQlTMkLYdPBew2DiabYCZDTuCeYVwcN3y+b/NFVkG7+jw1scHmrI8FnH3bOZ/Q
+ Fve2x0qGelwlbiDGf94mktI6skCdgWcqibE6Yz2UTLOuBouljOA0xxcjcGybPcqN6P
+ cL3vYPLu/L0uuxbZEEt3zbsokU0o0/6P4lTcBXxyOhW04AO2oVCX5oeSgDP8aERpDI
+ 0vtc/H/RuZGRRVqy4P7U4pYuxkK32vzfv4up9MUmannIhalUAjtZ8k3GbqBgfnJCHR
+ HF8fJzyhBBjVw==
 To: jaegeuk@kernel.org
-Date: Wed,  9 Sep 2026 09:36:02 +0800
-Message-ID: <20260909013611.3418568-4-chao@kernel.org>
+Date: Wed,  9 Sep 2026 09:36:05 +0800
+Message-ID: <20260909013611.3418568-7-chao@kernel.org>
 X-Mailer: git-send-email 2.55.0.979.g7e5102b832-goog
 In-Reply-To: <20260909013611.3418568-1-chao@kernel.org>
 References: <20260909013611.3418568-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1x47Eu-0000XA-RA
-Subject: [f2fs-dev] [PATCH v6 03/12] f2fs: cache: introduce shrinker
+X-Headers-End: 1x47Ey-0006xQ-PE
+Subject: [f2fs-dev] [PATCH v6 06/12] f2fs: cache: initialize node cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,170 +95,118 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <chao@kernel.org>
 
-This patch integrates the metadata cache into the F2FS memory shrinker
-subsystem to reclaim clean, unreferenced cached blocks under memory
-pressure.
+This patch introduces node_blocks in f2fs_sb_info structure, initializes
+and destroys the node cache during filesystem mount and unmount.
 
-It implements f2fs_shrink_cache() using a 3-phase cache reclamin method:
-1. isolate clean entries from lru list
-2. truncate from radix tree under lock
-3. splice un-reclaimed entries back
-
-And hooks the new interface into f2fs_shrink_count() and f2fs_shrink_scan().
+It also introduces helper wrappers for node cache operation, and registers
+node cache into the memory shrinker and writeback kthread.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/cache.c    | 89 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/cache.h    |  3 ++
- fs/f2fs/shrinker.c | 12 +++++++
- 3 files changed, 104 insertions(+)
+ fs/f2fs/cache.c |  9 ++++++++-
+ fs/f2fs/cache.h | 11 +++++++++++
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/super.c |  9 ++++++++-
+ 4 files changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-index 473b8c272ffb..5524c0c81c83 100644
+index 772fe0ad0f90..e65f8e619d2b 100644
 --- a/fs/f2fs/cache.c
 +++ b/fs/f2fs/cache.c
-@@ -533,3 +533,92 @@ void f2fs_destroy_cache(struct f2fs_cached_block_list *cache)
- 	f2fs_put_cache(entry, true);
- 	goto next;
- }
+@@ -620,7 +620,14 @@ static unsigned long f2fs_do_shrink_cache(struct f2fs_cached_block_list *cache,
+ unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
+ 					unsigned long nr_to_scan)
+ {
+-	return f2fs_do_shrink_cache(META_CACHE(sbi), nr_to_scan);
++	unsigned long freed;
 +
-+static unsigned long f2fs_do_shrink_cache(struct f2fs_cached_block_list *cache,
-+						unsigned long nr_to_scan)
-+{
-+	struct f2fs_cached_block *entry, *next;
-+	LIST_HEAD(dispose_list);
-+	LIST_HEAD(keep_list);
-+	unsigned long freed = 0;
-+	unsigned long scanned = 0;
++	freed = f2fs_do_shrink_cache(META_CACHE(sbi), nr_to_scan);
++	if (freed >= nr_to_scan)
++		return freed;
 +
-+	/* Phase 1: Isolate candidate entries from LRU list into dispose_list */
-+	spin_lock(&cache->list_lock);
-+	list_for_each_entry_safe(entry, next, &cache->lru_list, list) {
-+		if (scanned >= cache->num_entries)
-+			break;
-+		if (scanned++ >= nr_to_scan)
-+			break;
-+
-+		/* If accessed, give it a second chance to rotate to tail */
-+		if (f2fs_cache_test_and_clear_referenced(entry)) {
-+			list_move_tail(&entry->list, &cache->lru_list);
-+			continue;
-+		}
-+
-+		if (f2fs_cache_test_dirty(entry) ||
-+		    f2fs_cache_test_writeback(entry) ||
-+		    f2fs_cache_test_locked(entry))
-+			continue;
-+
-+		if (f2fs_cache_refcount(entry) != 1)
-+			continue;
-+
-+		list_move_tail(&entry->list, &dispose_list);
-+	}
-+	spin_unlock(&cache->list_lock);
-+
-+	/* Phase 2: Process isolated candidates one by one */
-+	while (1) {
-+		spin_lock(&cache->list_lock);
-+		entry = list_first_entry_or_null(&dispose_list,
-+						struct f2fs_cached_block, list);
-+		if (!entry) {
-+			spin_unlock(&cache->list_lock);
-+			break;
-+		}
-+		f2fs_cache_get(entry);
-+		list_move_tail(&entry->list, &keep_list);
-+		spin_unlock(&cache->list_lock);
-+
-+		if (!f2fs_trylock_cache(entry)) {
-+			f2fs_put_cache(entry, false);
-+			continue;
-+		}
-+
-+		/* the entry has been truncated */
-+		if (!entry->cache) {
-+			f2fs_put_cache(entry, true);
-+			continue;
-+		}
-+		/*
-+		 * at least there are shrinker, radix tree and another user
-+		 * has referenced the entry.
-+		 */
-+		if (f2fs_cache_refcount(entry) >= 3) {
-+			f2fs_put_cache(entry, true);
-+			continue;
-+		}
-+
-+		f2fs_do_truncate_cache(entry, false);
-+
-+		if (f2fs_put_cache(entry, true))
-+			freed++;
-+	}
-+
-+	/* Phase 3: Splice un-reclaimed entries back onto cache->lru_list */
-+	if (!list_empty(&keep_list)) {
-+		spin_lock(&cache->list_lock);
-+		list_splice_tail(&keep_list, &cache->lru_list);
-+		spin_unlock(&cache->list_lock);
-+	}
-+
++	freed += f2fs_do_shrink_cache(NODE_CACHE(sbi), nr_to_scan - freed);
 +	return freed;
-+}
-+
-+unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
-+					unsigned long nr_to_scan)
-+{
-+	return f2fs_do_shrink_cache(META_CACHE(sbi), nr_to_scan);
-+}
+ }
+ 
+ static int f2fs_cache_writeback_kthread(void *data)
 diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
-index 6408f8cb5723..d5aa89d59474 100644
+index 57c6147c82da..9d4d7eca4adb 100644
 --- a/fs/f2fs/cache.h
 +++ b/fs/f2fs/cache.h
-@@ -205,4 +205,7 @@ void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
+@@ -197,6 +197,7 @@ int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi);
+ void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
+ 
+ #define META_CACHE(sbi)		(&(sbi)->meta_blocks)
++#define NODE_CACHE(sbi)		(&(sbi)->node_blocks)
+ 
+ #define f2fs_find_meta_cache(sbi, blkaddr)		\
+ 	f2fs_find_cache(META_CACHE(sbi), blkaddr, 0)
+@@ -205,6 +206,16 @@ void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
  #define f2fs_truncate_meta_caches(sbi, start, len)	\
  	f2fs_drop_cache_range(META_CACHE(sbi), start, len, true)
  
-+unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
-+				unsigned long nr_to_scan);
++#define f2fs_grab_node_cache(sbi, blkaddr)		\
++	f2fs_grab_cache(NODE_CACHE(sbi), blkaddr,	\
++	F2FS_CACHE_LOCK_CREATE)
++#define f2fs_find_node_cache(sbi, blkaddr)		\
++	f2fs_find_cache(NODE_CACHE(sbi), blkaddr)
++#define f2fs_invalidate_node_cache(sbi, blkaddr)	\
++	f2fs_drop_cache_range(NODE_CACHE(sbi), blkaddr, 1, false)
++#define f2fs_truncate_node_caches(sbi, start, len)	\
++	f2fs_drop_cache_range(NODE_CACHE(sbi), start, len, true)
 +
- #endif /* _LINUX_F2FS_CACHE_H */
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index e3e0a7e89406..baa09bc63585 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -37,6 +37,11 @@ static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi,
- 				atomic_read(&eti->total_ext_node);
- }
+ unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
+ 				unsigned long nr_to_scan);
  
-+static unsigned long __count_cache(struct f2fs_sb_info *sbi)
-+{
-+	return META_CACHE(sbi)->num_entries;
-+}
-+
- unsigned long f2fs_shrink_count(struct shrinker *shrink,
- 				struct shrink_control *sc)
- {
-@@ -68,6 +73,9 @@ unsigned long f2fs_shrink_count(struct shrinker *shrink,
- 		/* count free nids cache entries */
- 		count += __count_free_nids(sbi);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index cceb14077b42..6b89cc56ef87 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2108,6 +2108,7 @@ struct f2fs_sb_info {
  
-+		/* count generic cache entries */
-+		count += __count_cache(sbi);
-+
- 		spin_lock(&f2fs_list_lock);
- 		p = p->next;
- 		mutex_unlock(&sbi->umount_mutex);
-@@ -120,6 +128,10 @@ unsigned long f2fs_shrink_scan(struct shrinker *shrink,
- 		if (freed < nr)
- 			freed += f2fs_try_to_free_nids(sbi, nr - freed);
+ 	/* f2fs internal cache */
+ 	struct f2fs_cached_block_list meta_blocks;
++	struct f2fs_cached_block_list node_blocks;
  
-+		/* shrink generic cache entries */
-+		if (freed < nr)
-+			freed += f2fs_shrink_cache(sbi, nr - freed);
+ 	/* internal cache flush thread */
+ 	struct f2fs_cache_kthread cache_thread;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 53f3b548e201..c9cae916ddd5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2092,6 +2092,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	sbi->node_inode = NULL;
+ 
+ 	f2fs_destroy_cache(META_CACHE(sbi));
++	f2fs_destroy_cache(NODE_CACHE(sbi));
+ 
+ 	/* Should check the page counts after dropping all node/meta pages */
+ 	for (i = 0; i < NR_COUNT_TYPE; i++) {
+@@ -5283,10 +5284,14 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (err)
+ 		goto free_page_array_cache;
+ 
++	err = f2fs_init_cache(sbi, NODE_CACHE(sbi), F2FS_NODE_CACHE);
++	if (err)
++		goto free_meta_cache;
 +
- 		spin_lock(&f2fs_list_lock);
- 		p = p->next;
- 		list_move_tail(&sbi->s_list, &f2fs_list);
+ 	err = f2fs_get_valid_checkpoint(sbi);
+ 	if (err) {
+ 		f2fs_err(sbi, "Failed to get valid F2FS checkpoint");
+-		goto free_meta_cache;
++		goto free_node_cache;
+ 	}
+ 
+ 	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
+@@ -5612,6 +5617,8 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ free_devices:
+ 	destroy_device_list(sbi);
+ 	kvfree(sbi->ckpt);
++free_node_cache:
++	f2fs_destroy_cache(NODE_CACHE(sbi));
+ free_meta_cache:
+ 	f2fs_destroy_cache(META_CACHE(sbi));
+ free_page_array_cache:
 -- 
 2.49.0
 
