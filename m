@@ -4,79 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 68C44C79FB6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 11:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65A50C79FAD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 11:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=6Y908LHRM2krECfzc5CK3kdMXWgsfeVhERAmyCeEYBE=; b=STXQ2Duc1/WIMYF6cHsDJbCfjt
-	wUX7JfOLFwiF28kZsMeHJ2UeO+WSfzAnNJ6z/d3F/PoQntwv5ZblBWkzAYrzZsusY748DF4pqMq6i
-	CvgvwxFhR/6iPh4340luBAzkrdW34YgtElPBlpo267jxnCoKM4Wa6xBsep6PQezsDwRY=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=XRrB+1C+lBPsZIFpjiDw5I9GhAU8/17Bk0Vg2lJF/ZU=; b=G5MCX5IAU1daljGZdZJ31GVQxU
+	uFwHkmfuRlsiLYELLm8XnFAvSBEG1e/ny+whVLDB40/9zuRKDNRUG13LqtvJxKKGjM4Mj5NPCqNT4
+	QnJRgZIodRBUHmu+HWg66XQsIXzkNEDRy27A3gQtD4UX7rcNKGJABqk5Wbvt70FHunFg=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x4Ghs-0003GA-8Y;
-	Wed, 09 Sep 2026 11:43:12 +0000
+	id 1x4GlG-0000MG-Ts;
+	Wed, 09 Sep 2026 11:46:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x4Gho-0003G1-KC
+ (envelope-from <jnhuang95@gmail.com>) id 1x4Gl2-0000L6-1K
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 11:43:09 +0000
+ Wed, 09 Sep 2026 11:46:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L5im36+TwSUdsIaIoTknqNBw9/Rj9pDS+TlAizK6I1o=; b=dw8DPkD0183p6529d451eXRbSL
- wBpat+jDnGHYaRsIFyK9oV/WKKQitgUJx2rESKGKVVMs95fQ6iqSY9c3nIsGPhAGXXJncHpv7ydQf
- G/uXV8p7bqNM92pGHZuVhsDNTAgHVrOOHvH3M6RBNzVsbEqJW1R8dbFtfDSk05eHtrpY=;
+ bh=FzPGH/onlDkeao3FKtNRGyfogFTCwrFBw7yRpYpNoZw=; b=Nu/hPbQ9+WujKnEdMnn98MMbsj
+ h/9CFPWHnyQ3uH6F9NuPnsnuvIcRowmvjqHXP8XT1OkpD64EVf0XodmMawrncHaCuvW9b5uHGb8tj
+ bIrCMl/KObYJsx9PGqkwiE35aneQlTMrGXgTvB7Cm7QAfvTVJdW0qJXpJ0dbZCfo1V+o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=L5im36+TwSUdsIaIoTknqNBw9/Rj9pDS+TlAizK6I1o=; b=Dv7LHE1tFFhhq1iYZYJi3jCiFN
- L2N+5aWsinJJHK2N9pXSUDYs5CCBfXy/Wm0fdfoHmUQEbVJxcvtKWFYWpMk5IEsFBWMNCqcyuCDMZ
- M6o1OgH7flUkkt/iqy0t6kIFmqj0vLsW3zatVPOMNHw1oYbuh2DUv4vGAJtryqx3GZLw=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x4Gho-0007hG-1b for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 11:43:09 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 7C9BB43768;
- Wed,  9 Sep 2026 11:43:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D821F00A3A;
- Wed,  9 Sep 2026 11:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788954182;
- bh=L5im36+TwSUdsIaIoTknqNBw9/Rj9pDS+TlAizK6I1o=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=ZHi9THzfg/aU++nHuZqH0xcWmTNlL3TolboXS1+esc52ASBXy6B/wX6+QdB6ok36q
- Ek/LsVFXf5rcgE1GfmfDDRU5a4mWzmMugdCOVd6W1n/fIytsQqqx3rvBnI251i/gg/
- NLPwsfDcjFnNZW1pY49PU3ZA8hK9dLTYkSI9LSgNL4ocMK6i/d/FV7nWOnti0tO0em
- aQC6SfEjJlVtW4srdYo7g8PHN/ltSDmTZ75sMnkqJ2O3HCx7RWiwfY7HQQBy+M8ZhX
- gYKdTXI2wwv5H5c4q0aQex2WKNCcE7JlXU5joVcL/Xujn4thEx4riB5aLqIETzg0i3
- TJKskANxxt8Lg==
-Message-ID: <f8098f66-9439-4408-99ee-46538becacc3@kernel.org>
-Date: Wed, 9 Sep 2026 19:42:59 +0800
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=FzPGH/onlDkeao3FKtNRGyfogFTCwrFBw7yRpYpNoZw=; b=V
+ DhS/o0ofcnTbxzj4Z1vy1ByQkoj5ghn0BdbRRRRpuD3qecExbLYZV3k5mip3yhrHa6wnvAagPpXMl
+ Sg1cqZbbO7oDKjof23GwHk0TzI/l+6GQkg+fC05Zkavu8fr9//MLLVIe94rgf2KaX2SeGLi+prwJC
+ 8DB8MW2InKTwyiok=;
+Received: from mail-pg1-f171.google.com ([209.85.215.171])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1x4Gl0-0000rj-Oh for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Sep 2026 11:46:28 +0000
+Received: by mail-pg1-f171.google.com with SMTP id
+ 41be03b00d2f7-cc1c9879395so3781689a12.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 09 Sep 2026 04:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1788954381; x=1789559181; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=FzPGH/onlDkeao3FKtNRGyfogFTCwrFBw7yRpYpNoZw=;
+ b=J0Gqw4Pii2IEsOpcnAbFkfhdqRb+wI19eIrJxfxvdu1Uv02sTyB+XdFxol6m2zrywD
+ n6/UkvXWxPWSDWVb4C8BHVCV5FYOGKNco/gMh8OkEe/qRed4Nlz1Ao0qQoAXUUB3zl7b
+ CWISwhYTQYomEL+jHuL5zW1cRhDRmwnPb7k2xvsctTzQhVnHof0x8n9nGw3y9VFLr7IX
+ UTEAuNDoOGAl4n2DvZ2/RZfoDIcrtBCAj0QsBz40R/NiF+jqOhK5SVD9rrVRSib9XDGk
+ xMoRe0n1xXPMR44hoo3BPOu2QcvwNvZe1MwU7Z6QJb7K7sVyfRTrIqVcayb0xlsXheyj
+ kWBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788954381; x=1789559181;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=FzPGH/onlDkeao3FKtNRGyfogFTCwrFBw7yRpYpNoZw=;
+ b=l5cnxnhUCFgh0TMAQUS1ljfi/YV3RtiB+hT2IjHY26s7vulhtLkIGOWRv6/cRFE4AS
+ IsRYe0TaSXcaday8jFMCnEJx7tahftMTyb8U8v6HhEakcXD8A/Tid4BImFBkmhAodGq4
+ vLPlaYhT6iAq2z0ozgbepL+aRd/lKBzCQbZbXYYnQXNs3TA5OiVrYvg5Y8/shQB6ls8O
+ EmQY9vRolS8Fsk+AmqUihBI1AsIuG+82smeTH05p7G643H1IDbu+71LF4G5Fb25pOtoK
+ cOf54sMH3z65hdLExGBznHYKlOEKPxEhzbJfA3pz3aL4DBZKwCaghZzd6lKFQz/Ab/ze
+ QM8A==
+X-Gm-Message-State: AFuF++mC6e/a+ymWahPu2Q/nonE/YDGLJK67gBy8oqfUhBsCyKXnKxRL
+ VRqmFOkSUDqaEHuGCfFUXExaXqk3oBcG7Q19qR7xXBxVVo0rgtIzWidHsPITbQSfUpc=
+X-Gm-Gg: AYBFou0btgvKdreueqIaQmVGaadjW/GqqIBfygcmAf0f0qn7/j2tUmRQk9PV5KaQTl4
+ WpU7Vygj524B/ao2gBHwQZIc85+j6kn8dvL311nAwGNm/oN0Ub5nLsv1ODMvon/T7CUC60a3D6G
+ C24wv8rnWEtokbcFvuwW/E5p3s1ATI9KWKlvrr7aelveZ9mjg4N/0tKq1AK5EU4sEwespMaV4Hw
+ x/Tmh4YqdAL/EwucxSQOM1phfgW+d9BCxgR/ky71KEwAXSE0sPyAVvXjnrUzxoFYR45ibLQ4D9O
+ S2quPQy6JvmAX1zw4fzA604UD+jJcOA/2TbaHaTDcXXWSx5X0oXfmqYUw6l/DhBA6VCf93P9z2+
+ 4SuZKAUc4kDTm1S+1GhtsdHnK+vcP7ErnHkGG8RmeD9laWmzxADtPKnh2s/1Yx8FvoeMz5WTmIY
+ W0jnqrvIAx1WVq1Iek7GNequ5BOijlvnIePZlHrvLIz28M260xCg61uu+ZBstRPbXTOw7f6gNd+
+ UHKD/voEJkMBds1t5c/xfh4lgRWf1z1GddX+w==
+X-Received: by 2002:a17:90b:2b4e:b0:38c:a59b:5189 with SMTP id
+ 98e67ed59e1d1-39b261d0d8emr53709922a91.15.1788954380841; 
+ Wed, 09 Sep 2026 04:46:20 -0700 (PDT)
+Received: from 4ce604c9y2.bytedance.net ([61.213.176.56])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39b260cd15asm32355971a91.4.2026.09.09.04.46.18
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 09 Sep 2026 04:46:19 -0700 (PDT)
+From: Jianan Huang <jnhuang95@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net, chao@kernel.org, jaegeuk@kernel.org
+Date: Wed,  9 Sep 2026 19:46:14 +0800
+Message-ID: <20260909114615.1390443-1-jnhuang95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jianan Huang <jnhuang95@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-References: <20260908034809.616919-1-jnhuang95@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20260908034809.616919-1-jnhuang95@gmail.com>
-X-Headers-End: 1x4Gho-0007hG-1b
-Subject: Re: [f2fs-dev] [PATCH] f2fs: quota: fix quota flush failure during
- filesystem freeze
+X-Headers-End: 1x4Gl0-0000rj-Oh
+Subject: [f2fs-dev] [PATCH v2] f2fs: quota: fix stale lock holder on remount
+ failure
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,272 +115,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
+Cc: Jianan Huang <jnhuang95@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/8/26 11:48, Jianan Huang wrote:
-> Quota flush retries can be exhausted during filesystem freeze.
-> 
-> freeze_super() and the quota checkpoint may race as below.
-> 
-> freeze_super()                       f2fs_ckpt
-> - down_write(&sb->s_umount)
-> - sb->s_writers.frozen = SB_FREEZE_PAGEFAULT
-> - sync_filesystem()
->  - f2fs_sync_fs()
->   - f2fs_issue_checkpoint()
->    - queue CP_SYNC -----------------> - block_operations()
->                                       - down_read_trylock(s_umount)
->                                         : fails; freeze holds write lock
->                                       - quota flush retries exhausted
->                                       - set CP_QUOTA_NEED_FSCK_FLAG
-> 
-> During the PAGEFAULT sync pass, freeze_super() holds s_umount for
-> write, but umount_lock_holder is not set until f2fs_freeze().  Thus
-> quota writeback tries to acquire s_umount again and can exhaust retries.
-> 
-> With checkpoint merge enabled, f2fs_issue_checkpoint() may dispatch
-> CP_SYNC to f2fs_ckpt.  That thread also cannot acquire the freeze lock.
-> 
-> Split the F2FS-internal sync implementation from the super-operation
-> callback.  For the VFS PAGEFAULT freeze sync, record current as holder
-> around the internal sync.  This lets quota writeback use the existing
-> lock and makes CP_SYNC run directly in the freeze caller.
-> 
-> Convert F2FS-internal callers to the internal helper so they cannot be
-> mistaken for the freeze owner while the filesystem is frozen.
-> 
-> Fixes: eb85c2410d6f ("f2fs: quota: fix to avoid warning in dquot_writeback_dquots()")
-> Signed-off-by: Jianan Huang <jnhuang95@gmail.com>
-> ---
->  fs/f2fs/f2fs.h    |  2 +-
->  fs/f2fs/file.c    |  8 ++++----
->  fs/f2fs/namei.c   | 16 ++++++++--------
->  fs/f2fs/segment.c |  4 ++--
->  fs/f2fs/super.c   | 25 ++++++++++++++++++++++---
->  5 files changed, 37 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 9940a6cecf1a..169792a08a82 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3977,7 +3977,7 @@ void f2fs_quota_off_umount(struct super_block *sb);
->  void f2fs_save_errors(struct f2fs_sb_info *sbi, unsigned char flag);
->  void f2fs_handle_error(struct f2fs_sb_info *sbi, unsigned char error);
->  int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
-> -int f2fs_sync_fs(struct super_block *sb, int sync);
-> +int __f2fs_sync_fs(struct super_block *sb, int sync);
->  int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
->  
->  /*
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index edc352569e87..83546a053656 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -408,7 +408,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  
->  	if (cp_reason) {
->  		/* all the dirty node pages should be flushed for POR */
-> -		ret = f2fs_sync_fs(inode->i_sb, 1);
-> +		ret = __f2fs_sync_fs(inode->i_sb, 1);
->  
->  		/*
->  		 * We've secured consistency through sync_fs. Following pino
-> @@ -2548,7 +2548,7 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
->  		break;
->  	case F2FS_GOING_DOWN_METASYNC:
->  		/* do checkpoint only */
-> -		ret = f2fs_sync_fs(sb, 1);
-> +		ret = __f2fs_sync_fs(sb, 1);
->  		if (ret) {
->  			if (ret == -EIO)
->  				ret = 0;
-> @@ -2568,7 +2568,7 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
->  		set_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
->  		set_sbi_flag(sbi, SBI_IS_DIRTY);
->  		/* do checkpoint only */
-> -		ret = f2fs_sync_fs(sb, 1);
-> +		ret = __f2fs_sync_fs(sb, 1);
->  		if (ret == -EIO)
->  			ret = 0;
->  		goto out;
-> @@ -2988,7 +2988,7 @@ static int f2fs_ioc_write_checkpoint(struct file *filp)
->  	if (ret)
->  		return ret;
->  
-> -	ret = f2fs_sync_fs(sbi->sb, 1);
-> +	ret = __f2fs_sync_fs(sbi->sb, 1);
->  
->  	mnt_drop_write_file(filp);
->  	return ret;
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index ff86ee07290d..5f6f5db9e849 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -403,7 +403,7 @@ static int f2fs_create(struct mnt_idmap *idmap, struct inode *dir,
->  	d_instantiate_new(dentry, inode);
->  
->  	if (IS_DIRSYNC(dir)) {
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (err)
->  			return err;
->  	}
-> @@ -459,7 +459,7 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
->  	d_instantiate(dentry, inode);
->  
->  	if (IS_DIRSYNC(dir)) {
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (err)
->  			return err;
->  	}
-> @@ -641,7 +641,7 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->  		d_invalidate(dentry);
->  
->  	if (IS_DIRSYNC(dir))
-> -		err = f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
-> +		err = __f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
->  out:
->  	trace_f2fs_unlink_exit(d_inode(dentry), err);
->  	return err;
-> @@ -729,7 +729,7 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
->  	ret = filemap_write_and_wait_range(inode->i_mapping, 0,
->  					   disk_link.len - 1);
->  	if (!ret && IS_DIRSYNC(dir))
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  
->  	f2fs_balance_fs(sbi, true);
->  out:
-> @@ -787,7 +787,7 @@ static struct dentry *f2fs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
->  	d_instantiate_new(dentry, inode);
->  
->  	if (IS_DIRSYNC(dir)) {
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (err)
->  			return ERR_PTR(err);
->  	}
-> @@ -845,7 +845,7 @@ static int f2fs_mknod(struct mnt_idmap *idmap, struct inode *dir,
->  	d_instantiate_new(dentry, inode);
->  
->  	if (IS_DIRSYNC(dir)) {
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (err)
->  			return err;
->  	}
-> @@ -1148,7 +1148,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->  	f2fs_unlock_op(sbi, &lc);
->  
->  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (err)
->  			return err;
->  	}
-> @@ -1318,7 +1318,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	f2fs_unlock_op(sbi, &lc);
->  
->  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (err)
->  			return err;
->  	}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 63b712d3d599..9a09f2525b70 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -550,7 +550,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, bool from_bg)
->  		mutex_unlock(&sbi->flush_lock);
->  	}
->  	stat_inc_cp_call_count(sbi, BACKGROUND);
-> -	f2fs_sync_fs(sbi->sb, 1);
-> +	__f2fs_sync_fs(sbi->sb, 1);
->  }
->  
->  static int __submit_flush_wait(struct f2fs_sb_info *sbi,
-> @@ -3478,7 +3478,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
->  				true, ZONED_PIN_SEC_REQUIRED_COUNT, true);
->  		if (err)
->  			return err;
-> -		err = f2fs_sync_fs(sbi->sb, 1);
-> +		err = __f2fs_sync_fs(sbi->sb, 1);
->  		if (!err) {
->  			gc_required = false;
->  			goto retry;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 1314b6ccced9..a82065146849 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2131,7 +2131,7 @@ static void f2fs_put_super(struct super_block *sb)
->  	}
->  }
->  
-> -int f2fs_sync_fs(struct super_block *sb, int sync)
-> +int __f2fs_sync_fs(struct super_block *sb, int sync)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
->  	int err = 0;
-> @@ -2154,6 +2154,25 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
->  	return err;
->  }
->  
-> +static int f2fs_sync_fs(struct super_block *sb, int sync)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +	bool freeze_sync = sync &&
-> +			sb->s_writers.frozen == SB_FREEZE_PAGEFAULT;
+F2FS remount can fail while duplicating a journalled quota file name.
 
-How about this to make sure freeze_sync will only be true in freeze_super()?
+f2fs_remount()
+- sbi->umount_lock_holder = current
+- kstrdup(F2FS_OPTION(sbi).s_qf_names[i])
+  : fails
+- free previously duplicated names
+- return -ENOMEM
 
-bool freeze_sync = sync && rwsem_is_locked(&sb->s_umount) &&
-			sb->s_writers.frozen == SB_FREEZE_PAGEFAULT;
+The direct return leaves umount_lock_holder pointing at the failed
+remount context.  A later checkpoint may then wrongly treat another
+context as the s_umount lock holder.
 
-And it's not needed to rename f2fs_sync_fs() to __f2fs_sync_fs()?
+Add a restore_holder cleanup path and use it before returning -ENOMEM.
 
-Thanks,
+Fixes: eb85c2410d6f ("f2fs: quota: fix to avoid warning in dquot_writeback_dquots()")
+Signed-off-by: Jianan Huang <jnhuang95@gmail.com>
+---
+Changes since v1:
+- add restore_holder cleanup label.
 
-> +	int err;
-> +
-> +	/* freeze_super() holds s_umount for write during this sync pass. */
-> +	if (freeze_sync)
-> +		sbi->umount_lock_holder = current;
-> +
-> +	err = __f2fs_sync_fs(sb, sync);
-> +
-> +	if (freeze_sync)
-> +		sbi->umount_lock_holder = NULL;
-> +
-> +	return err;
-> +}
-> +
->  static int f2fs_freeze(struct super_block *sb)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> @@ -2807,7 +2826,7 @@ static int f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
->  	set_sbi_flag(sbi, SBI_IS_DIRTY);
->  	f2fs_up_write_trace(&sbi->gc_lock, &lc);
->  
-> -	ret = f2fs_sync_fs(sbi->sb, 1);
-> +	ret = __f2fs_sync_fs(sbi->sb, 1);
->  	if (ret)
->  		f2fs_err(sbi, "%s sync_fs failed, ret: %d", __func__, ret);
->  
-> @@ -2993,7 +3012,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
->  
->  		set_sbi_flag(sbi, SBI_IS_DIRTY);
->  		set_sbi_flag(sbi, SBI_IS_CLOSE);
-> -		err = f2fs_sync_fs(sb, 1);
-> +		err = __f2fs_sync_fs(sb, 1);
->  		if (err)
->  			goto restore_gc;
->  		clear_sbi_flag(sbi, SBI_IS_CLOSE);
+ fs/f2fs/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1314b6ccced9..867c82192078 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2864,7 +2864,8 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 			if (!org_mount_opt.s_qf_names[i]) {
+ 				for (j = 0; j < i; j++)
+ 					kfree(org_mount_opt.s_qf_names[j]);
+-				return -ENOMEM;
++				err = -ENOMEM;
++				goto restore_holder;
+ 			}
+ 		} else {
+ 			org_mount_opt.s_qf_names[i] = NULL;
+@@ -3125,6 +3126,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	sbi->mount_opt = org_mount_opt;
+ 	sb->s_flags = old_sb_flags;
+ 
++restore_holder:
+ 	sbi->umount_lock_holder = NULL;
+ 	return err;
+ }
+-- 
+2.43.0
 
 
 
