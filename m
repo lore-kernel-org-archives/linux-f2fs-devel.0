@@ -4,76 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0822C79FAD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 05:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11B2DC79FAD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 05:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=xpqFijLYWtJh5x47DbAT2J3Tv3jP4dYPicfaPFbLgpk=; b=GWbYVTcP1yo6Tt/B68dyYO8NHz
-	an5+uIuabiYPnTQFAqJpttrpl4ZJ/qNqSGozlM43MTPk+dS56QKaGai/RUYOk1cRSdpmDJX4ojzFO
-	lWdzp7kJv/RewA3aqfrRbLW6hYCatKUWbVv8Tww4d//WBOToWK8o8pWN4zNdOefaxuWs=;
+	bh=0M3bbiRd+fPUwklbn5yNbxy47I2izHWJtfyrt1C0Jxg=; b=NkQYMJ/5uEuZsrnLeEm+Zn7GpP
+	u54O8AcrssV8qH2rTF4cGSp82ehvkialfcNmD+42fAkqQ35djA7/qg8wN0Y99J+gkKRFEUPBxeE3y
+	o13VB1zFWPNo4BeepeeroBbH7h+fCFgyzxB2k/avbecQYp7sZeNqmd2G+bkl6EA78y/Y=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x4AVp-0002XX-7o;
-	Wed, 09 Sep 2026 05:06:22 +0000
+	id 1x4AWD-0002ad-RH;
+	Wed, 09 Sep 2026 05:06:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x4AVm-0002XF-3E
+ (envelope-from <chao@kernel.org>) id 1x4AWD-0002aV-DJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 05:06:18 +0000
+ Wed, 09 Sep 2026 05:06:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RsDvgoKPbc7IZI/Q1CUq25bFvbIrJS4QZ3Ki/H0ZJXM=; b=Rylas19JZ8pYmK+mfg2ztJYqgg
- JZKIkOKPzZ/WzL/ZF7Ya65gYUljtUgj0MQlKy7qjj2au7zuAhaq5U1SNga7oTFB1ZQ5E4evLZ/zQc
- 9Q+tlBXyp1v5BrZ9ibPzNSadKgDHbWiJRLgnbeVHTfj9MxTc03UCI1x2RK4dSdaG+OK4=;
+ bh=Ts9hwby3/MRsSLVJ7fCUGIQ98U/Sv6ufELDj6yChuwU=; b=ImrmwN4EC5DExxYpRRmbj1ruHz
+ ZDOiTXSQE+oo2pA3lhDbwpyunyP1taiwPF9dkzr+p0+e4qtsWEyV+6bP4PTpdiSj/sxWhVSJ9mEvY
+ JaF/v7Cxqo+OihT6ozF272KYiZRwjPbY2/m6f9rfGUqGtumtKX3Dey7ILU56mq9Ovj6k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=RsDvgoKPbc7IZI/Q1CUq25bFvbIrJS4QZ3Ki/H0ZJXM=; b=C
- rZLNSkbF0nC7QO3UF3liqyEMEhFskAHRel5aIXDdZiosvIq/dBsBynxW0F9k+DBAXdkbcawv21Gz5
- mjLi5FwCa0xlRt234Dso9iAEbI/Ovpoi4Z3kEUtffZmQNX/8ga2ld+189kAkgApo4Mtb+it8UiztG
- 8zEw4q84tI0xg0tI=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=Ts9hwby3/MRsSLVJ7fCUGIQ98U/Sv6ufELDj6yChuwU=; b=Z
+ Dl+UoTsSTiRM2tOVzHy2TNSwTUTTm84xyKSP6aMuM0oo4F11xibPqScvPYGI48VhkATL2tAZzxt3v
+ frlgdh2jND7a7Z8UfNGh0AQezCYoKsHtJzmjxJAOoXUVHFCyVApBChlHa7iwNyG/RVt6mZRZhcvda
+ Nyp394c2uex7Tg5E=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x4AVl-0003Ub-En for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 05:06:18 +0000
+ id 1x4AWB-0004zz-EE for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Sep 2026 05:06:46 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A3F1F601FB
+ by sea.source.kernel.org (Postfix) with ESMTP id DE739409FB
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  9 Sep 2026 05:06:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B881F00A3A;
- Wed,  9 Sep 2026 05:06:10 +0000 (UTC)
+ Wed,  9 Sep 2026 05:06:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288F21F00A3A;
+ Wed,  9 Sep 2026 05:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788930371;
- bh=RsDvgoKPbc7IZI/Q1CUq25bFvbIrJS4QZ3Ki/H0ZJXM=;
+ s=k20260515; t=1788930397;
+ bh=Ts9hwby3/MRsSLVJ7fCUGIQ98U/Sv6ufELDj6yChuwU=;
  h=From:To:Cc:Subject:Date;
- b=HwNngrbnAXt5/yrEeOcyXipgjTWA1ev2eLhIX/TIZRLJrV3MPA+WVnl6FvC7IVOPe
- zaIJqn3oFQGGNyjviIt5NFJ3kFN4CU8hwH8eRft4CsKay697pPlbpWJmT43+7EIFtf
- g8kb39ccPdCL6QK9JIMRbwLNqLTDsQlanWrAqXM7tfEr42oJcN7/AUzFXZ69RyuqCC
- eLAF7OARHIYrJUNvnV7Ir/3Nf994FPHN0Ni3Fu1o6fL8Gxe/FWlTTdvQ0BXzYhDgfD
- LKOY8HmVgUJf0n9sp7f9vcVSVHIJAPCq9kW3cO2pFt8umqZGrAh3ba01gdUCFvmTVT
- 5S0GTuezSeMOg==
+ b=m43fu7DDlsVcST/u1NZM3X93BEddJ56PWF0jpPqSBBHBYW6SNqjyTKbe5b4MnM+P8
+ rLPE4q077L4IAlc6/grgtOxU9kT3f9A0E/3iG61Tfni5oHYBwufO9TkRHKey5ANRQt
+ 5cD4Lx5NUmGffTIQ76Eq0Hq5p92x4uHkWsZAyaDTIJ8w2MYtLe4gudkoQQyer72v+0
+ dNjc1BoPsM4wdzd+cZoy/aVQX0BhkjewxFlicNYnMLlprclVPDLN7+9v0P3TjQIQQ7
+ k6z5/Q6ft5wrBat+8A8Ay+/eIo35DSqknbJzR+2L2R00s878z2PLEdeW9TYAxHG2zg
+ ohJ5tuZUG7Q2w==
 To: jaegeuk@kernel.org
-Date: Wed,  9 Sep 2026 13:06:04 +0800
-Message-ID: <20260909050604.3513016-1-chao@kernel.org>
+Date: Wed,  9 Sep 2026 13:06:34 +0800
+Message-ID: <20260909050634.3513267-1-chao@kernel.org>
 X-Mailer: git-send-email 2.55.0.979.g7e5102b832-goog
 MIME-Version: 1.0
-X-Headers-End: 1x4AVl-0003Ub-En
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: fix to maintain ckpt_valid_blocks
- correctly
+X-Headers-End: 1x4AWB-0004zz-EE
+Subject: [f2fs-dev] [PATCH] fsck.f2fs: fix to avoid selecting current
+ section in find_next_free_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,73 +94,48 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <chao@kernel.org>
 
-When need_fsync_data_record() is true (e.g. after sudden power-off or
-shutdown), get_seg_vblocks() returns se->ckpt_valid_blocks.
+In find_next_free_block(), when searching for a free block or allocating a
+new section, it checks:
 
-In reserve_new_block(), se->ckpt_valid_blocks is correctly incremented
-along with setting the bit in se->ckpt_valid_map. However, in
-update_block() and release_block(), while se->ckpt_valid_map is updated,
-se->ckpt_valid_blocks is never incremented or decremented.
+	if (!(get_sb(feature) & F2FS_FEATURE_RO) &&
+					IS_CUR_SEGNO(sbi, segno))
+		goto next_segment;
 
-As a result, if blocks in an empty segment are newly allocated or migrated
-by fsck (e.g. during quota rebuild), se->ckpt_valid_blocks remains 0.
-Subsequent calls to get_seg_vblocks() will treat the segment as completely
-empty, leading to false free segment detection or incorrect section reuse.
+However, when large section is enabled (segs_per_sec > 1), checking only
+IS_CUR_SEGNO(sbi, segno) is insufficient. If segment 0 of a section is
+empty, but segment 1 is an active curseg (e.g. CURSEG_WARM_NODE),
+IS_CUR_SEGNO(sbi, segno) evaluates to false.
 
-Fix this by maintaining se->ckpt_valid_blocks alongside se->ckpt_valid_map
-in update_block() and release_block().
+Consequently, find_next_free_block() can treat the section as completely
+free and call set_section_type(sbi, segno, want_type). This overwrites the
+segment type of all segments in the section, clobbering active curseg
+segments (e.g. from NODE to DATA) and leading to an assertion crash in
+update_data_blkaddr():
 
-Fixes: 10dad5ed7ce1 ("f2fs-tools: support zoned ufs devices")
+  [update_data_blkaddr:2527] NAT and SIT is inconsistent: ino: 4, nid: 23, blkaddr: 21925780, segtype: 1
+  [ASSERT] (update_data_blkaddr:2529) 0
+
+Fix this by using IS_CUR_SECNO(sbi, GET_SEC_FROM_SEG(sbi, segno)) to ensure
+that any segment belonging to an active current section is skipped.
+
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fsck/fsck.c    | 4 +++-
- fsck/segment.c | 8 ++++++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ fsck/mount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index e47f7be..a56c16b 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -3262,8 +3262,10 @@ static inline void release_block(struct f2fs_sb_info *sbi, u64 blkaddr,
- 		offset = OFFSET_IN_SEG(sbi, blkaddr);
- 		se->valid_blocks--;
- 		f2fs_clear_bit(offset, (char *)se->cur_valid_map);
--		if (need_fsync_data_record(sbi))
-+		if (need_fsync_data_record(sbi)) {
- 			f2fs_clear_bit(offset, (char *)se->ckpt_valid_map);
-+			se->ckpt_valid_blocks--;
-+		}
- 		se->dirty = 1;
- 		f2fs_clear_sit_bitmap(sbi, blkaddr);
- 	}
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 9f3fa0c..ee66a8e 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -798,8 +798,10 @@ int update_block(struct f2fs_sb_info *sbi, void *buf, u32 *blkaddr,
- 	}
- 	se->valid_blocks--;
- 	f2fs_clear_bit(offset, (char *)se->cur_valid_map);
--	if (need_fsync_data_record(sbi))
-+	if (need_fsync_data_record(sbi)) {
- 		f2fs_clear_bit(offset, (char *)se->ckpt_valid_map);
-+		se->ckpt_valid_blocks--;
-+	}
- 	se->dirty = 1;
- 	f2fs_clear_main_bitmap(sbi, old_blkaddr);
- 	f2fs_clear_sit_bitmap(sbi, old_blkaddr);
-@@ -821,8 +823,10 @@ int update_block(struct f2fs_sb_info *sbi, void *buf, u32 *blkaddr,
- 	se->type = se->orig_type = type;
- 	se->valid_blocks++;
- 	f2fs_set_bit(offset, (char *)se->cur_valid_map);
--	if (need_fsync_data_record(sbi))
-+	if (need_fsync_data_record(sbi)) {
- 		f2fs_set_bit(offset, (char *)se->ckpt_valid_map);
-+		se->ckpt_valid_blocks++;
-+	}
- 	se->dirty = 1;
- 	f2fs_set_main_bitmap(sbi, new_blkaddr, type);
- 	f2fs_set_sit_bitmap(sbi, new_blkaddr);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index a202f3d..2fd8e1c 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -3149,7 +3149,7 @@ next_segment:
+ 			continue;
+ 		}
+ 		if (!(get_sb(feature) & F2FS_FEATURE_RO) &&
+-						IS_CUR_SEGNO(sbi, segno))
++			IS_CUR_SECNO(sbi, GET_SEC_FROM_SEG(sbi, segno)))
+ 			goto next_segment;
+ 		if (vblocks == 0 && not_enough)
+ 			goto next_segment;
 -- 
 2.49.0
 
