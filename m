@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD2BAC79FAD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 12:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E8393C79FAD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Sep 2026 12:24:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=iJnnHq35vH+R49MJMnigiZICfltgXLAGIlf7kshnKR4=; b=l77qLdAGwg4s2lGiPsDEJ7kRTY
-	SZqaA08b1u7QjsGR+mV1fSU38HZilwkZvqeQlAsATgz98CX1YTQCNZ3XShZCA5BH1EhdivRWBIt/6
-	rQTcXkmREWL8BqKOYLHtxdbpii14WAhb+/WrirzYaBI0VcqU+QlAXWlUmULUjxhFv9hA=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=iac9h0wxZtSp6myM2oAUPrQdaBVkluzepHAgX3d9U+Q=; b=EjqR5YcFrXZm8pz6B11gXIvCgh
+	BF/aKpMho/Amjv1wXMNaiQGgrtGnq79B8kKBdVP4KwnAEJvesk7y7I7MLvVgwsyFUUCxJyQyaffvI
+	+XumapoR7KXITh+RdWuPZa5FossVuvLbaqyQ2h/nxn7Btu8L0SCYQwCvnzEgJ7t5Myf4=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x4H6S-0002oX-IO;
-	Wed, 09 Sep 2026 12:08:34 +0000
+	id 1x4HLj-00047n-JA;
+	Wed, 09 Sep 2026 12:24:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x4H5t-0002nn-DW
+ (envelope-from <chao@kernel.org>) id 1x4HLh-00047c-U0
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 12:07:58 +0000
+ Wed, 09 Sep 2026 12:24:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=z/fyRKmyWcjAhwOrdKyi+6Pel+QX97RYxzmDXFW0tPc=; b=ljOmIoCh1KCKFuGBDmwtHubRc9
- 2GC8ObwIT3E71JFSBwtiCI7NBc9mcw3UszEA8gtwLH6jgP6HUW7+Kq7FmsKIeDakAMQo6qlEmNz08
- 5uNVMVS3krKSMaCIPiRn1FL9kyDx+tJ1sWPlLaeuUslHcgSNxZw9zNIzJ1x9jVCZ3reg=;
+ bh=cBzhxQxiITnYJOzsVsN3hQMa5zYjZWLywNfvsBGbMl0=; b=V4mdaTe1fsMwzbV3cRSA4+LMRX
+ F9P1/NXdXgJeRYzGWP0WfuQBEmULkoz1gR/FUi/lxUlIgqFvpijY/9OGlepD3VM+iRlx61nls55u3
+ qp1ZHDXCINzCrbxMCMost5/6zGZvK+NojMMXL2uOGCo9hOoM+YKnj3pyOJJmcqMogYps=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=z/fyRKmyWcjAhwOrdKyi+6Pel+QX97RYxzmDXFW0tPc=; b=IfmkhLQ/eDGfCHQfTT+WzMTgUF
- OFrHvT8b300Gbu7vcRPpK0iHgMIkLdbUiMQaWso3JX7KDc5hQ2WvxcoJrPi+qpDUcgtSbGBTTPbV7
- nBgb71U8/0650L3VrtG2vKxZzECJRCXU2t+ByWUmslt99xan8hjb+dgmZjvqWLsFbo/Q=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=cBzhxQxiITnYJOzsVsN3hQMa5zYjZWLywNfvsBGbMl0=; b=CuTqSOjK5cqamngGZmzTQqQnVq
+ 2XJg1KMAUSdOO89xPxE5WVBL6tRVdq8p8yTEaEi0QwCZKbv3lF2SkApb1zcQRNuvMjPyXVxD9LDZz
+ SuosV75zN1WswcXTawS+BA1FExpD5dcboPGvSPvixg7sY3IfhaIqHneI8V1Iyj+GTeUA=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x4H5q-0008Hs-Gm for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Sep 2026 12:07:58 +0000
+ id 1x4HLi-0000BR-6v for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Sep 2026 12:24:22 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id D493960214;
- Wed,  9 Sep 2026 12:07:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA94D1F00A3E;
- Wed,  9 Sep 2026 12:07:51 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7910A40F51;
+ Wed,  9 Sep 2026 12:24:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918EF1F00A3A;
+ Wed,  9 Sep 2026 12:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1788955672;
- bh=z/fyRKmyWcjAhwOrdKyi+6Pel+QX97RYxzmDXFW0tPc=;
+ s=k20260515; t=1788956655;
+ bh=cBzhxQxiITnYJOzsVsN3hQMa5zYjZWLywNfvsBGbMl0=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=UI5bUd8HaWIOk25Bl+Av+AxC/Fq084xI0Po20OP0roome+yL74YYYGHxEaB/KgxSZ
- 7z+6uYu7LeVLDRuCu311E1arra2i1k1GS97kfSykwE1T+mvERlpZPuyB5EZTeRWicq
- U3zAtVlqLsLghub+nvEPcJ+tVEk+vQW4kihUfc39GDBpRgTDB/PziofSP6mLJXf09e
- V2XTiucNRRM/1fCSVnklqOmk+FUwY9n9tdC/Vn/Ryepr/EXDWfQveAbtCDzs6vbNGN
- 2svwVq3uhIq3UCjzt09IIZzITUfGsrndc9JoG/HrBIkFKtziEiQ6gNOr3WbzQOF/Yl
- y9uaFlFN+OIMw==
-Message-ID: <3a22ec95-18a6-4f92-8bc2-80f13bc7de32@kernel.org>
-Date: Wed, 9 Sep 2026 20:07:50 +0800
+ b=DA8quWIZKD2QNv7LTGnTOsIRNKzpwuZ4ISU90P1n+X2eidA/Gdfeznj0eWfqndKIW
+ xFocVm1IaceDKaLVF4QXdKHQiYuMX/Tj/i5hmlKoCMoCXT4evHaY7oHezy6JjVYWt+
+ q69QIR5e+xOGrHhj8qQH0ARcmHJsdkWFnsE7cpPMfaiiR8VSrACC8CNqWh0H46psmE
+ OJ3Qj+LBvW8ZdYQCDVC5Ihf1qr//Gwt/mZDbolt0t7vZLYUhQjcoLyREzCftBubmc6
+ 91L3TJpxKOMmMDndGmQPqg2tOrMkkVFzTb5fGpqBcfc5NbnAY3OMTqtzBQxw0nPxT/
+ 3KxN+mG4IdH8w==
+Message-ID: <572c036a-cedf-4ed6-9814-b821626d56a6@kernel.org>
+Date: Wed, 9 Sep 2026 20:24:13 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Jianan Huang <jnhuang95@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-References: <20260909114615.1390443-1-jnhuang95@gmail.com>
+To: Seongjae Jeong <jsjlee1020@gmail.com>, jaegeuk@kernel.org
+References: <20260906145614.2749-1-jsjlee1020@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260909114615.1390443-1-jnhuang95@gmail.com>
-X-Headers-End: 1x4H5q-0008Hs-Gm
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: quota: fix stale lock holder on
- remount failure
+In-Reply-To: <20260906145614.2749-1-jsjlee1020@gmail.com>
+X-Headers-End: 1x4HLi-0000BR-6v
+Subject: Re: [f2fs-dev] [PATCH] f2fs: skip node_change lock for inline data
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,28 +89,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/9/26 19:46, Jianan Huang wrote:
-> F2FS remount can fail while duplicating a journalled quota file name.
+On 9/6/26 22:56, Seongjae Jeong wrote:
+> The node_change lock serializes block reservation in the PRE_AIO path
+> against checkpoint preparation, since block reservation can create
+> dirty node pages and update checkpoint accounting.
 > 
-> f2fs_remount()
-> - sbi->umount_lock_holder = current
-> - kstrdup(F2FS_OPTION(sbi).s_qf_names[i])
->   : fails
-> - free previously duplicated names
-> - return -ENOMEM
+> However, writes that remain within the inline data area return before
+> the block reservation path. Thus, they do not call
+> inc_valid_block_count(), change a node mapping from NULL_ADDR to
+> NEW_ADDR, or create a dirty node page as a result of block reservation.
+> They also do not update total_valid_block_count or
+> alloc_valid_block_count.
 > 
-> The direct return leaves umount_lock_holder pointing at the failed
-> remount context.  A later checkpoint may then wrongly treat another
-> context as the s_umount lock holder.
+> The inline path only copies the existing inline data to the data folio,
+> sets FI_DATA_EXIST, and marks the inode folio for deferred inline data
+> flushing. FI_DATA_EXIST can dirty inode metadata, but it does not
+> reserve a block or update the node mapping and checkpoint accounting
+> that node_change is intended to serialize.
 > 
-> Add a restore_holder cleanup path and use it before returning -ENOMEM.
+> Skip f2fs_map_lock() for writes that fit within MAX_INLINE_DATA. Keep
+> the existing locking for inline conversion, which can update filesystem
+> metadata and requires checkpoint serialization.
 > 
-> Fixes: eb85c2410d6f ("f2fs: quota: fix to avoid warning in dquot_writeback_dquots()")
-> Signed-off-by: Jianan Huang <jnhuang95@gmail.com>
+> Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
