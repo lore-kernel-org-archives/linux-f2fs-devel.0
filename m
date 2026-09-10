@@ -4,160 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 36EE7C79FBF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Sep 2026 15:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 74560C79F9F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Sep 2026 18:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=lAZiQww9JjTOlKOxlIw1mBTii1cn2BJBwFJcn58cPlY=; b=aptiqUVWy2IyQtSXMXf2oxUZR6
-	2f33wKzFJCkXX8biinYm2+W88gGQwAl2Uuy3in9FhZ43xlGpO/IslO14WyasfUGIcHoEI+uzSYCPN
-	DhD+bpJrH2EyDwYS9D9t7Pko5g5JdHS12KGM1eBSTfl9RyRFu0Fd6ZUwK1BZepZM/l2s=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=vgjWjmcmi9ybFzad9hEACXGOK0YMdaIO57ys81L2SZU=; b=Ewbx6TAjfj+LC3vg0eDxJ2Dc9n
+	91kF4S2nJYWIqbSaG7RYTLDPYPjPTexDQ2kQcZgPoGTEJPZ0oQEMvG4TTHMAOz6lUwiCrgFIlgRYQ
+	HzUmKnnS9s02VHe2QETWJ4mYckseX7g09FqJ7qaXEls+hHN64A2ttWWrefPwDzU71OAY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x4h69-0003Nk-RD;
-	Thu, 10 Sep 2026 15:54:02 +0000
+	id 1x4jLv-0006oZ-D5;
+	Thu, 10 Sep 2026 18:18:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ziy@nvidia.com>) id 1x4h66-0003NS-7A
+ (envelope-from <daeho43@gmail.com>) id 1x4jLu-0006oP-JR
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Sep 2026 15:53:58 +0000
+ Thu, 10 Sep 2026 18:18:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Se4HlPyGVigrGHnWPlCoT/Tt6qCSfO0pnPQmufzoLRw=; b=U0XEybM010wpmz+X1yoVzs1DCy
- s7MG+cB08uw0LvoTBWoLwDYWcCj8W/xIIKqBlkqxArNmiyPgDUY4nvgmExLCiOmGpfQa7kVRfZ9kM
- o2vsjNNpWHm4E3brcJze7lCNNpjV0Lw/yrI/fpmVSFd90airdwhvGSly0N65v/S3e/ds=;
+ bh=jMuTEYKkyyrLqeX97xIC/Z56ogCyVEt8VnZlLfJ3DOI=; b=O3fiGikwlOpsVvE7HmPbjBb2F1
+ FFPH/7LT9963BL/yMv0oPxRWdc1R2Vd3XqJ8uBDZEFg3DnrD0/Zv0AtvDT3nhrsiWCmBLaKPuOv4n
+ 7PUH06MsKggLhpVDhiPS+Fkebyf4Wsv9VOSfEUbIPuOS/oaYRAoeEDfx1w0pVRhbtKj4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Se4HlPyGVigrGHnWPlCoT/Tt6qCSfO0pnPQmufzoLRw=; b=YEbpMdSmSCIcBWZ+Eate9QIsVp
- L+2quRTt1S8BxpixhFQ1Kra79UudKHcAYv3c3NaW0YBjIXW/kkoT1PANlfpxWq7q4+DwgZuqK0lQv
- CxlHsQfl6qUkfwjQkxgHvzFRMCnKThIWQiwBKnThNdI3MPK4PZ2bjub0gL/G/iUYHiN0=;
-Received: from mail-northcentralusazon11012045.outbound.protection.outlook.com
- ([40.107.200.45] helo=CH5PR02CU005.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=jMuTEYKkyyrLqeX97xIC/Z56ogCyVEt8VnZlLfJ3DOI=; b=D
+ XlqYD2BVbtF2VmlhKqsAMU3/vUJwCWv2KuQMFGNvlat95Uzw2E7F+yKIgsuC8aDHThFbR3hr1Hst6
+ 91FpMhoI4/ARLxcEWtIVQ/vjxSe2BqCgpB2xfax6aaQgRNSp0qR8Tu4266f8lBKI2EgkCIRmBnH7/
+ 1A9s8Ed7qa5yf0Ig=;
+Received: from mail-pz2-f12.google.com ([74.125.228.12])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x4h66-0005LA-CO for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Sep 2026 15:53:58 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NyX2lP4yL4yyiNmSIdIZaKatetnjQAHMgPJWzfzL5I61m7x7H8BovKfaAW0hHC4ZA8pwWH7nNxjHOfkHtnq+PimVACQaceRb0ZeIl2FGhvsKQEFv2l1qCbOlGLF3RQP4mIG+2/P6RDNx3B6bMD538q9UVxwB2HFqJrnsdyEOubg+eifaIxU4lj/TEO4UPNO49QC3Pzp7GTsNDNxqtLSEALcInamvDk0OCjHoiCyoFWEuiYdzuxUQ0jFVrJ6wFM/6Ck4IT3c/geR5bIU182rAB28SMQhg+1+mAgGVcGMsfIpB1Z+MolucFWeitBGV0Dg313tsLxodOBtng6iUBcHe4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Se4HlPyGVigrGHnWPlCoT/Tt6qCSfO0pnPQmufzoLRw=;
- b=wDNFeLDyxtXBN/vHeqRTX9duRj1+LDXIuxPSKBiqtd+lAg906R3Giln4lhqQZqUG6+TMHjaS+I3BNW8XsGu/GUwrUfoCPG6A3go9QTgmNM3KIBVlilvMD9AAOeLLoN4UgWRzkUysOZ/XHglCivqdiKWkPtJvQzCJqviGUj31AgXGJ8/0h+xz52XSyKZRAIzceVbP+42G0irF0g8PsBswKa7gXVFckDjX6Pulcw575oryqpqyPTj9KbVDLPfYLHm17WHIxV9f36+3bhUOFlin2STh+Uw9jGLqJNdp5iUOEHmGeSwYjYt58Crf/4XKeXwSPL2oZOdPRZEKa9BcyKJNyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Se4HlPyGVigrGHnWPlCoT/Tt6qCSfO0pnPQmufzoLRw=;
- b=kM54kR5GCpGKLKYjEGx1aqNyZkNtg2N8GkcrrRkvHIS3//HavE5/cwqc3xrxUZDlxLsW4QqWX4ZvOMnFBrkGK5pUuAaLrsXHTOetuR1LF/Rea5dzZ2nh+i33Hl1/svD+0awRiKyOv4kGeUJRgVthP/6RSxQ7o3Ip3qysz+p1tNwzE5oy8PtOEi/hTIEtW6bdlHGNlo1+ev6lvYVT4+XT75J+H5T8MstHfOKuElaCmlPQ7le3SvhJZHj5Z5yO5lNhXP5CfCQwJD437/hxIDmEyETmsQoV4w0n+7X2CmvNKGusD4GKYKOYkSmD3V+ceO973VS1OU+hemp0SnudiO1xbw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7)
- by BY5PR12MB4067.namprd12.prod.outlook.com (2603:10b6:a03:212::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.8; Thu, 10 Sep
- 2026 12:21:52 +0000
-Received: from IA0PR12MB8374.namprd12.prod.outlook.com
- ([fe80::d85f:4c87:ae84:3f16]) by IA0PR12MB8374.namprd12.prod.outlook.com
- ([fe80::d85f:4c87:ae84:3f16%5]) with mapi id 15.21.0406.007; Thu, 10 Sep 2026
- 12:21:51 +0000
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Date: Thu, 10 Sep 2026 08:21:52 -0400
-X-Mailer: MailMate (3.0r7028)
-Message-ID: <30DEBE66-9E26-4468-9A12-123539ED68A3@nvidia.com>
-In-Reply-To: <927c0ec3-4183-4355-9269-721d79f4983c@kernel.org>
-References: <20260907-remove-pg_private-v3-0-6ae22f9d9272@nvidia.com>
- <20260907-remove-pg_private-v3-6-6ae22f9d9272@nvidia.com>
- <e5792e81-e8a5-42e1-aafe-58dc603f4968@kernel.org>
- <178889163877.1334491.3646957026033534678.b4-reply@b4>
- <83a8743b-9cbb-42a5-9ff5-718297916a76@kernel.org>
- <3dfab5df-c205-4853-bf48-86351a02b4e2@columbia.edu>
- <927c0ec3-4183-4355-9269-721d79f4983c@kernel.org>
-X-MS-Reactions: disallow
-X-ClientProxiedBy: MN2PR20CA0041.namprd20.prod.outlook.com
- (2603:10b6:208:235::10) To IA0PR12MB8374.namprd12.prod.outlook.com
- (2603:10b6:208:40e::7)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1x4jLs-0001PA-QK for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 10 Sep 2026 18:18:27 +0000
+Received: by mail-pz2-f12.google.com with SMTP id
+ d2e1a72fcca58-868cfc5c244so1048167b3a.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 10 Sep 2026 11:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1789064299; x=1789669099; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=jMuTEYKkyyrLqeX97xIC/Z56ogCyVEt8VnZlLfJ3DOI=;
+ b=kjk13DEzZpQKBrvDaHLQDPn2mGxbjgrKxN7hzoSLXd/PIZ9zPnoVpkeyZlPtbR/9B8
+ YtQL5VYE4aM2yd0u8gfIBaEqrBpC/2kw0SMuhdCWHP1KytpQ+mX7dvd7RvZiF2szUN90
+ YB0A8KLd8AOU5h/iuzleDn7ge0IefK6aJ3CJpdNEIhamXUMg5eCNh1zKgT1aj2pJHgZE
+ dH2ikLkZMAIRH/UnQGEdzwORhFXy/XNGzjHnOAZP86MozqvCiV123lipIusAncAw/yti
+ TYHX9CdUeUZl1Sq0p2CjVOWtrQWBfkTe7XjfsxIO/RzNpyhFvHCu5TuD7MXLVA68C1qC
+ OZ1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1789064299; x=1789669099;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=jMuTEYKkyyrLqeX97xIC/Z56ogCyVEt8VnZlLfJ3DOI=;
+ b=N+k8bKQvGBILkf39QvB5JGx2KFAAc2/jtgnIy4LTys3NXlQwFf4SM+ETDxcRn4iYDm
+ f6GNAckrKDTMZ00aBL7uVGWzrYTyXfKlvpAdzylPyQh0uDEvBJNimfjN9BhnPs4uSSN4
+ HGLj31YKkE8vhxzrlOHITy6mQ/5FFLgzWS3SxXOtmaTpKx2Y7hhKCaxY5OUIb1CxJJrf
+ 52IY3ArzzSLiJNHmU6Y5jNLripVtA1KIwW3Jx7KCQ7//Xf41V4JFvUTgCUhoV91X8BFb
+ b/oFOkKJvrWyHMEdzHwQX33X6cbxprKAFF7coOWUZBvttn8M3xif3GE/WoqHp1bdM91y
+ scFg==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBy5MfNSh4sHSsB9qNVZiTbdeixkQXMoGUZRzpyz26w/VD5vgMptLA528IOEjMJRR8o4lAJ008NUTruV3RVYVUBX@lists.sourceforge.net
+X-Gm-Message-State: AFuF++lxYTV7Op0+R+YG1ZRrucrFuT9BrEMqiGv6wPtMKov78cZPyRLl
+ nwPuRzmACtmypbFrR3TtDakqPLbMghkSABcVbf+7ciy0OPPyE3zC4JjBxdbHGTxj
+X-Gm-Gg: AYBFou0qtDf9EAqFT2FbPA5DQ9BSodGBj7hlkg16EnfCRx3d2wszSuLM1add22yaqt8
+ RbqXh1K7SGrwlJp+FQt4rqztSH7UbTJUrTWJlszgK88fn94Bw0SDNUpnMQ41bE8TOOqM1CPiMb4
+ QhhrHEvOKLszt07o7NjxPiOBSk58e4yJL3JVuzWJ8EOdE0b/XeCVIeGf7lejqoc+1adA5LvzFG7
+ IK9JyJx2abugHSzKf5AU1PKqqxWsopO5XxO4uOsMyyyWPQY1kE3sUiDi4F/OpPrkpHS/iECt7l/
+ V6b/urtPlAjUKyVK4rriuA65g6/yp5toOQTguGtXjul/7cUauHwREBrtrqv8T/kg2TSOOTMpzcH
+ QLwYHFO7+LYv+tRzf80vzzPDPYLHILxHliq8N8V9H7/e/HsLJDNvOqxzlXiDBwWLdFd4QktF3ou
+ UMBcZLWoL1szwHTPUS5y8unophl8BFZtfwsqTMfdV4Pvz7tYKBVb43sotfdSobJWjApMIrebvFR
+ RnU/HHvFeKb1z+wOrI3AZK/sJETSBxHiEuGzfLkbo4aDomyJg0yfPU7Fsds1g8oLd9HJV+HXBB3
+ 62sfZkYH0Q+uQ8DxtJUnag==
+X-Received: by 2002:a05:6a20:be8f:b0:3d3:adbf:7782 with SMTP id
+ adf61e73a8af0-3daed4a71damr233450637.23.1789064298963; 
+ Thu, 10 Sep 2026 11:18:18 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2a00:79e0:2e7c:8:4a5b:802b:c0b:d1d7])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-336c2571039sm32309407eec.25.2026.09.10.11.18.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 10 Sep 2026 11:18:17 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Thu, 10 Sep 2026 11:10:56 -0700
+Message-ID: <20260910181057.640203-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.55.0.1007.g17ff1f9808-goog
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB8374:EE_|BY5PR12MB4067:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b9d0721-82cf-491d-7215-08df0f3617f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|7416014|376014|1800799024|23010399003|366016|6133799003|10067099003|4143699003|11063799006|5023799004|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: jWdcUDHCijees+S+jIrnV6n897ChONRQehwY61dyn6edq/JJpj3pvAbvdWrUiFEL7B/NIgdw8s9wOMyVDaEnF/IQo3wXTWodLErpOj6+EUfr/qNR8u+F4mwfhkgHO5c133AGoiQPzdNhFwQTyFQH/3DexVSoCPQONFVW+caYj2OnGWFUFNpwHBRCZI6yhY31mN1ldgO6veVBM8sRlYKnkz0CSHJZc4PPi2B3N2bhie1JNoT4kyY2S9u5jme2iNxnn5V0OUVbz/C7igDCtEmnenwe1w8kUyoysw/XM5WoLRCqjfQGZ4447yMksR6lXDIo6fw0MfTFpP4hkCSlFteAlgQmDGkHxH9tjAg2PekWL29XPcuRBxdrwBWNivk+6DiF4BPBK4oX3i7t5XPo6wTYm9UvLHJoVIruj28M6y1upJaaYsTlRtol/3YjKVmbfeGJ0TGpfAV6xBJLx/BKwvDZIXNbQePB5X/3Or/K+bNcBrNEGSqxACtsSyjjC3WLPNbhWR7VIOOFGP8ZZ5LVhwN3WtMhoCfHOQbXIKoM/YuN0PpgXRclMCYiEYsLO6yFhKT5gU+1Gzt12aBv7bScf7vXU69TI57Smd3m42dSiOSijE3REzk7vFu7p1TM3t68+s/KrMKpyd2qVcC3OGQOMXfcoUMqt233G6sQChdgYzqpUgM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA0PR12MB8374.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(7416014)(376014)(1800799024)(23010399003)(366016)(6133799003)(10067099003)(4143699003)(11063799006)(5023799004)(56012099006)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TlhRa1plN3JIT2ZNc1JSaTNtUGhBbkIrUDR4UWZuTmZaWGJETWRtNTJRZVhR?=
- =?utf-8?B?dzhRZmRRdUxiL2doak9ONXpIVVkrYnhJSDVwYzcvQ3gwbm8xcklrOHkydnoy?=
- =?utf-8?B?YzVLTU5YWEkwOCs2ck9VL0IwdnhINnVyZmY0UjVnc1BYR1FnQkt0REFWelgy?=
- =?utf-8?B?RVRYT1VrMWE3ZUNMeHlKak5KQS96TEltNDJudVpySkI3VDBtS3RNWWp5M2Y0?=
- =?utf-8?B?VW4zc1JoWkhVbm8yS01OZHBRc1hoNHdOSFFrSVQ0aTFPSmhscUgyMmNIcUVE?=
- =?utf-8?B?RndKSmNVV2FlY1ZHaWhxY1B0ZUtTd3ZBR1hUQ25kYVk3a0Zwc25zajZLeS8y?=
- =?utf-8?B?QzlvQ1JxZnNOdEF1UjZBL1lwTWVIN2xjYXZCQ0dOZG5RVmg3OThwYVBHU2NE?=
- =?utf-8?B?ekFpVnMyRVRiOUI3bU0zV0swK3NTejhjQTRUN3BFVFBFVUk1NUJ0RldsTldr?=
- =?utf-8?B?aENiTUlmTTZaa29pWlpsam5vVG1sVzdsNnBtQU9pcXRoMitoeU9BdmIyZS9s?=
- =?utf-8?B?WVJiQy9rZlUxRHZQd0pkeXBiTk82d3E0bmZTMnYyZW91bThreTZNN0JPcUhE?=
- =?utf-8?B?d0ZuaFBMVEw1a2JMaUV2WlBsOW51VjJzakwrUEx2eDEzZ1VRUThtNGFDY0Y1?=
- =?utf-8?B?OC9LRnkzekw4RFpha3BwQ0VaVXllbE5pbFBpZ1RFQ1VZa1BnWWFGbVA1ckxx?=
- =?utf-8?B?ZVZkVTcyS25ibTJuVFlJSElUWXZhQVp6YU5BN1FQb0RaZkFwTDRDZUlUMWlL?=
- =?utf-8?B?Rk9aWDQzaldRNkVKc3dZRFhVYTZORk0vazVtc2thMVpWYTB0dE1kWXZwR3FD?=
- =?utf-8?B?R2dkVEVuQThhdE5pb0Z6N1N3TnE1Tkc3S2RmR3BLc3Fjb2U5WTZBRkdtRHNF?=
- =?utf-8?B?S3FKQW1WK04wN3o5ejBVaUd0dy9QOWVPSEtqa2ZlTVNlaWJ2ZnhyWUNzZlYz?=
- =?utf-8?B?VkU3QS9TeWplVVd3RWdsejlaWTdLVjVkNXNKSGZmbzZRTXQ0TFBGNjN3eDFr?=
- =?utf-8?B?QjdkNFQxUlFuSjByRW5Wamk5ek9LVzhoa0RBWExSWCt5R1cyQWtmWjAwS3FT?=
- =?utf-8?B?ZnBCendVUWMzdUY3Rm43N2NXU0t0d0RDMjJnUTVSdFRWckxiN3J2blBtbE9w?=
- =?utf-8?B?eThReTFWUll0V09rbkt1dzJXczY5Z052RlhONTZ2UjQ4Nm9mK3U0WnFFMVpW?=
- =?utf-8?B?Ulp0T2ZOOU0xQjVwSWdVYlBrN0JWSHB3QmYwMHczR2J3a0s2UGdvcFlMdHU4?=
- =?utf-8?B?S3ZINUpqc1hGeDJGZGM5M3B6VDlBNzB5WVgyRmZtblJyK1QwK3dLWlBMM1NM?=
- =?utf-8?B?NXVEeHlMNStRQ0lXWlF3MFRBTCtDOG13cXd4VjBrMExZSE9IWGhjem1XUnBL?=
- =?utf-8?B?VWpGSER6QVlUcklldGFtTFFMb00zZnREcWs3L0RJbC81c1Z3am9LVjlGWWpZ?=
- =?utf-8?B?M3I5cVZ1akxkc3RMSHR6K1R0Zm1jSzcrM3NqbEN4dTZkU24xcmd4UUxTZVl6?=
- =?utf-8?B?c1VNTXQ4YXk3ZUozRjVSclArRldHMVlBUzd0UXplN21xSm1lNm9nQUtFazY4?=
- =?utf-8?B?ZlMxd3pjOEdpUytlVytvZC9rMUpjVk9pck1QdmpZTlVVUTllV3dWUWs4TmNY?=
- =?utf-8?B?ZDhEZVVkd2s1SmhkQTNxWlNJNzNkQkl4R1dTTUFsdmh4SXNYZWZpSlFaNEM4?=
- =?utf-8?B?WWFxM1E2Yis0NGxsS3M4VXhZWFppTFo5VU8xM0dES3lFYytvVitMVWdnMFMy?=
- =?utf-8?B?WmlQaUNmQUU2ZXoxZFh2dUk3dk5HR2poSk5LZHBZRzUzK0RyQmJWQkY0N1Fy?=
- =?utf-8?B?U0Y4d0IrMDJFSzZjUDVOL2J5bjVMZHBpQWR6RWlaQ2lEdzMwVi81d3NEN29O?=
- =?utf-8?B?dlE5Y1hta2ZndTl5elJOT0piRlBZRWJSblQ2V2ZPdUp3RGkvalhxa2d5TzFD?=
- =?utf-8?B?WTRBeWp2ZDhLblFmanZTTWxyUEpUOGZEc0xEbEN4ejFVbHNad0xvcGpiODgy?=
- =?utf-8?B?LzR1OFplK0NFNHpVZXBhODBMUlYxd1dXazBKaWhHa0ZYZGpIc29LWEIweWhj?=
- =?utf-8?B?L3A3ZEEwb2VSNGNwaWc1N0h6eGxBb2t2RExxRkozM1hCR3Z4MXBaM2Z2ZUtO?=
- =?utf-8?B?YlNsdmhmNFVGREVrZjE3WWZGNmswZzY0RndQVW1HdFZwV3NYOHFySW4wR3lH?=
- =?utf-8?B?MjQrMVdJQ3RCNElxYjVjV0g2Vmd5VUNMZVhGaENZamlpL3RYbUNtMFkvOSs5?=
- =?utf-8?B?VGh6K3NOVm82S09ITC9zSk1GR0IwL0VDQm5iTTdHVDBicVZ6UURtMHcwbG5u?=
- =?utf-8?B?WEZldmREWTkyQzRxSlRrN2lZRXNMbU5WcFovSVlSSHBpUmRuQTBWdz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b9d0721-82cf-491d-7215-08df0f3617f8
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8374.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2026 12:21:51.5990 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qRwrEhgW/YqLSR8eK12KW4CbfVA1uPJAcA+9PW0diz3hLjUZra0T/4EA5lBYcF8F
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4067
-X-Headers-End: 1x4h66-0005LA-CO
-Subject: Re: [f2fs-dev] [PATCH v3 06/14] f2fs: stop using PG_private
+X-Headers-End: 1x4jLs-0001PA-QK
+Subject: [f2fs-dev] [PATCH] f2fs: introduce reserve_shrink mount option for
+ filesystem shrinkage
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -169,61 +120,271 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Zi Yan via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Zi Yan <ziy@nvidia.com>
-Cc: Michal Hocko <mhocko@suse.com>, "Liam R. Howlett" <liam@infradead.org>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Ying Huang <ying.huang@linux.alibaba.com>,
- Tal Zussman <tz2294@columbia.edu>, Qi Zheng <qi.zheng@linux.dev>,
- Vlastimil Babka <vbabka@kernel.org>, Alistair Popple <apopple@nvidia.com>,
- Dev Jain <dev.jain@arm.com>, "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- Gregory Price <gourry@gourry.net>, Ryan Roberts <ryan.roberts@arm.com>,
- Usama Arif <usama.arif@linux.dev>, linux-f2fs-devel@lists.sourceforge.net,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Barry Song <baohua@kernel.org>,
- Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
- Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
- Nico Pache <nico.pache@linux.dev>, Lance Yang <lance.yang@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Daeho Jeong <daehojeong@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMTAgU2VwIDIwMjYsIGF0IDM6MzUsIERhdmlkIEhpbGRlbmJyYW5kIChBcm0pIHdyb3RlOgoK
-PiBPbiA5LzkvMjYgMTk6NDcsIFRhbCBadXNzbWFuIHdyb3RlOgo+PiBPbiA5LzkvMjYgMzo0OCBQ
-TSwgRGF2aWQgSGlsZGVuYnJhbmQgKEFybSkgd3JvdGU6Cj4+PiBPbiA5LzgvMjYgMjA6MjAsIFRh
-bCBadXNzbWFuIHdyb3RlOgo+Pj4+Cj4+Pj4gSSBoYXZlIGEgV0lQIHNlcmllcyBvZiB+MzAgcGF0
-Y2hlcyBjb252ZXJ0aW5nIG11Y2ggb2YgdGhlIHJlbWFpbmluZyBwYWdlCj4+Pj4gdXNlcnMgaW4g
-ZjJmcyAoaW5jbHVkaW5nIHRoZSBiZWxvdykgdG8gZm9saW9zLiBTdGlsbCBoYXZlIHRvIGRvIHNv
-bWUKPj4+PiB0ZXN0aW5nIGFuZCBjbGVhbiBpdCB1cCwgYnV0IGhvcGluZyB0byBzZW5kIGl0IG91
-dCBpbiB0aGUgbmV4dCBjb3VwbGUgb2YKPj4+PiB3ZWVrcyAoaW4gdGhlIGhvcGVzIG9mIGVsaW1p
-bmF0aW5nIHNvbWUgbW9yZSBmb2xpb19jb21wYXQuYyBmdW5jdGlvbnMgYnkKPj4+PiBuZXh0IGN5
-Y2xlLi4uKQo+Pj4KPj4+IEluZGVlZCBiZXN0IHRvIHdhaXQgYSBiaXQgYmVmb3JlIGZsb29kaW5n
-IC1tbSBldmVuIG1vcmUsIGl0J3MgcmF0aGVyIGEgbG90IGF0Cj4+PiB0aGlzIHBvaW50Lgo+Pj4K
-Pj4+IEluIHRoZSBjb250ZXh0IG9mIHRoaXMgc2VyaWVzLCBpdCB3b3VsZCBiZSBncmVhdCBpZiB5
-b3UgY291bGQgcmV2aWV3IHdoZXRoZXIgdGhlCj4+PiBkaWZmIEkgcHJvcG9zZWQgd291bGQgZ2V0
-IHRoZSBqb2IgZG9uZSwgdGhhbmtzIQo+Pj4KPj4KPj4gV2hhdCBpdCBjaGFuZ2VzIGxvb2tzIGdv
-b2QsIGJ1dCBJIHdvdWxkIGdvIGEgbGl0dGxlIGZ1cnRoZXIuCj4KPiBUaGFua3MhCj4KPj4KPj4g
-VGhlcmUgYXJlIG9ubHkgdHdvIG1vcmUgdXNlcnMgb2YgcGFnZV9wcml2YXRlX2djaW5nKCksIHdo
-aWNoIHBhc3MgZmlvLT5wYWdlLgo+PiBUaG9zZSBjb3VsZCBlYXNpbHkgYmUgY29udmVydGVkIHRv
-IGZvbGlvX3Rlc3RfZjJmc19nY2luZygpIGJ5IHBhc3NpbmcgZmlvLT5mb2xpbywKPj4gd2hpY2gg
-aXMgaW4gYSB1bmlvbiB3aXRoIGZpby0+cGFnZS4gVGhhdCB3b3VsZCBsZXQgeW91IGRlbGV0ZSB0
-aGUKPj4gcGFnZV9wcml2YXRlXyMjbmFtZSgpIGltcGxlbWVudGF0aW9uIGluIFBBR0VfUFJJVkFU
-RV9HRVRfRlVOQygpIGFzIHdlbGwgYW5kIGp1c3QKPj4gcmVtb3ZlIHRoZSBlbnRpcmUgZmFtaWx5
-LiBBdCB0aGF0IHBvaW50IFBBR0VfUFJJVkFURV97R0VULFNFVCxDTEVBUn1fRlVOQygpCj4+IGNv
-dWxkIGJlIHJlbmFtZWQgdG8gc29tZXRoaW5nIGxpa2UgRjJGU19GT0xJT19QUklWQVRFX3tHRVQs
-U0VULENMRUFSfV9GVU5DKCkgYW5kCj4+IGFsbCBvZiB0aGlzIGNydWZ0IGlzIGdvbmUgYW5kIGZv
-bGlvLWJhc2VkLCB3aXRoIG5vIG1vcmUgZjJmcyB1c2Ugb2YgcGFnZV9wcml2YXRlKCkKPj4gZWl0
-aGVyLgo+Pgo+PiBUaGUgcmVuYW1pbmcgY291bGQgYmUgZG9uZSBhcyBhIGxhdGVyIHN0ZXAsIGJ1
-dCBJIHdvdWxkIGdldCByaWQgb2YgdGhlIGFjY2Vzc29ycwo+PiBhcyB3ZWxsIGluIG9uZSBzd29v
-cC4KPgo+IFllcywgZWl0aGVyIGFzIHBhcnQgb2YgdGhlIHNhbWUgcGF0Y2ggb3IgYXMgYSBzZXBh
-cmF0ZSBwYXRjaC4gWmksIGNhbiB5b3UgdGFrZQo+IGNhcmUgb2YgdGhhdD8gVGhhbmtzIQoKT0ss
-IEkgd2lsbCBjb21lIHVwIHdpdGggYSBwYXRjaCBiYXNlZCBvbiB5b3VyIHBhdGNoIHBsdXMgdGhl
-IHN1Z2dlc3Rpb24gaGVyZQpvbiB0b3Agb2YgdGhpcyDigJxmMmZzOiBzdG9wIHVzaW5nIFBHX3By
-aXZhdGXigJ0uIEkgd2lsbCBwb3N0IHRoZSBwYXRjaCBoZXJlCmZvciBmZWVkYmFjayB0byBhdm9p
-ZCBleHRyYSBjaHVybiBvZiB0aGUgd2hvbGUgc2VyaWVzLgoKQmVzdCBSZWdhcmRzLApZYW4sIFpp
-CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
-ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
-ZjJmcy1kZXZlbAo=
+From: Daeho Jeong <daehojeong@google.com>
+
+When preparing for subsequent online filesystem shrinkage (e.g., during
+partition resizing or FOTA updates), sufficient free space must be
+preserved so that valid data blocks can be evacuated and the filesystem
+can safely shrink.
+
+Existing reserve_root cannot prevent space exhaustion by privileged root
+processes (such as OTA updaters, package managers, and system daemons
+running with CAP_SYS_RESOURCE), which can allocate blocks from the root
+reserve and lead to resize failures due to lack of space. Moreover,
+runtime configurable reserved_blocks represents permanent GC and metadata
+headroom that must persist after resize, which would cause double-counting
+if inflated for shrinkage.
+
+To resolve this, introduce a dedicated reserve_shrink=<blocks>
+mount option:
+1. Symmetrically mirrors reserve_root=<blocks> in block units to
+   pre-reserve space specifically for subsequent filesystem shrinkage.
+2. In get_available_block_count(), unconditionally deducts
+   reserve_shrink_blocks for all callers, strictly rejecting all
+   allocations (including root / CAP_SYS_RESOURCE) once available blocks
+   are exhausted.
+3. In f2fs_statfs(), deducts reserve_shrink_blocks from f_bfree (and
+   f_bavail) so that filesystem statistics accurately reflect usable space.
+4. In f2fs_resize_fs(), automatically resets reserve_shrink_blocks to 0
+   and clears F2FS_MOUNT_RESERVE_SHRINK upon successful shrink completion,
+   releasing any remaining reservation.
+5. In sysfs: reserved_blocks, subtracts reserve_shrink_blocks when
+   validating the upper limit of configurable reserved blocks.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ Documentation/filesystems/f2fs.rst |  7 +++++
+ fs/f2fs/f2fs.h                     |  9 ++++++
+ fs/f2fs/gc.c                       |  5 ++++
+ fs/f2fs/super.c                    | 47 ++++++++++++++++++++++++++++++
+ fs/f2fs/sysfs.c                    | 13 +++++++--
+ 5 files changed, 79 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 771216f45207..dbdc5d5a83ad 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -191,6 +191,13 @@ reserve_node=%d		 Support configuring reserved nodes which are used for
+ 			 gid, the default limit is 12.5% of all nodes.
+ resuid=%d		 The user ID which may use the reserved blocks and nodes.
+ resgid=%d		 The group ID which may use the reserved blocks and nodes.
++reserve_shrink=%d	 Support pre-reserving space for subsequent filesystem
++			 shrinkage (e.g. during partition resizing or FOTA),
++			 unit: blocks. Unlike reserve_root, allocations from
++			 this reserved space strictly reject all callers
++			 (including root / CAP_SYS_RESOURCE). Once the
++			 filesystem is successfully shrunk via resize, this
++			 value is automatically reset to 0.
+ fault_injection=%d	 Enable fault injection in all supported types with
+ 			 specified injection rate.
+ fault_type=%d		 Support configuring fault injection type, should be
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 62efc25cd107..c21ed3eacc6f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -145,6 +145,7 @@ enum f2fs_mount_opt {
+ 	 */
+ 	F2FS_MOUNT_LAZYTIME,
+ 	F2FS_MOUNT_RESERVE_NODE,
++	F2FS_MOUNT_RESERVE_SHRINK,
+ };
+ 
+ #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+@@ -226,6 +227,7 @@ struct f2fs_mount_info {
+ 	unsigned long long opt;
+ 	block_t root_reserved_blocks;	/* root reserved blocks */
+ 	block_t root_reserved_nodes;	/* root reserved nodes */
++	block_t reserve_shrink_blocks;	/* reserve blocks for shrink */
+ 	kuid_t s_resuid;		/* reserved blocks for uid */
+ 	kgid_t s_resgid;		/* reserved blocks for gid */
+ 	int active_logs;		/* # of active logs */
+@@ -2658,6 +2660,13 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+ 	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, inode, cap))
+ 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+ 
++	if (test_opt(sbi, RESERVE_SHRINK)) {
++		if (avail_user_block_count > F2FS_OPTION(sbi).reserve_shrink_blocks)
++			avail_user_block_count -= F2FS_OPTION(sbi).reserve_shrink_blocks;
++		else
++			avail_user_block_count = 0;
++	}
++
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+ 		if (avail_user_block_count > sbi->unusable_block_count)
+ 			avail_user_block_count -= sbi->unusable_block_count;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index bc22dde1cb30..556c4793478d 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -2492,6 +2492,11 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ 		spin_lock(&sbi->stat_lock);
+ 		sbi->user_block_count += shrunk_blocks;
+ 		spin_unlock(&sbi->stat_lock);
++	} else if (test_opt(sbi, RESERVE_SHRINK)) {
++		spin_lock(&sbi->stat_lock);
++		F2FS_OPTION(sbi).reserve_shrink_blocks = 0;
++		clear_opt(sbi, RESERVE_SHRINK);
++		spin_unlock(&sbi->stat_lock);
+ 	}
+ out_err:
+ 	f2fs_up_write_trace(&sbi->cp_global_sem, &clc);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f96abecb3c55..f7f82a32f99f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -196,6 +196,7 @@ enum {
+ 	Opt_data_flush,
+ 	Opt_reserve_root,
+ 	Opt_reserve_node,
++	Opt_reserve_shrink,
+ 	Opt_resgid,
+ 	Opt_resuid,
+ 	Opt_mode,
+@@ -328,6 +329,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_flag("data_flush", Opt_data_flush),
+ 	fsparam_u32("reserve_root", Opt_reserve_root),
+ 	fsparam_u32("reserve_node", Opt_reserve_node),
++	fsparam_u32("reserve_shrink", Opt_reserve_shrink),
+ 	fsparam_gid("resgid", Opt_resgid),
+ 	fsparam_uid("resuid", Opt_resuid),
+ 	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
+@@ -407,6 +409,7 @@ static match_table_t f2fs_checkpoint_tokens = {
+ #define F2FS_SPEC_lookup_mode			(1 << 24)
+ #define F2FS_SPEC_reserve_node			(1 << 25)
+ #define F2FS_SPEC_resizable_tail_secno		(1 << 26)
++#define F2FS_SPEC_reserve_shrink		(1 << 27)
+ 
+ struct f2fs_fs_context {
+ 	struct f2fs_mount_info info;
+@@ -538,6 +541,27 @@ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
+ 					   F2FS_OPTION(sbi).s_resgid));
+ }
+ 
++static inline void limit_reserve_shrink(struct f2fs_sb_info *sbi)
++{
++	block_t block_limit;
++
++	if (!test_opt(sbi, RESERVE_SHRINK))
++		return;
++
++	block_limit = sbi->user_block_count - sbi->reserved_blocks;
++	if (test_opt(sbi, RESERVE_ROOT)) {
++		if (block_limit > F2FS_OPTION(sbi).root_reserved_blocks)
++			block_limit -= F2FS_OPTION(sbi).root_reserved_blocks;
++		else
++			block_limit = 0;
++	}
++	if (F2FS_OPTION(sbi).reserve_shrink_blocks > block_limit) {
++		F2FS_OPTION(sbi).reserve_shrink_blocks = block_limit;
++		f2fs_info(sbi, "Reduce reserved blocks for shrink = %u",
++			  F2FS_OPTION(sbi).reserve_shrink_blocks);
++	}
++}
++
+ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
+ {
+ 	if (!F2FS_OPTION(sbi).unusable_cap_perc)
+@@ -941,6 +965,14 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		F2FS_CTX_INFO(ctx).root_reserved_nodes = result.uint_32;
+ 		ctx->spec_mask |= F2FS_SPEC_reserve_node;
+ 		break;
++	case Opt_reserve_shrink:
++		if (result.uint_32)
++			ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_SHRINK);
++		else
++			ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_SHRINK);
++		F2FS_CTX_INFO(ctx).reserve_shrink_blocks = result.uint_32;
++		ctx->spec_mask |= F2FS_SPEC_reserve_shrink;
++		break;
+ 	case Opt_resuid:
+ 		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
+ 		ctx->spec_mask |= F2FS_SPEC_resuid;
+@@ -1763,6 +1795,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 	if (ctx->spec_mask & F2FS_SPEC_reserve_node)
+ 		F2FS_OPTION(sbi).root_reserved_nodes =
+ 					F2FS_CTX_INFO(ctx).root_reserved_nodes;
++	if (ctx->spec_mask & F2FS_SPEC_reserve_shrink)
++		F2FS_OPTION(sbi).reserve_shrink_blocks =
++					F2FS_CTX_INFO(ctx).reserve_shrink_blocks;
+ 	if (ctx->spec_mask & F2FS_SPEC_resgid)
+ 		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
+ 	if (ctx->spec_mask & F2FS_SPEC_resuid)
+@@ -2288,6 +2323,13 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
+ 						sbi->current_reserved_blocks;
+ 
++	if (test_opt(sbi, RESERVE_SHRINK)) {
++		if (buf->f_bfree > F2FS_OPTION(sbi).reserve_shrink_blocks)
++			buf->f_bfree -= F2FS_OPTION(sbi).reserve_shrink_blocks;
++		else
++			buf->f_bfree = 0;
++	}
++
+ 	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
+ 		buf->f_bfree = 0;
+ 	else
+@@ -2512,6 +2554,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 					F2FS_OPTION(sbi).s_resuid),
+ 				from_kgid_munged(&init_user_ns,
+ 					F2FS_OPTION(sbi).s_resgid));
++	if (test_opt(sbi, RESERVE_SHRINK))
++		seq_printf(seq, ",reserve_shrink=%u",
++				F2FS_OPTION(sbi).reserve_shrink_blocks);
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (test_opt(sbi, FAULT_INJECTION)) {
+ 		seq_printf(seq, ",fault_injection=%u",
+@@ -3093,6 +3138,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 
+ 	adjust_pinned_area_boundary(sbi);
+ 	limit_reserve_root(sbi);
++	limit_reserve_shrink(sbi);
+ 	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+ 
+ 	sbi->umount_lock_holder = NULL;
+@@ -5310,6 +5356,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->current_reserved_blocks = 0;
+ 	sbi->alias_reserved_blocks = 0;
+ 	limit_reserve_root(sbi);
++	limit_reserve_shrink(sbi);
+ 	adjust_unusable_cap_perc(sbi);
+ 
+ 	f2fs_init_extent_cache_info(sbi);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index aaca9ed9b169..d61940d095b4 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -591,9 +591,18 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 	}
+ #endif
+ 	if (a->struct_type == RESERVED_BLOCKS) {
++		unsigned long limit;
++
+ 		spin_lock(&sbi->stat_lock);
+-		if (t > (unsigned long)(sbi->user_block_count -
+-				F2FS_OPTION(sbi).root_reserved_blocks)) {
++		limit = sbi->user_block_count -
++				F2FS_OPTION(sbi).root_reserved_blocks;
++		if (test_opt(sbi, RESERVE_SHRINK)) {
++			if (limit > F2FS_OPTION(sbi).reserve_shrink_blocks)
++				limit -= F2FS_OPTION(sbi).reserve_shrink_blocks;
++			else
++				limit = 0;
++		}
++		if (t > limit) {
+ 			spin_unlock(&sbi->stat_lock);
+ 			return -EINVAL;
+ 		}
+-- 
+2.55.0.1007.g17ff1f9808-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
