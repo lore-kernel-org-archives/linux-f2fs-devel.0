@@ -4,126 +4,137 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09139C79FB9
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Sep 2026 07:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33347C79FB9
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Sep 2026 07:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9QAw8G78wdazUL0eicXC1FipzIx1FX9ZnJiQ2tb93CY=; b=INVtpUcGFZDBxi2Xur+K7DIueM
-	fMi5FNR4PJqeTnrFruSiM3DE2tnikbeFbvCK6ulKQ02OOENb50A46jGtkl4987nASWpOFun7uFjdZ
-	UobVRzcSDFojk1nBPKgHEf44w/ewf7bmM6elv2zbUcaeZyLwrRuGhk0RUwT1hkD/6YG0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Id4q4DG3zqh0kpk6YQti9ieTRbormQEr3tU6sxaoFBY=; b=MfWsyXwZxOEb/6jRJLeticKs+0
+	QmbL24pC5DtObLgHrwuFVxJQpwStE+CONPCZS9LpI/FvGH942MMl5RgpZeSARoPUjlpk239i9pGmL
+	FNio7yW1kpm8XFQFVCpov6PESCmbOiNK1hD2leQTffs766Bgv1pMhPXfoPVypE1YhfwU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x4Z7X-00052e-0M;
-	Thu, 10 Sep 2026 07:22:52 +0000
+	id 1x4ZJO-0003Ef-2f;
+	Thu, 10 Sep 2026 07:35:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <niuzhiguo84@gmail.com>) id 1x4Z7G-00052P-70
+ (envelope-from <david@kernel.org>) id 1x4ZJI-0003EA-Gr
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Sep 2026 07:22:35 +0000
+ Thu, 10 Sep 2026 07:35:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l5Wu7YrtYFqk2A1LMgO87zFbbXnbSNxs3gHTR4Q+xNo=; b=AYlFvW/WS6guw/VwucSzaCMD5B
- MQzgIE4TWxix46WsPAoAUIkNg2rcBZHxxAZobRUB4TDOj1nT2tuoKLn1L4C+qcH5Kd5B0hwcSbvom
- rX2qtXRy1wA98xR9cQDj1wLMlwTZHHQT/WE3w/io4YAxDu8+ZCYPqmPdnyuZ9iypi9HQ=;
+ bh=4CWbYR+JLxhjEFkn3E8IqW/7LBzeZSK+qKtZqgiB7OM=; b=HgTErgDETMwfPfOlLBFARLBots
+ r+Ccxnd9JJfMe5F5Eyr+j/N57aYcn0GTtvHheg8e335YwWq5Ly++O96OCn9Dxx4kwbyPj8PBJWv/2
+ cvmWGAKlCYiIZIEAAqmSBRTCIWBHhIsvdJNhm8meSexCv4RxUVVlCWrgsKLEhpLcT9FY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l5Wu7YrtYFqk2A1LMgO87zFbbXnbSNxs3gHTR4Q+xNo=; b=WMloItXFY/HE4bj33VeTB0qq8O
- aUBnaVR6fh6zNhuMXzTpjfmjfHaI7N8a4RpgndZqaz99LM/s0WrtBEYLint5AzMYnRmhQqtaIfVjU
- PDx4xMd7WMfJmNhvdmOdIxjAg3tildv/JaVgHUKqaix9NUYmbEVMWcgJRRT211bjlSg4=;
-Received: from mail-wm2-f12.google.com ([74.125.225.140])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x4Z7C-0005fe-LC for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Sep 2026 07:22:35 +0000
-Received: by mail-wm2-f12.google.com with SMTP id
- 5b1f17b1804b1-499db1740f2so2792745e9.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 10 Sep 2026 00:22:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789024948; cv=none;
- d=google.com; s=arc-20260327;
- b=b3+UrsJrC4v+152+WuWB5Ow2lC1EeHCs/j19WoZ5maZ2Agk4uBLLUi2I7Z4Ilfa6VN
- fXGOMsVoBulFs4EKW0TRRpswhoIKbKj86W5Xd04DIpzrX0APzRfinGumOlFYIo+u2rfY
- gsMpBbwRhTo9QPJiklsJ5asW6G7TIUgFayDhP6mDXH94SmvR7wPYYQwXRBWqZQNWQmc5
- 9YNcRsVwAuGmrGWQn2t4dRziJT+PYUlHvdWOOUtPqXOEvnCCg9OjFBCgY02W2JyKQqlY
- Li3ODuZ8QaBttAGmyA1+kt+tNGybeao5LqhwyXUBFmlNlLzpFzJVs9ZqO7JOL7ejzKQj
- FYfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=l5Wu7YrtYFqk2A1LMgO87zFbbXnbSNxs3gHTR4Q+xNo=;
- fh=ZmoWWhxvL51DOnhfLpAelmtnE5s7LUOF8I9v+W+Fz4c=;
- b=bdllEtYEFxgYuQRnzoULQwg+ZIJZxBgwi08hSeRfN8kcbL4mAyhOnl3ZwOlob1alSv
- Kx7/KRBNzu8yNq20Clq2Is9F4WWuljBa0lxvupQOWg3OQ92rP7rP9YomfdfhSErz6chy
- zZoll1iYcm1xdJxOTyvTAvSfta8KIrF6kYW/dmWd+DomfFSiDCsBWwox+FQnIF74Uo/e
- L1I8NVIsAozZqYs8mAiLwk4WA+3XWSB6ammi3K6EV7kjUsmXz7HUzcYKT4vwEebU4sFT
- npzZkh8RqTMEmgFd3AGCKLsWJ/5B6j3IFiePo1mEb0P1jQoSnw9XYhN6nhbT74DdHzdv
- z3PQ==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789024948; x=1789629748; darn=lists.sourceforge.net;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=l5Wu7YrtYFqk2A1LMgO87zFbbXnbSNxs3gHTR4Q+xNo=;
- b=T4holiIbgMAAYyt9/vV5hd8jRZt0hU0J1n/x1/KyDUEjikdxNKHBd81MI88fB7jytn
- L/d1A3Lup63NNlD/3e4EYFsrPobCVOGGbqPq3g0+Rv2YrRajc2/zOvrm6Y47ReE9LjZR
- k5/wTlUg/H+gMmIMqoqkX9faqkJpjBAu679pA24et3Jb2G72Hu15w6Y8Z8pndX24WmLU
- uBirYrg1dyXUIbPUFVTe6h8wpXA1RTVTHRKzu7WOFFFZjoO//TW2gHQMkdU0iuJF0DwU
- 9gPi7GLQF9FH6Y6zVAYDbrJLR8YuOXpAjDecu4DOeEyjUIQZeFvvgDhu8yratCvIN6q0
- SPWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789024948; x=1789629748;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=l5Wu7YrtYFqk2A1LMgO87zFbbXnbSNxs3gHTR4Q+xNo=;
- b=fm6M0E90F8EclLTuLt+YGPaRY9D4I3TtZRaz8ZktWKOKQDzJH62bBBkAOlabCKSs1T
- BFhTcccVBg0YfnbHqBvtVQ3RQyI35Yb9ckz9sR2uQTBi+KCgxzMK8D8edNmdwwxgfWgj
- tbO77Y1pPmdm+JetSp7EsGbgTvl50adt6hIfxlMK2UwMUYDM1do/KneCLEVb5X8stP6Z
- hLWbec8Zez26vfLhCHf46tybcWo5QlYAPSnYYfW0GB/adM02szgq5+9nQa/dx5/Sksci
- BPvx95PLGS9AnbH2Qcp9QW/yL/4M9LMKivY4LgLsW7IVDV9aFSNMIrgD9KOQGSsKGJq4
- RTvg==
-X-Forwarded-Encrypted: i=1;
- AKwUvByXXeP5XMp24SECvphj20RzZqgEG0HfCecyBl/AjBE9UGjhujTDeYnpgCvBQsnV4gYULwNu1zzHxZmXDFZ9hbZ4@lists.sourceforge.net
-X-Gm-Message-State: AFuF++mWJwR4jtIWztKjIODjaT4SOGBFBuSqxvIIYE7tPDenuUcgmKFT
- moNK2cXLgkWJsyBYfR4BFTutowEiPNehC2S/rntGx3JWqgCRTnQYOKhT97BsnbjRyU/OhdIFInF
- vCsZD01ijfpf0C0/Eg6mNITRbHXKxCBNxUj7a
-X-Gm-Gg: AYBFou2/m0kK6H2mNoj+3XsAYPiwC76Rnk1/op/d7ov9RGAvNsyMNrX+NfhuX3VaG2j
- 66JY2qoyWSwK/b3ql/cVORkBis0ly0ap/GTEdE03ZTrikY/fVngDx5obwEtfuj4FCvh6T4SWT2p
- 2hzuG98zNB0WUFCaEPGPGhj4aUJVvB4uPdbSytVb8fROLzZq2C1GQg7TGuDkFZgFP+jY9OMtTU/
- W5tXViPTV7az6VL81PiqY3z8L+qqBKzMH9N6k2L/FX9YLtP7nMzDT2vRcHpr7tObAU83K5KKgTu
- Da7XUNQmT11v67T05y2Yy6AnBs2eyFo4R1f3ecdTTBjho3qcRjiKLLPm
-X-Received: by 2002:a05:600c:6289:b0:49d:1da4:511b with SMTP id
- 5b1f17b1804b1-49d27670d04mr22165515e9.1.1789024947960; Thu, 10 Sep 2026
- 00:22:27 -0700 (PDT)
+ bh=4CWbYR+JLxhjEFkn3E8IqW/7LBzeZSK+qKtZqgiB7OM=; b=BBHxsNt9VFH5g6k++XOrv79dhR
+ VPX004gmKJuoy/bu5Ncf1joWMP90R5qHeO2wanxsYCnAOF5kHba4LmuI/kDgFxRC8VCOybw4Uuh8U
+ sFhYNS49+t3DqWhTrL3LVncS236fyVO9wEWsNRqi6WiJXDxMCzqpIS7FzsGIdDKx9DSo=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x4ZJG-00062n-2p for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 10 Sep 2026 07:35:05 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 1BCDB600C8;
+ Thu, 10 Sep 2026 07:34:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC771F000FF;
+ Thu, 10 Sep 2026 07:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1789025695;
+ bh=4CWbYR+JLxhjEFkn3E8IqW/7LBzeZSK+qKtZqgiB7OM=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To;
+ b=S1aYriuIA6tz4mgwaEsKlFV/NuKhCbH9E4gw76QlVDki4uhAeXqLWRTP9gPhiZ55S
+ 4uZd793YbTA63LDC5kAxbA8Z4jDJae5iEqCYeY38BNSj8bjOseVTLKUHqPkrf6E8sn
+ H77+2CIAtMWh4529SPPwSA5vW1LhGs+DfN22NujSwLjn8XMpyqfcFhL2ilS9kN66kM
+ sK2hhAEuuRCG/da4Dv0RQlVpcLXkTwdf/z7E1pbcTqy1oM3Z5ci8735qX8++JVmQV7
+ iWRKJLlFBdOEv1USiOYnctrqqLEQfI0agOWUEMTGKq6Im9Zf0L+ubXr1+XEuCGH4n9
+ AXgTGSVPweDNw==
+Message-ID: <520b6aca-b515-4720-977f-1adb484f2e08@kernel.org>
+Date: Thu, 10 Sep 2026 09:34:46 +0200
 MIME-Version: 1.0
-References: <20260910022258.3308187-1-chao@kernel.org>
-In-Reply-To: <20260910022258.3308187-1-chao@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Thu, 10 Sep 2026 15:22:14 +0800
-X-Gm-Features: AcwNN1VIotxYcfepBaV4DRS_s_5RX8jAe5pbtNh52LTKDkYSGXp9aQO81YuJ_Jc
-Message-ID: <CAHJ8P3Kah8NTiSMsXdb1PF9yA59UE+MZTg8MkcYcH4OrVQVjQw@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1x4Z7C-0005fe-LC
-Subject: Re: [f2fs-dev] [PATCH] f2fs: compress: fix to handle race between
- truncate and writeback
+User-Agent: Mozilla Thunderbird
+To: Chao Yu <chao@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>,
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <qi.zheng@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Kairui Song <kasong@tencent.com>
+References: <20260907-remove-pg_private-v3-0-6ae22f9d9272@nvidia.com>
+ <20260907-remove-pg_private-v3-6-6ae22f9d9272@nvidia.com>
+ <e5792e81-e8a5-42e1-aafe-58dc603f4968@kernel.org>
+ <7e11c56d-05e6-48f0-b5b8-b4a0e18ddc1d@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <7e11c56d-05e6-48f0-b5b8-b4a0e18ddc1d@kernel.org>
+X-Headers-End: 1x4ZJG-00062n-2p
+Subject: Re: [f2fs-dev] [PATCH v3 06/14] f2fs: stop using PG_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -135,76 +146,108 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- stable@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: "David Hildenbrand \(Arm\) via Linux-f2fs-devel"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: "David Hildenbrand \(Arm\)" <david@kernel.org>
+Cc: linux-mm@kvack.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Q2hhbyBZdSB2aWEgTGludXgtZjJmcy1kZXZlbCA8bGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQ+CuS6jjIwMjblubQ55pyIMTDml6Xlkajlm5sgMTA6MjTlhpnpgZPvvJoKPgo+
-IEZyb206IENoYW8gWXUgPGNoYW9Aa2VybmVsLm9yZz4KPgo+IGZzc3RyZXNzIHJlcG9ydHMgYSBr
-ZXJuZWwgQlVHIGluIGYyZnNfdHJ1bmNhdGVfcGFydGlhbF9jbHVzdGVyKCk6Cj4KPiBrZXJuZWwg
-QlVHIGF0IGZzL2YyZnMvY29tcHJlc3MuYzoxMjM4IQo+IFJJUDogMDAxMDpmMmZzX3RydW5jYXRl
-X3BhcnRpYWxfY2x1c3RlcisweDI5Mi8weDJhMAo+IENhbGwgVHJhY2U6Cj4gIDxUQVNLPgo+ICBm
-MmZzX3RydW5jYXRlKzB4ZjYvMHgyMTAKPiAgZjJmc19zZXRhdHRyKzB4NmI3LzB4NzcwCj4gIG5v
-dGlmeV9jaGFuZ2UrMHgzM2IvMHg1MjAKPiAgZG9fdHJ1bmNhdGUrMHhjMi8weGYwCj4gIHZmc190
-cnVuY2F0ZSsweDE1My8weDFkMAo+ICBrc3lzX3RydW5jYXRlKzB4NzgvMHhkMAo+ICBfX3g2NF9z
-eXNfdHJ1bmNhdGUrMHgxNi8weDIwCj4gIGRvX3N5c2NhbGxfNjQrMHhiZS8weDU0MAo+Cj4gVGhl
-IHJvb3QgY2F1c2UgaXMgdGhhdCBUaHJlYWQgQSAodHJ1bmNhdGUpIGFuZCBUaHJlYWQgQiAoYmFj
-a2dyb3VuZAo+IHdyaXRlYmFjayBvciBmc3luYykgY2FuIHJhY2UgYXMgZm9sbG93czoKPgo+IFRo
-cmVhZCBBICAgICAgICAgICAgICAgICAgICAgICAgICAgICBUaHJlYWQgQgo+IC0gZjJmc19zZXRh
-dHRyCj4gIC0gZjJmc190cnVuY2F0ZQo+ICAgLSBmMmZzX3RydW5jYXRlX2Jsb2Nrcwo+ICAgIC0g
-ZjJmc190cnVuY2F0ZV9wYXJ0aWFsX2NsdXN0ZXIKPiAgICAgLSBmMmZzX2lzX2NvbXByZXNzZWRf
-Y2x1c3Rlcgo+ICAgICAgIHJldHVybiAxCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIC0gZjJmc193cml0ZV9jYWNoZV9wYWdlcwo+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgLSBmMmZzX3dyaXRlX211bHRpX3BhZ2VzCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgLSBmMmZzX3dyaXRlX3Jhd19wYWdlcwo+ICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtIGYyZnNfd3JpdGVfc2luZ2xlX2RhdGFf
-cGFnZQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRuLmRhdGFf
-YmxrYWRkciAhPSBDT01QUkVTU19BRERSCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgKGNsdXN0ZXIgY29udmVydGVkIHRvIG5vcm1hbCkKPiAgICAgLSBmMmZzX3By
-ZXBhcmVfY29tcHJlc3Nfb3ZlcndyaXRlCj4gICAgICAtIGYyZnNfaXNfY29tcHJlc3NlZF9jbHVz
-dGVyCj4gICAgICAgIHJldHVybiAwCj4gICAgICAtIHJldHVybiAwCj4gICAgIC0gZjJmc19idWdf
-b24oc2JpLCBlcnIgPT0gMCk6IEJVRyEKPgo+IFdyaXRlYmFjayBwYXRoIGRvZXMgbm90IGFjcXVp
-cmUgaV9nY19yd3NlbSBvciBmaWxlbWFwX2ludmFsaWRhdGVfbG9jay4KPiBXaGVuIGEgY29tcHJl
-c3NlZCBjbHVzdGVyIGZhaWxzIGNvbXByZXNzaW9uIGR1cmluZyB3cml0ZWJhY2ssIGl0IGlzCj4g
-b3ZlcndyaXR0ZW4gd2l0aCByYXcgZGF0YSBibG9ja3MuIElmIFRocmVhZCBBIGNoZWNrZWQKPiBm
-MmZzX2lzX2NvbXByZXNzZWRfY2x1c3RlcigpIGJlZm9yZSB0aGUgY29udmVyc2lvbiwgYnV0IGNh
-bGxzCj4gZjJmc19wcmVwYXJlX2NvbXByZXNzX292ZXJ3cml0ZSgpIGFmdGVyIHRoZSBjb252ZXJz
-aW9uLAo+IGYyZnNfcHJlcGFyZV9jb21wcmVzc19vdmVyd3JpdGUoKSByZXR1cm5zIDAgYmVjYXVz
-ZSB0aGUgY2x1c3RlciBpcyBubwo+IGxvbmdlciBhIGNvbXByZXNzZWQgY2x1c3Rlci4KPgo+IFRv
-IGZpeCB0aGlzLCByZW1vdmUgdGhlIGYyZnNfYnVnX29uKCkgYW5kIHJldHJ5IGNoZWNraW5nIHRo
-ZSBjbHVzdGVyIHN0YXR1cwo+IHdoZW4gZjJmc19wcmVwYXJlX2NvbXByZXNzX292ZXJ3cml0ZSgp
-IHJldHVybnMgMCwgc28gdGhhdCBpdCBjYW4gZmFsbCBiYWNrCj4gdG8gZjJmc19kb190cnVuY2F0
-ZV9ibG9ja3MoKSB0byBoYW5kbGUgaXQgYXMgYSBub3JtYWwgY2x1c3Rlci4KPgo+IENjOiBzdGFi
-bGVAa2VybmVsLm9yZwo+IEZpeGVzOiAzMjY1ZDNkYjFmMTYgKCJmMmZzOiBzdXBwb3J0IHBhcnRp
-YWwgdHJ1bmNhdGlvbiBvbiBjb21wcmVzc2VkIGlub2RlIikKPiBTaWduZWQtb2ZmLWJ5OiBDaGFv
-IFl1IDxjaGFvQGtlcm5lbC5vcmc+Cj4gLS0tCj4gIGZzL2YyZnMvY29tcHJlc3MuYyB8IDggKysr
-Ky0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkK
-Pgo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2NvbXByZXNzLmMgYi9mcy9mMmZzL2NvbXByZXNzLmMK
-PiBpbmRleCBjZTg4MDkyZDljZTIuLmUxY2M3MTg1NDI4ZSAxMDA2NDQKPiAtLS0gYS9mcy9mMmZz
-L2NvbXByZXNzLmMKPiArKysgYi9mcy9mMmZzL2NvbXByZXNzLmMKPiBAQCAtMTIyMiw2ICsxMjIy
-LDcgQEAgaW50IGYyZnNfdHJ1bmNhdGVfcGFydGlhbF9jbHVzdGVyKHN0cnVjdCBpbm9kZSAqaW5v
-ZGUsIHU2NCBmcm9tLCBib29sIGxvY2spCj4gICAgICAgICBpbnQgaTsKPiAgICAgICAgIGludCBl
-cnI7Cj4KPiArcmVwZWF0Ogo+ICAgICAgICAgZXJyID0gZjJmc19pc19jb21wcmVzc2VkX2NsdXN0
-ZXIoaW5vZGUsIHN0YXJ0X2lkeCk7Cj4gICAgICAgICBpZiAoZXJyIDwgMCkKPiAgICAgICAgICAg
-ICAgICAgcmV0dXJuIGVycjsKPiBAQCAtMTIzMywxMSArMTIzNCwxMCBAQCBpbnQgZjJmc190cnVu
-Y2F0ZV9wYXJ0aWFsX2NsdXN0ZXIoc3RydWN0IGlub2RlICppbm9kZSwgdTY0IGZyb20sIGJvb2wg
-bG9jaykKPiAgICAgICAgIC8qIHRydW5jYXRlIGNvbXByZXNzZWQgY2x1c3RlciAqLwo+ICAgICAg
-ICAgZXJyID0gZjJmc19wcmVwYXJlX2NvbXByZXNzX292ZXJ3cml0ZShpbm9kZSwgJnBhZ2VwLAo+
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0YXJ0X2lk
-eCwgJmZzZGF0YSk7Cj4gKyAgICAgICBpZiAoZXJyID09IDApCj4gKyAgICAgICAgICAgICAgIGdv
-dG8gcmVwZWF0OwpIaSBDaGFvLAogc29tZSBjb21tZW50cyBoZXJlIHdpbGwgYmUgZWFzaWVyIHRv
-IHVuZGVyc3RhbmTvvJ8Kb3RoZXIgTEdUTQpSZXZpZXdlZC1ieTogWmhpZ3VvIE5pdSA8emhpZ3Vv
-Lm5pdUB1bmlzb2MuY29tPgp0aGFua3MhCj4KPiAtICAgICAgIC8qIHNob3VsZCBub3QgYmUgYSBu
-b3JtYWwgY2x1c3RlciAqLwo+IC0gICAgICAgZjJmc19idWdfb24oRjJGU19JX1NCKGlub2RlKSwg
-ZXJyID09IDApOwo+IC0KPiAtICAgICAgIGlmIChlcnIgPD0gMCkKPiArICAgICAgIGlmIChlcnIg
-PCAwKQo+ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOwo+Cj4gICAgICAgICBycGFnZXMgPSBm
-c2RhdGE7Cj4gLS0KPiAyLjQ5LjAKPgo+Cj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJj
-ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWls
-aW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9s
-aXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 9/10/26 04:41, Chao Yu wrote:
+> On 9/8/26 23:47, David Hildenbrand (Arm) wrote:
+>> On 9/8/26 04:56, Zi Yan wrote:
+>>> f2fs sets its PAGE_PRIVATE_* flags in page->private and checking
+>>> page->private != NULL is equivalent to checking PG_private. Change
+>>> PagePrivate() to page_private(). Meanwhile, in set_page_private_##name(),
+>>> page->private is first set to 0/NULL before an PAGE_PRIVATE_* flag is set,
+>>> but it can cause confusion when PG_private is removed and
+>>> page->private != NULL is used instead. Change it to initialize
+>>> page->private to PAGE_PRIVATE_NOT_POINTER instead and retain the original
+>>> semantics.
+>>>
+>>> It prepares for a future commit that removes PG_private.
+>>>
+>>> No functional change intended.
+>>>
+>>> Assisted-by: Claude:claude-opus-4-8
+>>> Assisted-by: Codex:gpt-5
+>>> To: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> To: Chao Yu <chao@kernel.org>
+>>> Cc: linux-f2fs-devel@lists.sourceforge.net
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Acked-by: Usama Arif <usama.arif@linux.dev>
+>>> Acked-by: Chao Yu <chao@kernel.org>
+>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>> ---
+>>>  fs/f2fs/f2fs.h | 8 ++++----
+>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 9940a6cecf1a2..2f7ab5888b078 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -2691,7 +2691,7 @@ static inline bool folio_test_f2fs_##name(const struct folio *folio)	\
+>>>  }									\
+>>>  static inline bool page_private_##name(struct page *page) \
+>>>  { \
+>>> -	return PagePrivate(page) && \
+>>> +	return page_private(page) && \
+>>>  		test_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)) && \
+>>>  		test_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
+>>>  }
+>>> @@ -2710,9 +2710,9 @@ static inline void folio_set_f2fs_##name(struct folio *folio)		\
+>>>  }									\
+>>>  static inline void set_page_private_##name(struct page *page) \
+>>>  { \
+>>> -	if (!PagePrivate(page)) \
+>>> -		attach_page_private(page, (void *)0); \
+>>> -	set_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)); \
+>>> +	if (!page_private(page)) \
+>>> +		attach_page_private(page, \
+>>> +				(void *)BIT(PAGE_PRIVATE_NOT_POINTER)); \
+>>>  	set_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
+>>>  }
+>>
+>> Very weird interface. Why do we even need the page-based interface still?
+>>
+>> $ git grep -E "(set|clear)_page_private"
+>> compress.c:             clear_page_private_gcing(cc->rpages[i]);
+>> compress.c:                     set_page_private_gcing(cc->rpages[i]);
+>> compress.c:             clear_page_private_gcing(cic->rpages[i]);
+>> f2fs.h:static inline void set_page_private_##name(struct page *page) \
+>> f2fs.h:static inline void clear_page_private_##name(struct page *page) \
+>>
+>> Seeing code like:
+>>
+>> clear_page_private_gcing(cc->rpages[i]);
+>> if (folio_test_writeback(page_folio(cc->rpages[i])))
+>> 	end_page_writeback(cc->rpages[i]);
+>>
+>> Makes me wonder whether we can just use the folio helper instead?
+>>
+>> In f2fs_iget(), we enable large folios only when !f2fs_compressed_file(inode).
+>>
+>> So naive me would assume that we can just get rid of the
+>> set_page_private_/clear_page_private_ stuff entirely.
+> 
+> David,
+> 
+> Thanks for the patch, at a glance, it seems fine, can you please send
+> a formal patch? then we can apply to dev-test for test.
+
+I'm hoping Zi will drag that along as part of this patch set. Is this fine or do
+you want it sent as a complete standalone patch (will make merging Zi's series
+slightly more complicated :) ).
+
+-- 
+Cheers,
+
+David
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
