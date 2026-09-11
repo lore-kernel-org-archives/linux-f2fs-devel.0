@@ -4,81 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 38D3DC88E41
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Sep 2026 01:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9A8FC88E4C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Sep 2026 08:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MBeJMvY+Frnc6BHzqLTk50e7E/5lenhEltkce3HrZeY=; b=AT0lPTzlqaC/WXlvp2J+jNp3pS
-	ME5j2ABCyTVEWHGnxbtQ6Gb7Gy9dx0ltAyX/YCoJibqrauk/V0i2ilLl4z+v5G8ZP1ZtEtqbC9l0y
-	y0a+rxwT2yui9xNTyDxUeDBnJvIEiFlLCt7C+98S7wgpNHJi50GRKin8pE7OMZAU6OQE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=9sLMVjf49aKCb0ra5HSwayXCi6AZygYQLcUgUAmbZus=; b=cwKrqUcJ6Truj3bv6GwdvY0tHu
+	oP6UGXi7608tNwkCSM3ZMvmjviMA9Y4scml9mZLgtNXymbOvvHMZFv8ghX9Gb2XdNYj2mb66wLUbi
+	XkNCfmL7lhHdDKW86PTAmukXqmaR8BPD5Ky0XZvEPWahc/+713IgmnDMs7VsyJcdZcpU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x4pq3-0006CR-NH;
-	Fri, 11 Sep 2026 01:14:00 +0000
+	id 1x4wNV-00035f-Ux;
+	Fri, 11 Sep 2026 08:12:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x4pq2-0006CL-CX
+ (envelope-from <lkp@intel.com>) id 1x4wNU-00035S-TS
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Sep 2026 01:13:59 +0000
+ Fri, 11 Sep 2026 08:12:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BieisaAQyLrvXLmQaVGGS1nqBTmDs9Q9Xm2RQGwma2c=; b=CGcNhyhOEqsgjDAi9m4YpS7rgz
- qz2p6MWDVfIVKxq0J0Uwtrf4kIDQL35kHcQCwOgORN4BATqQEbmMIZidZKh9JWW7mzfibjZ7v5ohU
- G7hCRKla/0dUnjNnOeZsPdO6ZRw+338EVUARVGBnGAID/IVPsB1ZkaocluMIO83R2dYM=;
+ bh=LQY6ybovI6uThHsKqg2EXfHiARtcqpVcnZMwHeAuKVA=; b=XCfDEW+jYWcBB8Km6H1FPznNN3
+ vtCf0+isW+TeTu6lDNQ602E9CuSjQf7BlD+NQ6Z2OvXrsaZZrIghs3ze2Btu2UF0C/W7IJUxTTXH5
+ eahoHhyH9ONs57f4regtspvtPchBfSwgXRVaz6EwNMksC2ybNe+yHXHWrMWWnelGLAkA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BieisaAQyLrvXLmQaVGGS1nqBTmDs9Q9Xm2RQGwma2c=; b=GEJMP3mR9yQO1f6aKiIbY4XYA5
- YMomp77j/S0WE7+JSRQ9dsGguiaDRKIfKk9/dXpellVj9RETcohjS7XnSLWuMLNZtdxZP9AeOGMtw
- yniDCikDJ6Gd4xpAsDZB6ZZgtuwkGsURoBgJz2Y8ysUFd/9kfnBKsSyHFNNBB21bzcOY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=LQY6ybovI6uThHsKqg2EXfHiARtcqpVcnZMwHeAuKVA=; b=UNQtK4PWE0DvoiyMk5zw+gUQVI
+ tIL59i3rpViBh6Sr8johjHp+5OfHukM6bhd2El7BzoU1rMFkwySuPnxfbAQI7deL1UJK79aZDPLsv
+ 6bumZ+taRm434wjoRWLkfkhO3EyoxdqXZ77IplhlC5YR6fal6QcnxclLSNJRjV46UV3M=;
+Received: from mgamail.intel.com ([198.175.65.19])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x4pq1-0003rz-88 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Sep 2026 01:13:58 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 5BF5360209;
- Fri, 11 Sep 2026 01:13:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F991F000FF;
- Fri, 11 Sep 2026 01:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1789089231;
- bh=BieisaAQyLrvXLmQaVGGS1nqBTmDs9Q9Xm2RQGwma2c=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=MpOwWAOakyFPXQUylSmPrH+JP7ID1p0sKzffYfvMFZXzz4y9uNB9DbapkHc36mpd5
- tRPPIY72fUmEofrSznpEGb9BVLCzjfnuLp6ePF9RiW+lqEkOcBsMlskbyK8tV3XfNX
- QWbxmjYaFYDPgjnOhW6KBIa3O6Ldx/tVXianHXusBaICoCK7/JJJ0j8GxCRkT6Vh1r
- 9Sjo/j3lnekaiXvJbA1QY4rNVa/LzfzddzVBIb4qbFPicalSFJbMOuCSkhY8sFmyH0
- A0bcDRJ5t2P3iFj1hGyk3LW9SrL93BaOGlAFGtJU0wFGootyxyW6yXMyblzpQQsv/s
- xTm4PtcnjNtOg==
-Message-ID: <e9ba1c73-430f-482b-bf6d-f6f77139f52d@kernel.org>
-Date: Fri, 11 Sep 2026 09:13:47 +0800
+ id 1x4wNR-0003ju-WF for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 11 Sep 2026 08:12:57 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789114375; x=1820650375;
+ h=date:from:to:cc:subject:message-id:references:
+ mime-version:in-reply-to;
+ bh=gvmZf3ItsRhJ8/S0UFE29TrvpRykf6zfuBlByhYmbFI=;
+ b=VdGdLt2SghnjcG2dwtn0oqjxykIGdIyHD/V4Qn2HNJtnAHA/mEuNBO0n
+ yffiD5EEd2Pa0m+xIKt66F6lzQvwVLDT/KsKmEsnvpsqX8RVF/TomdkVV
+ b7HzQN/8D6drAp4LBuwzNccFHsze/Sqh63GC54EKUokVkASIFZ6pLGiUX
+ r4JBvP4xZVTWGvJJVtqe5Mq4etl9F0KD4FchT34DbeRZ/UG+fBZmb4LIZ
+ 4J08806hRPTepxVvxrgp3kWT55tQBvOqT52j+O8JC0yi/SHZrAkhqHopR
+ TBJ2H8CivvLs3qdHb9OupYChlLyQd2HsJMMANIU16+td1Giny+qAV3kod A==;
+X-CSE-ConnectionGUID: xJMlaqNMTMC45xkSEdwMzw==
+X-CSE-MsgGUID: bbr1ObRrRVCy1mRc2niIow==
+X-IronPort-AV: E=McAfee;i="6800,10657,11901"; a="89508840"
+X-IronPort-AV: E=Sophos;i="6.27,96,1787036400"; 
+   d="scan'208";a="89508840"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Sep 2026 01:12:49 -0700
+X-CSE-ConnectionGUID: +ItDRX2hTa+1pmY5/NcOxA==
+X-CSE-MsgGUID: w+iIru6QRJSpZd8HExTxcg==
+X-Ironport-Invalid-End-Of-Message: True
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,96,1787036400"; d="scan'208";a="271834668"
+Received: from lkp-server02.sh.intel.com (HELO 0a3643a6ed9d) ([10.239.97.151])
+ by orviesa007.jf.intel.com with ESMTP; 11 Sep 2026 01:12:47 -0700
+Received: from kbuild by 0a3643a6ed9d with local (Exim 4.98.2)
+ (envelope-from <lkp@intel.com>) id 1x4wMQ-000000001HK-0ldF;
+ Fri, 11 Sep 2026 08:12:02 +0000
+Date: Fri, 11 Sep 2026 16:10:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+Message-ID: <202609111633.uyRbsEUB-lkp@intel.com>
+References: <20260910181057.640203-1-daeho43@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260910022026.3301257-1-chao@kernel.org>
- <aqMgnpBYj0zBpioI@google.com>
- <9c47a6fb-93b3-459b-8f90-ab89ab3e2ce4@kernel.org>
- <aqNUWanfyje0_PNr@google.com>
-Content-Language: en-US
-In-Reply-To: <aqNUWanfyje0_PNr@google.com>
-X-Headers-End: 1x4pq1-0003rz-88
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid folio->mapping
- dereference in is_{meta, node}_folio()
+Content-Disposition: inline
+In-Reply-To: <20260910181057.640203-1-daeho43@gmail.com>
+X-Headers-End: 1x4wNR-0003ju-WF
+Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce reserve_shrink mount option
+ for filesystem shrinkage
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,260 +103,182 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Zhiguo Niu <zhiguo.niu@unisoc.com>, stable@kernel.org
+Cc: llvm@lists.linux.dev, Daeho Jeong <daehojeong@google.com>,
+ oe-kbuild-all@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/11/26 09:07, Jaegeuk Kim wrote:
-> On 09/11, Chao Yu wrote:
->> On 9/11/26 05:26, Jaegeuk Kim wrote:
->>> Can you rebase on -dev?
->>
->> Jaegeuk, this patch is based on "[PATCH] f2fs: parameterize node helpers and macros",
->>
->> Can we apply that fix first and then current one? or do you prefer the reversed order?
-> 
-> Ok, I applied, but it has conflicts with your previous metadata cache patches
+Hi Daeho,
 
-Thanks,
+kernel test robot noticed the following build warnings:
 
-> due to is_meta_folio and is_node_folio changes. Let me know, once you have next
-> version, so that I can apply on top of dev-test.
+[auto build test WARNING on jaegeuk-f2fs/dev-test]
+[also build test WARNING on jaegeuk-f2fs/dev linus/master v7.3-rc2 next-20260909]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes, I have a rebased version locally, let me refactor the patchset w/ your cleanup
-patches as v7, will update soon.
+url:    https://github.com/intel-lab-lkp/linux/commits/Daeho-Jeong/f2fs-introduce-reserve_shrink-mount-option-for-filesystem-shrinkage/20260910-111056
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+patch link:    https://lore.kernel.org/r/20260910181057.640203-1-daeho43%40gmail.com
+patch subject: [PATCH] f2fs: introduce reserve_shrink mount option for filesystem shrinkage
+config: powerpc-randconfig-001-20260911 (https://download.01.org/0day-ci/archive/20260911/202609111633.uyRbsEUB-lkp@intel.com/config)
+compiler: clang version 21.1.8 (https://github.com/llvm/llvm-project 2078da43e25a4623cab2d0d60decddf709aaea28)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260911/202609111633.uyRbsEUB-lkp@intel.com/reproduce)
 
-Thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609111633.uyRbsEUB-lkp@intel.com/
 
-> 
->>
->> Thanks,
->>
->>>
->>> On 09/10, Chao Yu via Linux-f2fs-devel wrote:
->>>> From: Chao Yu <chao@kernel.org>
->>>>
->>>> Otherwise, it may cause NULL pointer dereference in race condition:
->>>>
->>>> Thread A			Thread B
->>>> 				- f2fs_setattr
->>>> 				 - f2fs_truncate
->>>> 				  - f2fs_truncate_blocks
->>>> 			    	   - f2fs_do_truncate_blocks
->>>> 				    - f2fs_truncate_inode_blocks
->>>> 				     - truncate_dnode
->>>> 				      - truncate_node
->>>> 				       - invalidate_mapping_pages
->>>> 				        - folio->mapping = NULL
->>>> - folio_lock
->>>> - is_node_folio
->>>>    - F2FS_F_SB(folio): dereference on folio->mapping
->>>>
->>>> Cc: stable@kernel.org
->>>> Fixes: 019a8912425e ("f2fs: introduce is_{meta,node}_folio")
->>>> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>>> Closes: https://lore.kernel.org/linux-f2fs-devel/c5d29b31-e764-4782-9639-be84b1b2bfc2@kernel.org
->>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>> ---
->>>>    fs/f2fs/checkpoint.c |  4 ++--
->>>>    fs/f2fs/data.c       |  7 ++++---
->>>>    fs/f2fs/f2fs.h       | 10 +++++-----
->>>>    fs/f2fs/gc.c         |  2 +-
->>>>    fs/f2fs/node.c       | 22 +++++++++++-----------
->>>>    fs/f2fs/segment.c    |  2 +-
->>>>    6 files changed, 24 insertions(+), 23 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>> index 712c4508f38c..dfbfe42086f2 100644
->>>> --- a/fs/f2fs/checkpoint.c
->>>> +++ b/fs/f2fs/checkpoint.c
->>>> @@ -291,7 +291,7 @@ static struct folio *__get_meta_folio(struct f2fs_sb_info *sbi, pgoff_t index,
->>>>    	f2fs_update_iostat(sbi, NULL, FS_META_READ_IO, F2FS_BLKSIZE(sbi));
->>>>    	folio_lock(folio);
->>>> -	if (unlikely(!is_meta_folio(folio))) {
->>>> +	if (unlikely(!is_meta_folio(sbi, folio))) {
->>>>    		f2fs_folio_put(folio, true);
->>>>    		goto repeat;
->>>>    	}
->>>> @@ -638,7 +638,7 @@ long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, long nr_to_write,
->>>>    			folio_lock(folio);
->>>> -			if (unlikely(!is_meta_folio(folio))) {
->>>> +			if (unlikely(!is_meta_folio(sbi, folio))) {
->>>>    continue_unlock:
->>>>    				folio_unlock(folio);
->>>>    				continue;
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index 93ed8416a289..0da78bf05ac0 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -172,7 +172,8 @@ static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
->>>>    			dec_page_count(F2FS_F_SB(folio), __read_io_type(folio));
->>>>    		if (bio->bi_status == BLK_STS_OK &&
->>>> -			F2FS_F_SB(folio)->node_inode && is_node_folio(folio) &&
->>>> +			F2FS_F_SB(folio)->node_inode &&
->>>> +			is_node_folio(F2FS_F_SB(folio), folio) &&
->>>>    			f2fs_sanity_check_node_footer(F2FS_F_SB(folio),
->>>>    				folio, folio->index, NODE_TYPE_REGULAR, true))
->>>>    			bio->bi_status = BLK_STS_IOERR;
->>>> @@ -359,12 +360,12 @@ static void f2fs_write_end_bio(struct bio *bio)
->>>>    			}
->>>>    		}
->>>> -		if (is_node_folio(folio)) {
->>>> +		if (is_node_folio(sbi, folio)) {
->>>>    			f2fs_sanity_check_node_footer(sbi, folio,
->>>>    				folio->index, NODE_TYPE_REGULAR, true);
->>>>    			f2fs_bug_on(sbi, folio->index != nid_of_node(sbi, folio));
->>>>    		}
->>>> -		if (f2fs_in_warm_node_list(folio))
->>>> +		if (f2fs_in_warm_node_list(sbi, folio))
->>>>    			f2fs_del_fsync_node_entry(sbi, folio);
->>>>    		dec_page_count(sbi, type);
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index 693153cbd8a0..ebc621f302e1 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -2371,14 +2371,14 @@ static inline struct address_space *NODE_MAPPING(struct f2fs_sb_info *sbi)
->>>>    	return sbi->node_inode->i_mapping;
->>>>    }
->>>> -static inline bool is_meta_folio(struct folio *folio)
->>>> +static inline bool is_meta_folio(struct f2fs_sb_info *sbi, struct folio *folio)
->>>>    {
->>>> -	return folio->mapping == META_MAPPING(F2FS_F_SB(folio));
->>>> +	return folio->mapping == META_MAPPING(sbi);
->>>>    }
->>>> -static inline bool is_node_folio(struct folio *folio)
->>>> +static inline bool is_node_folio(struct f2fs_sb_info *sbi, struct folio *folio)
->>>>    {
->>>> -	return folio->mapping == NODE_MAPPING(F2FS_F_SB(folio));
->>>> +	return folio->mapping == NODE_MAPPING(sbi);
->>>>    }
->>>>    static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
->>>> @@ -4063,7 +4063,7 @@ enum node_type;
->>>>    int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
->>>>    bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
->>>> -bool f2fs_in_warm_node_list(struct folio *folio);
->>>> +bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct folio *folio);
->>>>    void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi);
->>>>    void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct folio *folio);
->>>>    void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
->>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>> index aedb45c8ee4a..c70deac9f1a3 100644
->>>> --- a/fs/f2fs/gc.c
->>>> +++ b/fs/f2fs/gc.c
->>>> @@ -1431,7 +1431,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
->>>>    						F2FS_BLKSIZE(fio.sbi));
->>>>    		folio_lock(mfolio);
->>>> -		if (unlikely(!is_meta_folio(mfolio) ||
->>>> +		if (unlikely(!is_meta_folio(fio.sbi, mfolio) ||
->>>>    			     !folio_test_uptodate(mfolio))) {
->>>>    			err = -EIO;
->>>>    			f2fs_folio_put(mfolio, true);
->>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->>>> index 8c150d4966e5..f16144b75d11 100644
->>>> --- a/fs/f2fs/node.c
->>>> +++ b/fs/f2fs/node.c
->>>> @@ -332,10 +332,10 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
->>>>    							start, nr);
->>>>    }
->>>> -bool f2fs_in_warm_node_list(struct folio *folio)
->>>> +bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct folio *folio)
->>>>    {
->>>> -	return is_node_folio(folio) && IS_DNODE(F2FS_F_SB(folio), folio) &&
->>>> -					is_cold_node(F2FS_F_SB(folio), folio);
->>>> +	return is_node_folio(sbi, folio) && IS_DNODE(sbi, folio) &&
->>>> +					is_cold_node(sbi, folio);
->>>>    }
->>>>    void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi)
->>>> @@ -1296,7 +1296,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
->>>>    			goto fail;
->>>>    		if (offset[1] == 0 && get_nid(sbi, folio, offset[0], true)) {
->>>>    			folio_lock(folio);
->>>> -			BUG_ON(!is_node_folio(folio));
->>>> +			BUG_ON(!is_node_folio(sbi, folio));
->>>>    			set_nid(sbi, folio, offset[0], 0, true);
->>>>    			folio_unlock(folio);
->>>>    		}
->>>> @@ -1612,7 +1612,7 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
->>>>    	folio_lock(folio);
->>>> -	if (unlikely(!is_node_folio(folio))) {
->>>> +	if (unlikely(!is_node_folio(sbi, folio))) {
->>>>    		f2fs_folio_put(folio, true);
->>>>    		goto repeat;
->>>>    	}
->>>> @@ -1731,7 +1731,7 @@ static struct folio *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
->>>>    			folio_lock(folio);
->>>> -			if (unlikely(!is_node_folio(folio))) {
->>>> +			if (unlikely(!is_node_folio(sbi, folio))) {
->>>>    continue_unlock:
->>>>    				folio_unlock(folio);
->>>>    				continue;
->>>> @@ -1841,7 +1841,7 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool do_fsync,
->>>>    				f2fs_need_dentry_mark(sbi, ino_of_node(sbi, folio)));
->>>>    	/* should add to global list before clearing PAGECACHE status */
->>>> -	if (f2fs_in_warm_node_list(folio)) {
->>>> +	if (f2fs_in_warm_node_list(sbi, folio)) {
->>>>    		seq = f2fs_add_fsync_node_entry(sbi, folio);
->>>>    		if (seq_id)
->>>>    			*seq_id = seq;
->>>> @@ -1965,7 +1965,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>>>    			folio_lock(folio);
->>>> -			if (unlikely(!is_node_folio(folio))) {
->>>> +			if (unlikely(!is_node_folio(sbi, folio))) {
->>>>    continue_unlock:
->>>>    				folio_unlock(folio);
->>>>    				continue;
->>>> @@ -2023,7 +2023,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>>>    		f2fs_debug(sbi, "Retry to write fsync mark: ino=%u, idx=%lx",
->>>>    			   ino, last_folio->index);
->>>>    		folio_lock(last_folio);
->>>> -		if (unlikely(!is_node_folio(last_folio))) {
->>>> +		if (unlikely(!is_node_folio(sbi, last_folio))) {
->>>>    			f2fs_folio_put(last_folio, true);
->>>>    			ret = -EAGAIN;
->>>>    			goto out;
->>>> @@ -2101,7 +2101,7 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
->>>>    			folio_lock(folio);
->>>> -			if (unlikely(!is_node_folio(folio)))
->>>> +			if (unlikely(!is_node_folio(sbi, folio)))
->>>>    				goto unlock;
->>>>    			if (!folio_test_dirty(folio))
->>>>    				goto unlock;
->>>> @@ -2173,7 +2173,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
->>>>    			else if (!folio_trylock(folio))
->>>>    				continue;
->>>> -			if (unlikely(!is_node_folio(folio))) {
->>>> +			if (unlikely(!is_node_folio(sbi, folio))) {
->>>>    continue_unlock:
->>>>    				folio_unlock(folio);
->>>>    				continue;
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 0b6267d0354e..ffdd2c510b3c 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -4161,7 +4161,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
->>>>    			__func__, fio->ino, folio->index, type,
->>>>    			fio->old_blkaddr, fio->new_blkaddr, err);
->>>>    		folio_end_writeback(folio);
->>>> -		if (f2fs_in_warm_node_list(folio))
->>>> +		if (f2fs_in_warm_node_list(fio->sbi, folio))
->>>>    			f2fs_del_fsync_node_entry(fio->sbi, folio);
->>>>    		f2fs_bug_on(fio->sbi, !is_set_ckpt_flags(fio->sbi,
->>>>    							CP_ERROR_FLAG));
->>>> -- 
->>>> 2.49.0
->>>>
->>>>
->>>>
->>>> _______________________________________________
->>>> Linux-f2fs-devel mailing list
->>>> Linux-f2fs-devel@lists.sourceforge.net
->>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>
+All warnings (new ones prefixed by >>):
 
+   In file included from fs/f2fs/debug.c:18:
+>> fs/f2fs/f2fs.h:2663:6: warning: shift count >= width of type [-Wshift-count-overflow]
+    2663 |         if (test_opt(sbi, RESERVE_SHRINK)) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   1 warning generated.
+--
+   In file included from fs/f2fs/gc.c:19:
+>> fs/f2fs/f2fs.h:2663:6: warning: shift count >= width of type [-Wshift-count-overflow]
+    2663 |         if (test_opt(sbi, RESERVE_SHRINK)) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+>> fs/f2fs/gc.c:2495:13: warning: shift count >= width of type [-Wshift-count-overflow]
+    2495 |         } else if (test_opt(sbi, RESERVE_SHRINK)) {
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   fs/f2fs/gc.c:2498:3: warning: shift count >= width of type [-Wshift-count-overflow]
+    2498 |                 clear_opt(sbi, RESERVE_SHRINK);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:153:28: note: expanded from macro 'clear_opt'
+     153 |         (F2FS_OPTION(sbi).opt &= ~BIT(F2FS_MOUNT_##option))
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   3 warnings generated.
+--
+   In file included from fs/f2fs/super.c:34:
+>> fs/f2fs/f2fs.h:2663:6: warning: shift count >= width of type [-Wshift-count-overflow]
+    2663 |         if (test_opt(sbi, RESERVE_SHRINK)) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+>> fs/f2fs/super.c:548:7: warning: shift count >= width of type [-Wshift-count-overflow]
+     548 |         if (!test_opt(sbi, RESERVE_SHRINK))
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   fs/f2fs/super.c:2326:6: warning: shift count >= width of type [-Wshift-count-overflow]
+    2326 |         if (test_opt(sbi, RESERVE_SHRINK)) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   fs/f2fs/super.c:2557:6: warning: shift count >= width of type [-Wshift-count-overflow]
+    2557 |         if (test_opt(sbi, RESERVE_SHRINK))
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   4 warnings generated.
+--
+   In file included from fs/f2fs/sysfs.c:17:
+>> fs/f2fs/f2fs.h:2663:6: warning: shift count >= width of type [-Wshift-count-overflow]
+    2663 |         if (test_opt(sbi, RESERVE_SHRINK)) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+>> fs/f2fs/sysfs.c:599:7: warning: shift count >= width of type [-Wshift-count-overflow]
+     599 |                 if (test_opt(sbi, RESERVE_SHRINK)) {
+         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/f2fs.h:157:26: note: expanded from macro 'test_opt'
+     157 |         (F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^  ~~~~
+   2 warnings generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for HOTPLUG_CPU
+   Depends on [n]: SMP [=y] && (PPC_PSERIES [=n] || PPC_PMAC [=n] || PPC_POWERNV [=n] || FSL_SOC_BOOKE [=n])
+   Selected by [y]:
+   - PM_SLEEP_SMP [=y] && SMP [=y] && (ARCH_SUSPEND_POSSIBLE [=n] || ARCH_HIBERNATION_POSSIBLE [=y]) && PM_SLEEP [=y]
+
+
+vim +2663 fs/f2fs/f2fs.h
+
+  2650	
+  2651	static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+  2652							struct inode *inode, bool cap)
+  2653	{
+  2654		block_t avail_user_block_count;
+  2655	
+  2656		avail_user_block_count = sbi->user_block_count -
+  2657						sbi->current_reserved_blocks -
+  2658						sbi->alias_reserved_blocks;
+  2659	
+  2660		if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, inode, cap))
+  2661			avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+  2662	
+> 2663		if (test_opt(sbi, RESERVE_SHRINK)) {
+  2664			if (avail_user_block_count > F2FS_OPTION(sbi).reserve_shrink_blocks)
+  2665				avail_user_block_count -= F2FS_OPTION(sbi).reserve_shrink_blocks;
+  2666			else
+  2667				avail_user_block_count = 0;
+  2668		}
+  2669	
+  2670		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+  2671			if (avail_user_block_count > sbi->unusable_block_count)
+  2672				avail_user_block_count -= sbi->unusable_block_count;
+  2673			else
+  2674				avail_user_block_count = 0;
+  2675		}
+  2676	
+  2677		return avail_user_block_count;
+  2678	}
+  2679	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
 _______________________________________________
