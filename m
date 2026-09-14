@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B811BC88E7B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2026 15:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BCF92C88E75
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2026 15:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=TBSIO3GEpJmQ7d2TCPuIfWmEXgAfPY0J/t+wgLEbzso=; b=S4UxMeSIULzPEdlp6jP/drtrHt
-	DF/2kgfjcBZQ/oSb5OuHU5cqKdRVgtxJUAdawYIP0WasGCevMI3jF0BRaNzwpaa7iMItFhROsJcxB
-	RIxC8ik3MDWPO6Wb2r4bBK5/5JQby/yCqh73l86X8DtIQHxyurDf+sllF82aZHOh5nCI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=xqYqVVzDGV92WNp/fUmR06ybAZiuznJ43ksPG/hCsnI=; b=fKJfFfa0pB4zb++uNb9QBwNU3/
+	pEw/OK/Ll45gJ+ZrM8u1hgszLj8vUZoJcOGd7LkR92R5Nu9vlOekLXKiGS9+KHGsynW7m8nAnjiqm
+	e+xOhVhyB6d7JvZ2gdQ1ZK4lOx5V6lyFsgHJsS91H79bqUJDPduQYv6DPGHjK25Gclpo=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x68eW-0008Pn-D9;
-	Mon, 14 Sep 2026 15:31:28 +0000
+	id 1x68eZ-0004wZ-M8;
+	Mon, 14 Sep 2026 15:31:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1x68eV-0008Pe-Ln
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1x68eY-0004wQ-D0
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 14 Sep 2026 15:31:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,50 +32,49 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qOTkNlqynpQr0wKRF6ie9yvPhlZ86hsILtCFmgTcBN0=; b=J9PXQqHvQIoZQG2SY+VeP6F7tk
- xcsWKwdSoLlRAyYsVfuelsmzXYeMkdSFXhPwHyAzKr0q68j+Ds/Rc0bBWvM4aIDvOpI+8azkuxlJf
- n9DHxinTGNAUBHIl4nbEBYkoIJO0q8O5NjoZROl8MVfXC/m62lxoslJVVhglrFaL5vNc=;
+ bh=xqSWZGYuhnFlJXQSdR+kjRpbfk1iIuI1HJbA/iOa23Y=; b=ib8wWTRwyCIXff0l7Ilp7sauWV
+ y3BQLvILYIiOExZypHs9RRZ0O9OvouLbYtzRrxvU7VKJFrfL7f86MhgT6UZ+mOlh7erbxD/+24ojj
+ ffjjKTAIDkR82XQJTYRCgiRm1A9EyHXUJX2S20rKIL23BAeIDArBPBkApUl6V+jMey3g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qOTkNlqynpQr0wKRF6ie9yvPhlZ86hsILtCFmgTcBN0=; b=GAPs5VSqwKFn18akBl3lZRDIHP
- EvO+di+Lh3mywTDjUwcucn3dQSStb+nIHeohXGk8Cmre0uNQMlWJegYC+yKmss133sEr62NvrO4n6
- vFZlYOW3+UcEzT9WnpU6/wxEfJglknU4W49XI9STUehTZohcKA3Ck5mjLnllcszkRo+s=;
+ bh=xqSWZGYuhnFlJXQSdR+kjRpbfk1iIuI1HJbA/iOa23Y=; b=lFBaGCW+OILmB3w2nBLVNSawuS
+ 0b3YdPdF+AOeXxxmWZ0AiOBVD5er9jc6lcx5/l8jA7CORA8VQFW6ZgDb61WxoqtfSKzhdId6l94j4
+ mqN/+w9RHACT2WxzMiXHiZRbRUNoHYRHClp6aAWQ3uSd6rEElgf4/j/Mdggzm80gS9tA=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x68eS-0003TK-Rq for linux-f2fs-devel@lists.sourceforge.net;
+ id 1x68eU-0000Ht-9c for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 14 Sep 2026 15:31:27 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 4149D60252
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 14 Sep 2026 15:31:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB81F1F000FF;
- Mon, 14 Sep 2026 15:31:18 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B780060261;
+ Mon, 14 Sep 2026 15:31:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70FAF1F00893;
+ Mon, 14 Sep 2026 15:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1789399879;
- bh=qOTkNlqynpQr0wKRF6ie9yvPhlZ86hsILtCFmgTcBN0=;
+ s=k20260515; t=1789399880;
+ bh=xqSWZGYuhnFlJXQSdR+kjRpbfk1iIuI1HJbA/iOa23Y=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=lH+o+RSZCJCSUbtuSA23oc2VyVjuSxz8KhlwnhjYbV0tk5pBg2044hs8uU/MDk97K
- JEiBZ/R9ggfncJ5LmIdGXtvoJ0DiJtBj1f4OJLP1VrwkF+wYExtaj8edhZzLHz2X3a
- 9P9XkvxP/bBjzfBR/9901F0KkcNbP4psY1dqdfj7J9Y/HsE0JV01Nm4rIpXs/vxTqs
- OonhoW8+uCXfSZYSn2n/y1KP4U9s3UCAo4MDdkyJkt2Y/u7r6HhwG2oeswK19T1ICt
- OEgzYWwKsQ7lNa0lc7INTxamvXq8Q5r2XmP3QK69HJLjl1DKkqS74pvQry4EKQ73M3
- O8+Sah7eJMPoQ==
+ b=VujuA2KihdFCeodvSWGo1fbwVB2MLxRvs+ISKWNyLtk1+Pw6nzvQt+WZuy/SQmSA+
+ KVuYlUBkm0YxB0aNfqfM1t2/wuKV6QL5q2fOu8IrPc4A0d9UQLV4bRVodNkusS+TBh
+ QmBpe0W/t5104bV2X1jYy4Rb8gF2TO+XCUtHoSSceL+ef2G0WuQ7JIpYUnEBrd7MJR
+ HFNHMPN5QUiE7e7vi2vmqczq4JcsDkWZcfCaaCc6yLXs9JmaCXHtgZBIrNFMlrUTCU
+ oewMycPTElaenOut9v+CIOS2XgFiM0PMh7V5Wm95n5ZtRpamm0aZHdG2A9PW5MFUIx
+ /LFsjb+NDkf/Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 5696A3924A79; Mon, 14 Sep 2026 15:30:15 +0000 (UTC)
+ D0AB73924A79; Mon, 14 Sep 2026 15:30:16 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178939981388.647967.9712319040788657342.git-patchwork-notify@kernel.org>
-Date: Mon, 14 Sep 2026 15:30:13 +0000
-References: <20260908100032.3141988-1-chao@kernel.org>
-In-Reply-To: <20260908100032.3141988-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1x68eS-0003TK-Rq
-Subject: Re: [f2fs-dev] [PATCH] f2fs: parameterize node helpers and macros
+Message-Id: <178939981537.647967.8184641811799373916.git-patchwork-notify@kernel.org>
+Date: Mon, 14 Sep 2026 15:30:15 +0000
+References: <20260909190636.3151580-1-daeho43@gmail.com>
+In-Reply-To: <20260909190636.3151580-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1x68eU-0000Ht-9c
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix livelock in syncing dirty inodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +89,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,23 +100,22 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue,  8 Sep 2026 18:00:32 +0800 you wrote:
-> From: Chao Yu <chao@kernel.org>
+On Wed,  9 Sep 2026 12:06:36 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> In gang-lookup loops such as last_fsync_dnode(), f2fs_sync_node_pages(),
-> and f2fs_fsync_node_pages(), candidate dirty node folios returned by
-> filemap_get_folios_tag() are inspected and filtered before acquiring
-> their folio locks:
-> - IS_DNODE
-> - is_cold_node
-> - ino_of_node
-> - ofs_of_node (called by IS_DNODE)
+> During checkpoint, f2fs_sync_dirty_inodes() and f2fs_sync_inode_meta()
+> iterate over dirty inodes in their respective lists. If igrab() fails on
+> an inode (e.g. because it is in the freeing state), the loop continues
+> without moving the current inode to the tail of the list. As a result,
+> subsequent iterations pick the same inode repeatedly, preventing other
+> ready dirty inodes in the list from making forward progress and leading
+> to a livelock.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: parameterize node helpers and macros
-    https://git.kernel.org/jaegeuk/f2fs/c/ea3eea801c5c
+  - [f2fs-dev,v2] f2fs: fix livelock in syncing dirty inodes
+    https://git.kernel.org/jaegeuk/f2fs/c/e398da0b9131
 
 You are awesome, thank you!
 -- 
