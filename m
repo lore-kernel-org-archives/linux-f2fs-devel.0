@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0CFEC88E70
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2026 13:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BCFE7C88E50
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2026 13:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=L5rtRyABdVR8uBSeXyO08pPM6EsDoxKnlWJShvukNig=; b=OLSqCyp4F7fo3PaWw4oJol1+L1
-	DgTCVhkdAUNPgIf3VP/B7Phf0CbzVc18OzdJdEt6A8TvP1ZH9Yw1OVWkner9fzsqIe6bsPBP4fao4
-	0KUSVHWZ0QRjMCitutDikeHNIdKNvFOOJt66qa7PugKhCdsZaGo3kA3vbwSuVWi+9iTc=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=/7obATlgvegdbF83eyIvI8/xF8UrC/nQ+60u1vqcJfI=; b=NB3kSX9Z6j4EBCdHhgfL3XKFxw
+	utJPrSU8hKCZkc/MFYqi6w9wrsCO0840PVU6gc9DJ26SMMmNi8HLGvebqNs7WhNsNEdSCGA/jbzWm
+	i0epMQOxtK/cyRh9OEP8qjlhJmT6VjpCBqK53hDTw6M47y0t9tt8rOMAe/PEij2+KrxQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x66TA-0004MO-0s;
-	Mon, 14 Sep 2026 13:11:33 +0000
+	id 1x66ZE-0007W4-Iu;
+	Mon, 14 Sep 2026 13:17:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <david@kernel.org>) id 1x66T8-0004MG-Hz
+ (envelope-from <david@kernel.org>) id 1x66Z6-0007Vt-K6
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Sep 2026 13:11:32 +0000
+ Mon, 14 Sep 2026 13:17:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HMEr8VxikyVfU6qvEUZWpmfPP3XV/5sFL4uxF81JxCA=; b=KkAy529klR4SIiB0wIjqC+ic79
- RtwsiYsNxH3Rm27uA0rCREcG62mZgWEYuJREBTuXxGlLzyo3wgd499cW9iL+LHZ1WJ6Ie99vLVIyH
- gHqOqJVzjR165J14+n8iI6z86s8CjCa7CYg915YO3KNinqUeIPT2ZBFoLa+96InJ1vcE=;
+ bh=hhUbJrfw6vW2Rpyvmw88xbSS4WfUjxj+d6KMf+zk/XA=; b=PYqp0eeLgmrrc90V3IMwoOg8SU
+ MMK5uSddktfTR7rBPUnrEPcZ7+eSpUh0j+y87GI8joUMsR24AZEJrgusIBPj3J1TNzasA0FzgOPTt
+ MijvFLlqdFgncoP2WHA62q85Z6MNx2kSMBsnHznBhFUiGNplvx3Y04IPQ6TLHThzmp8M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -42,36 +42,48 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HMEr8VxikyVfU6qvEUZWpmfPP3XV/5sFL4uxF81JxCA=; b=kWAAZml0AaIYaDyNKIel7zTOLM
- E39XZTvYXq5BULBKMbP1o9wtyqUAr47LYjpwEPHDhk21WT4ZWQ0pI3PdxAdpH9f732uxNo669jUj4
- 4Y012Ywdnn8kXj/A+dOGrNPZvCPbdAPDeKYCWeV+YqibG5e+9lyex82U0AUSISBiuY7Q=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=hhUbJrfw6vW2Rpyvmw88xbSS4WfUjxj+d6KMf+zk/XA=; b=EIceXNk1VOrxqvcz0RX0AuVBp1
+ QJy/KfkIQksXMxVl2bwKgeE8z+ZY3wE0iKKzA6Y5RW72NqAT0YGFpBG+0kmVOHbphFOsV2AHjOsv5
+ SOt7+3CK+DEaRBtZx+8FAQiNinbLNtKIM7uegQ0WM0hUZv6eX87GN7qOrpFQy0P7wZWs=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x66T4-000829-EG for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Sep 2026 13:11:32 +0000
+ id 1x66Z5-00053J-QD for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 14 Sep 2026 13:17:45 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 0A94E40332;
- Mon, 14 Sep 2026 13:11:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F6B1F000FF;
- Mon, 14 Sep 2026 13:11:01 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 24C4060120;
+ Mon, 14 Sep 2026 13:17:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC1DB1F000FF;
+ Mon, 14 Sep 2026 13:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1789391484;
- bh=HMEr8VxikyVfU6qvEUZWpmfPP3XV/5sFL4uxF81JxCA=;
+ s=k20260515; t=1789391857;
+ bh=hhUbJrfw6vW2Rpyvmw88xbSS4WfUjxj+d6KMf+zk/XA=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To;
- b=CJKJt+kIe+hjf+CMIokL8p95jJbZP9ztsmmxzZVo1NFVjWTN+jeWfJ8gkpM0krJT8
- Utjnt2XRl1o23z+XgGILQt1K7qKpVap9QKwfAQ3Pbw7Nb1qdciasZLG+bCxX6W8crk
- mB6ySTVDkFOyHlizGE9wPiKXzd5ZoeQzUUHq4GK3Az9uzbVLKJs+jLvaWj//Z7s9yJ
- 26BLl4l4JsAZDlTiLo0F5mBC0VkJP+XRzFeBS+pwUeA7vgq+fA4Y2VALNJVCMnpA9v
- 1Oa2VfL25A9Rb97s1Afe8qFm5GadjQrDawLd5iUENfXkRUR76/6j5S6iZTu65TIRWr
- 3oGpW4Ax822zA==
-Message-ID: <066c3b3b-e5a7-4cbb-b077-26c78cfc07ac@kernel.org>
-Date: Mon, 14 Sep 2026 15:10:57 +0200
+ b=kik6WOQKTvM9ZwoIKKjJrNrdc7isnaDKhleSp9hWvx3NYkGsF9cz9od8V/H6jOhUv
+ vQTWoqiWmQ3IlCDiOL8EEKkH6rkAFkOsEkx6s5wnLGmh1RFtOi7dkkyhdjTrkEaFn9
+ WdA0z/hrNNcDVgDGiGqcvC5/EDKdQCdRRvI8Z/0d2o+OrWjKcMslgW2PiKVk4d+Qw8
+ N1l4+y4mgKDbZhzCTyxCOWBnV9FkqB7AQBpV+ajBYEcexVj3HVishW7GUcTUpHcanC
+ kcz6rGf9oj+GggO1Pt2IJPUVaEiytEp1en8fLo+jtDoCNA/OvuSJnOdIl0aAwy88ZI
+ PYbtbl+vtbsXg==
+Message-ID: <3c82cbf0-0f4b-4ced-8f88-5106c4dbf212@kernel.org>
+Date: Mon, 14 Sep 2026 15:17:26 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>
+To: Zi Yan <ziy@nvidia.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>,
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <qi.zheng@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Kairui Song <kasong@tencent.com>
 References: <20260913-remove-pg_private-v4-0-848550f7574e@nvidia.com>
- <aqd2N1J3ui1llWWG@casper.infradead.org>
+ <20260913-remove-pg_private-v4-6-848550f7574e@nvidia.com>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -117,10 +129,9 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <aqd2N1J3ui1llWWG@casper.infradead.org>
-X-Headers-End: 1x66T4-000829-EG
-Subject: Re: [f2fs-dev] [PATCH v4 00/16] Remove PG_private by using
- page/folio->private checks instead
+In-Reply-To: <20260913-remove-pg_private-v4-6-848550f7574e@nvidia.com>
+X-Headers-End: 1x66Z5-00053J-QD
+Subject: Re: [f2fs-dev] [PATCH v4 06/16] f2fs: stop using PG_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -135,73 +146,37 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: "David Hildenbrand \(Arm\) via Linux-f2fs-devel"
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: "David Hildenbrand \(Arm\)" <david@kernel.org>
-Cc: Tal Zussman <tz2294@columbia.edu>, Matthew Brost <matthew.brost@intel.com>,
- Alistair Popple <apopple@nvidia.com>, Eric Biggers <ebiggers@kernel.org>,
- xen-devel@lists.xenproject.org, Gregory Price <gourry@gourry.net>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, linux-fscrypt@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>, Suren Baghdasaryan <surenb@google.com>,
- linux-kernel@vger.kernel.org, Nico Pache <nico.pache@linux.dev>,
- linux-perf-users@vger.kernel.org,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Trond Myklebust <trondmy@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Song Liu <song@kernel.org>,
- Hongbo Li <hongbohbli@tencent.com>, Ying Huang <ying.huang@linux.alibaba.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Vlastimil Babka <vbabka@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Qi Zheng <qi.zheng@linux.dev>,
- Byungchul Park <byungchul@sk.com>, linux-trace-kernel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Barry Song <baohua@kernel.org>,
- Kairui Song <kasong@tencent.com>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Li Nan <magiclinan@didiglobal.com>, Muchun Song <muchun.song@linux.dev>,
- linux-f2fs-devel@lists.sourceforge.net, Minchan Kim <minchan@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Thomas Gleixner <tglx@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Pratyush Yadav <pratyush@kernel.org>,
- Alex Markuze <amarkuze@redhat.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-mtd@lists.infradead.org, Chunhai Guo <guochunhai@vivo.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- Dev Jain <dev.jain@arm.com>, Viacheslav Dubeyko <slava@dubeyko.com>,
- Gao Xiang <xiang@kernel.org>, Juergen Gross <jgross@suse.com>,
- Baoquan He <baoquan.he@linux.dev>, James Clark <james.clark@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Borislav Petkov <bp@alien8.de>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, ceph-devel@vger.kernel.org,
- Ilya Dryomov <idryomov@gmail.com>, Oscar Salvador <osalvador@suse.de>,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org, linux-erofs@lists.ozlabs.org,
- Mike Rapoport <rppt@kernel.org>, Ian Rogers <irogers@google.com>,
- Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
- Peter Zijlstra <peterz@infradead.org>, Dave Young <ruirui.yang@linux.dev>,
- Yuanchu Xie <yuanchu@google.com>, "Liam R. Howlett" <liam@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Yue Hu <zbestahu@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Richard Weinberger <richard@nod.at>,
- x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Yu Kuai <yukuai@fygo.io>,
- Axel Rasmussen <axelrasmussen@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Usama Arif <usama.arif@linux.dev>,
- Xiao Ni <xiao@kernel.org>, linux-raid@vger.kernel.org,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Namhyung Kim <namhyung@kernel.org>,
- Wei Xu <weixugc@google.com>, kexec@lists.infradead.org,
- Adrian Hunter <adrian.hunter@intel.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-mm@kvack.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/14/26 06:21, Matthew Wilcox wrote:
-> On Sun, Sep 13, 2026 at 10:23:58PM -0400, Zi Yan wrote:
->>       md/md-bitmap: replace PagePrivate() with page_private()
->>       buffer: replace page_buffer() with page_private() and delete it
+On 9/14/26 04:24, Zi Yan wrote:
+> f2fs sets its PAGE_PRIVATE_* flags in page->private and checking
+> page->private != NULL is equivalent to checking PG_private. Change
+> PagePrivate() to page_private(). Meanwhile, in set_page_private_##name(),
+> page->private is first set to 0/NULL before an PAGE_PRIVATE_* flag is set,
+> but it can cause confusion when PG_private is removed and
+> page->private != NULL is used instead. Change it to initialize
+> page->private to PAGE_PRIVATE_NOT_POINTER instead and retain the original
+> semantics.
 > 
-> Sorry, looks like I screwed up git send-email usage.  I'm proposing
-> replacing these two patches wth the three I sent.
+> It prepares for a future commit that removes PG_private.
+> 
+> No functional change intended.
+> 
+> Assisted-by: LLM
+> To: Jaegeuk Kim <jaegeuk@kernel.org>
+> To: Chao Yu <chao@kernel.org>
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Cc: linux-kernel@vger.kernel.org
+> Acked-by: Usama Arif <usama.arif@linux.dev>
+> Acked-by: Chao Yu <chao@kernel.org>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
 
-For everybody CCed wondering "which patches":
-
-https://lore.kernel.org/r/20260914041830.2072626-1-willy@infradead.org
-https://lore.kernel.org/r/20260914041830.2072626-2-willy@infradead.org
-https://lore.kernel.org/r/20260914041830.2072626-3-willy@infradead.org
+Reviewed-by: David Hildenbrand (Arm) <david@kernel.org>
 
 -- 
 Cheers,
