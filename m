@@ -4,80 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09E42C982CD
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2026 06:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0A13C88E72
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2026 07:34:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=AUHyFrqF9pVvgJvvtDbES/0beMlwSLbwFaT0AiDYuhs=; b=IoRsQT6FhXyZtMZRqJuzparln9
-	UQnQjx6ToDG2M6F5Wl4VMAXROaRMK+iP7dXK0iyWZOx2yq2l2TIbE1C4LakeRyTTreJr1mibuhTP5
-	xzuFgjFtXpNQYZfpjBLZMlHuLvrlyJXGZVF+8YOkB+0RcDVTV1W0ixGXOrfCtCp81fl4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=ATZBBI5P1/z139E7/Sgm856kEBvLJGLg+N+lcbLC8SE=; b=UzYqvei/i/yVwsv38mwcTze9bE
+	2KcrWv/701yoEurADqexrTP2kujm3iqjVcFI+sdwxDojGj8/5V9KcrtlMzxX1Ug8Pqs9Z2h9MaM4T
+	mle4IPSvQw/7nEmJ4HId59urhcQDiqSuNMpZE1ABxM7JtndkhATb+ayNViJTIvblW8HM=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x75gJ-0003xL-FN;
-	Thu, 17 Sep 2026 06:33:13 +0000
+	id 1x76dF-00070X-3Z;
+	Thu, 17 Sep 2026 07:34:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1x75gH-0003xF-Tg
+ (envelope-from <chao@kernel.org>) id 1x76d6-0006zl-Iv
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 17 Sep 2026 06:33:11 +0000
+ Thu, 17 Sep 2026 07:34:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2Dkf6N5LkZEVeQLvEwSSS0z/qszvyO+arKERtyYiiCc=; b=IkLaR7gfomwzCS8Sh+dZ5BMy94
- 5izmxwOtsnwjtJev2CawS4HbmOqZjFhSVmNh+2p7qERxe3a//SJcA/vFdAn8gywFll10A0cYNaeG7
- kK/uOCtlsjJPIAmn2Rm9uqGFUVkpgJASJ+Y+hHAfy7QCuaVAqZSlzkryRWi3YbCh9oik=;
+ bh=hOn10Ivnu+FWK0gmFyUfxt+O6V6njzU/vWHhV1O3p6s=; b=PjCHoaEUAVmuWABeZHB1oeYKIN
+ zNDLiBRdK6JOCKbA0MeQVqeR4jZRByHDwC0/Req8fCHh3LO9N34CgBj0lxhJLcq6LNjJvr3wWSgz0
+ umJtAUwqUkdlhWhhSLPB21IlbYumwJ7/aVRNRYkY68J4Limm2LwJYJdZIcJW0bZ1VRHk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2Dkf6N5LkZEVeQLvEwSSS0z/qszvyO+arKERtyYiiCc=; b=kFKSEk9pBHqsjpJwf9kL2vGx+O
- /gc93lu9yrC8o5ktdZawGZliNaQhFSUAp4mbuH0arCWFYb0UmYiP3NnK5Gg8sfvBuhBp9uBXfyT6X
- 2HAC3XtkNNP9A7nQt3K6ndY7aTlH0Kc0uihDNFMomgp+W62OqTUcPzEAziEpBU5yuQlc=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=hOn10Ivnu+FWK0gmFyUfxt+O6V6njzU/vWHhV1O3p6s=; b=Nd607EUYn+uzrQmkTOlAwuHkmn
+ KRyKUImcIwkZlZ6wDRXrdwxkNz5MvmNSfZ25IMC7gs/ZWZSRx8KklvPPZkgD5ssQ/uBRqrRxCl7Lb
+ htgnZ0niWEc68cY4ce71QsEKC1QkqjyDzWYN2IExuGLRckMwjG1hvK6zwcPj3WRJncLo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x75gD-0003Gf-Ub for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 17 Sep 2026 06:33:11 +0000
+ id 1x76d4-0004RN-Lx for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 17 Sep 2026 07:34:01 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 5438260200;
- Thu, 17 Sep 2026 06:33:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66811F000FF;
- Thu, 17 Sep 2026 06:33:01 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 5EC45447A4;
+ Thu, 17 Sep 2026 07:33:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABE01F00893;
+ Thu, 17 Sep 2026 07:33:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1789626784;
- bh=2Dkf6N5LkZEVeQLvEwSSS0z/qszvyO+arKERtyYiiCc=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=bQAZYBLCXtKHUFc//cySnC8WUPfX8kyL60sJp1kHjOfYQPPCf5C9lL2HMC+mtndZn
- nPIrCrEG0+ermm8Q1w4W3u+CrgyjgCOwseS4sW5a0mb/pvSwIkSvcLtntba+SKT+PC
- m47vNGF3vTYuddU5cRPC4LMkvIyT+8/2y1kADAd7vmA9wJ4GvCDhUtd0yEXP1L6fV4
- nRj5xRBt0vbstNL9KFTxpJO3Lchr3RWweT8wKL8Zl20oSmIS6HCR9ue4vIZ7mvYzBs
- F0XJvQpgI68NQ/N3mvJeZzOO62s4g0bVt2MIEHWPfKAV85yZDM0RLeGmQlETN66xOA
- 47L6pq1gpTpgQ==
-Message-ID: <fe99e57f-20e4-4975-b7ed-f6e16ed331ed@kernel.org>
-Date: Thu, 17 Sep 2026 14:32:59 +0800
+ s=k20260515; t=1789630433;
+ bh=hOn10Ivnu+FWK0gmFyUfxt+O6V6njzU/vWHhV1O3p6s=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=Rb4A5JtaaszL4c0S/mkSqhFHaAXDxqc0MA1S50cWGnip1tVH+EgMG5VndEq2Bh4+S
+ v74zIiQT5tbEHyUijn0Jj4QIEjthKgs5/DMutoWU2LUhL+TIPBxeX9sfoO8/rFyjnr
+ HqDLZVDlDLB/X7+QkM3Csv7k6RMEp9YchDaYnK6LdP4jqXbwa87iTLrHBU9mQ8b5Qm
+ QZOTe34M97I0cC2kCgwdPr49uDcSul7d4EAIo7RgjD+OT7sgE3obR0Wvl9571tyXPh
+ r1izol7MHgeauq7xpNFATKB9G2ADO05PlzFWNE62NDv+Bqgt4UT856HmAcF6ya1np6
+ AeWGXr5nlIsTw==
+To: jaegeuk@kernel.org
+Date: Thu, 17 Sep 2026 15:33:35 +0800
+Message-ID: <20260917073343.2823157-5-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.1082.g2b9226bbc0-goog
+In-Reply-To: <20260917073343.2823157-1-chao@kernel.org>
+References: <20260917073343.2823157-1-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260915041909.2903887-1-zhaonanzhe@xiaomi.com>
- <20260915041909.2903887-7-zhaonanzhe@xiaomi.com>
-Content-Language: en-US
-In-Reply-To: <20260915041909.2903887-7-zhaonanzhe@xiaomi.com>
-X-Headers-End: 1x75gD-0003Gf-Ub
-Subject: Re: [f2fs-dev] [PATCH v2 06/14] f2fs: prepare mmap write faults for
- large folios
+X-Headers-End: 1x76d4-0004RN-Lx
+Subject: [f2fs-dev] [PATCH v9 04/12] f2fs: cache: introduce writeback thread
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,230 +87,331 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <David.Hildenbrand@arm.com>, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Nanzhe Zhao <nzzhao@126.com>,
- Pengfei Li <lipengfei28@xiaomi.com>, Ryan Roberts <Ryan.Roberts@arm.com>
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/15/26 12:19, Nanzhe Zhao wrote:
-> Now write protect `mmap` also need to support large folio,
-> Change `f2fs_vm_page_mkwrite` to acheive that.
-> 
-> Note it currently marks the whole large folio dirty
-> to avoid data loss which causes write amplification.
-> Further optimization is welcome.
-> 
-> PG_mappedtodisk is useless in f2fs, so drop the
-> folio_test_mappedtodisk() check and its goto out_sem
-> shortcut in f2fs_vm_page_mkwrite().  We extend the
-> folio_zero_segment() in mkwrite to zero the post-EOF part
-> of the faulted folio for both order-0 and large folios, so
-> the f2fs_zero_post_eof_page() call added to cover that
-> shortcut is no longer needed.
-> 
-> Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-> ---
->  fs/f2fs/f2fs.h |   4 ++
->  fs/f2fs/file.c | 107 ++++++++++++++++++++++++++++++-------------------
->  2 files changed, 70 insertions(+), 41 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 8eccca6e5d27..f48e2627d90a 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4393,6 +4393,10 @@ int f2fs_write_single_data_page(struct folio *folio, int *submitted,
->  				enum iostat_type io_type,
->  				int compr_blocks, bool allow_balance);
->  bool f2fs_ffs_test_blk_uptodate(const struct folio *folio, pgoff_t index);
-> +struct f2fs_folio_state *f2fs_ffs_find_or_alloc(struct folio *folio);
-> +void f2fs_ffs_mark_subrange_dirty(struct folio *folio, size_t offset, size_t len);
-> +bool f2fs_ffs_clear_subrange_dirty_and_test(struct folio *folio, size_t offset,
-> +					    size_t len);
->  void f2fs_write_failed(struct inode *inode, loff_t to);
->  void f2fs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
->  bool f2fs_release_folio(struct folio *folio, gfp_t wait);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 9071bd23e57b..738a751c3903 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -118,13 +118,47 @@ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
->  	return ret;
->  }
->  
-> +static int f2fs_get_block_mkwrite(struct inode *inode, struct folio *folio,
-> +				  pgoff_t index, bool need_alloc)
-> +{
-> +	struct dnode_of_data dn;
-> +	int err;
-> +
-> +	set_new_dnode(&dn, inode, NULL, NULL, 0);
-> +	if (need_alloc) {
-> +		err = f2fs_get_block_locked(&dn, index);
-> +	} else {
-> +		err = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
-> +		f2fs_put_dnode(&dn);
-> +		if (f2fs_is_pinned_file(inode) &&
-> +		    !__is_valid_data_blkaddr(dn.data_blkaddr))
-> +			err = -EIO;
-> +	}
-> +
-> +	if (err)
-> +		return err;
-> +
-> +	f2fs_folio_wait_writeback(folio, DATA, false, true);
-> +
-> +	/* wait for GCed page writeback via META_MAPPING */
-> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-> +
-> +	return 0;
-> +}
-> +
->  static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->  {
->  	struct folio *folio = page_folio(vmf->page);
->  	struct inode *inode = file_inode(vmf->vma->vm_file);
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> -	struct dnode_of_data dn;
->  	bool need_alloc = !f2fs_is_pinned_file(inode);
-> +	pgoff_t pidx = folio->index + folio_page_idx(folio, vmf->page);
-> +	loff_t pos = (loff_t)pidx << PAGE_SHIFT;
-> +	loff_t isize;
-> +	loff_t folio_start;
-> +	loff_t valid_end;
-> +	size_t dirty_len;
-> +	size_t subpage_off;
+From: Chao Yu <chao@kernel.org>
 
-pgoff_t i, nr;
+This patch introduces a background writeback kthread (f2fs_writeback-x:y)
+to periodically flush dirty metadata cache entries with a default
+interval of 5 seconds.
 
->  	int err = 0;
->  	vm_fault_t ret;
->  
-> @@ -161,7 +195,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->  
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->  	if (f2fs_compressed_file(inode)) {
-> -		int ret = f2fs_is_compressed_cluster(inode, folio->index);
-> +		int ret = f2fs_is_compressed_cluster(inode, pidx);
->  
->  		if (ret < 0) {
->  			err = ret;
-> @@ -179,72 +213,63 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->  
->  	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
->  
-> -	err = f2fs_zero_post_eof_page(inode,
-> -		(folio->index + 1) << PAGE_SHIFT, true, false);
-> -	if (err)
-> -		goto out_pagefault;
-> -
->  	file_update_time(vmf->vma->vm_file);
->  	filemap_invalidate_lock_shared(inode->i_mapping);
->  
->  	folio_lock(folio);
-> +	isize = i_size_read(inode);
-> +	folio_start = folio_pos(folio);
-> +	subpage_off = offset_in_folio(folio, pos);
-> +	valid_end = min_t(loff_t, folio_start + folio_size(folio), isize);
-> +	dirty_len = valid_end > folio_start ? valid_end - folio_start : 0;
+It manages thread lifecycle across mount, unmount, and remount (rw/ro)
+transitions.
 
-valid_end <= folio_start, is this a possible case? if the folio is post EOF,
-can it be dirtied via mmap?
+It introduces a sysfs entry /sys/fs/f2fs/<disk>/cache_wb_interval to control
+writeback interval.
 
-> +
->  	if (unlikely(folio->mapping != inode->i_mapping ||
-> -			folio_pos(folio) > i_size_read(inode) ||
-> -			!folio_test_uptodate(folio))) {
-> +			pos >= isize ||
-> +			!f2fs_ffs_test_blk_uptodate(folio,
-> +			folio->index + (subpage_off >> PAGE_SHIFT)))) {
->  		folio_unlock(folio);
->  		err = -EFAULT;
->  		goto out_sem;
->  	}
->  
-> -	set_new_dnode(&dn, inode, NULL, NULL, 0);
-> -	if (need_alloc) {
-> -		/* block allocation */
-> -		err = f2fs_get_block_locked(&dn, folio->index);
-> -	} else {
-> -		err = f2fs_get_dnode_of_data(&dn, folio->index, LOOKUP_NODE);
-> -		f2fs_put_dnode(&dn);
-> -		if (f2fs_is_pinned_file(inode) &&
-> -		    !__is_valid_data_blkaddr(dn.data_blkaddr))
-> -			err = -EIO;
-> -	}
-> +	pgoff_t i, nr = DIV_ROUND_UP(dirty_len, PAGE_SIZE);
->  
-> -	if (err) {
-> -		folio_unlock(folio);
-> -		goto out_sem;
-> +	for (i = 0; i < nr; i++) {
-> +		err = f2fs_get_block_mkwrite(inode, folio, folio->index + i,
-> +					     need_alloc);
-> +		if (err) {
-> +			folio_unlock(folio);
-> +			goto out_sem;
-> +		}
->  	}
->  
-> -	f2fs_folio_wait_writeback(folio, DATA, false, true);
-> -
-> -	/* wait for GCed page writeback via META_MAPPING */
-> -	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-> -
-> -	/*
-> -	 * check to see if the page is mapped already (no holes)
-> -	 */
-> -	if (folio_test_mappedtodisk(folio))
-> -		goto out_sem;
+Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++
+ fs/f2fs/cache.c                         | 69 +++++++++++++++++++++++++
+ fs/f2fs/cache.h                         | 13 +++++
+ fs/f2fs/f2fs.h                          |  3 ++
+ fs/f2fs/super.c                         | 33 +++++++++++-
+ fs/f2fs/sysfs.c                         | 20 ++++++-
+ 6 files changed, 142 insertions(+), 3 deletions(-)
 
-I think we'd better to drop this logic in a separated patch, it doesn't
-belong to current patch?
-
-Thanks,
-
-> -
->  	/* page is wholly or partially inside EOF */
-> -	if (((loff_t)(folio->index + 1) << PAGE_SHIFT) >
-> -						i_size_read(inode)) {
-> -		loff_t offset;
-> +	if (folio_start + folio_size(folio) > isize) {
-> +		size_t offset = offset_in_folio(folio, isize);
->  
-> -		offset = i_size_read(inode) & ~PAGE_MASK;
->  		folio_zero_segment(folio, offset, folio_size(folio));
->  	}
-> +
-> +	if (folio_test_large(folio)) {
-> +		if (!f2fs_ffs_find_or_alloc(folio)) {
-> +			folio_unlock(folio);
-> +			err = -ENOMEM;
-> +			goto out_sem;
-> +		}
-> +		f2fs_ffs_mark_subrange_dirty(folio, 0, dirty_len);
-> +	}
->  	folio_mark_dirty(folio);
->  
-> -	f2fs_update_iostat(sbi, inode, APP_MAPPED_IO, F2FS_BLKSIZE(sbi));
-> +	f2fs_update_iostat(sbi, inode, APP_MAPPED_IO, dirty_len);
->  	f2fs_update_time(sbi, REQ_TIME);
->  
->  out_sem:
->  	filemap_invalidate_unlock_shared(inode->i_mapping);
-> -out_pagefault:
->  	sb_end_pagefault(inode->i_sb);
->  out:
->  	ret = vmf_fs_error(err);
->  
-> -	trace_f2fs_vm_page_mkwrite(inode, folio->index, vmf->vma->vm_flags, ret);
-> +	trace_f2fs_vm_page_mkwrite(inode, pidx, vmf->vma->vm_flags, ret);
->  	return ret;
->  }
->  
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 0cebc89799dd..c4746c416ac2 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -1020,3 +1020,10 @@ Contact:	"Daeho Jeong" <daehojeong@google.com>
+ Description:	This is a read-only entry to show the upper bound section number
+ 		for pinned files. Pinned files will only be allocated within
+ 		sections 0 to pinned_area_max_secno - 1.
++
++What:		/sys/fs/f2fs/<disk>/cache_wb_interval
++Date:		August 2026
++Contact:	"Chao Yu" <chao@kernel.org>
++Description:	This is a writable entry to control writeback interval of
++		f2fs_writeback-x:y, the range is [100, 30000], by default the value
++		is 5000, unit is ms.
+diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
+index e571080ab266..0185e7af5381 100644
+--- a/fs/f2fs/cache.c
++++ b/fs/f2fs/cache.c
+@@ -628,3 +628,72 @@ unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
+ {
+ 	return f2fs_do_shrink_cache(META_CACHE(sbi), nr_to_scan);
+ }
++
++static int f2fs_cache_writeback_kthread(void *data)
++{
++	struct f2fs_sb_info *sbi = data;
++	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
++	wait_queue_head_t *wq = &cache_thread->cache_wb_wq;
++
++	set_freezable();
++
++	while (!kthread_should_stop()) {
++		unsigned int interval = cache_thread->cache_wb_interval;
++
++		wait_event_freezable_timeout(*wq,
++				kthread_should_stop(),
++				msecs_to_jiffies(interval));
++
++		if (kthread_should_stop())
++			break;
++
++		if (f2fs_readonly(sbi->sb))
++			continue;
++
++		if (f2fs_cp_error(sbi))
++			continue;
++
++		if (unlikely(freezing(current)))
++			continue;
++
++		if (!sb_start_write_trylock(sbi->sb))
++			continue;
++
++		sb_end_write(sbi->sb);
++	}
++	return 0;
++}
++
++int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
++	struct task_struct *task;
++	dev_t dev = sbi->sb->s_dev;
++	char name[36];
++
++	if (cache_thread->cache_wb_task)
++		return 0;
++
++	init_waitqueue_head(&cache_thread->cache_wb_wq);
++	cache_thread->cache_wb_interval = DEF_DIRTY_CACHE_TIMEOUT;
++	snprintf(name, sizeof(name), "f2fs_writeback-%u:%u",
++			MAJOR(dev), MINOR(dev));
++
++	task = kthread_run(f2fs_cache_writeback_kthread, sbi, "%s", name);
++	if (IS_ERR(task))
++		return PTR_ERR(task);
++
++	cache_thread->cache_wb_task = task;
++	return 0;
++}
++
++void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
++
++	if (!cache_thread->cache_wb_task)
++		return;
++
++	kthread_stop(cache_thread->cache_wb_task);
++	cache_thread->cache_wb_task = NULL;
++}
+diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
+index 6c38fc9e18f6..246384935593 100644
+--- a/fs/f2fs/cache.h
++++ b/fs/f2fs/cache.h
+@@ -205,4 +205,17 @@ void f2fs_drop_cache_range(struct f2fs_cached_block_list *cache,
+ unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
+ 				unsigned long nr_to_scan);
+ 
++#define DEF_DIRTY_CACHE_TIMEOUT 5000
++#define MIN_DIRTY_CACHE_TIMEOUT 100
++#define MAX_DIRTY_CACHE_TIMEOUT 30000
++
++struct f2fs_cache_kthread {
++	struct task_struct *cache_wb_task;
++	wait_queue_head_t cache_wb_wq;
++	unsigned int cache_wb_interval;
++};
++
++int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi);
++void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
++
+ #endif /* _LINUX_F2FS_CACHE_H */
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 85c4bf40b4aa..c0f82b63d732 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2110,6 +2110,9 @@ struct f2fs_sb_info {
+ 
+ 	/* f2fs internal cache */
+ 	struct f2fs_cached_block_list meta_blocks;
++
++	/* internal cache flush thread */
++	struct f2fs_cache_kthread cache_thread;
+ };
+ 
+ /* Definitions to access f2fs_sb_info */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index bc3d378371e5..9004456b079d 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2039,6 +2039,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	 * flush all issued checkpoints and stop checkpoint issue thread.
+ 	 * after then, all checkpoints should be done by each process context.
+ 	 */
++	f2fs_stop_cache_wb_thread(sbi);
+ 	f2fs_stop_ckpt_thread(sbi);
+ 
+ 	/*
+@@ -2845,6 +2846,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	unsigned int flags = fc->sb_flags;
+ 	int err;
+ 	bool need_restart_gc = false, need_stop_gc = false;
++	bool need_restart_wb = false, need_stop_wb = false;
+ 	bool need_restart_flush = false, need_stop_flush = false;
+ 	bool need_restart_discard = false, need_stop_discard = false;
+ 	bool need_enable_checkpoint = false, need_disable_checkpoint = false;
+@@ -3004,6 +3006,18 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 		need_stop_gc = true;
+ 	}
+ 
++	if (flags & SB_RDONLY) {
++		if (sbi->cache_thread.cache_wb_task) {
++			f2fs_stop_cache_wb_thread(sbi);
++			need_restart_wb = true;
++		}
++	} else if (!sbi->cache_thread.cache_wb_task) {
++		err = f2fs_start_cache_wb_thread(sbi);
++		if (err)
++			goto restore_gc;
++		need_stop_wb = true;
++	}
++
+ 	if (flags & SB_RDONLY) {
+ 		sync_inodes_sb(sb);
+ 
+@@ -3011,7 +3025,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 		set_sbi_flag(sbi, SBI_IS_CLOSE);
+ 		err = f2fs_sync_fs(sb, 1);
+ 		if (err)
+-			goto restore_gc;
++			goto restore_wb;
+ 		clear_sbi_flag(sbi, SBI_IS_CLOSE);
+ 	}
+ 
+@@ -3026,7 +3040,7 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	} else {
+ 		err = f2fs_create_flush_cmd_control(sbi);
+ 		if (err)
+-			goto restore_gc;
++			goto restore_wb;
+ 		need_stop_flush = true;
+ 	}
+ 
+@@ -3123,6 +3137,13 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 		clear_opt(sbi, FLUSH_MERGE);
+ 		f2fs_destroy_flush_cmd_control(sbi, false);
+ 	}
++restore_wb:
++	if (need_restart_wb) {
++		if (f2fs_start_cache_wb_thread(sbi))
++			f2fs_warn(sbi, "background cache writeback thread has stopped");
++	} else if (need_stop_wb) {
++		f2fs_stop_cache_wb_thread(sbi);
++	}
+ restore_gc:
+ 	if (need_restart_gc) {
+ 		if (f2fs_start_gc_thread(sbi))
+@@ -5527,6 +5548,12 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			goto sync_free_meta;
+ 	}
+ 
++	if (!f2fs_readonly(sb)) {
++		err = f2fs_start_cache_wb_thread(sbi);
++		if (err)
++			goto stop_gc_thread;
++	}
++
+ 	/* recover broken superblock */
+ 	if (recovery) {
+ 		err = f2fs_commit_super(sbi, true);
+@@ -5549,6 +5576,8 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->umount_lock_holder = NULL;
+ 	return 0;
+ 
++stop_gc_thread:
++	f2fs_stop_gc_thread(sbi);
+ sync_free_meta:
+ 	/* safe to flush all the data */
+ 	sync_filesystem(sbi->sb);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index aaca9ed9b169..4f3c481896fc 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -40,6 +40,7 @@ enum {
+ 	RESERVED_BLOCKS,	/* struct f2fs_sb_info */
+ 	CPRC_INFO,	/* struct ckpt_req_control */
+ 	ATGC_INFO,	/* struct atgc_management */
++	WB_THREAD,	/* struct f2fs_cache_kthread */
+ };
+ 
+ static const char *gc_mode_names[MAX_GC_MODE] = {
+@@ -98,6 +99,8 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
+ 		return (unsigned char *)&sbi->cprc_info;
+ 	else if (struct_type == ATGC_INFO)
+ 		return (unsigned char *)&sbi->am;
++	else if (struct_type == WB_THREAD)
++		return (unsigned char *)&sbi->cache_thread;
+ 	return NULL;
+ }
+ 
+@@ -995,6 +998,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "cache_wb_interval")) {
++		if (t < MIN_DIRTY_CACHE_TIMEOUT || t > MAX_DIRTY_CACHE_TIMEOUT)
++			return -EINVAL;
++		sbi->cache_thread.cache_wb_interval = t;
++		return count;
++	}
++
+ 	__sbi_store_value(a, sbi, ptr + a->offset, t);
+ 
+ 	return count;
+@@ -1008,7 +1018,8 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
+ 					a->struct_type == GC_THREAD);
+ 	bool thread_entry = !strcmp(a->attr.name, "ckpt_thread_ioprio") ||
+-			!strcmp(a->attr.name, "critical_task_priority");
++			!strcmp(a->attr.name, "critical_task_priority") ||
++			!strcmp(a->attr.name, "cache_wb_interval");
+ 
+ 	if (gc_entry || thread_entry) {
+ 		if (!down_read_trylock(&sbi->sb->s_umount))
+@@ -1218,6 +1229,9 @@ static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
+ #define ATGC_INFO_RW_ATTR(name, elname)				\
+ 	F2FS_RW_ATTR(ATGC_INFO, atgc_management, name, elname)
+ 
++#define WB_THREAD_RW_ATTR(name, elname)				\
++	F2FS_RW_ATTR(WB_THREAD, f2fs_cache_kthread, name, elname)
++
+ /* GC_THREAD ATTR */
+ GC_THREAD_RW_ATTR(gc_urgent_sleep_time, urgent_sleep_time);
+ GC_THREAD_RW_ATTR(gc_min_sleep_time, min_sleep_time);
+@@ -1347,6 +1361,9 @@ ATGC_INFO_RW_ATTR(atgc_candidate_count, max_candidate_count);
+ ATGC_INFO_RW_ATTR(atgc_age_weight, age_weight);
+ ATGC_INFO_RW_ATTR(atgc_age_threshold, age_threshold);
+ 
++/* WB_THREAD ATTR */
++WB_THREAD_RW_ATTR(cache_wb_interval, cache_wb_interval);
++
+ F2FS_GENERAL_RO_ATTR(dirty_segments);
+ F2FS_GENERAL_RO_ATTR(free_segments);
+ F2FS_GENERAL_RO_ATTR(ovp_segments);
+@@ -1533,6 +1550,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(lock_duration_priority),
+ 	ATTR_LIST(adjust_lock_priority),
+ 	ATTR_LIST(critical_task_priority),
++	ATTR_LIST(cache_wb_interval),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs);
+-- 
+2.49.0
 
 
 
