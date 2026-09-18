@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E309C982DA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Sep 2026 11:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 66CCFC982DA
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Sep 2026 11:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=y0s5q0soJHMSTaSppUfbdLkoW01HJyAHslq369cAs20=; b=V+p2iCLS5407XnP9NJq6zh9+Fc
-	nBq9G3YmUylGrtVtqA1Td7sk+F0ovfcGqu4YfYgz9K0xjknk/+PnyLQ8/OtMxV3BUpMGD9C7nFkex
-	5ylyAyxlJc1yMoBjOWY5uas+pLRgRxd2HyIQ24kNQSA+V9VQXoCV7l14/mHFJiyWKUgU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=HzSoacJdVejJYn06Q5KcxERBuVXY/RJ3cbueR3JnaJc=; b=XgbpsVVOraOYkdZyyKtRkEnhNK
+	7l77i4F8ZhGpEdpgHO8hurtKoX72iz6sUY6O6FTPOcGHro+JdMJY7qk0ITivGTwLVyfgwMQ0Qt60k
+	K+rSL8gnvIcAQ3x1G6jSbYNaUCoPM4xft1eZZzDrlKj9gzwC4scPajKA0xy9dHeVi1Hc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x7WaP-00029A-VY;
-	Fri, 18 Sep 2026 11:16:58 +0000
+	id 1x7WaW-0001Jm-2a;
+	Fri, 18 Sep 2026 11:17:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1x7WaN-00028y-Vf
+ (envelope-from <aalbersh@kernel.org>) id 1x7WaU-0001JX-Ac
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 18 Sep 2026 11:16:56 +0000
+ Fri, 18 Sep 2026 11:17:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bSv6TKlW4NbrjSEeVlXfAwkAliMrPUfKHonbv3D6dao=; b=cRaxWx+xEod/PoYBBcQJv+V4bV
- n49KUlK3MNmuEuMb9Hx/t65mIZi/FteVfB97hcFs3kIZkxBNEvZXM6Ryx6kHe4HHIujsj5JOdOthA
- SHXWgwGJOT2KUbHBDFrThvjpM3cdRNolhHeuBJceyWyjXihZ0bdpLivt+7FSvDIgEunI=;
+ bh=X2CWqNywYNsvbx7g4PPecfxdxb01tUk+6rCakwXASDw=; b=LcQ7rKoe3B+A7cNc7ZhaMoqzwr
+ 7xeGZ1aG4p6al3qEHjL0rGi37nQeTDvdFp5usQelekMOAvTRYT17IbkVU2vXCEgg+LOGGD9B3ryD4
+ DkaHAreJNMynH18W86EJNeSYUHG0ElYWHptS+IQ8b3T11VahGfCppWqWO5/jvNqYZVAA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bSv6TKlW4NbrjSEeVlXfAwkAliMrPUfKHonbv3D6dao=; b=IFV5Skv6pB2CJFEU1X15tRYtnv
- LUonfOE8j6xB3xXWsgNfi+f3WCPm53VuRqcgfczC8nJ39wNOtDkiIdy+17tC2B0nzYx9pER9ORp5k
- 3B0dAiYjQi8UMoP6FgHjDLaUbBOQ1OFmagBHOBwBSJTweYhK7+NvhfjxCs6uv2qVG4to=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=X2CWqNywYNsvbx7g4PPecfxdxb01tUk+6rCakwXASDw=; b=TzF8AXQ0NA8d+yA4yMrowplVSI
+ A6ap1X/mJ07YqMk1ApRZ+z7IVDkzB7/HOQ3bD5cYG8YOBS/TbbOrjIVLMEP87M+PoPWHn0VpH12t+
+ UdgbBr5q2bjvDkK13ByoJn/nJbf5ssSkMcpLc4AMAe2PQWl45bkb2U6SOCiVZqb1kIrw=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x7WaO-0007tQ-7n for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 18 Sep 2026 11:16:56 +0000
+ id 1x7WaS-000091-5D for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 18 Sep 2026 11:17:02 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id ED30440692;
- Fri, 18 Sep 2026 11:16:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91B3C1F00893;
- Fri, 18 Sep 2026 11:16:47 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 9498F60A99;
+ Fri, 18 Sep 2026 11:16:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B7F1F000FF;
+ Fri, 18 Sep 2026 11:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1789730210;
- bh=bSv6TKlW4NbrjSEeVlXfAwkAliMrPUfKHonbv3D6dao=;
+ s=k20260515; t=1789730214;
+ bh=X2CWqNywYNsvbx7g4PPecfxdxb01tUk+6rCakwXASDw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=bmwAxfYcw+WkJlxVlaOJseqnRuyguAQo71ovBJFGBEqhxRKZGiNC4rRTB0a4o0vT8
- K4LbmZJSWIisP3SWoMIF5XHllxreionK1gYtjkZY5PtGc7CRdZWu8Ur6RGqKl25XU1
- ZhkejPG2a8TH1+GyL4FDIeR7p0YPQdM39PdJfo9fMIihOpkMGGVpzJXwP6AUI6ziav
- oED5IpKHSv/rfpXCIkPFpF1s7fH/S3IsQ33VXEp1uASy2+n97HoD9jDxpxiL5S7PgT
- Vvchi8gPvPbAFxMoQIB526dRzfyB3XGlvXOgz+Zc8hjbCpWPx40tXSIBuN+Np7inDd
- oahp7mKSVfOAg==
+ b=Fh0KYZGVKFFVjzt7gZfAYnsvFPEzhKpBxIyEht/PFPtm05Ge6stxkXMwAi2oV5fA1
+ SYdeo0mVp9OlYvWEmVi7kCeTkRq8xJtCCYFujDbYsOEKnJcfexUrHXCebQsqgo6YUa
+ 2GWjzA0IVKtI+8BMyDIZB3J1LachDpsV6Maes90AHaYEbXYyK2k8au0J/q8EAsxwPf
+ Vd0z4tXVcoxB75SnX0ly3qTao6xtu+OuKLQxSXSCMjj/8tOG8jpqdJbnYXmiilCN1g
+ F3/QbKRFlUH1M/o0OGdgBiBw0lCKbi+dOC6zI4/H/1XySWXJyxJc+BjuYDHk84STqs
+ oeaJ7QOOa1nlw==
 To: djwong@kernel.org, ebiggers@kernel.org, hch@lst.de,
  Carlos Maiolino <cem@kernel.org>
-Date: Fri, 18 Sep 2026 13:15:30 +0200
-Message-ID: <20260918111539.1003439-19-aalbersh@kernel.org>
+Date: Fri, 18 Sep 2026 13:15:31 +0200
+Message-ID: <20260918111539.1003439-20-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260918111539.1003439-1-aalbersh@kernel.org>
 References: <20260918111539.1003439-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1x7WaO-0007tQ-7n
-Subject: [f2fs-dev] [PATCH v16 18/21] xfs: advertise fs-verity being
- available on filesystem
+X-Headers-End: 1x7WaS-000091-5D
+Subject: [f2fs-dev] [PATCH v16 19/21] xfs: check and repair the verity inode
+ flag state
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,52 +91,209 @@ From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
 Cc: fsverity@lists.linux.dev, Andrey Albershteyn <aalbersh@kernel.org>,
- Andrey Albershteyn <aalbersh@redhat.com>, david@fromorbit.com,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+ david@fromorbit.com, linux-unionfs@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Darrick J. Wong" <djwong@kernel.org>
 
-Advertise that this filesystem supports fsverity.
+If an inode has the incore verity iflag set, make sure that we can
+actually activate fsverity on that inode.  If activation fails due to
+a fsverity metadata validation error, clear the flag.  The usage model
+for fsverity requires that any program that cares about verity state is
+required to call statx/getflags to check that the flag is set after
+opening the file, so clearing the flag will not compromise that model.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/xfs/libxfs/xfs_fs.h | 1 +
- fs/xfs/libxfs/xfs_sb.c | 2 ++
- 2 files changed, 3 insertions(+)
+ fs/xfs/scrub/common.c       | 55 +++++++++++++++++++++++++++++++++++++
+ fs/xfs/scrub/common.h       |  2 ++
+ fs/xfs/scrub/inode.c        |  7 +++++
+ fs/xfs/scrub/inode_repair.c | 36 ++++++++++++++++++++++++
+ 4 files changed, 100 insertions(+)
 
-diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-index 185f09f327c0..c80133784419 100644
---- a/fs/xfs/libxfs/xfs_fs.h
-+++ b/fs/xfs/libxfs/xfs_fs.h
-@@ -250,6 +250,7 @@ typedef struct xfs_fsop_resblks {
- #define XFS_FSOP_GEOM_FLAGS_PARENT	(1 << 25) /* linux parent pointers */
- #define XFS_FSOP_GEOM_FLAGS_METADIR	(1 << 26) /* metadata directories */
- #define XFS_FSOP_GEOM_FLAGS_ZONED	(1 << 27) /* zoned rt device */
-+#define XFS_FSOP_GEOM_FLAGS_VERITY	(1 << 28) /* fs-verity */
+diff --git a/fs/xfs/scrub/common.c b/fs/xfs/scrub/common.c
+index e5233e31abb7..02b68bf4c512 100644
+--- a/fs/xfs/scrub/common.c
++++ b/fs/xfs/scrub/common.c
+@@ -45,6 +45,8 @@
+ #include "scrub/health.h"
+ #include "scrub/tempfile.h"
+ 
++#include <linux/fsverity.h>
++
+ /* Common code for the metadata scrubbers. */
  
  /*
-  * Minimum and maximum sizes need for growth checks.
-diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-index 985c7c6a09f2..fd06c3d6cc11 100644
---- a/fs/xfs/libxfs/xfs_sb.c
-+++ b/fs/xfs/libxfs/xfs_sb.c
-@@ -1587,6 +1587,8 @@ xfs_fs_geometry(
- 		geo->flags |= XFS_FSOP_GEOM_FLAGS_METADIR;
- 	if (xfs_has_zoned(mp))
- 		geo->flags |= XFS_FSOP_GEOM_FLAGS_ZONED;
-+	if (xfs_has_verity(mp))
-+		geo->flags |= XFS_FSOP_GEOM_FLAGS_VERITY;
- 	geo->rtsectsize = sbp->sb_blocksize;
- 	geo->dirblocksize = xfs_dir2_dirblock_bytes(sbp);
+@@ -1754,3 +1756,56 @@ xchk_inode_count_blocks(
+ 	return xfs_bmap_count_blocks(sc->tp, sc->ip, whichfork, nextents,
+ 			count);
+ }
++
++/*
++ * If this inode has S_VERITY set on it, read the verity info. If the reading
++ * fails with anything other than ENOMEM, the file is corrupt, which we can
++ * detect later with fsverity_active.
++ *
++ * Callers must hold the IOLOCK and must not hold the ILOCK of sc->ip because
++ * activation reads inode data.
++ */
++int
++xchk_inode_setup_verity(
++	struct xfs_scrub	*sc)
++{
++	int			error;
++
++	if (!fsverity_active(VFS_I(sc->ip)))
++		return 0;
++
++	error = fsverity_ensure_verity_info(VFS_I(sc->ip));
++	switch (error) {
++	case 0:
++		/* fsverity is active */
++		break;
++	case -ENODATA:
++	case -EMSGSIZE:
++	case -EINVAL:
++	case -EFSCORRUPTED:
++	case -EFBIG:
++	case -ERANGE:
++	case -EBADMSG:
++		/*
++		 * The nonzero errno codes above are the error codes that can
++		 * be returned from fsverity on metadata validation errors.
++		 */
++		return 0;
++	default:
++		/* runtime errors */
++		return error;
++	}
++
++	return 0;
++}
++
++/*
++ * Is this a verity file that failed to activate?  Callers must have tried to
++ * activate fsverity via xchk_inode_setup_verity.
++ */
++bool
++xchk_inode_verity_broken(
++	struct xfs_inode	*ip)
++{
++	return fsverity_active(VFS_I(ip)) && !fsverity_get_info(VFS_I(ip));
++}
+diff --git a/fs/xfs/scrub/common.h b/fs/xfs/scrub/common.h
+index f0f073a93413..676b4afd0be4 100644
+--- a/fs/xfs/scrub/common.h
++++ b/fs/xfs/scrub/common.h
+@@ -267,6 +267,8 @@ int xchk_inode_is_allocated(struct xfs_scrub *sc, xfs_agino_t agino,
+ 		bool *inuse);
+ int xchk_inode_count_blocks(struct xfs_scrub *sc, int whichfork,
+ 		xfs_extnum_t *nextents, xfs_filblks_t *count);
++int xchk_inode_setup_verity(struct xfs_scrub *sc);
++bool xchk_inode_verity_broken(struct xfs_inode *ip);
  
+ bool xchk_inode_is_dirtree_root(const struct xfs_inode *ip);
+ bool xchk_inode_is_sb_rooted(const struct xfs_inode *ip);
+diff --git a/fs/xfs/scrub/inode.c b/fs/xfs/scrub/inode.c
+index 65b13e311916..d1cdd6b445d0 100644
+--- a/fs/xfs/scrub/inode.c
++++ b/fs/xfs/scrub/inode.c
+@@ -36,6 +36,10 @@ xchk_prepare_iscrub(
+ 
+ 	xchk_ilock(sc, XFS_IOLOCK_EXCL);
+ 
++	error = xchk_inode_setup_verity(sc);
++	if (error)
++		return error;
++
+ 	error = xchk_trans_alloc(sc, 0);
+ 	if (error)
+ 		return error;
+@@ -833,6 +837,9 @@ xchk_inode(
+ 	if (S_ISREG(VFS_I(sc->ip)->i_mode))
+ 		xchk_inode_check_reflink_iflag(sc, I_INO(sc->ip));
+ 
++	if (xchk_inode_verity_broken(sc->ip))
++		xchk_ino_set_corrupt(sc, sc->sm->sm_ino);
++
+ 	xchk_inode_check_unlinked(sc);
+ 
+ 	xchk_inode_xref(sc, I_INO(sc->ip), &di);
+diff --git a/fs/xfs/scrub/inode_repair.c b/fs/xfs/scrub/inode_repair.c
+index 8bc508336aa5..6c0b7130e227 100644
+--- a/fs/xfs/scrub/inode_repair.c
++++ b/fs/xfs/scrub/inode_repair.c
+@@ -573,6 +573,8 @@ xrep_dinode_flags(
+ 		dip->di_nrext64_pad = 0;
+ 	else if (dip->di_version >= 3)
+ 		dip->di_v3_pad = 0;
++	if (!xfs_has_verity(mp) || !S_ISREG(mode))
++		flags2 &= ~XFS_DIFLAG2_VERITY;
+ 
+ 	if (flags2 & XFS_DIFLAG2_METADATA) {
+ 		xfs_failaddr_t	fa;
+@@ -1617,6 +1619,10 @@ xrep_dinode_core(
+ 	if (iget_error)
+ 		return iget_error;
+ 
++	error = xchk_inode_setup_verity(sc);
++	if (error)
++		return error;
++
+ 	error = xchk_trans_alloc(sc, 0);
+ 	if (error)
+ 		return error;
+@@ -2035,6 +2041,27 @@ xrep_inode_unlinked(
+ 	return 0;
+ }
+ 
++/*
++ * If this file is a fsverity file, xchk_prepare_iscrub or xrep_dinode_core
++ * should have activated it.  If it's still not active, then there's something
++ * wrong with the verity descriptor and we should turn it off.
++ */
++STATIC int
++xrep_inode_verity(
++	struct xfs_scrub	*sc)
++{
++	struct inode		*inode = VFS_I(sc->ip);
++
++	if (xchk_inode_verity_broken(sc->ip)) {
++		sc->ip->i_diflags2 &= ~XFS_DIFLAG2_VERITY;
++		inode_set_flags(inode, 0, S_VERITY);
++
++		xfs_trans_log_inode(sc->tp, sc->ip, XFS_ILOG_CORE);
++	}
++
++	return 0;
++}
++
+ /* Repair an inode's fields. */
+ int
+ xrep_inode(
+@@ -2084,6 +2111,15 @@ xrep_inode(
+ 			return error;
+ 	}
+ 
++	/*
++	 * Disable fsverity if it cannot be activated.  Activation failure
++	 * prohibits the file from being opened, so there cannot be another
++	 * program with an open fd to what it thinks is a verity file.
++	 */
++	error = xrep_inode_verity(sc);
++	if (error)
++		return error;
++
+ 	/* Reconnect incore unlinked list */
+ 	error = xrep_inode_unlinked(sc);
+ 	if (error)
 -- 
 2.54.0
 
