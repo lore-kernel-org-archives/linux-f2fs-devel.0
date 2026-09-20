@@ -4,109 +4,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9CFB8C982CC
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 19 Sep 2026 13:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7090C982D8
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 20 Sep 2026 14:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=JZHnQoCQQ/SWouWmCqSErnL2ERHaMF2NtW3X691zJ54=; b=P9NT2Q8chUEl3gkvy8z6XY++VR
-	LgrKzM/1fv7tg8DcFPzV0A8MJCiDpyXXx0yxXIEXB5fVXiX+tWKuO4n3c9JBpigDHabhNYirShmgy
-	pMK3JWJ2EyOwDcerV6SgAHdISV/7AYo7AXGgk/RRmCT8R8vaHUDdF6pR6OhqhF49ZEAc=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Hs0WKai71vph24P5NcjtD1+oLCtR4a0XUiFtAo5KHLA=; b=LU0DBL7P0NPG1PWw56psVgYBHl
+	wT6h+8iXXSUhHGLy8A66IIYyBNjbkYBnMLxctqLFzDMsd/umv4tewnWdxQHSOkMgxQ91V1uEOnB9u
+	G/ai+pg5AQBHVTJqfWlIa/PQpZLTRv6nRNEl9HrhHngBscKNCBin1RrwUVUr4X7Ddrqs=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x7upK-0000cc-OW;
-	Sat, 19 Sep 2026 13:09:59 +0000
+	id 1x8IFq-00081h-HL;
+	Sun, 20 Sep 2026 14:10:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kaixuanli0131@gmail.com>) id 1x7upJ-0000cV-Mf
+ (envelope-from <asj@kernel.org>) id 1x8IFp-00081a-Ce
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 19 Sep 2026 13:09:58 +0000
+ Sun, 20 Sep 2026 14:10:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=y5Tjh3GexCBzXdpLVPsyPNiT6yr4CdLK794OeNiom9k=; b=ag/53ztPHhSPJoXVD599XGf6rF
- ePubxE529St7RJYCyjDPjWeLoFXJQ/QiBXpzJO/SPbqXxc7v2HTePLhMDVqB15+jbGc+wTuoLGLzB
- fGfB493BGbyKOKUEIfCjaxZmCjnz0zxvLXXjhBA2UifjKkbTig+T97vDmFgO7X2gpX2E=;
+ bh=L9U8x29FUMYYuun6BO6TXnYXUZdKJvqLoY6TjdR/gGg=; b=AMYG5P4fm/dRTRP7BoaC4Re8oD
+ vvBq7Pia1q8oOXAB2wEyxR6iqgr9ps9NWQyj4GX0Utw7fpPTiiOHNsbhNHL0mPQeWrbI+AhepeilY
+ qGKFWrjnyzWu0LLOQ/zDe7E2b0CXkRVFWVsvBeABC6Ra00RbOYAHaPJ6i3kko2WWX7ho=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=y5Tjh3GexCBzXdpLVPsyPNiT6yr4CdLK794OeNiom9k=; b=f
- V3YAOaubzkx9ls9NIMAztyq15C4woCv7+AIEO7t09tgmB1XK1k8E8Q7gRzNZFdwjWd8Iy0L2rXOxY
- VSAFOljdlDsYgFloqWmrPj8xvm7lZVsAquL6SU1h3r95jPRKRvtB0aNTvvzJlbPFa1G+Ofx8TmJ+w
- hQSmIXkxXhGme24o=;
-Received: from mail-pz2-f41.google.com ([74.125.228.41])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=L9U8x29FUMYYuun6BO6TXnYXUZdKJvqLoY6TjdR/gGg=; b=diVhaHSwDVVqKp6A3X+8uhbcbZ
+ n9BEcFrYNyaF17bXsAta+SAIpiIcVTYxHoqM2zqS28GnCHPdxPqqjSdZyJFFPO2tLproIdkoITZEg
+ HcNUKT+4R8ewaEORq7V5PswO5UxmiHVpsP/AGvVAtT2mjSjWf3DGlSBaalerQiDzSIwY=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x7upJ-0004Rd-Rh for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 19 Sep 2026 13:09:58 +0000
-Received: by mail-pz2-f41.google.com with SMTP id
- d2e1a72fcca58-85469b355ffso1025853b3a.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x8IFm-00055C-9w for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 20 Sep 2026 14:10:50 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id ED51843B1B
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 19 Sep 2026 06:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789823392; x=1790428192; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=y5Tjh3GexCBzXdpLVPsyPNiT6yr4CdLK794OeNiom9k=;
- b=WAFtchpJhdh9hzGbCgNArvkxHZ9ADN59TUdgaYilptZ4ouGBEDHS+dY3hPzttmZAkw
- IO1QKhtHy2kLR7pWEjy+jFCS8Je9HJz6h2aBkhOz7HApvvyVr56/iAh+AvGFlXh2Q3VI
- kNt2DdC5u5M4x/LANgMxjO9Lofq2X1ssWR3HSoLZ6xCh9TPtPfwnQinvCY8qLEvgVa47
- ULg5eoT4cTAMEnEYn7gIWuSWzpQCayG6/K5n0YOmWP8n6dM29ydmW/MbhZzk0uLwDFS0
- /Y66j6JgOmFM20zthNFBZ7nTqWpdSYI7crXLF0r3MvLwnN+yLCMgMruwwK+3SS2cTbwt
- seVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789823392; x=1790428192;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=y5Tjh3GexCBzXdpLVPsyPNiT6yr4CdLK794OeNiom9k=;
- b=ZMbEUYmosx07gvR8wDNmn/hd2Jr0wRaUTR+JaHNVmCcB3xLKDyPn54YnzH6n7y1sRT
- qN0Gf7M8RuXMv6sWHLophIz9GbE0AKcMGM9XN+p+POSE3UWvpX1md4uJEXw3leXPqTXP
- dTaEXScsoQs4zx5Hqz08Go4a5BHDOMIVBe2g3sgK5s64gyyBKTU2NYevMqQ8VUcvjMhz
- JAoIeYkwevcR5kzjvtY5RNXZHw9NGy1rH/ht1DsQ2JY3mSJ3zRq/sq+KM68XZskDYNCj
- d12CqKBpWogcQzycTwaXlOZkSHGUcKjGOVOo2ZCLZrVtveb/sI5J4nwYhzuos7Cot5de
- tOqw==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwKeqKPQkfC/163o+3NoJJxWY3GR96rb+YLRSYmJ8tAvJy9P0x1zuk27gGL+vU3eMMbdamOMSM89rUbTFlsjKLo@lists.sourceforge.net
-X-Gm-Message-State: AFuF++lpqAm5ykG0RmWbVd2+luBzP0K+bRXEQNbB5nHryYS+3hDdeXim
- /6O/O6Bo2d8I227VvOexiTa5YiRxl5SJuuwNF1S3KplPN8iPkz/3W0ya
-X-Gm-Gg: AYBFou1J70Prph8H9Nu0WVJfu4I6yl11V27ifdQGsmZ/rcMQwjK3wqxnHE2F+ccPYsm
- D+o7eZlpQ1+GaE6mCy5hO9hapJb5C9fkdtaDiOuXxdUFR7pEpu1O/PAOo8ZjU/hA78SOoIcrZX9
- kI78l4cmjD46xexeddJRRU6wQRhXRRtK8kn+dSwKZ8XM+7C777sj7Uz+VqXzbEouf3865OoQr5/
- EUoGjesfwiuIDY22EpdSm3of1mtsmnH0yZCdt/QOqpaqpLiztT5wgFyLhX+pjmJwkRfkPm2uqb9
- y3AXiTcz9E7wOlpMSyOoTgEzaTlK5n0odt5SUp506qpB2P9UJxLWCVhcOn835Bg4FXWfQ29dUSt
- tfpu4E8tyXcBXs6y+ySW7/WRz+6PJcpAcy0K8T7LuSLWpzkUyXf6a5/SQgHeu5riG3Hf8Zc/go+
- VW0K1SEPE3lJjWtQ/EiX4dZz/Jrpq6Hp3PEWyj5VpBIlW/a9i5+9UCO6ht3yw7aSvYRAPoCQcTa
- ik4vZhfXybzVYNZSgyGrW1ZQe/Z9REgsBC8
-X-Received: by 2002:a05:6a00:94e7:b0:878:34d7:6997 with SMTP id
- d2e1a72fcca58-87834d76dcfmr1434910b3a.39.1789823392057; 
- Sat, 19 Sep 2026 06:09:52 -0700 (PDT)
-Received: from csl-conti-dell7859.ntu.edu.sg ([155.69.199.57])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-877aa6fd3ecsm1025493b3a.59.2026.09.19.06.09.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 19 Sep 2026 06:09:51 -0700 (PDT)
-From: Kaixuan Li <kaixuanli0131@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Sat, 19 Sep 2026 21:09:24 +0800
-Message-Id: <20260919130925.1899994-1-kaixuanli0131@gmail.com>
-X-Mailer: git-send-email 2.34.1
+ Sun, 20 Sep 2026 14:10:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158EC1F000FF;
+ Sun, 20 Sep 2026 14:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1789913444;
+ bh=L9U8x29FUMYYuun6BO6TXnYXUZdKJvqLoY6TjdR/gGg=;
+ h=Date:Subject:To:References:From:In-Reply-To;
+ b=OY14vxyofU4iSX/+urwWgT4p8rLI95Hj5FWX4subo5GURa0SrjeP7fS6DWA7YBOQz
+ i1O2qFs410fkP5MFiDlObENnIjMrVl98e0lHlIPRev+rKcXQBfV5B+gnonpsb4DZGr
+ BYDt5ZPzD1LHOs3bf9QFN3T/mcIrCPFH74okdOKSQ+1FNUcu1s+GV6QI/0MrCvFfXS
+ O5/t6Hj6w6rdkHMAsKCBRTq1PmglCWdlqDn6QjDQM8vEcXXKadYRLwkWaPyB8PCINq
+ H3fn8qdPEDV4NMRpBcQHh2+PbbI6TBgazZI0VILZPRxEeiMIovMn+ITMsw4I1mCrX+
+ II09xWKQycbhg==
+Message-ID: <e58634ab-9b04-4ae9-bc36-88f60724e8b1@kernel.org>
+Date: Sun, 20 Sep 2026 22:10:40 +0800
 MIME-Version: 1.0
-X-Headers-End: 1x7upJ-0004Rd-Rh
-Subject: [f2fs-dev] [PATCH] f2fs: bound the SIT/NAT bitmaps by the
- checkpoint pack
+User-Agent: Mozilla Thunderbird
+To: fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, djwong@kernel.org
+References: <cover.1784949154.git.asj@kernel.org>
+ <f68b3bd9fcee878289f8ddd7c85a6913c89772cd.1784949155.git.asj@kernel.org>
+ <apcdo8K-Lfi5imbg@zlang-mailbox>
+Content-Language: en-US
+In-Reply-To: <apcdo8K-Lfi5imbg@zlang-mailbox>
+X-Headers-End: 1x8IFm-00055C-9w
+Subject: Re: [f2fs-dev] [PATCH v8 08/13] fstests: verify f_fsid for cloned
+ filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,131 +92,133 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Kaixuan Li <kaixuanli0131@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Anand Suveer Jain via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Anand Suveer Jain <asj@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-sit_ver_bitmap_bytesize and nat_ver_bitmap_bytesize are used as memcpy
-lengths into and out of sbi->ckpt, which is sized from cp_payload alone,
-and nothing compares either length against that allocation.
+On 2/9/26 02:51, Zorro Lang wrote:
+> On Sat, Jul 25, 2026 at 03:39:05PM +0800, Anand Jain wrote:
+>> Verify that the cloned filesystem provides an f_fsid that is persistent
+>> across mount cycles, yet unique from the original filesystem's f_fsid.
+>>
+>> Signed-off-by: Anand Jain <asj@kernel.org>
+>> ---
+>>  tests/generic/802     | 64 +++++++++++++++++++++++++++++++++++++++++++
+>>  tests/generic/802.out |  4 +++
+>>  2 files changed, 68 insertions(+)
+>>  create mode 100644 tests/generic/802
+>>  create mode 100644 tests/generic/802.out
+>>
+>> diff --git a/tests/generic/802 b/tests/generic/802
+>> new file mode 100644
+>> index 000000000000..910807c11584
+>> --- /dev/null
+>> +++ b/tests/generic/802
+>> @@ -0,0 +1,64 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (c) 2026 Anand Jain <asj@kernel.org>.  All Rights Reserved.
+>> +#
+>> +# FS QA Test 802
+>> +# Check that the cloned filesystem provides an f_fsid that is persistent
+>> +# across mount cycles if the block device maj:min remains unchanged.
+>> +
+>> +. ./common/preamble
+>> +
+>> +_begin_fstest auto quick mount clone
+>> +
+>> +_require_test
+>> +_require_block_device $TEST_DEV
+>> +_require_loop
+>> +
+>> +_fixed_by_fs_commit btrfs xxxxxxxxxxxx \
+>> +	"btrfs: use on-disk uuid for s_uuid in temp_fsid mounts"
+>> +_fixed_by_fs_commit btrfs xxxxxxxxxxxx \
+>> +	"btrfs: derive f_fsid from on-disk fsuuid and dev_t"
+>> +
+>> +_cleanup()
+>> +{
+>> +	cd /
+>> +	rm -r -f $tmp.*
+>> +	umount $mnt1 $mnt2 2>/dev/null
+>> +	_loop_image_destroy "${devs[@]}" 2> /dev/null
+>> +}
+>> +
+>> +# Setup base loop device and its clone
+>> +devs=()
+>> +_loop_image_create_clone devs
+>> +mkdir -p $TEST_DIR/$seq
+> 
+> Better to `rm -rf $TEST_DIR/$seq` before creating a new one.
+> 
 
-sanity_check_ckpt() has checked these two fields since c77ec61ca0a4, which
-added them after a crafted image overran build_sit_info(). That check ties
-each length to a segment count; it never compares either against the
-allocation, which is the half this adds.
+Applied.
 
-Mounting over-reads in build_sit_info() and build_node_manager(), and the
-first checkpoint writes the same lengths back through the same pointers,
-so the over-read's contents reach the on-disk checkpoint. An unmount is
-enough; the filesystem does not have to be used.
+>> +mnt1=$TEST_DIR/$seq/mnt1
+>> +mnt2=$TEST_DIR/$seq/mnt2
+>> +mkdir -p $mnt1
+>> +mkdir -p $mnt2
+>> +
+>> +# Mount both filesystems simultaneously using mandatory clone mount options
+>> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
+>> +						_fail "Failed to mount dev1"
+>> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
+>> +						_fail "Failed to mount dev2"
+>> +
+>> +# Capture baseline filesystem IDs for comparison
+>> +fsid_scratch=$(stat -f -c "%i" $mnt1)
+>> +fsid_clone=$(stat -f -c "%i" $mnt2)
+>> +
+>> +# Verify that the fsids remain stable after a mount cycle, even when the
+>> +# mount order is reversed.
+>> +echo "**** fsid after mount cycle ****"
+>> +_unmount $mnt1
+>> +_unmount $mnt2
+>> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
+>> +						_fail "Failed to mount dev2"
+>> +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
+>> +						_fail "Failed to mount dev1"
+>> +
+>> +# Compare post mount-cycle values against the baseline
+>> +stat -f -c "%i" $mnt1 | sed -e "s/$fsid_scratch/FSID_SCRATCH/g"
+>> +stat -f -c "%i" $mnt2 | sed -e "s/$fsid_clone/FSID_CLONE/g"
+> 
 
-Bound both ends the way __bitmap_ptr() lays them out. The three branches
-differ, so a single sum of the two lengths would still admit a small
-overflow when cp_payload is non-zero.
+> Hmm... what if "$fsid_scratch" is same with "$fsid_clone"?
+> 
 
-Fixes: c77ec61ca0a4 ("f2fs: fix to do sanity check with {sit,nat}_ver_bitmap_bytesize")
-Signed-off-by: Kaixuan Li <kaixuanli0131@gmail.com>
----
-Reproduced on v7.2.4 x86_64 with CONFIG_KASAN=y. Two crafted images from a
-plain mkfs.f2fs 512G volume, with segments taken off the SSA area so
-main_blkaddr does not move:
+That falls into the same category as ext4 (and likely Btrfs as well,
+pending a regression report fix that is delaying this fstests patch as
+well), where both the original and cloned filesystems share the same
+`f_fsid`. However, since the objective of this test case is to verify
+consistency within the filesystem across reboots, this behavior is fine.
 
-	cp_payload 0, segment_count_sit 20 -> 220
-		sbi->ckpt 4096 bytes, SIT bitmap at +192 for 7040, NAT at
-		+7232 for 3200, ending 6336 past the allocation
-	cp_payload 2, segment_count_sit 20 -> 520
-		sbi->ckpt 12288 bytes, SIT bitmap at +4096 for 16640,
-		ending 8448 past
+>> +
+>> +status=0
+>> +exit
+> 
+> _exit 0
 
-	case                    kernel    result
-	crafted cp_payload=2    stock     mounts and unmounts
-	crafted cp_payload=0    stock     mounts and unmounts
-	pristine mkfs.f2fs      stock     mounts
-	crafted cp_payload=2    patched   rejected
-	crafted cp_payload=0    patched   rejected
-	pristine mkfs.f2fs      patched   mounts
+Applied.
 
-with the patched kernel naming the numbers:
+> 
+>> diff --git a/tests/generic/802.out b/tests/generic/802.out
+>> new file mode 100644
+>> index 000000000000..0202a9a2c108
+>> --- /dev/null
+>> +++ b/tests/generic/802.out
+>> @@ -0,0 +1,4 @@
+>> +QA output created by 802
+>> +**** fsid after mount cycle ****
+>> +FSID_SCRATCH
+>> +FSID_CLONE
+>> -- 
+>> 2.43.0
+>>
 
-	Bitmaps do not fit the checkpoint pack: sit ends at 20736, nat at 3392, pack is 12288 bytes
-	Bitmaps do not fit the checkpoint pack: sit ends at 7232, nat at 10432, pack is 4096 bytes
-
-Setting sit_ver_bitmap_bytesize to 7040 while leaving segment_count_sit at
-20 gives "Wrong bitmap size: sit: 7040, nat:3200" and the mount fails, so
-the field is read and the only thing checked against it is the segment
-count.
-
-KASAN does not flag the copy: with cp_payload 0 the allocation requests
-exactly 4096, so there is no in-object redzone, and at 12288 it went
-unreported too. What the cp_payload 2 image does produce, on one of three
-runs with a freshly built image each time, is the corruption landing at
-unmount:
-
-	BUG: KASAN: slab-use-after-free in kthread_stop+0x23/0x390
-	Write of size 4 at addr ffff88800a329fa8 by task init/1
-	Call Trace:
-	 kasan_check_range+0x39/0x1c0
-	 kthread_stop+0x23/0x390
-	 f2fs_destroy_segment_manager+0x176/0x9b0
-	 f2fs_put_super+0x635/0x10e0
-	 generic_shutdown_super+0x13e/0x440
-	 kill_f2fs_super+0x24e/0x500
-
-Which neighbour it lands on varies.
-
-Mounting a crafted image is not a Linux kernel vulnerability
-(Documentation/process/threat-model.rst), and I am not reporting it as
-one.
----
- fs/f2fs/super.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4180,8 +4180,9 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	block_t user_block_count, valid_user_blocks;
- 	block_t avail_node_count, valid_node_count;
- 	unsigned int nat_blocks, nat_bits_bytes, nat_bits_blocks;
- 	unsigned int sit_blk_cnt;
-+	unsigned long long ckpt_size, sit_end, nat_end;
- 	int i, j;
- 
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -4308,8 +4309,31 @@ skip_cross:
- 			 cp_pack_start_sum);
- 		return 1;
- 	}
- 
-+	/*
-+	 * Nothing above ties the bitmap lengths to sbi->ckpt, which is
-+	 * (1 + cp_payload) blocks. Bound both ends the way __bitmap_ptr()
-+	 * lays them out.
-+	 */
-+	ckpt_size = (unsigned long long)(cp_payload + 1) * F2FS_BLKSIZE;
-+	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
-+		nat_end = CP_MIN_CHKSUM_OFFSET + sizeof(__le32) + nat_bitmap_size;
-+		sit_end = nat_end + sit_bitmap_size;
-+	} else if (cp_payload > 0) {
-+		nat_end = CP_MIN_CHKSUM_OFFSET + nat_bitmap_size;
-+		sit_end = F2FS_BLKSIZE + sit_bitmap_size;
-+	} else {
-+		sit_end = CP_MIN_CHKSUM_OFFSET + sit_bitmap_size;
-+		nat_end = sit_end + nat_bitmap_size;
-+	}
-+
-+	if (sit_end > ckpt_size || nat_end > ckpt_size) {
-+		f2fs_err(sbi, "Bitmaps do not fit the checkpoint pack: sit ends at %llu, nat at %llu, pack is %llu bytes",
-+			 sit_end, nat_end, ckpt_size);
-+		return 1;
-+	}
-+
- 	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG) &&
- 		le32_to_cpu(ckpt->checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
- 		f2fs_warn(sbi, "using deprecated layout of large_nat_bitmap, "
- 			  "please run fsck v1.13.0 or higher to repair, chksum_offset: %u, "
 
 
 _______________________________________________
