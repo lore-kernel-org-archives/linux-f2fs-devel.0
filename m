@@ -4,73 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 028E1C982EE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 12:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 07131C982ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 12:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=aQoMmrHUxTHYR2G3PDXrA4bgqQ9OjbspEk7LbU8NjTc=; b=Is73GvulR/5+NQC+HoWR7wKJL6
-	nt9kcW0FnYf7bjjwUnNE1DGNUfBADJCXOAOK8zqcSNOlLm8gE7/GX8Me8TbNDt5IwofIkT33baY74
-	Z2ycNv7Wos4P6PmqLYTlv92F2gibfYgeoxFmKntOvAp3zmhRd4JHhWZb9JwfPi+oFyCk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=aQoMmrHUxTHYR2G3PDXrA4bgqQ9OjbspEk7LbU8NjTc=; b=TxNoeXX4V0p4DS/7yCvaQDQFmE
+	BxM9fAnPH7CJPDv3/LPgyjXmSaya7e+GsqYp9eiOwZ2xC4J8WZtytrk+EvAd7LBbIACcxXFjWyJ5N
+	KH8WFVW8FJoy3Ocqse9X2jm8EMiJf6yZnt+tOjQhRp0CSov7nWTKr9VuUgkf30yf6CqM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8dKj-0000lL-Bf;
-	Mon, 21 Sep 2026 12:41:18 +0000
+	id 1x8dOg-0002E1-9f;
+	Mon, 21 Sep 2026 12:45:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1x8dKh-0000lE-FR
+ (envelope-from <nzzhao@126.com>) id 1x8dOa-0002DU-W0
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 12:41:17 +0000
+ Mon, 21 Sep 2026 12:45:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
  Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=A8Qj63fKlUaxa3ZeSdmtYDjuJ/
- PD6aSRgYiMtF/+hdo7YmMsa/E68zSROEH/sQSDJo1uM4vItvmn7/Ew5G5t0048KMcB4s27dYNDSdf
- T87B8yueTGDiObJgSDZctHaaTt4JtOIHpZ4X/Vt7SXk/qqoHdkdGxJ0jiOb1SybMNzxw=;
+ bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=JMTG3XRY4AoytoEoE7UhJ2S+0s
+ Cn/MoHSz54nC18ldajt7PXGUCnAwQ5KCrSH2yR4xAMfQYUHXzsYZ5k0fDExc0XOGAizBKlI2Ewpjh
+ E7kjL75RW5tsQXHSYH1YwmNscG0GkjbBoHXEajYCDFZA/yOptPwLfcsdNhUbuwAHSmRw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Sender:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
  To:From:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=d
- dnnwzzHYjTgJig1fJSC/fFCUws5Tf1MCpBhPb0YHSBgtoW0SrYeKO+PPn0B9MaZIeXQtZCj/w2mpF
- yduE11unQpMGestQ9igun/ENUaWVL4aN9GX/bPdhzfBshH1T1URpudMxN+7CXay0c6d4lqkzgathH
- 8+RG620Viexyso0A=;
-Received: from m16.mail.126.com ([220.197.31.9])
+ List-Owner:List-Archive; bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=E
+ HnGSW3ZeOa2KsaztmlArdJFaIDFZGE7zw5VkDzarPBV0gqkgpNUVKWoYD/5MgcbJcMNf0YOGseQZT
+ FHvD0LlmZazuGg1uV8Yl8JMWLcsP95hpYDOxzzwMiuBaZxfxs8gh7vRySft+67CcBPhHxvxbeMIe/
+ CMC46uwGKnBA+FSI=;
+Received: from m16.mail.126.com ([220.197.31.7])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x8dKc-0006W0-Ri for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 12:41:16 +0000
+ id 1x8dOa-0006dw-Ld for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Sep 2026 12:45:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
  s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=36
- MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=EYgzn/3iR51Z3H8cBn
- e9YMvoYGn9kG2Ozuf/kkYQ5RdA/5DcFQ9hd5HwUJxlHxiPqY62LP9++XGFF45KTA
- +hZshYjUiQ87nXs/leCNqahd9oANdiz0gFYCut3/VAXEVvWsnuh3BRtrpRscgIJr
- /ij2TsvrVxAd//2P4tFL+IPUM=
+ MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=p3hRPFeT84ObW9Etto
+ nwIQMfzeEjfe1RdbfkscGrxveFvpDagZWPOS7HefepjIzcVaJIslw93jTGLr+H6B
+ kdKbX+5oQJuE009A7zDxYi8i0PyG2PVLiCCk7IT9dNMebHmYF0CtxK8tOFprtp5U
+ b9Q969CPhcxjI88KvPAP9/VNU=
 Received: from nzzhao-ThinkCentre-M760t.mioffice.cn (unknown [])
- by gzsmtp2 (Coremail) with SMTP id PSkvCgDnL_rGJbFqB1vMAA--.60781S2;
- Mon, 21 Sep 2026 20:40:40 +0800 (CST)
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 21 Sep 2026 20:40:16 +0800
-Message-ID: <20260921124016.565348-1-zhaonanzhe@xiaomi.com>
+ by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id
+ _____wDnX8bBJrFqd+91Bw--.51449S2; 
+ Mon, 21 Sep 2026 20:44:50 +0800 (CST)
+To: linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Mon, 21 Sep 2026 20:44:39 +0800
+Message-ID: <20260921124439.568654-1-zhaonanzhe@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-CM-TRANSID: PSkvCgDnL_rGJbFqB1vMAA--.60781S2
+X-CM-TRANSID: _____wDnX8bBJrFqd+91Bw--.51449S2
 X-Coremail-Antispam: 1Uf129KBjvJXoW7CryUXF4UAF15AF4xKr4UArb_yoW8Aw48pr
  y5CFn7GrZ5Gw1DWrn7W3Z5Zr1rt3s3Cw4xuF4kCwsIv3W7urnYgF1rta48ZFyjqr93Ar12
  vr45uryrXa1rtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_fHbUUUUU=
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsAiCUmqxJchHKAAA3x
-X-Headers-End: 1x8dKc-0006W0-Ri
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMwZcUUUUU=
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsALAkGqxJsJNuQAA3p
+X-Headers-End: 1x8dOa-0006dw-Ld
 Subject: [f2fs-dev] [PATCH] f2fs: remove mappedtodisk flag usage in mmap
  write path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -86,8 +88,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Barry Song <baohua@kernel.org>,
- Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Cc: Barry Song <baohua@kernel.org>, Nanzhe Zhao <zhaonanzhe@xiaomi.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
