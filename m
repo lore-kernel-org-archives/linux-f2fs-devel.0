@@ -4,75 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 199E1C982F1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 04:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 035A4C982E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 07:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:Mime-Version:References:In-Reply-To:Message-Id:To:From:Date:Sender:
+	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=4Tye6nYdiTwTT8dxmL+NwWJkpgtlyVJruZxCIr9TSPA=; b=MI/3wH6msWXa1dE5qWwx/rWSh1
-	eZPTXeMlZkKk9KjYtSnkJAp4NUD7khAamzHQBTXhIkKLg4aA7UtGwPwqR5P8qQUBByQprNSoCoE0/
-	pfhipoyyj5Yi7UG3ky5o8doxULJ3OerhssSlPzCbYl/OC2iP5Sdw27cGkRHXRLW/4vEw=;
+	bh=j1MhxMAVwsVwszOlNEJF+cBK5kuWxByw7WmDCv7Bf5E=; b=Nc6KVgubL4pSuGIH+XwatVthHf
+	aZDoYBSSXvJ57oPWctQ0oblkRew6sepgjOZKxhtXTD4nAjGVumaU0OJ4trF272rSLy/16Sg5QX6c6
+	Uala3nxegfXgUyCaR/2H9LShlbwgr4Q4PXTFjRerOXXLRgmmj1+JEu90dguCRI0nliEk=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8VbH-0003lg-Uz;
-	Mon, 21 Sep 2026 04:25:56 +0000
+	id 1x8YOi-00072M-JK;
+	Mon, 21 Sep 2026 07:25:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <akpm@linux-foundation.org>) id 1x8VbF-0003la-Rm
+ (envelope-from <lance.yang@linux.dev>) id 1x8YOd-00072D-Cd
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 04:25:54 +0000
+ Mon, 21 Sep 2026 07:25:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Mime-Version
- :References:In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LZ736WQSm180sbvHtkV3uFqBg4iSSs3xixQmjdddUBk=; b=M+VErNT3EnRpG1Z3QWztLVva7I
- BqYEvDvSult2sU/8Or8XEujYquhLT/1QinlMjj8KmAcyBEX7ELjB76pNwc3jzDQLCVZ6hFcrPvvrn
- gnaSopZcKgM/v6PzasPAxy4B7q9sjFYxukSNE/sFqxX7l/xuIpUEHjXAxwQQvCQlhF8c=;
+ bh=XYfb6ENu9z05LITXdP+abHeFIFgnzSa/Qk0FF2ckOZM=; b=lDh0Hs5pylYnqFv5eiuWBv5sLv
+ 1UyOtRw50STjTTJTwNBAFGU8Gge+lFyqQUSedjxwgCVxY00rDI5viXz4u0/dG7C0tagzFS+r83qbG
+ 3pJ3TpSiGiAf34NxEtJp6XbDTV9jqcSB3KF2SRCv8phyvNE8AttMT2/kkBDGCHyXPQrM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Mime-Version:References:
- In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LZ736WQSm180sbvHtkV3uFqBg4iSSs3xixQmjdddUBk=; b=eKkefesf0nnQopD7w1HNgzlo4Z
- 3AKNGASSkrD2EJDyH9SDSQLYK0y3/e+0CgXCVlOiLW2ASBR/MPqURu0x7CxSS2CzABQWmOHeA9eVw
- IwJ4h3Dj4SH/XrSiCAZZ3stVXdK3SEorf3EM4eYgh1huQZkwBpyBVaJ3sPf41RhMEOZY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=XYfb6ENu9z05LITXdP+abHeFIFgnzSa/Qk0FF2ckOZM=; b=JsiwRhMhPfmSJGEmNoAouiki7r
+ IU3X1IgflrOOJRYfA6aJ+PZWAccHG3DZo+/PQdPOBVELRgFrCqUz0jlgeBnUXZIvrmIl+TTFrNUzt
+ hZmGFmMGV83tUFENV79BjnLho2EW+AP4UAMcMjLaCx/EF7jme2xzfdExCs/QNvdLnNzU=;
+Received: from [95.215.58.225] (helo=mta1.migadu.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x8VbE-0003Pw-KW for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 04:25:54 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id BDFEF60213;
- Mon, 21 Sep 2026 04:09:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C301F000FF;
- Mon, 21 Sep 2026 04:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linux-foundation.org; s=korg; t=1789963743;
- bh=LZ736WQSm180sbvHtkV3uFqBg4iSSs3xixQmjdddUBk=;
- h=Date:From:To:Cc:Subject:In-Reply-To:References;
- b=fgqpk7b6eCfprR7zmZiJy9qBQZJsbM5f8s3hI8e6nM8wYRmEU0CAVWtHGL4kzcQi0
- wEjzAZst11LRJ9q6W6kXCFZAXji7jeST+bAFloveBQOKkO+TvLOqlAUkcR9HD/Se9Q
- iZwtpMlXm4chDCNpRM7SRsEPxwlhnoNITtr0Iqy0=
-Date: Sun, 20 Sep 2026 21:08:59 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1x8YOb-0006W1-0R for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Sep 2026 07:25:04 +0000
+X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
+DKIM-Signature: a=rsa-sha256; bh=Q2h6+eU+5UZjnvGnYVU6mhubmYWept3jKn5v+HruplI=; 
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1789975494; v=1; x=1790580294;
+ b=hHPpvsdQocNJjRA1KZ29kuc0sLubTq5vL4gNpUx4YgMo0qS9tRjKWLTbOrz60iQhfhdrVKAf
+ 8rsO9+Sr7ZeSTaQ0G2hqhn12P/tqQsfdJexVGEzppWWBeuSX4xGzMKqU0/ZTvfrB3HFwPC/t8t9
+ bgUUJLjN0TDjFna1Yp/R9Fzs=
+X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
+Received: by smtp.migadu.com with ESMTPS id 4c701f708d715319;
+ Mon, 21 Sep 2026 07:24:54 +0000
+X-Mizu-Trace-ID: 4c701f708d715319
+X-Migadu-Flow: FLOW_OUT
+Message-ID: <c7871a6d-bc51-43c1-a4a7-ed68a8e5aa23@linux.dev>
+Date: Mon, 21 Sep 2026 15:24:37 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
 To: Zi Yan <ziy@nvidia.com>
-Message-Id: <20260920210859.a0f75483dc4a12202c8b9516@linux-foundation.org>
-In-Reply-To: <20260920-remove-pg_private-v5-0-bb68b6a21869@nvidia.com>
 References: <20260920-remove-pg_private-v5-0-bb68b6a21869@nvidia.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-X-Headers-End: 1x8VbE-0003Pw-KW
-Subject: Re: [f2fs-dev] [PATCH v5 00/17] Remove PG_private by using
- page/folio->private checks instead
+ <20260920-remove-pg_private-v5-6-bb68b6a21869@nvidia.com>
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20260920-remove-pg_private-v5-6-bb68b6a21869@nvidia.com>
+X-Headers-End: 1x8YOb-0006W1-0R
+Subject: Re: [f2fs-dev] [PATCH v5 06/17] f2fs: stop using PG_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,284 +86,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Tal Zussman <tz2294@columbia.edu>, Matthew Brost <matthew.brost@intel.com>,
- Suren Baghdasaryan <surenb@google.com>, Alistair Popple <apopple@nvidia.com>,
- Eric Biggers <ebiggers@kernel.org>, xen-devel@lists.xenproject.org,
- Gregory Price <gourry@gourry.net>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-fscrypt@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
- David Hildenbrand <david@kernel.org>, linux-kernel@vger.kernel.org,
- Nico Pache <nico.pache@linux.dev>, linux-perf-users@vger.kernel.org,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- linux-fsdevel@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Hongbo Li <hongbohbli@tencent.com>, Ying Huang <ying.huang@linux.alibaba.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Vlastimil Babka <vbabka@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Qi Zheng <qi.zheng@linux.dev>,
- Byungchul Park <byungchul@sk.com>, linux-trace-kernel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Barry Song <baohua@kernel.org>,
- Kairui Song <kasong@tencent.com>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Muchun Song <muchun.song@linux.dev>, linux-f2fs-devel@lists.sourceforge.net,
- Minchan Kim <minchan@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Thomas Gleixner <tglx@kernel.org>, Anna Schumaker <anna@kernel.org>,
- Pratyush Yadav <pratyush@kernel.org>, Alex Markuze <amarkuze@redhat.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-mtd@lists.infradead.org, Chunhai Guo <guochunhai@vivo.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+Cc: Michal Hocko <mhocko@suse.com>, "Liam R. Howlett" <liam@infradead.org>,
+ Shakeel Butt <shakeel.butt@linux.dev>,
+ Ying Huang <ying.huang@linux.alibaba.com>, Qi Zheng <qi.zheng@linux.dev>,
+ Vlastimil Babka <vbabka@kernel.org>, Alistair Popple <apopple@nvidia.com>,
  Dev Jain <dev.jain@arm.com>, "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- Viacheslav Dubeyko <slava@dubeyko.com>, Gao Xiang <xiang@kernel.org>,
- Juergen Gross <jgross@suse.com>, Baoquan He <baoquan.he@linux.dev>,
- James Clark <james.clark@linaro.org>, Steven Rostedt <rostedt@goodmis.org>,
- Borislav Petkov <bp@alien8.de>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, ceph-devel@vger.kernel.org,
- Ilya Dryomov <idryomov@gmail.com>, Oscar Salvador <osalvador@suse.de>,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org, linux-erofs@lists.ozlabs.org,
- Mike Rapoport <rppt@kernel.org>, Ian Rogers <irogers@google.com>,
- Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
- Peter Zijlstra <peterz@infradead.org>, Dave Young <ruirui.yang@linux.dev>,
- Yuanchu Xie <yuanchu@google.com>, "Liam R. Howlett" <liam@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Yue Hu <zbestahu@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Richard Weinberger <richard@nod.at>,
- x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Usama Arif <usama.arif@linux.dev>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Namhyung Kim <namhyung@kernel.org>,
- Wei Xu <weixugc@google.com>, kexec@lists.infradead.org,
- Adrian Hunter <adrian.hunter@intel.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset="us-ascii"
+ Gregory Price <gourry@gourry.net>, Ryan Roberts <ryan.roberts@arm.com>,
+ Usama Arif <usama.arif@linux.dev>, Kairui Song <kasong@tencent.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Lorenzo Stoakes <ljs@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Barry Song <baohua@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ David Hildenbrand <david@kernel.org>, linux-mm@kvack.org,
+ Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
+ Nico Pache <nico.pache@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, 20 Sep 2026 22:27:56 -0400 Zi Yan <ziy@nvidia.com> wrote:
 
-> Hi all,
+
+On 2026/9/21 10:28, Zi Yan wrote:
+> f2fs sets its PAGE_PRIVATE_* flags in page->private and checking
+> page->private != NULL is equivalent to checking PG_private. Change
+> PagePrivate() to page_private(). Meanwhile, in set_page_private_##name(),
+> page->private is first set to 0/NULL before an PAGE_PRIVATE_* flag is set,
+> but it can cause confusion when PG_private is removed and
+> page->private != NULL is used instead. Change it to initialize
+> page->private to PAGE_PRIVATE_NOT_POINTER instead and retain the original
+> semantics.
 > 
-> This patchset removes PG_private to make space for upcoming PG_folio for
-> identifying pages from a folio (more details in Note below). Instead of
-> checking PG_private, all code is changed to check page/folio->private !=
-> NULL instead.
+> It prepares for a future commit that removes PG_private.
+> 
+> No functional change intended.
+> 
+> Assisted-by: LLM
+> To: Jaegeuk Kim <jaegeuk@kernel.org>
+> To: Chao Yu <chao@kernel.org>
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Cc: linux-kernel@vger.kernel.org
+> Acked-by: Usama Arif <usama.arif@linux.dev>
+> Acked-by: Chao Yu <chao@kernel.org>
+> Reviewed-by: David Hildenbrand (Arm) <david@kernel.org>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
 
-Thanks, I updated mm-unstable to this version.
+LGTM. Feel free to add:
 
-> Changes in v5:
-> 1. replaced md patches (patch 13 and 14 in v4) with Matthew Wilcox's
->    version (see Matthew's replies to v4).
-> 2. used data_race() inside folio_test_private() and PagePrivate(), so that
->    the new versions can be used without KCSAN warnings while not holding
->    folio lock like before.
-> 3. moved folio_has_attached_private() implementation detail comment next to
->    the code.
-
-Here's how v5 altered mm.git:
-
-
- drivers/md/md-bitmap.c         |   17 ++++++++---------
- fs/buffer.c                    |    8 --------
- include/linux/buffer_head.h    |    2 +-
- include/linux/mm.h             |    3 +--
- include/linux/page-flags.h     |   30 +++++++++++++++++++-----------
- include/trace/events/pagemap.h |    3 +--
- mm/huge_memory.c               |    3 +--
- mm/page-writeback.c            |    3 +--
- 8 files changed, 32 insertions(+), 37 deletions(-)
-
---- a/drivers/md/md-bitmap.c~b
-+++ a/drivers/md/md-bitmap.c
-@@ -516,7 +516,8 @@ static void end_bitmap_write(struct bio
- 
- static void write_file_page(struct bitmap *bitmap, struct page *page, int wait)
- {
--	struct buffer_head *bh = (struct buffer_head *)page_private(page);
-+	struct folio *folio = page_folio(page);
-+	struct buffer_head *bh = folio_buffers(folio);
- 
- 	while (bh && bh->b_blocknr) {
- 		atomic_inc(&bitmap->pending_writes);
-@@ -533,18 +534,15 @@ static void write_file_page(struct bitma
- 
- static void free_buffers(struct page *page)
- {
--	struct buffer_head *bh = (struct buffer_head *)page_private(page);
--
--	if (!bh)
--		return;
-+	struct folio *folio = page_folio(page);
-+	struct buffer_head *bh = folio_detach_private(folio);
- 
- 	while (bh) {
- 		struct buffer_head *next = bh->b_this_page;
- 		free_buffer_head(bh);
- 		bh = next;
- 	}
--	detach_page_private(page);
--	put_page(page);
-+	folio_put(folio);
- }
- 
- /* read a page from a file.
-@@ -559,6 +557,7 @@ static int read_file_page(struct file *f
- {
- 	int ret = 0;
- 	struct inode *inode = file_inode(file);
-+	struct folio *folio = page_folio(page);
- 	struct buffer_head *bh;
- 	sector_t block, blk_cur;
- 	unsigned long blocksize = i_blocksize(inode);
-@@ -566,12 +565,12 @@ static int read_file_page(struct file *f
- 	pr_debug("read bitmap file (%dB @ %llu)\n", (int)PAGE_SIZE,
- 		 (unsigned long long)index << PAGE_SHIFT);
- 
--	bh = alloc_page_buffers(page, blocksize);
-+	bh = folio_alloc_buffers(folio, blocksize, GFP_NOFS | __GFP_ACCOUNT);
- 	if (!bh) {
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	attach_page_private(page, bh);
-+	folio_attach_private(folio, bh);
- 	blk_cur = index << (PAGE_SHIFT - inode->i_blkbits);
- 	while (bh) {
- 		block = blk_cur;
---- a/fs/buffer.c~b
-+++ a/fs/buffer.c
-@@ -773,14 +773,6 @@ no_grow:
- }
- EXPORT_SYMBOL_GPL(folio_alloc_buffers);
- 
--struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size)
--{
--	gfp_t gfp = GFP_NOFS | __GFP_ACCOUNT;
--
--	return folio_alloc_buffers(page_folio(page), size, gfp);
--}
--EXPORT_SYMBOL_GPL(alloc_page_buffers);
--
- static inline void link_dev_buffers(struct folio *folio,
- 		struct buffer_head *head)
- {
---- a/include/linux/buffer_head.h~b
-+++ a/include/linux/buffer_head.h
-@@ -175,6 +175,7 @@ static inline unsigned long bh_offset(co
- 	return (unsigned long)(bh)->b_data & (page_size(bh->b_page) - 1);
- }
- 
-+/* If we *know* folio->private refers to buffer_heads */
- #define folio_buffers(folio)		folio_get_private(folio)
- 
- void buffer_check_dirty_writeback(struct folio *folio,
-@@ -191,7 +192,6 @@ void folio_set_bh(struct buffer_head *bh
- 		  unsigned long offset);
- struct buffer_head *folio_alloc_buffers(struct folio *folio, unsigned long size,
- 					gfp_t gfp);
--struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size);
- struct buffer_head *create_empty_buffers(struct folio *folio,
- 		unsigned long blocksize, unsigned long b_state);
- void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
---- a/include/linux/mm.h~b
-+++ a/include/linux/mm.h
-@@ -3052,9 +3052,8 @@ static inline int folio_expected_ref_cou
- 		ref_count += !!data_race(folio->mapping) << order;
- 		/*
- 		 * One reference from filesystem private data.
--		 * Use data_race() since folio might not be locked.
- 		 */
--		ref_count += data_race(folio_has_attached_private(folio));
-+		ref_count += folio_has_attached_private(folio);
- 	}
- 
- 	/* One reference per page table mapping. */
---- a/include/linux/page-flags.h~b
-+++ a/include/linux/page-flags.h
-@@ -576,7 +576,12 @@ FOLIO_FLAG(swapbacked, FOLIO_HEAD_PAGE)
- 
- static __always_inline bool folio_test_private(const struct folio *folio)
- {
--	return folio->private;
-+	/*
-+	 * data_race() is added for readers without holding the folio lock.
-+	 * Only the NULL/non-NULL answer is used and both are valid while
-+	 * private is being attached or detached, so the race is benign.
-+	 */
-+	return data_race(folio->private);
- }
- 
- FOLIO_FLAG(private_2, FOLIO_HEAD_PAGE)
-@@ -1199,20 +1204,23 @@ static __always_inline void __ClearPageA
-  * @folio: The folio to check.
-  *
-  * Use this in code that may encounter swapcache or hugetlb folios but only
-- * wants to detect attached private data. Swapcache stores swp_entry_t in
-- * folio->swap, a union with folio->private, and hugetlb stores its own flags
-- * in folio->private; both are excluded.
-- *
-- * NOTE: For swapcache, folio->swap.val PG_swapcache are not set as a whole,
-- * so folio_test_swapcache() is not reliable to exclude swapcache.
-- * Use folio_test_swapbacked() instead, since it remains set when a folio is
-- * added to/removed from swapcache.
-+ * wants to detect attached private data.
-  *
-- * Return: true if folio->private is set and the folio is neither swapcache
-- * nor hugetlb.
-+ * Return: true if the folio has private data attached.
-  */
- static inline bool folio_has_attached_private(const struct folio *folio)
- {
-+	/*
-+	 * Swapcache stores swp_entry_t in folio->swap, a union with
-+	 * folio->private, and hugetlb stores its own flags in folio->private;
-+	 * both are excluded.
-+	 *
-+	 * NOTE: For swapcache, folio->swap.val PG_swapcache are not set as
-+	 * a whole, so folio_test_swapcache() is not reliable to exclude
-+	 * swapcache. Use folio_test_swapbacked() instead, since it remains set
-+	 * when a folio is added to/removed from swapcache.
-+	 */
-+
- 	return folio_test_private(folio) && !folio_test_swapbacked(folio) &&
- 	       !folio_test_hugetlb(folio);
- }
---- a/include/trace/events/pagemap.h~b
-+++ a/include/trace/events/pagemap.h
-@@ -22,8 +22,7 @@
- 	(folio_test_swapcache(folio)	? PAGEMAP_SWAPCACHE  : 0) | \
- 	(folio_test_swapbacked(folio)	? PAGEMAP_SWAPBACKED : 0) | \
- 	(folio_test_mappedtodisk(folio)	? PAGEMAP_MAPPEDDISK : 0) | \
--	/* data_race() is used to read attached private locklessly */ \
--	(data_race(folio_has_attached_private(folio))	? PAGEMAP_BUFFERS    : 0) \
-+	(folio_has_attached_private(folio)	? PAGEMAP_BUFFERS    : 0) \
- 	)
- 
- TRACE_EVENT(mm_lru_insertion,
---- a/mm/huge_memory.c~b
-+++ a/mm/huge_memory.c
-@@ -4845,9 +4845,8 @@ static int split_huge_pages_pid(int pid,
- 		 * For folios with private, split_huge_page_to_list_to_order()
- 		 * will try to drop it before split and then check if the folio
- 		 * can be split or not. So skip the check here.
--		 * data_race() is used to read attached private locklessly.
- 		 */
--		if (!data_race(folio_has_attached_private(folio)) &&
-+		if (!folio_has_attached_private(folio) &&
- 		    folio_expected_ref_count(folio) != folio_ref_count(folio))
- 			goto next;
- 
---- a/mm/page-writeback.c~b
-+++ a/mm/page-writeback.c
-@@ -2705,8 +2705,7 @@ bool filemap_dirty_folio(struct address_
- 	if (folio_test_set_dirty(folio))
- 		return false;
- 
--	/* data_race() is used to read attached private locklessly */
--	__folio_mark_dirty(folio, mapping, !data_race(folio_has_attached_private(folio)));
-+	__folio_mark_dirty(folio, mapping, !folio_has_attached_private(folio));
- 
- 	if (mapping->host) {
- 		/* !PageAnon && !swapper_space */
-_
-
+Reviewed-by: Lance Yang <lance.yang@linux.dev>
 
 
 _______________________________________________
