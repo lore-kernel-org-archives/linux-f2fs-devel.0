@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 035A4C982E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 07:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83990C982E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 07:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=j1MhxMAVwsVwszOlNEJF+cBK5kuWxByw7WmDCv7Bf5E=; b=Nc6KVgubL4pSuGIH+XwatVthHf
-	aZDoYBSSXvJ57oPWctQ0oblkRew6sepgjOZKxhtXTD4nAjGVumaU0OJ4trF272rSLy/16Sg5QX6c6
-	Uala3nxegfXgUyCaR/2H9LShlbwgr4Q4PXTFjRerOXXLRgmmj1+JEu90dguCRI0nliEk=;
+	bh=qWHzonbenjfr5T+KUX2qVlIHLR/MtibklSnMl/9Jvgk=; b=PI7McjJEk2RpGHCC78PyGXdfMH
+	a6hWv6KOljPxmO9hfH7a/QrFftNUqpBsuBCnwnE3DLCi3jDpO1bNJ3zA2yWBaSceSmAZ+eDm3Lr10
+	ASAvhY/zvvasftCxJVrGM4htH8eLC8OcYZgK5vXRX2Bm0QxHqrUYrShMqALH730w/KvM=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8YOi-00072M-JK;
-	Mon, 21 Sep 2026 07:25:09 +0000
+	id 1x8YcZ-0007SJ-Eo;
+	Mon, 21 Sep 2026 07:39:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lance.yang@linux.dev>) id 1x8YOd-00072D-Cd
+ (envelope-from <lance.yang@linux.dev>) id 1x8YcX-0007SD-Q1
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 07:25:04 +0000
+ Mon, 21 Sep 2026 07:39:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XYfb6ENu9z05LITXdP+abHeFIFgnzSa/Qk0FF2ckOZM=; b=lDh0Hs5pylYnqFv5eiuWBv5sLv
- 1UyOtRw50STjTTJTwNBAFGU8Gge+lFyqQUSedjxwgCVxY00rDI5viXz4u0/dG7C0tagzFS+r83qbG
- 3pJ3TpSiGiAf34NxEtJp6XbDTV9jqcSB3KF2SRCv8phyvNE8AttMT2/kkBDGCHyXPQrM=;
+ bh=5w3ycCGa4RFXPrE/mVtI/6EI9P8fpVebaaYmqzh6+Ws=; b=OiJhqkfJtOI2phkH6Pq5Umngro
+ RmKmQ0fsO8jdOuBZID4OMcqt4mHeHd8HZe8q8bHfkKnQ+SjDOtf/O+lHL13x9nP7biQa64mtAy7bd
+ rh0ZHutkpcBJYlLh1RdPJIQD9VbwqY9KRUDXmKHamJGa5uX/E1gtK9DogolWShPKYc94=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XYfb6ENu9z05LITXdP+abHeFIFgnzSa/Qk0FF2ckOZM=; b=JsiwRhMhPfmSJGEmNoAouiki7r
- IU3X1IgflrOOJRYfA6aJ+PZWAccHG3DZo+/PQdPOBVELRgFrCqUz0jlgeBnUXZIvrmIl+TTFrNUzt
- hZmGFmMGV83tUFENV79BjnLho2EW+AP4UAMcMjLaCx/EF7jme2xzfdExCs/QNvdLnNzU=;
-Received: from [95.215.58.225] (helo=mta1.migadu.com)
+ bh=5w3ycCGa4RFXPrE/mVtI/6EI9P8fpVebaaYmqzh6+Ws=; b=kJRrfnlfxrWHneACPpKqjJIa8k
+ zc86lsWfYtkYiIPzzexRecUAGp/fxyR1taGAG0TasWywIb9hEMJLmn2hdsoT0wV5nZ0cl1dqdAmtz
+ IbzOxSlL5tPgJW/n9SND3EDwEBRY6TUBcDvbL+4oi/4PUraNOa4gn1aBXtqsP5c1jgQc=;
+Received: from out-149.mta0.migadu.com ([91.218.175.149] helo=mta0.migadu.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x8YOb-0006W1-0R for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 07:25:04 +0000
+ id 1x8YcW-0006hw-Q9 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Sep 2026 07:39:26 +0000
 X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
-DKIM-Signature: a=rsa-sha256; bh=Q2h6+eU+5UZjnvGnYVU6mhubmYWept3jKn5v+HruplI=; 
+DKIM-Signature: a=rsa-sha256; bh=QASj6Z6chGBEQBYT8Fc20eY9OhWz9aaUtq7xvhcRKKw=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1789975494; v=1; x=1790580294;
- b=hHPpvsdQocNJjRA1KZ29kuc0sLubTq5vL4gNpUx4YgMo0qS9tRjKWLTbOrz60iQhfhdrVKAf
- 8rsO9+Sr7ZeSTaQ0G2hqhn12P/tqQsfdJexVGEzppWWBeuSX4xGzMKqU0/ZTvfrB3HFwPC/t8t9
- bgUUJLjN0TDjFna1Yp/R9Fzs=
+ t=1789976357; v=1; x=1790581157;
+ b=MOHCbkyBVQm4tJ9DsrkkobQByRHrE03xCq8KQR+8P5TLGQdvpA2xiw0OsToI6SmT3OzfUNhX
+ YUV98ukDxnv+7lT/oLUAhR6Isgqc6ZcLsMsVdHz/vkDAC+jwA5IyymPGOPbhwE797N4owb37Dky
+ 9z0gJsjcNnH0jPxfd2YE9QHs=
 X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
-Received: by smtp.migadu.com with ESMTPS id 4c701f708d715319;
- Mon, 21 Sep 2026 07:24:54 +0000
-X-Mizu-Trace-ID: 4c701f708d715319
+Received: by smtp.migadu.com with ESMTPS id 57f2f9324be8538a;
+ Mon, 21 Sep 2026 07:39:17 +0000
+X-Mizu-Trace-ID: 57f2f9324be8538a
 X-Migadu-Flow: FLOW_OUT
-Message-ID: <c7871a6d-bc51-43c1-a4a7-ed68a8e5aa23@linux.dev>
-Date: Mon, 21 Sep 2026 15:24:37 +0800
+Message-ID: <b71094a8-d5b3-4d24-8423-18882fbe0cb8@linux.dev>
+Date: Mon, 21 Sep 2026 15:39:03 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: Zi Yan <ziy@nvidia.com>
 References: <20260920-remove-pg_private-v5-0-bb68b6a21869@nvidia.com>
- <20260920-remove-pg_private-v5-6-bb68b6a21869@nvidia.com>
+ <20260920-remove-pg_private-v5-7-bb68b6a21869@nvidia.com>
 From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20260920-remove-pg_private-v5-6-bb68b6a21869@nvidia.com>
-X-Headers-End: 1x8YOb-0006W1-0R
-Subject: Re: [f2fs-dev] [PATCH v5 06/17] f2fs: stop using PG_private
+In-Reply-To: <20260920-remove-pg_private-v5-7-bb68b6a21869@nvidia.com>
+X-Headers-End: 1x8YcW-0006hw-Q9
+Subject: Re: [f2fs-dev] [PATCH v5 07/17] f2fs: convert the ->private flag
+ helpers to folio-only
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,18 +88,19 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Michal Hocko <mhocko@suse.com>, "Liam R. Howlett" <liam@infradead.org>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Ying Huang <ying.huang@linux.alibaba.com>, Qi Zheng <qi.zheng@linux.dev>,
- Vlastimil Babka <vbabka@kernel.org>, Alistair Popple <apopple@nvidia.com>,
- Dev Jain <dev.jain@arm.com>, "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Nico Pache <nico.pache@linux.dev>,
+ Qi Zheng <qi.zheng@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Ying Huang <ying.huang@linux.alibaba.com>, Vlastimil Babka <vbabka@kernel.org>,
+ Alistair Popple <apopple@nvidia.com>, Dev Jain <dev.jain@arm.com>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
  Gregory Price <gourry@gourry.net>, Ryan Roberts <ryan.roberts@arm.com>,
- Usama Arif <usama.arif@linux.dev>, Kairui Song <kasong@tencent.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Lorenzo Stoakes <ljs@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Barry Song <baohua@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- David Hildenbrand <david@kernel.org>, linux-mm@kvack.org,
+ Usama Arif <usama.arif@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ David Hildenbrand <david@kernel.org>, Tal Zussman <tz2294@columbia.edu>,
+ Suren Baghdasaryan <surenb@google.com>, Barry Song <baohua@kernel.org>,
+ Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
  Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
- Nico Pache <nico.pache@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Johannes Weiner <hannes@cmpxchg.org>,
  Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
@@ -107,31 +109,34 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
 On 2026/9/21 10:28, Zi Yan wrote:
-> f2fs sets its PAGE_PRIVATE_* flags in page->private and checking
-> page->private != NULL is equivalent to checking PG_private. Change
-> PagePrivate() to page_private(). Meanwhile, in set_page_private_##name(),
-> page->private is first set to 0/NULL before an PAGE_PRIVATE_* flag is set,
-> but it can cause confusion when PG_private is removed and
-> page->private != NULL is used instead. Change it to initialize
-> page->private to PAGE_PRIVATE_NOT_POINTER instead and retain the original
-> semantics.
+> page-based ->private flag helpers are used in the compression path, where
+> large folios are not enabled. They can use folio versions with
+> page_folio(). The two remaining users in data.c and segment.c can use
+> fio->folio instead of fio->page (two are in a union).
 > 
-> It prepares for a future commit that removes PG_private.
+> Drop page-based helpers after the conversion and rename
+> PAGE_PRIVATE_{GET,SET,CLEAR}_FUNC() and the PAGE_PRIVATE_* flags to
+> F2FS_FOLIO_PRIVATE_* to match. Convert the folio/page union from
+> f2fs_io_info union to folio only, since no page user is left.
 > 
-> No functional change intended.
+> The folio helpers do a plain read-modify-write where the page ones used
+> set_bit()/clear_bit(). It is fine because the converted code either holds
+> folio lock or, in f2fs_compress_write_end_io(), matches what the
+> non-compressed code does in f2fs_write_end_bio().
 > 
 > Assisted-by: LLM
+> Suggested-by: Tal Zussman <tz2294@columbia.edu>
+> Co-developed-by: David Hildenbrand (Arm) <david@kernel.org>
+> Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
 > To: Jaegeuk Kim <jaegeuk@kernel.org>
 > To: Chao Yu <chao@kernel.org>
 > Cc: linux-f2fs-devel@lists.sourceforge.net
 > Cc: linux-kernel@vger.kernel.org
-> Acked-by: Usama Arif <usama.arif@linux.dev>
-> Acked-by: Chao Yu <chao@kernel.org>
-> Reviewed-by: David Hildenbrand (Arm) <david@kernel.org>
+> Reviewed-by: Tal Zussman <tz2294@columbia.edu>
 > Signed-off-by: Zi Yan <ziy@nvidia.com>
 > ---
 
-LGTM. Feel free to add:
+Nice work! Feel free to add:
 
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
 
