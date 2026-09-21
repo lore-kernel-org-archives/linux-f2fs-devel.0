@@ -4,78 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83990C982E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 07:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 028E1C982EE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 12:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=qWHzonbenjfr5T+KUX2qVlIHLR/MtibklSnMl/9Jvgk=; b=PI7McjJEk2RpGHCC78PyGXdfMH
-	a6hWv6KOljPxmO9hfH7a/QrFftNUqpBsuBCnwnE3DLCi3jDpO1bNJ3zA2yWBaSceSmAZ+eDm3Lr10
-	ASAvhY/zvvasftCxJVrGM4htH8eLC8OcYZgK5vXRX2Bm0QxHqrUYrShMqALH730w/KvM=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=aQoMmrHUxTHYR2G3PDXrA4bgqQ9OjbspEk7LbU8NjTc=; b=Is73GvulR/5+NQC+HoWR7wKJL6
+	nt9kcW0FnYf7bjjwUnNE1DGNUfBADJCXOAOK8zqcSNOlLm8gE7/GX8Me8TbNDt5IwofIkT33baY74
+	Z2ycNv7Wos4P6PmqLYTlv92F2gibfYgeoxFmKntOvAp3zmhRd4JHhWZb9JwfPi+oFyCk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8YcZ-0007SJ-Eo;
-	Mon, 21 Sep 2026 07:39:28 +0000
+	id 1x8dKj-0000lL-Bf;
+	Mon, 21 Sep 2026 12:41:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lance.yang@linux.dev>) id 1x8YcX-0007SD-Q1
+ (envelope-from <nzzhao@126.com>) id 1x8dKh-0000lE-FR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 07:39:26 +0000
+ Mon, 21 Sep 2026 12:41:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
+ Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5w3ycCGa4RFXPrE/mVtI/6EI9P8fpVebaaYmqzh6+Ws=; b=OiJhqkfJtOI2phkH6Pq5Umngro
- RmKmQ0fsO8jdOuBZID4OMcqt4mHeHd8HZe8q8bHfkKnQ+SjDOtf/O+lHL13x9nP7biQa64mtAy7bd
- rh0ZHutkpcBJYlLh1RdPJIQD9VbwqY9KRUDXmKHamJGa5uX/E1gtK9DogolWShPKYc94=;
+ bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=A8Qj63fKlUaxa3ZeSdmtYDjuJ/
+ PD6aSRgYiMtF/+hdo7YmMsa/E68zSROEH/sQSDJo1uM4vItvmn7/Ew5G5t0048KMcB4s27dYNDSdf
+ T87B8yueTGDiObJgSDZctHaaTt4JtOIHpZ4X/Vt7SXk/qqoHdkdGxJ0jiOb1SybMNzxw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=5w3ycCGa4RFXPrE/mVtI/6EI9P8fpVebaaYmqzh6+Ws=; b=kJRrfnlfxrWHneACPpKqjJIa8k
- zc86lsWfYtkYiIPzzexRecUAGp/fxyR1taGAG0TasWywIb9hEMJLmn2hdsoT0wV5nZ0cl1dqdAmtz
- IbzOxSlL5tPgJW/n9SND3EDwEBRY6TUBcDvbL+4oi/4PUraNOa4gn1aBXtqsP5c1jgQc=;
-Received: from out-149.mta0.migadu.com ([91.218.175.149] helo=mta0.migadu.com)
+ h=Sender:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
+ To:From:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=d
+ dnnwzzHYjTgJig1fJSC/fFCUws5Tf1MCpBhPb0YHSBgtoW0SrYeKO+PPn0B9MaZIeXQtZCj/w2mpF
+ yduE11unQpMGestQ9igun/ENUaWVL4aN9GX/bPdhzfBshH1T1URpudMxN+7CXay0c6d4lqkzgathH
+ 8+RG620Viexyso0A=;
+Received: from m16.mail.126.com ([220.197.31.9])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x8YcW-0006hw-Q9 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 07:39:26 +0000
-X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
-DKIM-Signature: a=rsa-sha256; bh=QASj6Z6chGBEQBYT8Fc20eY9OhWz9aaUtq7xvhcRKKw=; 
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1789976357; v=1; x=1790581157;
- b=MOHCbkyBVQm4tJ9DsrkkobQByRHrE03xCq8KQR+8P5TLGQdvpA2xiw0OsToI6SmT3OzfUNhX
- YUV98ukDxnv+7lT/oLUAhR6Isgqc6ZcLsMsVdHz/vkDAC+jwA5IyymPGOPbhwE797N4owb37Dky
- 9z0gJsjcNnH0jPxfd2YE9QHs=
-X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
-Received: by smtp.migadu.com with ESMTPS id 57f2f9324be8538a;
- Mon, 21 Sep 2026 07:39:17 +0000
-X-Mizu-Trace-ID: 57f2f9324be8538a
-X-Migadu-Flow: FLOW_OUT
-Message-ID: <b71094a8-d5b3-4d24-8423-18882fbe0cb8@linux.dev>
-Date: Mon, 21 Sep 2026 15:39:03 +0800
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x8dKc-0006W0-Ri for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Sep 2026 12:41:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=36
+ MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=EYgzn/3iR51Z3H8cBn
+ e9YMvoYGn9kG2Ozuf/kkYQ5RdA/5DcFQ9hd5HwUJxlHxiPqY62LP9++XGFF45KTA
+ +hZshYjUiQ87nXs/leCNqahd9oANdiz0gFYCut3/VAXEVvWsnuh3BRtrpRscgIJr
+ /ij2TsvrVxAd//2P4tFL+IPUM=
+Received: from nzzhao-ThinkCentre-M760t.mioffice.cn (unknown [])
+ by gzsmtp2 (Coremail) with SMTP id PSkvCgDnL_rGJbFqB1vMAA--.60781S2;
+ Mon, 21 Sep 2026 20:40:40 +0800 (CST)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 21 Sep 2026 20:40:16 +0800
+Message-ID: <20260921124016.565348-1-zhaonanzhe@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-References: <20260920-remove-pg_private-v5-0-bb68b6a21869@nvidia.com>
- <20260920-remove-pg_private-v5-7-bb68b6a21869@nvidia.com>
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20260920-remove-pg_private-v5-7-bb68b6a21869@nvidia.com>
-X-Headers-End: 1x8YcW-0006hw-Q9
-Subject: Re: [f2fs-dev] [PATCH v5 07/17] f2fs: convert the ->private flag
- helpers to folio-only
+X-CM-TRANSID: PSkvCgDnL_rGJbFqB1vMAA--.60781S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CryUXF4UAF15AF4xKr4UArb_yoW8Aw48pr
+ y5CFn7GrZ5Gw1DWrn7W3Z5Zr1rt3s3Cw4xuF4kCwsIv3W7urnYgF1rta48ZFyjqr93Ar12
+ vr45uryrXa1rtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_fHbUUUUU=
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsAiCUmqxJchHKAAA3x
+X-Headers-End: 1x8dKc-0006W0-Ri
+Subject: [f2fs-dev] [PATCH] f2fs: remove mappedtodisk flag usage in mmap
+ write path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,58 +84,65 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Michal Hocko <mhocko@suse.com>, "Liam R. Howlett" <liam@infradead.org>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Nico Pache <nico.pache@linux.dev>,
- Qi Zheng <qi.zheng@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>,
- Ying Huang <ying.huang@linux.alibaba.com>, Vlastimil Babka <vbabka@kernel.org>,
- Alistair Popple <apopple@nvidia.com>, Dev Jain <dev.jain@arm.com>,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- Gregory Price <gourry@gourry.net>, Ryan Roberts <ryan.roberts@arm.com>,
- Usama Arif <usama.arif@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- David Hildenbrand <david@kernel.org>, Tal Zussman <tz2294@columbia.edu>,
- Suren Baghdasaryan <surenb@google.com>, Barry Song <baohua@kernel.org>,
- Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
- Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
+From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Barry Song <baohua@kernel.org>,
+ Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+PG_mappedtodisk was inherited from the nobh/buffer-head era.  However,
+f2fs has no buffer heads and the flag is no longer meaningful.  The only
+user of the flag is the "no holes" shortcut in f2fs_vm_page_mkwrite(),
+which makes mmap write faults skip:
 
+- zeroing the post-EOF part of the faulted folio,
+- marking the folio dirty (mm dirties shared file mappings after
+  ->page_mkwrite() returns, so this one was not noticeable),
+- APP_MAPPED_IO iostat and REQ_TIME updates.
 
-On 2026/9/21 10:28, Zi Yan wrote:
-> page-based ->private flag helpers are used in the compression path, where
-> large folios are not enabled. They can use folio versions with
-> page_folio(). The two remaining users in data.c and segment.c can use
-> fio->folio instead of fio->page (two are in a union).
-> 
-> Drop page-based helpers after the conversion and rename
-> PAGE_PRIVATE_{GET,SET,CLEAR}_FUNC() and the PAGE_PRIVATE_* flags to
-> F2FS_FOLIO_PRIVATE_* to match. Convert the folio/page union from
-> f2fs_io_info union to folio only, since no page user is left.
-> 
-> The folio helpers do a plain read-modify-write where the page ones used
-> set_bit()/clear_bit(). It is fine because the converted code either holds
-> folio lock or, in f2fs_compress_write_end_io(), matches what the
-> non-compressed code does in f2fs_write_end_bio().
-> 
-> Assisted-by: LLM
-> Suggested-by: Tal Zussman <tz2294@columbia.edu>
-> Co-developed-by: David Hildenbrand (Arm) <david@kernel.org>
-> Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
-> To: Jaegeuk Kim <jaegeuk@kernel.org>
-> To: Chao Yu <chao@kernel.org>
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Cc: linux-kernel@vger.kernel.org
-> Reviewed-by: Tal Zussman <tz2294@columbia.edu>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
+Remove this shortcut in f2fs_vm_page_mkwrite() and stop setting it in
+f2fs_read_single_page().
 
-Nice work! Feel free to add:
+Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+---
+ fs/f2fs/data.c | 1 -
+ fs/f2fs/file.c | 6 ------
+ 2 files changed, 7 deletions(-)
 
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a3b02c067e89..14cea508ae01 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2264,7 +2264,6 @@ static int f2fs_read_single_page(struct inode *inode, struct fsverity_info *vi,
+ got_it:
+ 	if ((map->m_flags & F2FS_MAP_MAPPED)) {
+ 		block_nr = map->m_pblk + block_in_file - map->m_lblk;
+-		folio_set_mappedtodisk(folio);
+ 
+ 		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
+ 						DATA_GENERIC_ENHANCE_READ)) {
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b0bdc7a977b9..5fc491c0a69d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -218,12 +218,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+ 
+-	/*
+-	 * check to see if the page is mapped already (no holes)
+-	 */
+-	if (folio_test_mappedtodisk(folio))
+-		goto out_sem;
+-
+ 	/* page is wholly or partially inside EOF */
+ 	if (((loff_t)(folio->index + 1) << PAGE_SHIFT) >
+ 						i_size_read(inode)) {
+-- 
+2.43.0
+
 
 
 _______________________________________________
