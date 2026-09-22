@@ -4,113 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F15FCC982FA
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 14:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A8179C982FA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 15:31:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9oeRXtNEw5e8FYMctnDzqNWiQh1OA3kBnAS/3AgKRyA=; b=IWR577KtJAa6lPRqSs2a4nlaev
-	e2Bvt6frma9KFfHGyPKrNzkEOyeTPAlnvuppSmFNTVN0PdeMFnNqnBX6HSegWoA+KHXBgU0Q1F7xc
-	z1OUSFla2//QmE/KoLK9aOHGl9mm5SIa0UkAEks+sA4/zTzS19162yEGYLjROoHMeZz4=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=lnT1k25jzIqQDvN2o/mRt03dSWc+nG11ZyRsS3PaWD4=; b=AIDzrK6oNPQ+7f9tA/m7lJXMIn
+	HZKrO0Nsg5OiwNHYNYGXJIQKdBrh9Wb5pHZfNT5eRon+WGCDMXWEaKFsk3OsTUftQwniCXmXbTKeF
+	MZRnys4CDDwDqULutQ20c0BHM1h/mv0OvEHcArZKDkQ37WDwpduH8KvRNbX4UwMvzIqE=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x9156-0005cD-6X;
-	Tue, 22 Sep 2026 14:02:45 +0000
+	id 1x92St-0001yW-QU;
+	Tue, 22 Sep 2026 15:31:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhanxusheng1024@gmail.com>) id 1x9154-0005c6-Az
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1x92Ss-0001yQ-TZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Sep 2026 14:02:43 +0000
+ Tue, 22 Sep 2026 15:31:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hMdmUhrxd/BwBfU0bmZvimeKVs/NpBNIsOEZ52l12Hw=; b=X4YweUgjq2EzXWIm4AP1eAPnPK
- LEE6km0cdeAjHiE2WphsIBzbnXBXB/sxbn8IzcmxLeDM36croSWmmddclNc1bkw8iTaRH35P5jyvF
- W4BkC/Pyx0MBfC+d3Jq64lTeJwqeW75xbj9HfbGh5jEHtjOU69PIvNGRYURY7f002eno=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=7MyOHtnbv5Z1ooWxQhYYpkMsAutc+1zEeEjjSDOMEUo=; b=WsCnjq6Kp6cdj6kBZhco+Rqlg4
+ kVkgkBERn4cVmJ7i3ocVtQVMuo2k6IV7BIfUiLzqgoHsIqUOFTTXJyHbKrucDLhy3MpiNCVWM4S4t
+ h8f9Nhx0ULmGwpWOQkPw2UqUHSIcKzrib0w1bfxQ08G7ywxfddmLD2G+fsAmVSbjG+vw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=hMdmUhrxd/BwBfU0bmZvimeKVs/NpBNIsOEZ52l12Hw=; b=kPhdmgROXCwWVe+o5ousY+Az5E
- 1Ri3CDvoid0dhaNDLUwnfnAgzn4QkGJHheq6arAClQ8nOf+IJEuaUwrCooVVNNpAwa2aAhukDUev0
- 9oa+HpcNJ7AyVnOvUBN6fxz4eY01pEX7RqyZSfTRQJIqac2tDzON0Dqqa+stB386AA5c=;
-Received: from mail-pj2-f12.google.com ([74.125.227.140])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x9150-0005B3-Hl for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Sep 2026 14:02:43 +0000
-Received: by mail-pj2-f12.google.com with SMTP id
- d9443c01a7336-2dd58e1e2c7so38203555ad.0
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=7MyOHtnbv5Z1ooWxQhYYpkMsAutc+1zEeEjjSDOMEUo=; b=W
+ shMAW7hjU5S+8pkVnkE1Ksa7S0S+4AMjvrQeVV2R+rU40ymYSj26+TtZZ+AipCrD71qwWfum+EF8j
+ P5s00ICGXMJ6y3um2+q8tfb40t5eIAM6Yw1KFoVJK2NfD2HLlUnvDKaFbW8f5QjIlUUOc8nqAi/a7
+ 7Cn3m6CrmXr7xw2I=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x92Sp-000407-Lz for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 22 Sep 2026 15:31:24 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 597AE42E9D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Sep 2026 07:02:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790085757; x=1790690557; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=hMdmUhrxd/BwBfU0bmZvimeKVs/NpBNIsOEZ52l12Hw=;
- b=ChCoFXWo7UM4G9L5T+w+8ttbc4k6XDC/rbz/M062638uaN/npcIbRTQvlLecS4Py0V
- 1ISbQB+jncFxhzmKj7Lw0kWHY70TOEkTQwT1M/MbGtZkflGZmTUHWll87Sc8Tvpe3wZU
- 7RZ999LW2Z+Vdd+dVKg7fSPzs7F9edrVBtvrcWEd5nPjHzNFRexnddZiTcUTaTsKU0kv
- 8jVsw6g0cYbEoeazTJCidHwQl7Bh/FQt5ycoPGi/vGdw4JLfqmq6wgj4RX4wJUUbbrZT
- VZRrZrSzYuClaoXb3JYyk8RClp3emMu/wpp88CZj+grDQtLZEu0p0WN+fxW8jK16tyWU
- Yybg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790085757; x=1790690557;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=hMdmUhrxd/BwBfU0bmZvimeKVs/NpBNIsOEZ52l12Hw=;
- b=UwKznIpRkolzHbgC3KNkKwVAtEemgsYNkdbYDTh3Q4/18JLHsQrXm8Udu7fIN55Hwl
- hb2xGKsLRwDaf4TSUHQITPjsSml4PQOtHFVyF9S46q8vSCZSJ32xLzEuRd2riYjOpbfw
- QPV8PBYoI9/v90EInTQzsrzQsN5zzyKBTYwukYCfVvOYCsfsBDA7GkiQsxFodudB9uR2
- ksCKQFoBHywbkLZsICnVwcPSPH7HHb7nXtciv03ouWjHmYdNnvDO1mZwoH0/s862gBn3
- kYBJ7Ng43fhVZOxJYEenXMGx3qV2yOH3PuOg7uFEXMMIIGdH6VQMMbIhMN0qfhbaOl1d
- LlGQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvBw8/J2bKTDQW/sE9HM5dMSOCSrOsIYIio47rvgKhUuuWwv2hoYLkxC0CMmayd01e1fnxuLB9XQsvPyMKLPFyrqy@lists.sourceforge.net
-X-Gm-Message-State: AFuF++kgusT0fJ7CjkXBhQkVZBelM3ec35igaa0wBdJdxfblXAEr6ePZ
- 4GGg5uZoWkOT1lIZdItxv51QFC8xE+Ed3TW98Mygc48yuLp/SsBlknnG
-X-Gm-Gg: AYBFou0p31lJeceIDtUrSutL2Tbr/S67eTCY4hVfjQ3a3SJ5cAgfxX6rjRLIUOvB/AM
- 5BH5HoEdfEVOOtLctYIYMq76I6X75PsWmt9gomLaLq/Qyk+UsFFxy76Cq+dXU+wkACUQbiWNxE+
- B0bvrtYRxYS5bc49Dmccq0Wsd+yFgWTusMGHwkTHHZZDNFWJFv7LFKgaZYAirt2/whyUtkE7WRd
- 4Ng7Oaw5Tx2CfcUoO+2zzcphHBySZZHcRjYHieF4X0HqzNGnRU+B7XZHdSOTJmXTf1s2KbVzrjd
- +vCYTXs/JDd+idVZvneCMQkRFHf3Ya8AA9m5WYj4e6Pkafu/qSnO1TBdBanSyXAn1rjIS1JR47n
- r7oGDb0O3i1eRoXtvx76UAPyZkqIDWvhkXDEzPXycL4LdR+JqsfB0ArAMri5KLjEcAN50PUY79u
- R7BOAoxsOU2VXgbp/z+5781o3gScc244ygGO3jUSLO2edI+39CjkkoBaFMlMsDp2K7j/XOnuhcJ
- zT3oMD0Kd4=
-X-Received: by 2002:a17:902:e551:b0:2c8:248a:5dbb with SMTP id
- d9443c01a7336-2df609b47b9mr15715095ad.7.1790085756497; 
- Tue, 22 Sep 2026 07:02:36 -0700 (PDT)
-Received: from osman.mioffice.cn ([43.224.245.178])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2df5d0588e9sm11123465ad.76.2026.09.22.07.02.34
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Sep 2026 07:02:36 -0700 (PDT)
-From: Zhan Xusheng <zhanxusheng1024@gmail.com>
-X-Google-Original-From: Zhan Xusheng <zhanxusheng@xiaomi.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- Daeho Jeong <daehojeong@google.com>, Sunmin Jeong <s_min.jeong@samsung.com>
-Date: Tue, 22 Sep 2026 22:02:29 +0800
-Message-ID: <20260922140230.2931816-1-zhanxusheng@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260922123443.2908902-1-zhanxusheng@xiaomi.com>
-References: <20260922123443.2908902-1-zhanxusheng@xiaomi.com>
+ Tue, 22 Sep 2026 15:31:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4D21F000FF
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 22 Sep 2026 15:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1790091078;
+ bh=7MyOHtnbv5Z1ooWxQhYYpkMsAutc+1zEeEjjSDOMEUo=;
+ h=Subject:From:Date:To;
+ b=A07GfHbU1b7wXkjK/5P1W9zcOO6IMnTt02jYXG2QPwrCIhCuPvZ/snT+PPGddMd7b
+ ijVghJYp4nsqWX88HwNoWoWMc/3+HKslMum9xBurq6KhAJoVGQUJ4M/GFAtNjwtKQJ
+ WfucfeAzfvKo5sd8tqqrcQp/JW/hJhkQfwBxn60yjSf5yG5/FWOWZdG1lkbdKYUc5q
+ 60aKiZ/fFcvj3YZx0yEcwbCpBZiejNkDx3nQJ2Domoee6C0o8Mx6/ncHqKMJWDj0ak
+ c5HOWBwpa3Q+VeVPeXTfUmbxx5v2CW9O0Bw4b+IJCDse7gvbWuQzFPqLH+LlMy7dBM
+ 0LyxpiMmOrG7w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 5935A3811A4B for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 22 Sep 2026 15:30:10 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1x9150-0005B3-Hl
-Subject: Re: [f2fs-dev] [PATCH] f2fs: recompute the pinned area boundary
- after resizing
+Message-Id: <179009100895.4140645.11889139269606540198.git-patchwork-summary@kernel.org>
+Date: Tue, 22 Sep 2026 15:30:08 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1x92Sp-000407-Lz
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,41 +88,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Zhan Xusheng <zhanxusheng@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Please hold this one.
+Hello:
 
-resizable_tail_secno is only checked against the section count at mount and
-remount, so after a shrink it can exceed MAIN_SECS(), and the subtraction in
-f2fs_adjust_pinned_area_boundary() is unsigned:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-	sbi->pinned_area_max_secno = min(sbi->pinned_area_max_secno,
-		MAIN_SECS(sbi) - F2FS_OPTION(sbi).resizable_tail_secno);
+Series: f2fs: introduce metadata cache
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/series/1167171/
+  Lore link: https://lore.kernel.org/r/20260917073343.2823157-1-chao@kernel.org
+    Patches: [f2fs-dev,v9,01/12] f2fs: cache: implement metadata cache
+             [f2fs-dev,v9,02/12] f2fs: cache: initialize meta cache
+             [f2fs-dev,v9,03/12] f2fs: cache: introduce shrinker
+             [f2fs-dev,v9,04/12] f2fs: cache: introduce writeback thread
+             [f2fs-dev,v9,05/12] f2fs: cache: use meta cache
+             [f2fs-dev,v9,06/12] f2fs: cache: initialize node cache
+             [f2fs-dev,v9,07/12] f2fs: cache: use node cache
+             [f2fs-dev,v9,08/12] f2fs: cache: initialize compress cache
+             [f2fs-dev,v9,09/12] f2fs: cache: use compress cache
+             [f2fs-dev,v9,10/12] f2fs: cache: support fault injection
+             [f2fs-dev,v9,11/12] f2fs: cache: introduce tracepoints
+             [f2fs-dev,v9,12/12] f2fs: cache: show per-cache usage in debugfs
 
-resizable_tail_secno=200 on a 248 section image, shrunk to 192 sections:
+Series: [f2fs-dev,v2,01/12] f2fs: cache: implement metadata cache
+  Submitter: Chao Yu <chao@kernel.org>
+  Patchwork: https://patchwork.kernel.org/series/1150938/
+  Lore link: https://lore.kernel.org/r/20260824134731.3704352-2-chao@kernel.org
+    Patches: [f2fs-dev,v2,01/12] f2fs: cache: implement metadata cache
+             [f2fs-dev,v2,12/12] f2fs: cache: show per-cache usage in debugfs
 
-	without the patch   MAIN_SECS 192, boundary 48
-	with the patch      MAIN_SECS 192, boundary 192
+Series: [f2fs-dev,1/2] f2fs: rename page_count with cache_count
+  Submitter: Chao Yu <chao@kernel.org>
+  Patchwork: https://patchwork.kernel.org/series/1163306/
+  Lore link: https://lore.kernel.org/r/20260911232510.1816298-1-chao@kernel.org
+    Patches: [f2fs-dev,1/2] f2fs: rename page_count with cache_count
+             [f2fs-dev,2/2] f2fs: rename nr_pages_to_skip with nr_caches_to_skip
 
-min() picks MAIN_SECS(), has_unpinned_area() turns false and the reservation
-is gone.  The stale 48 kept more of the tail clear, so here the patch makes
-things worse.
 
-On an exact match the boundary becomes 0 and
+Total patches: 16
 
-	f2fs_gc_range(sbi, 0,
-		sbi->pinned_area_max_secno * SEGS_PER_SEC(sbi) - 1, ...)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-passes UINT_MAX as end_seg.  f2fs_gc_range() does not bound end_seg and
-get_valid_blocks() indexes sit_i->sentries[] with no check.  I did not hit
-the exact match; that part is from reading the code.
 
-What should happen when the reservation no longer fits: refuse the resize,
-drop it, or clamp resizable_tail_secno?  I will respin once that is settled.
 
 
 _______________________________________________
