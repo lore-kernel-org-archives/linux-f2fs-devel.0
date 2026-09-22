@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 35A5BC982FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 04:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0CB6BC982F1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 04:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=JR6UK3NgBRO7HeVO9hjcxyk9gT7NyWOszbZJ2G8uRmg=; b=C41uRq67quOx3h23lXlclxezxD
-	/y/iuNasdXjRBjSHnGO7Y/o5XnvzzZlQAhatSxXArp0QE6tmneJ1VnQ8QPBB+a/PzHBecTu523ZvM
-	JA+M7t11C5IfW8rTtpq3cbaE9m8fPkg2heQIa5CGFVN/QeHcQgou/eHiKiGLdOfJYSSo=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ErvqBhsxcUAsuhpBKb4VY8GQfpMpLoK0XXTETobu6VQ=; b=HY6EXOvDB6i2ylINPo/epc/oVz
+	AGR8BdPrU2fb3V951kn5F0o37LjzkB1YgUXbRED4bEdzTJU5QNjgdTzM6F+1pecBeChkezJUsb1gP
+	UIwVoQpNy+UyJDe442cSWQBdSAUVQLkQPWNHtJoWA9Qf3F17p4ArkLAmckKITY+7cpn0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8sCo-0007V2-Su;
-	Tue, 22 Sep 2026 04:34:11 +0000
+	id 1x8sGT-0002n9-DF;
+	Tue, 22 Sep 2026 04:37:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1x8sCm-0007Uu-Fg
+ (envelope-from <djwong@kernel.org>) id 1x8sGS-0002mx-B7
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Sep 2026 04:34:09 +0000
+ Tue, 22 Sep 2026 04:37:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xIUsqdTQPFnoKt9EnfUmvbFaGcMJVQ4YA3rI0Kzdh7E=; b=jFnk1GXZHgnkmpEJZe47pggzru
- QglkK5KKP2l1P/1koB5iESdtIrYNfDJawCY2xGhZSWCGn+4kVFfNqkBAPIEoy9qAWHnDlGDCNtiHU
- rpvEhU14oycqJZxFKkKH1Nbgm/dRCLZah27U3Z3ZhH3zJO2hUl2u/483delQs67sBzVQ=;
+ bh=K0Sw228Cihp0VPJl4lhopC6Np3CQYCAfu/HTn3gh2Io=; b=LFYUxzlj32vK84cKdAXTU9QHwC
+ KP2jw2QgFGqc2D8LIyh76SaUFmiI78Cc2UT83EBaoqICJJFntMdWJWusFBGhpTqvNknDVGPycxxaV
+ X0pK4hY9Wt8HoCADxCmYLBQ98VeLt2FrzUXU2LXL2uLdfo8ncNJxcxd6trR9M7sVJw+8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xIUsqdTQPFnoKt9EnfUmvbFaGcMJVQ4YA3rI0Kzdh7E=; b=ato2HcpVixWAiLmyJBpE8/5Oqz
- L/1Oa2FRh0F4S2hbyhIw7FlOJogzk6sJRbfjqYmy6tAFti18u64FqVNcRMaKogdRwuUzfiNYVEJnt
- 0jkPWi3ZkA7ErkGSmG7EHMSK5bL3QLCgtBgBvgN0w3sTK2FQSx9MUpS0fNd7yHw1740o=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=K0Sw228Cihp0VPJl4lhopC6Np3CQYCAfu/HTn3gh2Io=; b=MMExg4KrWVyAXwQC7r3Va/bI2o
+ n66LnVH7qBsXaJ711ZhXeoGZ+hzHQPQFrp7+DmVu2i2BlkgkOqbCEEMut0hQHln7jM+qoMEmET4QT
+ XsPz7p4xfdJYcXkmxE/ZLcczkHSnovwY9Vhqx9X3dkcXx6rXiIXJJ1oh60VHhtVH0dNY=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x8sCm-0000Qw-LG for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Sep 2026 04:34:09 +0000
+ id 1x8sGS-0000Ui-6d for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 22 Sep 2026 04:37:57 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with UTF8SMTP id 045F460216;
- Tue, 22 Sep 2026 04:34:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A206D1F000FF;
- Tue, 22 Sep 2026 04:34:02 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with UTF8SMTP id CBE1C43DD6;
+ Tue, 22 Sep 2026 04:37:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A03271F000FF;
+ Tue, 22 Sep 2026 04:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1790051642;
- bh=xIUsqdTQPFnoKt9EnfUmvbFaGcMJVQ4YA3rI0Kzdh7E=;
+ s=k20260515; t=1790051870;
+ bh=K0Sw228Cihp0VPJl4lhopC6Np3CQYCAfu/HTn3gh2Io=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=gwqL4D0O/UjlOCn56Mp2fmUtkof8dZHMjba1D2crqNr2z3OIuKQfQ+R8MYqM/9qBY
- +MZrfysIILUxfXdW92FglRkZnLFkEH+RMuzwOkvZNgrDIh16XCfiCMybtyLIOFeMR3
- 6tvJPqf99pUG34bvSoEkqWPslrNQbSm0FwHnUX8WkU44xPnASgnLQtWygHnkzxIPmF
- 4f+o0kY/FyxBscHKGqWdkUTo2vfIG0ZCQgbZQH1sqCY0n54AmhY4xWyTMBRTezUVDe
- u32quEfqB5qsbHxdVSjO7gRhVGOkILDi77C/IIvlDjVGt+7jcT084+zoGT2AKuDJml
- /PeDEFYcz7SwQ==
-Date: Mon, 21 Sep 2026 21:34:02 -0700
+ b=IR2+PNNX1L6gIXyKF6HzpRSCtNuwnNHr5cRslALF2iNrHeLYri27zFnUTntGWki8I
+ ekcheGNRBVqm1HNWVr5yCgOvt2s1ocoaMviRnAxS5sH2iEUbt1vazDwGcASakfFBiq
+ G3w0Gt6oAuaDhYJ2koSsYsa/R1Q2SyViyML/sSqAz1Rj0ksb6QyO+uTwlbxZxBNIJy
+ z/dqMvndgNxUaw158hFT1x5uh2+OV7/zt20rhQUbXDJdL6yvhy2eUUL/nFhaT6/ke4
+ Ch974KPiHQL7S/rZYr7jz/ovq9J12PgcTUFobTAe6HjlofjEzucehkwx0X1C/iFwZr
+ cSsBTGdCKonvw==
+Date: Mon, 21 Sep 2026 21:37:50 -0700
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260922043402.GM2705364@frogsfrogsfrogs>
+Message-ID: <20260922043750.GN2705364@frogsfrogsfrogs>
 References: <20260918111539.1003439-1-aalbersh@kernel.org>
- <20260918111539.1003439-14-aalbersh@kernel.org>
+ <20260918111539.1003439-15-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260918111539.1003439-14-aalbersh@kernel.org>
-X-Headers-End: 1x8sCm-0000Qw-LG
-Subject: Re: [f2fs-dev] [PATCH v16 13/21] xfs: add XFS_BMAPI_UNWRITTEN to
- unmap unwritten extents in __xfs_bunmapi()
+In-Reply-To: <20260918111539.1003439-15-aalbersh@kernel.org>
+X-Headers-End: 1x8sGS-0000Ui-6d
+Subject: Re: [f2fs-dev] [PATCH v16 14/21] xfs: don't remove written extents
+ past EOF on fsverity inodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,82 +99,120 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Sep 18, 2026 at 01:15:25PM +0200, Andrey Albershteyn wrote:
-> The __xfs_bunmapi() is used to remove all extents past EOF. Add
-> XFS_BMAPI_UNWRITTEN to remove only unwritten extents, while leaving
-> written ones in place. This will be used in following patch to clean up
-> unwritten extents on fsverity inodes.
+On Fri, Sep 18, 2026 at 01:15:26PM +0200, Andrey Albershteyn wrote:
+> xfs_free_eofblocks() removes all extents past EOF unless the
+> XFS_DIFLAG_PREALLOC or XFS_DIFLAG_APPEND flags are set. This is
+> undesired for fsverity as it stores metadata beyond EOF. However, while
+> merkle tree is being built, delayed preallocation and unwritten extents
+> are used. After metadata construction is done, fsverity inodes becomes
+> read-only and won't be changed anymore, none of these unwritten extents
+> or preallocations in post EOF region will be used.
+> 
+> Let xfs_free_eofblocks() be called on fsverity inode as usual to remove
+> anything which is not written extent. However, inodes which are
+> undergoing merkle tree construction need to be skipped in case reclaim
+> takes place.
 > 
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > ---
->  fs/xfs/libxfs/xfs_bmap.c | 6 +++++-
->  fs/xfs/libxfs/xfs_bmap.h | 6 +++++-
->  2 files changed, 10 insertions(+), 2 deletions(-)
+>  fs/xfs/xfs_bmap_util.c | 25 ++++++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index cc48f6e20e80..7ba76017ae56 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -5280,6 +5280,10 @@ __xfs_bunmapi(
->  		if (del.br_startoff + del.br_blockcount > end + 1)
->  			del.br_blockcount = end + 1 - del.br_startoff;
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index 268d159339d0..7fd951992557 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -31,6 +31,7 @@
+>  #include "xfs_rtbitmap.h"
+>  #include "xfs_rtgroup.h"
+>  #include "xfs_zone_alloc.h"
+> +#include <linux/fsverity.h>
 >  
-> +		if ((flags & XFS_BMAPI_UNWRITTEN) &&
-> +				del.br_state != XFS_EXT_UNWRITTEN)
+>  /* Kernel only BMAP related definitions and functions */
+>  
+> @@ -553,6 +554,13 @@ xfs_can_free_eofblocks(
+>  	if (last_fsb <= end_fsb)
+>  		return false;
+>  
+> +	/*
+> +	 * Don't clean fsverity inodes which have merkle tree being built, the
+> +	 * merkle tree is written beyond EOF
+> +	 */
+> +	if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION))
+> +		return false;
+> +
+>  	/*
+>  	 * Check if there is an post-EOF extent to free.  If there are any
+>  	 * delalloc blocks attached to the inode (data fork delalloc
+> @@ -579,6 +587,9 @@ xfs_free_eofblocks(
+>  	struct xfs_trans	*tp;
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	int			error;
+> +	int			bmapi_flags = XFS_BMAPI_NODISCARD;
+> +	bool			has_verity =
+> +			ip->i_diflags2 & XFS_DIFLAG2_VERITY;
+>  
+>  	/* Attach the dquots to the inode up front. */
+>  	error = xfs_qm_dqattach(ip);
+> @@ -593,15 +604,20 @@ xfs_free_eofblocks(
+>  	 *
+>  	 * Note that this means we also leave speculative preallocations in
+>  	 * place for preallocated files.
+> +	 *
+> +	 * Clean up delalloc reservations for fsverity too as those won't be
+> +	 * used
+>  	 */
+> -	if (ip->i_diflags & (XFS_DIFLAG_PREALLOC | XFS_DIFLAG_APPEND)) {
+> +	if (ip->i_diflags & (XFS_DIFLAG_PREALLOC | XFS_DIFLAG_APPEND) ||
+> +			has_verity) {
+>  		if (ip->i_delayed_blks) {
+>  			xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK,
+>  				round_up(XFS_ISIZE(ip), mp->m_sb.sb_blocksize),
+>  				LLONG_MAX, NULL);
+>  		}
+>  		xfs_inode_clear_eofblocks_tag(ip);
+> -		return 0;
+> +		if (!has_verity)
+> +			return 0;
+>  	}
+>  
+>  	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
+> @@ -613,6 +629,9 @@ xfs_free_eofblocks(
+>  	xfs_ilock(ip, XFS_ILOCK_EXCL);
+>  	xfs_trans_ijoin(tp, ip, 0);
+>  
+> +	if (has_verity)
+> +		bmapi_flags |= XFS_BMAPI_UNWRITTEN;
 
-Odd indentation?
+This ought to have a comment explaining where post-eof unwritten extents
+might come from:
 
-		if ((flags & XFS_BMAPI_UNWRITTEN) &&
-		    del.br_state != XFS_EXT_UNWRITTEN)
+	/*
+	 * If fs-verity fails to write the full metadata, it can leave
+	 * unwritten preallocations after EOF.  Clear all that out.
+	 */
+	if (has_verity)
+		bmapi_flags |= XFS_BMAPI_UNWRITTEN;
 
-/me again wonders if bunmapi ought to have its own flags instaed of
-reusing *some* of bmapi.  But I concede that ought to be a different
-cleanup, because figuring out which flags are for bunmapi.  I think it's
-REMAP, ATTR_FORK, NODISCARD, and UNWRITTEN?
 
-With the indentation fixed,
+With that documented,
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> +			goto skip;
 > +
->  		if (!isrt || (flags & XFS_BMAPI_REMAP))
->  			goto delete;
+>  	/*
+>  	 * Do not update the on-disk file size.  If we update the on-disk file
+>  	 * size and then the system crashes before the contents of the file are
+> @@ -620,7 +639,7 @@ xfs_free_eofblocks(
+>  	 * bug).
+>  	 */
+>  	error = xfs_itruncate_extents_flags(&tp, ip, XFS_DATA_FORK,
+> -				XFS_ISIZE(ip), XFS_BMAPI_NODISCARD);
+> +				XFS_ISIZE(ip), bmapi_flags);
+>  	if (error)
+>  		goto err_cancel;
 >  
-> @@ -5414,7 +5418,7 @@ __xfs_bunmapi(
->  			if (error)
->  				goto error0;
->  		}
-> -
-> +skip:
->  		end = del.br_startoff - 1;
->  nodelete:
->  		/*
-> diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
-> index d5f2729305fa..0f36431d9936 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.h
-> +++ b/fs/xfs/libxfs/xfs_bmap.h
-> @@ -90,6 +90,9 @@ struct xfs_bmalloca {
->  /* Try to align allocations to the extent size hint */
->  #define XFS_BMAPI_EXTSZALIGN	(1u << 11)
->  
-> +/* Process unwritten extents only. Used for unmapping */
-> +#define XFS_BMAPI_UNWRITTEN	(1u << 12)
-> +
->  #define XFS_BMAPI_FLAGS \
->  	{ XFS_BMAPI_ENTIRE,	"ENTIRE" }, \
->  	{ XFS_BMAPI_METADATA,	"METADATA" }, \
-> @@ -102,7 +105,8 @@ struct xfs_bmalloca {
->  	{ XFS_BMAPI_COWFORK,	"COWFORK" }, \
->  	{ XFS_BMAPI_NODISCARD,	"NODISCARD" }, \
->  	{ XFS_BMAPI_NORMAP,	"NORMAP" },\
-> -	{ XFS_BMAPI_EXTSZALIGN,	"EXTSZALIGN" }
-> +	{ XFS_BMAPI_EXTSZALIGN,	"EXTSZALIGN" }, \
-> +	{ XFS_BMAPI_UNWRITTEN,	"UNWRITTEN" }
->  
->  
->  static inline int xfs_bmapi_aflag(int w)
 > -- 
 > 2.54.0
 > 
