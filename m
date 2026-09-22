@@ -4,78 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F588C982FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 07:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6779AC982FA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 08:32:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=RdML/sdCCYjD+NgBbIO1jQTkjmTdBz6GcbyYgHsQUz4=; b=Sk3fXTG2ooJiPuO8YXXR3YfpwA
-	8ms+0par78v0FrmlOb8Qd1r+T65Ex2wesYIfyWuDakHDh+5bG1YmxaQco1g4RwvnpM4Nb1zCoEkN6
-	Cw/W5Od/Gv/UEAPOgH6S2TA7JXqDAsuVnSbk67jpDnnkCs635+cQz0JBGGygdd3vyC/4=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=7/NGA+mhKJs5P1vTPYQJjFJVZa2FCvQosxFleeCjpgI=; b=LIRMC+QAILn5hZSk8/KSF+Z6hs
+	YkPqzziNA2fwVfzGLIqiaRU5T0MucrUnKLMHvpqwV0VGN6gm05BIqQqgiMvNNyfpjY1V0rz0FNTjK
+	O2RcFs/+TtW09CHhkCCHvAMQo/14r1mgX1IMmlq8PHgN6olJdQWmzed/683QpAC0b6x8=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8uqV-00022l-KF;
-	Tue, 22 Sep 2026 07:23:19 +0000
+	id 1x8vvf-0003up-Lg;
+	Tue, 22 Sep 2026 08:32:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+a4e1fe537d2c1e8d4400+8430+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1x8uqC-00022H-79 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Sep 2026 07:23:00 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <aalbersh@redhat.com>) id 1x8vvZ-0003ue-PY
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 22 Sep 2026 08:32:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3qq0Y7EkYZQB8hy7/hh9R5IKZgsY5zc1hNog+FB/7qA=; b=VV8mwFnviTJ7Wu5inqHwFqGb0w
- /L5xznHIOVOL9UjoxxaAnS4+hhN787BxCoshunsTwD4e5gFWbSHjPziQq1jEMMF84i4+3Uxygmcq1
- 2Zl23dRydp9gdX6WwGGGS6PGanjQqqyyJipJd0NbPfCn4zdwB9MIhoIQRooXQTp4yzQE=;
+ bh=v6HyFSOK4HYSfvcwVKnaiUCa+pWXMNUUzDe6nYFstxk=; b=Y/AIwhEeSgnd7vF7bYuoDQmXg9
+ gYuhCOafE76jA1JCbAt8Xd09IqrnHrJyOdDB0GGIQsyIpzl0IHwhTM7qLTrJqWbAEclC/WzpOry9E
+ aWP4h+grqSnbtdJGJPBXtnqGcTut1zLlL3RQu/0K55unMPAhFce5qZ5HgWEZTIhJqF5Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
  :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3qq0Y7EkYZQB8hy7/hh9R5IKZgsY5zc1hNog+FB/7qA=; b=B511h0N0Sjm+CGrTy7R0fjyVWE
- m7vSLIesfPFWeGToL7u4EWwhh6wivd9PVeA3vq+5J/5Ma/tFf/sJ1/lKge/B830Sg0z60K6zIzuvi
- RTuxupMhqo0APiYlnabMMccwjARl6fFYDzvh3vSYqCTl5r/JrhRi+YXj05iymdEwhnTU=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=v6HyFSOK4HYSfvcwVKnaiUCa+pWXMNUUzDe6nYFstxk=; b=Mta3umIz2MdWOy+Ssxw0YoruHf
+ qj5S93QLDh77NapJMLhUHHFnjCMMnXAQIe1apD8tQp4TC4YPeNfG8dgrIcbH0itIJng/i22opo8z6
+ NXPqnKDxR4XwkD9QPL92ulM7UOgAPTrMtfsPfeF7z/1wISpepu6ZA5O89NMlQoCIdvNE=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x8uq9-0003WI-MB for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Sep 2026 07:23:00 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=3qq0Y7EkYZQB8hy7/hh9R5IKZgsY5zc1hNog+FB/7qA=; b=HFw1PEaoKGRVVOHOulcFABvcvD
- qvfOH1H7/NrXCx1ZznRfNai3F1oyiRHGoIfcNQ04KDOfWBgugZIEryXn9ShwYQig1A4ivC4VL/9wl
- IqmFkQzyO4ddOgSJzTpDRVzIauMyZmxEwvOcJ7M4c1UJGKjZINI+ENGwbXlfIoVMxuxsXeZhqDmpj
- VpSU6tXGdTXjQohEss4haQPdrOBtjJqZ8BYvxar14WNAI5o5BTGgw5yPgFJjUGPgG+V5UjD/Oa0s/
- sAgxNvqQTkQgG+n3cAqojrWU9F2FQLnKwtPn/9OrYr3euBvpvXwPaptMfFuIbX/qrZLJhiJmEnRyK
- qshyy8+g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red
- Hat Linux)) id 1x8uq4-00000004Upg-1yFV;
- Tue, 22 Sep 2026 07:22:52 +0000
-Date: Tue, 22 Sep 2026 00:22:52 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <arIszDCcy0VbRVFp@infradead.org>
+ id 1x8vvZ-0005v6-CC for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 22 Sep 2026 08:32:37 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790065951;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=v6HyFSOK4HYSfvcwVKnaiUCa+pWXMNUUzDe6nYFstxk=;
+ b=OaX3zQe1A/i6f2euJs4tg+AxapSpwR/3HNRrlUjSYIpC9Mpdqm+Kj2SRngRipSkoiPwBFa
+ zKsoxQVrgM/M7HDYboV9viAOVrd+eXclj+dPXexYRpPt2rIFqfz5jy2ytcX+46/V8uP7+C
+ M88uKc11snPa14dasNqQJu3m5Pg4bAk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-672-i6LktyKxNIaUPSGjYPNX0A-1; Tue, 22 Sep 2026 04:32:29 -0400
+X-MC-Unique: i6LktyKxNIaUPSGjYPNX0A-1
+X-Mimecast-MFC-AGG-ID: i6LktyKxNIaUPSGjYPNX0A_1790065949
+Received: by mail-wm1-f71.google.com with SMTP id
+ 5b1f17b1804b1-490a767c7dcso28731735e9.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 22 Sep 2026 01:32:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790065948; x=1790670748;
+ h=in-reply-to:content-disposition:content-type:mime-version
+ :references:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=v6HyFSOK4HYSfvcwVKnaiUCa+pWXMNUUzDe6nYFstxk=;
+ b=qJmHo1ANf5jj9EYXFZ4+n45GzFrP1Y/oPDw85x2K6mx5wRVYw35s9fgzIoL01AHv81
+ 7OjOzBDPfRN7zyArkrw+jhuPS2OszP8yHWFzg2aS1ZEHkZeB2wVLobfvxDZmBDDG1T9z
+ cbQoD1iYkc5qC20YdJ4xmlHJvLSccuDs//P841J+gtbC4s89bs3rPekToqXMDHifprKZ
+ DmdJU9W3N/u2HuPfUxt35rKiKyk+yHigWyp2O2i43jV9K8FJ3KHm1D8DJpJFV8UWDiXD
+ pD2psgH6jk4nbvKsfts2vx8G07czRtnTVAVUmD12Xi7s90GOgiukBSZptZ0Ba6N8hZkG
+ N0sA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwAn1AwJ8KLcUbNRVt8NrPZMC5+lZC4elAlhDlcCHPrRiZPKRH+BsNX2HgmXWDK9p7MoxgdNakrqXSKC4M4o9Eg@lists.sourceforge.net
+X-Gm-Message-State: AFuF++l/7JVmUVhBa7WnmIf1Q96H9bhiXno95RrDczMshGNykZyswJs8
+ PGYhvNmYyqo99bQG4XZaohIrwFYIwLdmKjj8vT0q9dVFnLRZ+/BXtK6pg2OPTTR+Gabvuzp3KdY
+ KGrNPESpq0YmVhVK7fuo+hM9uRVqDo5WI2TYWikZru7lWSb6xz1Q2yea2xPzluIAQNjeh+W7SMV
+ ksrQ==
+X-Gm-Gg: AYBFou3laSX1COTsFzUoqRWLQLTViiauDI9jHHRz6bafbcVgiaM7LZwsi2Y+5FhWGn2
+ NuWYr6AfHr09OBH6mU9NFxwJENN9+wz5bQ+TaRFjkHBbteBCN/sL8Z/DrZkRf1bgShMJuOGR/bu
+ K0+RBY4NGts2RV75gdfZYggd56fg9+ujKxEgnFCGnK6awOk7hDSdZ0+9FTTfn+iE4lpBG3OPj2I
+ zTMCfD1OBmVKoeTmg7j4R85UiB1LoXmScPnEHGfT+Qgr6lOrvUMR3pWMqlOzVXm05C8Ei24CHBf
+ R4c2f2G4nItrwpTkInfknsVUu+rkJoiXMuYEioH2Tmso/tAKEYdCVaaeX0Y6sxtZFnvh/kTKuC3
+ L6EfZ9hNpKB1PeIN779aoXlJKNTkx39/6GQ==
+X-Received: by 2002:a05:600c:3f0b:b0:49d:1df6:2592 with SMTP id
+ 5b1f17b1804b1-49fc5750c61mr161766945e9.21.1790065948508; 
+ Tue, 22 Sep 2026 01:32:28 -0700 (PDT)
+X-Received: by 2002:a05:600c:3f0b:b0:49d:1df6:2592 with SMTP id
+ 5b1f17b1804b1-49fc5750c61mr161766615e9.21.1790065948022; 
+ Tue, 22 Sep 2026 01:32:28 -0700 (PDT)
+Received: from aalbersh-thinkpadx1carbongen13.rmtcz.csb ([217.30.74.39])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-49fdabe8a2asm32746655e9.4.2026.09.22.01.32.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Sep 2026 01:32:27 -0700 (PDT)
+Date: Tue, 22 Sep 2026 10:32:24 +0200
+To: Christoph Hellwig <hch@infradead.org>
+Message-ID: <arI8cvh8rgIwmv9V@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
 References: <20260918111539.1003439-1-aalbersh@kernel.org>
- <20260918111539.1003439-16-aalbersh@kernel.org>
+ <20260918111539.1003439-14-aalbersh@kernel.org>
+ <20260922043402.GM2705364@frogsfrogsfrogs>
+ <arIsIhrWltHi9Aej@infradead.org>
 MIME-Version: 1.0
+In-Reply-To: <arIsIhrWltHi9Aej@infradead.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: D05WfvUoLkSTDese8VS5cyTxAiGjeROvtbpT5UUepio_1790065949
+X-Mimecast-Originator: redhat.com
 Content-Disposition: inline
-In-Reply-To: <20260918111539.1003439-16-aalbersh@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1x8uq9-0003WI-MB
-Subject: Re: [f2fs-dev] [PATCH v16 15/21] xfs: add fs-verity support
+X-Headers-End: 1x8vvZ-0005v6-CC
+Subject: Re: [f2fs-dev] [PATCH v16 13/21] xfs: add XFS_BMAPI_UNWRITTEN to
+ unmap unwritten extents in __xfs_bunmapi()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,24 +132,61 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org, djwong@kernel.org,
- Carlos Maiolino <cem@kernel.org>, david@fromorbit.com,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- hch@lst.de, linux-btrfs@vger.kernel.org
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+ Andrey Albershteyn <aalbersh@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
+ david@fromorbit.com, linux-unionfs@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Sep 18, 2026 at 01:15:27PM +0200, Andrey Albershteyn wrote:
-> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> +	xfs_trans_ijoin(tp, ip, 0);
-> +
-> +	truncate_inode_pages(VFS_I(ip)->i_mapping, XFS_ISIZE(ip));
+On 2026-09-22 00:20:02, Christoph Hellwig wrote:
+> On Mon, Sep 21, 2026 at 09:34:02PM -0700, Darrick J. Wong wrote:
+> > > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> > > index cc48f6e20e80..7ba76017ae56 100644
+> > > --- a/fs/xfs/libxfs/xfs_bmap.c
+> > > +++ b/fs/xfs/libxfs/xfs_bmap.c
+> > > @@ -5280,6 +5280,10 @@ __xfs_bunmapi(
+> > >  		if (del.br_startoff + del.br_blockcount > end + 1)
+> > >  			del.br_blockcount = end + 1 - del.br_startoff;
+> > >  
+> > > +		if ((flags & XFS_BMAPI_UNWRITTEN) &&
+> > > +				del.br_state != XFS_EXT_UNWRITTEN)
+> > 
+> > Odd indentation?
+> > 
+> > 		if ((flags & XFS_BMAPI_UNWRITTEN) &&
+> > 		    del.br_state != XFS_EXT_UNWRITTEN)
+> 
+> Yeah.
+> 
+> > /me again wonders if bunmapi ought to have its own flags instaed of
+> > reusing *some* of bmapi.  But I concede that ought to be a different
+> > cleanup, because figuring out which flags are for bunmapi.  I think it's
+> > REMAP, ATTR_FORK, NODISCARD, and UNWRITTEN?
+> 
+> I think that would create more confusion than it helps.  OTOH asserting
+> the valid flag would be helful.
+> 
+> Sashiko complains about interactions with the weird rtextent bunmap
+> behavior.  Should we disallow fsverity with a larger than fsb
+> rtextensive to not bother with this?  Btw, did you test this series
+> with RT classic and or zoned?
 
-We can't call truncate_inode_pages with the ilock held.
+yeah, I will disallow it
 
-I also don't see what this is trying to protect to start with.
+I did many revisions back, but haven't tested recent versions, I
+will test with rt for the next version
+
+-- 
+- Andrey
+
 
 
 _______________________________________________
