@@ -4,77 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 07131C982ED
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Sep 2026 12:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B2BFDC982F1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2026 03:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=aQoMmrHUxTHYR2G3PDXrA4bgqQ9OjbspEk7LbU8NjTc=; b=TxNoeXX4V0p4DS/7yCvaQDQFmE
-	BxM9fAnPH7CJPDv3/LPgyjXmSaya7e+GsqYp9eiOwZ2xC4J8WZtytrk+EvAd7LBbIACcxXFjWyJ5N
-	KH8WFVW8FJoy3Ocqse9X2jm8EMiJf6yZnt+tOjQhRp0CSov7nWTKr9VuUgkf30yf6CqM=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=NMhI3l370xjYxINyx+o/Q/mOIu7Wet4LGGyH0GyfiHw=; b=Tm+GRtSSuJ3I7Yl4I84u5AI645
+	kyOsQKq2tWg/deEqOmw4DuPmSZNb5znkoexrFjOwS/5oOEhVzDC740iDDYnBP7q5UqypjNUdcNIbF
+	SZJdDwYT68HsxdXDCsyVfA8mGARDbQHaVc9JjGvXuz+2Pv2BcL3N+yOl6YvuKUVQ9oho=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x8dOg-0002E1-9f;
-	Mon, 21 Sep 2026 12:45:27 +0000
+	id 1x8qtN-0000dy-6R;
+	Tue, 22 Sep 2026 03:09:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1x8dOa-0002DU-W0
+ (envelope-from <chao@kernel.org>) id 1x8qtB-0000dj-9q
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 12:45:21 +0000
+ Tue, 22 Sep 2026 03:09:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
- Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=JMTG3XRY4AoytoEoE7UhJ2S+0s
- Cn/MoHSz54nC18ldajt7PXGUCnAwQ5KCrSH2yR4xAMfQYUHXzsYZ5k0fDExc0XOGAizBKlI2Ewpjh
- E7kjL75RW5tsQXHSYH1YwmNscG0GkjbBoHXEajYCDFZA/yOptPwLfcsdNhUbuwAHSmRw=;
+ bh=CBrq0W4hwuHtFakDlzYoO5CFxEwhKTqvSW2yit9CFf4=; b=KQxt9fajPBxod7w6d/D5RXS8m4
+ z8md0qsJI+mbylNGNMAGbEgsTpnMssojnIuXXp0SQKUlRB+0eaMhin/emUfIkgpgPi9Rpcu5M4opl
+ dY2H6e/neH9oAXB1n6tadNgXyoPz/svGQl/Yz2uiOlU4N7wi9LKhTnGPp6uLUBqNjyPA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
- To:From:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=36MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=E
- HnGSW3ZeOa2KsaztmlArdJFaIDFZGE7zw5VkDzarPBV0gqkgpNUVKWoYD/5MgcbJcMNf0YOGseQZT
- FHvD0LlmZazuGg1uV8Yl8JMWLcsP95hpYDOxzzwMiuBaZxfxs8gh7vRySft+67CcBPhHxvxbeMIe/
- CMC46uwGKnBA+FSI=;
-Received: from m16.mail.126.com ([220.197.31.7])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=CBrq0W4hwuHtFakDlzYoO5CFxEwhKTqvSW2yit9CFf4=; b=VeB+cd2kEEO77Fx7R2zQ/DSEdk
+ QXbTozMQ8qARu3bM096ZZGWmr7BZ0AdnaR0SEt9TKQA4WEYMun1Sdy1cHiDvNa+dHVxr30kRAbNp8
+ lRnIcONJPTmTkpXDYh7T1WAi/VpgAS/9IrjiA2ytuN/qcKwFw26ymKmrEbXfaTEfcmZ0=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1x8dOa-0006dw-Ld for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Sep 2026 12:45:21 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=36
- MABM9SR70Oy6aPH2t+jBEfLTxUPU8SztDkPPWdNL4=; b=p3hRPFeT84ObW9Etto
- nwIQMfzeEjfe1RdbfkscGrxveFvpDagZWPOS7HefepjIzcVaJIslw93jTGLr+H6B
- kdKbX+5oQJuE009A7zDxYi8i0PyG2PVLiCCk7IT9dNMebHmYF0CtxK8tOFprtp5U
- b9Q969CPhcxjI88KvPAP9/VNU=
-Received: from nzzhao-ThinkCentre-M760t.mioffice.cn (unknown [])
- by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id
- _____wDnX8bBJrFqd+91Bw--.51449S2; 
- Mon, 21 Sep 2026 20:44:50 +0800 (CST)
-To: linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>,
- Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Mon, 21 Sep 2026 20:44:39 +0800
-Message-ID: <20260921124439.568654-1-zhaonanzhe@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+ id 1x8qt7-0003pI-C1 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 22 Sep 2026 03:09:45 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id F275A418F8;
+ Tue, 22 Sep 2026 03:09:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEB11F000FF;
+ Tue, 22 Sep 2026 03:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1790046579;
+ bh=CBrq0W4hwuHtFakDlzYoO5CFxEwhKTqvSW2yit9CFf4=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=iGH8lUKFZTsbN++vJ/QwgzV0AfW4e21HkwgcxJtIBtce0InGcNNKyQVmFb/Y488e2
+ sE2k/I6sXlnJ4pSqL6/AWnwzHg/pdkIxKMyaX/5Ccw919j8KpfKtXz7yUnjw10GC/l
+ gZcuBAPGEW7S4SyL2n2HbnnrxP03XnMOS02PFImiTMo8sUDXLNFV+e65pOlaUMSS/u
+ OlNxLb2Fa+rjqYCXbTD6Q6cK5VpxXwICBax0bzK9rR/DV5OHGTHvJy3dl8LhmFmDCb
+ iR+aO663/okc1AjvfWfBa2ujn55i/d3brjCERAr0Kcw7EgdZvFEGSRiS6/pfjPMiI2
+ 5OhybF6cmvJPw==
+Message-ID: <747d2cbe-01ce-4261-a699-e51ede593434@kernel.org>
+Date: Tue, 22 Sep 2026 11:09:36 +0800
 MIME-Version: 1.0
-X-CM-TRANSID: _____wDnX8bBJrFqd+91Bw--.51449S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CryUXF4UAF15AF4xKr4UArb_yoW8Aw48pr
- y5CFn7GrZ5Gw1DWrn7W3Z5Zr1rt3s3Cw4xuF4kCwsIv3W7urnYgF1rta48ZFyjqr93Ar12
- vr45uryrXa1rtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMwZcUUUUU=
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsALAkGqxJsJNuQAA3p
-X-Headers-End: 1x8dOa-0006dw-Ld
-Subject: [f2fs-dev] [PATCH] f2fs: remove mappedtodisk flag usage in mmap
- write path
+User-Agent: Mozilla Thunderbird
+To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260915041909.2903887-1-zhaonanzhe@xiaomi.com>
+ <20260915042503.2912616-4-zhaonanzhe@xiaomi.com>
+Content-Language: en-US
+In-Reply-To: <20260915042503.2912616-4-zhaonanzhe@xiaomi.com>
+X-Headers-End: 1x8qt7-0003pI-C1
+Subject: Re: [f2fs-dev] [PATCH v2 14/14] f2fs: make compressed files
+ compatible with large folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,63 +89,125 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-Cc: Barry Song <baohua@kernel.org>, Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
+ Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
+ David Hildenbrand <David.Hildenbrand@arm.com>, Bo Zhang <zhangbo56@xiaomi.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Nanzhe Zhao <nzzhao@126.com>,
+ Pengfei Li <lipengfei28@xiaomi.com>, Ryan Roberts <Ryan.Roberts@arm.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-PG_mappedtodisk was inherited from the nobh/buffer-head era.  However,
-f2fs has no buffer heads and the flag is no longer meaningful.  The only
-user of the flag is the "no holes" shortcut in f2fs_vm_page_mkwrite(),
-which makes mmap write faults skip:
+On 9/15/26 12:25, Nanzhe Zhao wrote:
+> The compression flag is the hint indicates that the inode can be
+> compressed, when the inode is using large folio, we expected it keeps
+> using the large folio read/write paths and its data stays uncompressed
+> on disk until the inode is evicted and re-read
+> 
+> Let f2fs_write_begin() skip the compression overwrite preparation for
+> such inodes and remove the compressed-file gate in
+> f2fs_read_data_large_folio() so the data is simply read/written as
+> regular blocks.
+> 
+> For the same reason, reject F2FS_IOC_COMPRESS_FILE with -EOPNOTSUPP
+> once the inode mapping is switched to large folios.
+> 
+> Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+> ---
+>  Documentation/filesystems/f2fs.rst | 10 ++++++++++
+>  fs/f2fs/compress.c                 |  2 ++
+>  fs/f2fs/data.c                     |  9 ++-------
+>  fs/f2fs/file.c                     |  7 +++++++
+>  4 files changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 771216f45207..b4f436ffd9ac 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -941,6 +941,16 @@ Compression implementation
+>    reserved via ioctl(F2FS_IOC_RESERVE_COMPRESS_BLOCKS) or the file size is
+>    truncated to zero.
+>  
+> +- Compression and large folios are not effective at the same time on a file:
+> +  a compressed inode does not use large folios, while an inode which is
+> +  using large folios keeps its data uncompressed on disk.  If the compression
+> +  flag is set on an inode that is already using large folios, the flag works
+> +  as a hint until the inode is evicted: the inode keeps using the large folio
+> +  read/write paths, f2fs_write_begin() skips the compression overwrite
+> +  preparation, and ioctl(F2FS_IOC_COMPRESS_FILE) fails with -EOPNOTSUPP.
+> +  Once the inode is evicted and read back, it uses order-0 folios again and
+> +  compression is applied as usual.
+> +
+>  Compress metadata layout::
+>  
+>  				[Dnode Structure]
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index b130e43b4566..fa0f8449a12c 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -78,6 +78,8 @@ bool f2fs_is_compressed_page(struct folio *folio)
+>  		return false;
+>  	if (folio_test_f2fs_nonpointer(folio))
+>  		return false;
+> +	if (f2fs_folio_has_ffs(folio))
+> +		return false;
+>  
+>  	f2fs_bug_on(F2FS_F_SB(folio),
+>  		*((u32 *)folio->private) != F2FS_COMPRESSED_PAGE_MAGIC);
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index c9dba8d0ad3d..f5421334ecf3 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2941,12 +2941,6 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+>  	int ret = 0;
+>  	bool folio_in_bio = false;
+>  
+> -	if (f2fs_compressed_file(inode)) {
+> -		if (folio)
+> -			folio_unlock(folio);
+> -		return -EOPNOTSUPP;
+> -	}
+> -
+>  	map.m_seg_type = NO_CHECK_TYPE;
+>  
+>  	if (rac)
+> @@ -4828,7 +4822,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+>  	}
+>  
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+> -	if (f2fs_compressed_file(inode)) {
+> +	if (f2fs_compressed_file(inode) &&
+> +	    !mapping_large_folio_support(inode->i_mapping)) {
+>  		int ret;
+>  		struct page *page;
+>  
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index db71cadefabd..c5cb0b0384b6 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -5002,6 +5002,13 @@ static int f2fs_ioc_compress_file(struct file *filp)
+>  	if (!(filp->f_mode & FMODE_WRITE))
+>  		return -EBADF;
+>  
+> +	/*
+> +	 * The mapping is already using large folios, where the data is kept
+> +	 * uncompressed, so refuse to start compressing the file.
+> +	 */
+> +	if (mapping_large_folio_support(inode->i_mapping))
 
-- zeroing the post-EOF part of the faulted folio,
-- marking the folio dirty (mm dirties shared file mappings after
-  ->page_mkwrite() returns, so this one was not noticeable),
-- APP_MAPPED_IO iostat and REQ_TIME updates.
+It needs to print log here to give notice.
 
-Remove this shortcut in f2fs_vm_page_mkwrite() and stop setting it in
-f2fs_read_single_page().
+e.g "not support if large folio bit is set, drop inode cache to unset the flag and retry" ?
 
-Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
----
- fs/f2fs/data.c | 1 -
- fs/f2fs/file.c | 6 ------
- 2 files changed, 7 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a3b02c067e89..14cea508ae01 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2264,7 +2264,6 @@ static int f2fs_read_single_page(struct inode *inode, struct fsverity_info *vi,
- got_it:
- 	if ((map->m_flags & F2FS_MAP_MAPPED)) {
- 		block_nr = map->m_pblk + block_in_file - map->m_lblk;
--		folio_set_mappedtodisk(folio);
- 
- 		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
- 						DATA_GENERIC_ENHANCE_READ)) {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b0bdc7a977b9..5fc491c0a69d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -218,12 +218,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	/* wait for GCed page writeback via META_MAPPING */
- 	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
- 
--	/*
--	 * check to see if the page is mapped already (no holes)
--	 */
--	if (folio_test_mappedtodisk(folio))
--		goto out_sem;
--
- 	/* page is wholly or partially inside EOF */
- 	if (((loff_t)(folio->index + 1) << PAGE_SHIFT) >
- 						i_size_read(inode)) {
--- 
-2.43.0
+> +		return -EOPNOTSUPP;
+> +
+>  	f2fs_balance_fs(sbi, true);
+>  
+>  	ret = mnt_want_write_file(filp);
 
 
 
