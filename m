@@ -4,113 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E2B4C982FA
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2026 02:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D8D9DC98302
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2026 02:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=TfT4O00jGBpPLK59kqt5CSN2etQGd4Ml6VyAqa6HwTg=; b=fWweSvVg4PFiry+xTrAbhPIWBm
-	YONmIguln9nW4XuN2IbnAGcJ89+IXEXKBHzLQgpJ8omfrdMDGKgIinG5IekmwnJam4s7iALknnJIz
-	Vpt0Pn6y1jzwsRsHe8eePrRE9ot79Thq8WCDMKiKQlNJVHvScDvAlZH/eEZK/kAv1eoI=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=lNFjF1LlEbSISJrhAbSKx9FdGBWytUfYu6OvWkQxvk8=; b=AaF4pk92Stc84LuuiczJy3O9Vk
+	bVwM0ok3QLWA5Jc7vQEVA/ZzXxVS/eaKoKgEdNY6pzM4GSUpYCN+ZhSYXLg2OGfZ12VK88xCwG/R/
+	fbC5fjKJVxPQ9j9cbpQUvf8bD1WC2gV02emOmeNl+Gq6N72GrIx6LjCK/pWEWf7SOeQ8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x9Cj3-0005DM-8a;
-	Wed, 23 Sep 2026 02:28:46 +0000
+	id 1x9Cqg-0000TH-BL;
+	Wed, 23 Sep 2026 02:36:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhanxusheng1024@gmail.com>) id 1x9Cj2-0005DG-OA
+ (envelope-from <nzzhao@126.com>) id 1x9Cqe-0000TB-UE
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 23 Sep 2026 02:28:46 +0000
+ Wed, 23 Sep 2026 02:36:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Qnx3X924G9QmmHUvigsztGCTM2BJ9g+wVGTPwCOEhSE=; b=MxJr/zr+R9cNNXIKHDyB298b+X
- t/nqQsRGaG4VPVImILwwLUOQebcn2T7PSTV5BkerLF+xkkMQsV/c6rOHKiAWj4DVNV/H8K6/13ZUZ
- +32Prea0x9Er34j3Rz42CUHIGkaq5gqwmp73hn+1nWfFXNanpWlWrU77ABkCI75pUv/8=;
+ d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+ Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+ Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Wq6rDKDipwApsiUMergEejrorDpbyIXxDoYQljk9aaE=; b=mz3mVMBuwxBs7L4SEuRhV/gGTN
+ HsXJkMdjQ5X4YqTaYTRYw+Yf+qNdX9e0GDWll+9gpk47Ul4GNrcl/7Qtj8xyNqIrQq5thE1gL6zoT
+ oYUF7GtMjKSi9ZuUVT+4DCS6yqLVb8Ly5cbO7IdCWYOKS+jHAFfX/XX1/x0BTTkFz9nU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Sender:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Qnx3X924G9QmmHUvigsztGCTM2BJ9g+wVGTPwCOEhSE=; b=KzoEKiOAx0m4TawG/7WJadn12J
- U7le/S7MiwJuwZdJ0IZ3jupuOqNwnn8X5U3eAEy5x9sXl3JKOzOLEJJ9f96h3ceJBhM5MS5uxwaNK
- 6lwULMSLwLlq5M5migcCTgJnq2SgCIX6ynpF5UYoYin83vtLk2PnHszJlLKFk/+GMWdw=;
-Received: from mail-pj2-f12.google.com ([74.125.227.140])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x9Ciz-000129-Mx for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 23 Sep 2026 02:28:46 +0000
-Received: by mail-pj2-f12.google.com with SMTP id
- d9443c01a7336-2d91c22d27dso1664115ad.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Sep 2026 19:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790130520; x=1790735320; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=Qnx3X924G9QmmHUvigsztGCTM2BJ9g+wVGTPwCOEhSE=;
- b=BT+qinkUilxl6zXu6m43GaKa0T7DyJDfJUDOI4elPWMmOTdhnRWCuFnR/aMTKqia4V
- V50w4xkMaMoh6sdCuSiueUwsh9qE7aKxKiw8rpk2MSLsJkBrAIYD/P/85aEiNWSV6tQA
- J7BUvIVx5g1gu67AZKX2szDfGIWNzHefvIsW3CYwkqRMYOG51eQwz1RzM8r1+Xp8+KU7
- nUkYJIyP9N3q0FFe7hbNClPgw1faDLcho2dMUUTQBKxBuS4+p9ZdJxkH1ZmuaMoMIbTZ
- AF6E1930NbUTpRxDjX9RaQybflKHB3TCdWnIH/2vXvSelBfgXhdD+E5OesmYD25pLh5T
- j5HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790130520; x=1790735320;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Qnx3X924G9QmmHUvigsztGCTM2BJ9g+wVGTPwCOEhSE=;
- b=vihVKdFDS2FhWb+B7nul4eMz8mGC5UvA4IqZuvXPCa7xfK1O5OJ63GO/szN93Ha7Hq
- HH3YwL9rwYNnloFgnrAKDLnvF9INZBByFlbZcEu5qMXfsR4VC/pOEAs19sAOnxYMoW84
- ILPPEejl986Ms2TP0eRWNMCh8H4ERyqZHVaALgA+w/7WiLXdOF/Y/r0X3AL6cw1BRM14
- +phO4YT+FPd3I2oSo1WQXjmQ7x9OEX17CHGbEiFQq3tJh5CZGwYdu1dHHBJv6hLwXbeg
- g7OIZtWNVHzIVfUbjCa2nzqjsGxro6o1khmLxI/GZacRQIWY2OM1lZRphezqYKCp4b0t
- dykw==
-X-Forwarded-Encrypted: i=1;
- AKwUvByTL/Zhn989V5F1cJeneZuqIsYCh6phd/B3StMyOqnZTJ377IkvTcAgvkLd0rBuWdrSJWJOdQWiaYX+zQXtN/Wd@lists.sourceforge.net
-X-Gm-Message-State: AFuF++ljCII2zzgYjpCaEu0WMjlFJ2BttAnVjcQohyQZ3KqakS1kJVRt
- i25f8GGfTV7oPwh6aZGr1KntbnwUCMGkEoF7rqznvbermLkEAfcSriJHAYlXfA==
-X-Gm-Gg: AYBFou1tqiWDdBOXLxJWArckFYZtrrdT4TH6ZQy/4N5TWtLJ9sTVi/mwAaNBEprCiTl
- Y7rEDKvjG7L0xRlVYueM0/PSq84cNta0IudCPDLBqqD5T7zczyHDDnfUQKr4QCWf0dJHH3WUb6w
- 5vR7OPbDUf1YHsAjfLYi4WdAOVpC1tyM0W83ORKb8vysBtDOU837Tfc+3Jt5Wh8YZhfzA0IzhwW
- fBokT/N+x2M3cnzthduS7u+0YUt0Rd0LVt3xVv7k5sS57Ash5zBaEzaTetES3GJ5Tk+llnyLKzk
- rAFhQS40oHSYWsEyG//mr7ViTCE7aJr+9q/sHMmwofYbxDbpzarbLejhCJQzm/tufjOGtYv5Bwr
- b4JPCS4vcJ6/oF0E12V6JEIIs78qjqY0WDVIkRQ6vAXCSTiEAgo5Tqhr3dSoit07dFbGyJsfZ8t
- aBsYDwtUjPIAmDWLygM+wpouIqkxX6jEmrrxnIoS24c/7qejgpRtiZa6Eg/Nn+2UIPUVDWea9K1
- NO6xONcsdiI/9wFnF1lAQ==
-X-Received: by 2002:a17:902:f707:b0:2dd:c100:4b76 with SMTP id
- d9443c01a7336-2df69dd03e3mr11281765ad.45.1790130519921; 
- Tue, 22 Sep 2026 19:28:39 -0700 (PDT)
-Received: from osman.mioffice.cn ([43.224.245.178])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2df6a5a7b53sm3067265ad.21.2026.09.22.19.28.37
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Sep 2026 19:28:39 -0700 (PDT)
-From: Zhan Xusheng <zhanxusheng1024@gmail.com>
-X-Google-Original-From: Zhan Xusheng <zhanxusheng@xiaomi.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- Daeho Jeong <daehojeong@google.com>, Sunmin Jeong <s_min.jeong@samsung.com>
-Date: Wed, 23 Sep 2026 10:28:33 +0800
-Message-ID: <20260923022834.3222763-1-zhanxusheng@xiaomi.com>
+ bh=Wq6rDKDipwApsiUMergEejrorDpbyIXxDoYQljk9aaE=; b=XbXkk9f3fYcEwqb0Nn+7xAyVMN
+ GUwFSd5s/+Ki7N3FOGgXSPXqTptzS4Fw8EvCJAjHXE5kPRXonaLRw3y1sbWgdhrI1krEMFBENkZlP
+ RGtGQQx4hEnJArNbgQABVQpK/fKemWaQYtbdqMT9Ezu4tW0LxEv7M93L8I6t6/EPPvr0=;
+Received: from m16.mail.126.com ([117.135.210.8])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1x9Cqd-0003Nw-Nt for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 23 Sep 2026 02:36:40 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Wq
+ 6rDKDipwApsiUMergEejrorDpbyIXxDoYQljk9aaE=; b=T6RENoVuOCPYB/Z7Gg
+ rxywQK733nfT3zivSDlNZiodCGLV8JnudEuZbbavHY2JyvmIzzKdYTNFyS2Zpjsw
+ yAR/O/pzWJ905lRP3GbOy80paVVQ7jAI0NGCbs3Q912iSWg4E0YdujPo7PYcY0Dk
+ WpwToSKWkf6ZOp50+1fjr9gBU=
+Received: from nzzhao-ThinkCentre-M760t.mioffice.cn (unknown [])
+ by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id
+ _____wDXH+8UO7NqDuI4AA--.29453S2; 
+ Wed, 23 Sep 2026 10:36:05 +0800 (CST)
+To: Daeho Jeong <daeho43@gmail.com>
+Date: Wed, 23 Sep 2026 10:36:01 +0800
+Message-ID: <20260923023601.2191075-1-zhaonanzhe@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260922123443.2908902-1-zhanxusheng@xiaomi.com>
-References: <20260922123443.2908902-1-zhanxusheng@xiaomi.com>
+In-Reply-To: <CACOAw_z47SS7OKs_wU=-eiPLTMqF=7w6cekiLFK4ePVAhC8YNg@mail.gmail.com>
+References: <CACOAw_z47SS7OKs_wU=-eiPLTMqF=7w6cekiLFK4ePVAhC8YNg@mail.gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1x9Ciz-000129-Mx
-Subject: Re: [f2fs-dev] [PATCH] f2fs: recompute the pinned area boundary
- after resizing
+X-CM-TRANSID: _____wDXH+8UO7NqDuI4AA--.29453S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw17AFyDXFWkAry5Zw1kXwb_yoWfJwcEyr
+ nIvw1DAw1xtr4akF4DWa15ZrsxtF4UuryIk3y8Jry3Za4FvFZ5uF1rtrySyr4xJa1UJF4Y
+ qFsYq34IyrWj9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRfMa3UUUUU==
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBohVbK2qzOxVUaQAA3N
+X-Headers-End: 1x9Cqd-0003Nw-Nt
+Subject: Re: [f2fs-dev] [PATCH v2 08/14] f2fs: optimize small block size
+ large folio read
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,20 +87,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Zhan Xusheng <zhanxusheng@xiaomi.com>, Wenjie Qi <qiwenjie@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net
+From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Cc: Barry Song <baohua@kernel.org>, Nanzhe Zhao <nzzhao@126.com>,
+ Juan Yescas <jyescas@google.com>, Dev Jain <Dev.Jain@arm.com>,
+ linux-kernel@vger.kernel.org, David Hildenbrand <David.Hildenbrand@arm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Bo Zhang <zhangbo56@xiaomi.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Pengfei Li <lipengfei28@xiaomi.com>, Ryan Roberts <Ryan.Roberts@arm.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Wenjie's v2 from Aug 29 already covers this and more: it rejects a shrink
-that would not leave the tail, which mine would have let wrap, rechecks the
-tail after the freeze, and restores the boundary when the final checkpoint
-rolls the resize back.
+On Tue, 15 Sep 2026 21:33:15 -0700, Daeho Jeong wrote:
+> 1. read_blocks_pending underflow: If a folio already has ffs attached
+> (from previous writes/holes/reads), whole_folio_in_bio skips
+> incrementing read_blocks_pending. When the BIO completes,
+> f2fs_finish_read_bio() still decrements it, underflowing the counter.
+> 2. BIO split risk: If a large folio BIO gets split by the block/crypto
+> layer, f2fs_finish_read_bio() would call folio_end_read() prematurely
+> on the first completing piece.
 
-	https://lore.kernel.org/r/20260829060524.2656620-3-qiwenjie@xiaomi.com
+Hi Daeho,
 
-Please drop mine.  I searched the git history but not the list.
+Thanks for pointing this out.
+
+It seems I need to drop the whole_folio_in_bio change in the next version.
+(BIO splitting at the block layer can only be solved by read_pages_pending.)
+
+I understand that in that case I'd better re-measure the I/O performance of
+the whole patch series for the next version?
+
+Thanks!
+-- 
+Nanzhe Zhao
+
 
 
 _______________________________________________
