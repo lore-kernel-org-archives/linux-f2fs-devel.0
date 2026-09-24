@@ -4,110 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C986DC98304
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Sep 2026 03:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3CD33C98304
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Sep 2026 05:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=dMRwTsAVHBjQBfMoTuBUB4X/jKPI1zRtJg/h+IM8LxU=; b=PHBNGu1C8ytXg87KYTQUPtyTuT
-	zJiVHLQmafuNK3Gryp0qzg0WUk+qNJMWQmj7kurSgmzr3W1HZqkRvfVSSmjfv3qBh0nd4OMZf6igu
-	7SIWO+tzeAbaEiW9wzssvEiwwVjLwjpr2LwwLBwICxs2OKmJ7cXMgOmtkZsXrBrp5leY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=liQTh5kjtQyEO9HuC9yT0plZMNpwXLwAop+za8G05n4=; b=IPKONKZ1X+C0mgrIvQ/BrAfoMi
+	loV2TxKziujvVI6QklMdgYS154gMYkOAVFtUNOzQ6KIXVn37TscFiBPFQgr69WSzkyYebcUanw83q
+	7YoC2AUC+Ww+ctQFD7i6mm7GEa5Rwp4qArSKtrj8egXaZL8zWXlWNJ/yt7mpGqXmxDBY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1x9aW7-00052Q-P9;
-	Thu, 24 Sep 2026 03:53:01 +0000
+	id 1x9c1S-00024f-BJ;
+	Thu, 24 Sep 2026 05:29:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1x9aW6-00052J-CH
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Sep 2026 03:52:59 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3dK60agkbAAEtz0lbmmfsbqqje.hpphmfvtfsdpoufou.dpn@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1x9c1Q-00024R-W1 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Sep 2026 05:29:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HMrOM7vzfWJDRkwcvRQsGWRYxRgpYk4wHHutCRIrF7U=; b=Y6Ld7fcRIBP18T8TMuQyuiog+w
- LFXmg4Ti1yGW1LF0SFSVmFehn2iWMgEB2PFP+0RiI0q33mji9HLK5npgqM2u58/PHiUuMFFU95Uqu
- wq4VybPNXpkRcOSegQhWGH8dJAX3ZH2E3DCZ2aprbPg17E+MtIOvU6LktXpWJqSZQ2jk=;
+ bh=uqqgurFUBuh0v3CWe8T+W2CgMloyuUVeURTr7IePVEU=; b=Xcb4vYs0pCqUGL/W0eW9n69AyV
+ LP38Y36lZELw0mR89IeVdyik1cdGhovTzEjRT1Gk1Tz2w4dKmIYeE8apKIEylKhhNhd045h4VTUsh
+ zkuH/R/eY/cpNhTHUDBsm/fp9oOFEElUC7OsdDtNsVogtB+khYlRiaFxcLZ4qOId2UPY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=HMrOM7vzfWJDRkwcvRQsGWRYxRgpYk4wHHutCRIrF7U=; b=HPjyNpnT5Z/5vuRWSYPoQT91dZ
- Sfzc2/DZyL/DXln2985JWkBa799avyLdilnWqnlyLnXHzfzu9HT0ys2zAtzv4Jv3/LRtiwlt95ipW
- 5y7b2tKvHxESgDW6Ro1NTL4li2j5QVzAwGO1KipAlKSbIbNxwysVhPTH3WNFHaj6tllg=;
-Received: from mail-pz2-f41.google.com ([74.125.228.41])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=uqqgurFUBuh0v3CWe8T+W2CgMloyuUVeURTr7IePVEU=; b=U
+ z4XLmx5kTfMe8KVZPsxHKtr7tOSaoddDX1qgYXgWhQCWK9hkivnO37WZFz31oCcBv7XpNrf33lXIG
+ 4kV6tMX10czuqlNcShx6/6yoDutyJaReNy5Hp0vB90DU0ytWhhIBLnD7B+ddG1eKLIm0/QJBkD8l0
+ rtQsr5bldTVndOnw=;
+Received: from mail-oi2-f6.google.com ([74.125.231.198])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1x9aW3-0001pj-I6 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Sep 2026 03:52:59 +0000
-Received: by mail-pz2-f41.google.com with SMTP id
- d2e1a72fcca58-85a4329731cso921339b3a.3
+ id 1x9c1Q-0002vi-U0 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Sep 2026 05:29:29 +0000
+Received: by mail-oi2-f6.google.com with SMTP id
+ 46e09a7af769-8049bae1780so711571a34.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 23 Sep 2026 20:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790221974; x=1790826774; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=HMrOM7vzfWJDRkwcvRQsGWRYxRgpYk4wHHutCRIrF7U=;
- b=kzMRew9lrOhJ4noYk3BCWhQGYtAAWVydSG4BxSXGLZnVBTuL88iX3aYfnRezkEtEKU
- INkHGygKSBWnboGhbq74SxlRu5nhU7mCzQqht+45g9bt6EpcAJV9oum7IAbbfatc7628
- X/GAHgoZ5AR6sfgY/JPGNSVzGRjTqXjX50zavTZZZ69g/8eqU3vrsnKc4kSYjf2Uyo8u
- w4DtPwi1m8gETWQ62ZDr3KvD9eZ1eF11Sg7UZYbo6NqsfN/bDTzeS3pUjE3sDrIWlxUH
- 7wJrOc13tVWEj8fFBDLRk9GEP+NkIZErmwPX6X60QgR5Ju27lHIrx7Z+1WdcAZRqv7Zq
- 2eAQ==
+ Wed, 23 Sep 2026 22:29:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790221974; x=1790826774;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=HMrOM7vzfWJDRkwcvRQsGWRYxRgpYk4wHHutCRIrF7U=;
- b=T1ISS0s+kdkdvbRWjBDiQoQeCtg/9hmAzAOv6pJ5QSBic6xIBSxTWyD+WgW/PTfEIE
- mtPeGv4G+QbzkM9OR3JCDedP7s5M75nja3ZQelKFbHoKP8liankrysSgSohIcBJJGJ1F
- Ckin6tIcAJv8x0dfmftg94c4BBTKoyjEw5DtnH+BxP9K9PVbEJeXgxdeXqjQ507pgMQk
- /kw/wrPUfLraB8Wp/2BsuISO+M7uRCTOP3wjjYF1IPAl5AyV6BNyICejkq4S3JBC2AI1
- fGYaJu5I7HYdOoPcphVNxnh6Gmx7V7VtEg1Q7E8V+K0o/SlhkBewe8hn7zyJcsUY5+Ka
- Ddug==
-X-Gm-Message-State: AFuF++k5swNKLVzSHuDXC72ing0Qer23qt5n2gwfftMmawCkg3imGGXL
- oGRQJEXAE+7aYfmYQEyxBboukgljv3+BxSaJSeR+Smm381bNiv77bX+6
-X-Gm-Gg: AYBFou2KoVbrXwOA+Uo+P39B6u1Cn6BOwKPtg1CPk7yPOEkXD5zaS//ceK/0LvoztYS
- 0jQZgCa3PpUuQ26S+0WvxYwXbn48UGkeQlI6OYO7i/G132PBU2O12Na3fTRxBS64HGJ7u9WC7kK
- BfphoyEHP3tKIWIYc/yjL0Kyw4WK+Jbb2ZT+tewlNw/pcfNKRY66KvZJakmAcv7c/yvPP8FWX4H
- L7KzB9qnZZ2/8Cr0qMx6ELBH2qzjqzTJDOVK498ocOiZRdtpqVYnxdSX95p3qtgxZd18q8n6ZVS
- /NCIEoDUFde+BtJHZcMVwKOlZSVUJHsd3nbIaz8uSazZdlXzkgr7cZW/FEl7rbvjjsuQD/dprEX
- o98nKwc3LDiIRcpXHM+/BkY5FP3bheuE8x9HPdip5/e3J/CYWrCm7GlAPVOtbt1XXyhn/5IPDss
- l9tk6T5Yz+r6j1RK+51i+VNhuGrcOS+3vE6vG7MPEtWraVKkYH2FxG3ZaQTW4VMXU65n/b9Jlqs
- trDNZC+j5qxcNfsesCDYDWH+r4kLc0Bzt4=
-X-Received: by 2002:a05:6a00:6c88:b0:868:f29f:67c9 with SMTP id
- d2e1a72fcca58-87e9899515bmr958238b3a.9.1790221973831; 
- Wed, 23 Sep 2026 20:52:53 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-87d1cfbcc08sm2188359b3a.15.2026.09.23.20.52.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Sep 2026 20:52:53 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Thu, 24 Sep 2026 11:52:46 +0800
-Message-ID: <20260924035246.3604446-1-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260829060524.2656620-1-qiwenjie@xiaomi.com>
-References: <20260829060524.2656620-1-qiwenjie@xiaomi.com>
+ d=1e100.net; s=20260707; t=1790227763; x=1790832563;
+ h=content-type:to:from:subject:message-id:date:mime-version
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=uqqgurFUBuh0v3CWe8T+W2CgMloyuUVeURTr7IePVEU=;
+ b=kYwpiK0TkhJWWN0BsH+gdfGbZ+SpaJepAU6DG/58i8jPdpR6S4WiQLC+w0LS0VWAMD
+ onkHr3E6Oketmt/NPzT+fkpM3o755Xxew/3NkMeLOA0poqt2uhTsyvFdv65QYuDSS3Ki
+ M+f7cFznOKz/GiLzxPaYus+ejl1BOnw/7o+kWpflfShUw7RlpZ/Zfti9ea0e6V5iZvBP
+ ITTT64beiDao3qWmqjpW4CucTgzTdTApfy8258L2ZXWav9Z34u6ycOqeOtt9Z+wAkgmF
+ XXw0GL7Ygxp58cXOpwJBqgjpTcDVQaeRSTq0Kq1oSJcSlzGLiwYnaMFan1/U7cNa5Dot
+ a+vg==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzhSic/Yss9b+C7nvnaoqF4eUGBY0ym2X1Bm3TXuiIIZd7wkhjsXbh4IaAbxJEwBLAPd6heDVSHxuTvamsCOx0x@lists.sourceforge.net
+X-Gm-Message-State: AFuF++kx0UvtKGdxvBVVK0QnM5E9ZVDLuwkXXpjzCDrWgsJX+vp9vDBB
+ SnlOzRSLDZaDxtzENh1iJgvk31j24S/Gpm6egYcA3pyN9fZyo/3pKCxT4TYa90WhmLxgdDhm79B
+ 0TtUVCHRxHA4BXaGfJXqzObpCq03ovxPb5DirxJw7fVMq63wQJ5sljX9pBjg=
 MIME-Version: 1.0
-X-Headers-End: 1x9aW3-0001pj-I6
-Subject: Re: [f2fs-dev] [PATCH v2 0/2] f2fs: fix online resize state
+X-Received: by 2002:a05:6808:1a06:b0:4c6:7ce9:1bf0 with SMTP id
+ 5614622812f47-4d72cb3f361mr1448749b6e.20.1790226036854; Wed, 23 Sep 2026
+ 22:00:36 -0700 (PDT)
+Date: Wed, 23 Sep 2026 22:00:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6ab4ae74.80e1c6cc.1e8e5f.000c.GAE@google.com>
+From: syzbot <syzbot+dfcbc1741488709db4b2@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ syzkaller-bugs@googlegroups.com
+X-Headers-End: 1x9c1Q-0002vi-U0
+Subject: [f2fs-dev] [syzbot] [f2fs?] UBSAN: shift-out-of-bounds in
+ __f2fs_commit_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,35 +97,96 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, qwjhust@gmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- qiwenjie@xiaomi.com, Qiuyang Sun <sunqiuyang@huawei.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk and Chao,
+Hello,
 
-Just a gentle ping on this series.
+syzbot found the following issue on:
 
-On Fri, Aug 29, 2026 at 02:05:22PM +0800, Wenjie Qi wrote:
-> Online filesystem shrink changes both persistent SIT state and the
-> in-memory geometry used by pinned allocation. Two stale-state paths can
-> leave old information active after the main area is reduced.
->
-> Patch 1 makes the resize checkpoint drain existing SIT journal entries
-> through the normal SIT-area write path even when there are no newly
-> dirty sentries. Patch 2 refreshes the pinned allocation boundary after
-> every geometry change and rejects a shrink that conflicts with the
-> configured resizable tail.
+HEAD commit:    a8c591ed6b67 Add linux-next specific files for 20260922
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16f98405580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=19be71c9d7429efd
+dashboard link: https://syzkaller.appspot.com/bug?extid=dfcbc1741488709db4b2
+compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f98405580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148ea515580000
 
-Patch 2/2 has received Daeho's Reviewed-by after the concurrent-remount
-rationale and test were clarified.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08a28cd722c6/disk-a8c591ed.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e1c983b28f94/vmlinux-a8c591ed.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ff7b15260591/bzImage-a8c591ed.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/3e937ffb1f11/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16029405580000)
 
-Please let me know if another revision or additional testing is needed.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dfcbc1741488709db4b2@syzkaller.appspotmail.com
 
-Thanks,
-Wenjie
+loop0: detected capacity change from 0 to 40427
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/f2fs/super.c:3950:27
+shift exponent 4294967287 is too large for 64-bit type 'sector_t' (aka 'unsigned long long')
+CPU: 1 UID: 0 PID: 5622 Comm: syz-executor329 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x30 lib/ubsan.c:233
+ __ubsan_handle_shift_out_of_bounds+0x36d/0x400 lib/ubsan.c:494
+ __f2fs_commit_super+0x43e/0x4d0 fs/f2fs/super.c:3950
+ sanity_check_area_boundary+0x7c5/0xe20 fs/f2fs/super.c:4040
+ sanity_check_raw_super fs/f2fs/super.c:4215 [inline]
+ read_raw_super_block fs/f2fs/super.c:4625 [inline]
+ f2fs_fill_super+0x1920/0x7fa0 fs/f2fs/super.c:5160
+ get_tree_bdev_flags+0x430/0x4f0 fs/super.c:1872
+ vfs_get_tree+0x92/0x2a0 fs/super.c:1932
+ fc_mount fs/namespace.c:1198 [inline]
+ do_new_mount_fc fs/namespace.c:3772 [inline]
+ do_new_mount+0x319/0xdc0 fs/namespace.c:3848
+ do_mount fs/namespace.c:4181 [inline]
+ __do_sys_mount fs/namespace.c:4394 [inline]
+ __se_sys_mount+0x31d/0x420 fs/namespace.c:4371
+ do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+ do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2eb02deeaa
+Code: 56 53 b8 9d 00 00 00 0f 05 83 f8 ea 75 a2 c7 05 e4 5b 09 00 00 00 00 00 eb 96 e8 51 05 00 00 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 d8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcaf01ba78 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffcaf01ba90 RCX: 00007f2eb02deeaa
+RDX: 0000200000000080 RSI: 0000200000000000 RDI: 00007ffcaf01ba90
+RBP: 0000200000000000 R08: 00007ffcaf01bad0 R09: 0000000000000000
+R10: 0000000000200000 R11: 0000000000000286 R12: 0000200000000080
+R13: 00007ffcaf01bad0 R14: 0000000000000003 R15: 0000000000200000
+ </TASK>
+---[ end trace ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
 
 _______________________________________________
