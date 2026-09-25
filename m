@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 214BDC9832E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Sep 2026 21:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E56BCC9830E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Sep 2026 22:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QmPyUwL2zz5HUvttDkcb/DCMUW2mVxg+zOJgZbZvVSo=; b=LwakigCusm9KIp2uzsLAYuRbO0
-	b0owJaNk/n8xnNwgoxALpK4DxIgDzyfk5AHog7e7BvTHItflMQbJvamXUqvCBeIgmUhbmVEan/PaG
-	St7vCE5VMr+ahYQot18xQQFE8rhNgZmV2AT6DRufFQnRsyNuoDcQz4jMxIWForECpmj8=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=nBr+TI2qaM82OnqVnJbFCjDNXL1Id+P6pQJZLip+rX8=; b=V1lbi8fuje02uRlkf6QLhuDx5T
+	/klUFWhtqrD5tsrALof3WcespPTrOGDPF3n9wT8m0rkWD1SwTO0wGBMWxnAQPgANFbZ/aEogHouMz
+	WOIHTJpDBCeVPau2yapB4dq0yR33U2wTUO7vtIseD9jcg2ls7+5Rz3OSKMEvbno6Moek=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xADdo-0008Ve-Px;
-	Fri, 25 Sep 2026 21:39:36 +0000
+	id 1xAE5V-0007k6-Sr;
+	Fri, 25 Sep 2026 22:08:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1xADdn-0008VV-HD
+ (envelope-from <ebiggers@kernel.org>) id 1xAE58-0007jT-3c
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Sep 2026 21:39:35 +0000
+ Fri, 25 Sep 2026 22:07:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qGAVtFU1ZWDmCtLaT+G7B5o5ljsTh3nqCzq4ca6rlME=; b=LDwtoV/yEC9nccmsAKnUZWD+Up
- OpMa2/GbjjO3vgj793j3IAiN38QmNX5yNgVGaYxxbYjc7UfR/dV9Lsuqqyw/fuOcuUva5B4YIAqWf
- 9/Q83CozgFPqPtCo+TK2Y+2trnBLzGnivOqpSTHB1mWlx3NlWvyQg8SXkAjmRPP8jqz0=;
+ bh=k8g2DRYbUFc/WlQ2pAkletlhQtrwe1F0NZCL2F3+zUE=; b=NlFmIlub9J1py1D09Ej8LtcqYB
+ /iDchGTggIkrrEEwWo7RReFH6v68wCervu2aDOWXSgZi22HSGMCpAd3o/BgsR763BxyA0ogyDCkId
+ q+SGWclRzMqRq3qLyPQwVTdvRtx12kugX+ecXik5SDAlbaGGpj1SwS1gCVYlI6vI/2ZU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qGAVtFU1ZWDmCtLaT+G7B5o5ljsTh3nqCzq4ca6rlME=; b=SiFHsj5ipR/PJXLXcZJYPmf9tW
- RuSWDNbDQh+rm4YiG0dP3fxuakpxFGQT63H5eYIafUPuu+GbldA7gUHglYpXq/53wqyAzJF3cQNrt
- tKkzErDWXAcWSaMP3JwW8bqx7JQLwaE8rQhxG4HQwB7s+5GlofpGBKi8msFbnRbrIRxo=;
+ bh=k8g2DRYbUFc/WlQ2pAkletlhQtrwe1F0NZCL2F3+zUE=; b=lbDhTcqC58AoPLgbamL9w5qNCn
+ qy0LQvA3qeJpjrybXqUF3B8F2GouxhLciW2yQQSIe61ArMmBCJHcyPHOQaoT9h+LECLwDUbEhHUi9
+ i6OWyILn+6uNBX6/FO6SDVNujzQytg5Ft5sFHHE/q6L3BMOVurIBz7DQykhJOjHhzr74=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xADdm-0000Vw-Rg for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Sep 2026 21:39:35 +0000
+ id 1xAE54-000164-6t for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 25 Sep 2026 22:07:47 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id DE20960136;
- Fri, 25 Sep 2026 21:39:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CA41F000FF;
- Fri, 25 Sep 2026 21:39:27 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 871CB60136;
+ Fri, 25 Sep 2026 22:07:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F871F000FF;
+ Fri, 25 Sep 2026 22:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1790372368;
- bh=qGAVtFU1ZWDmCtLaT+G7B5o5ljsTh3nqCzq4ca6rlME=;
+ s=k20260515; t=1790374060;
+ bh=k8g2DRYbUFc/WlQ2pAkletlhQtrwe1F0NZCL2F3+zUE=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=Uq3jK6lzFPBk2mUB+21kzIEJ3e7xo6lES0MeUECU8KDNeBmretRa77Q3OlwhtoQmE
- JG8Dx0lTEjtjm2k8juBgSTzHaF2rroNVk1zww7OONmnk0v+x0FA56wC0MjZCrNSV/e
- H2pVr0Zo24UJv/vG9L8beZRRHMlmE7YAN/RF7/BIf3sCxDQZGCKJr+E+v3UjzyyNbI
- MirHao5U2KikMGzvv4h38MAzkcRcWP7PU8EZ2aiQo71N4cAbsRUfMEcbTXCJ/xYXPz
- HyiCZr2awcrNsxXI7Kdq8YVAeSXWzjieQzGLgVnG89GGjnkOohpJbH4QMHQxQzDjRf
- Ccal7IQ4ASL7g==
-Date: Fri, 25 Sep 2026 14:39:26 -0700
+ b=Blm+98gnNSmmT+B1FkGka5xELWe0Sas5kxh6t5tiDl8w5RPy2GIR156rg32qYAB8h
+ 0WC2HIz9I9oTU8BMJGRhVpVPYDGzzRjyfJveq8tYuLsmMYq8PIg/rRdFm5JUc5XTUv
+ 91GhFUgvrNiWWbRRvN59hi3Fpb3qet+Bo+uXdpaPUiXnSpzo4uJ6julwsKMhb0hI0F
+ fCnTm7iQaDrz5G7/S+Ybr+QBIQ138M/AuG4leepfCPOBvTzVcKAe7YoDWwTXpZPdWD
+ sWKIAoZzsyb+GWb/CE2bNAPLaHe7PFEY5aiF2ExoAzy1jo3Uh5k6xUgU2dktwiDBax
+ IMsJ0+SwguBcQ==
+Date: Fri, 25 Sep 2026 15:07:37 -0700
 To: Michal Wilczynski <m.wilczynski@samsung.com>
-Message-ID: <20260925213926.GA1903@quark>
-References: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
- <CGME20260925113507eucas1p2ddb94f2077b679426aa86dd1d492eaf3@eucas1p2.samsung.com>
- <20260925-lz4-vendor-upstream-v1-9-1c7ffbe21c4b@samsung.com>
+Message-ID: <20260925220737.GB1903@quark>
+References: <CGME20260925113450eucas1p2fcf838f00f35e1bce0ca04a694cd0cd2@eucas1p2.samsung.com>
+ <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260925-lz4-vendor-upstream-v1-9-1c7ffbe21c4b@samsung.com>
-X-Headers-End: 1xADdm-0000Vw-Rg
-Subject: Re: [f2fs-dev] [PATCH RFC 9/9] MAINTAINERS: add an entry for the
- LZ4 compression library
+In-Reply-To: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
+X-Headers-End: 1xAE54-000164-6t
+Subject: Re: [f2fs-dev] [PATCH RFC 0/9] lib/lz4: stop forking upstream LZ4,
+ vendor it instead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,38 +117,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Sep 25, 2026 at 01:27:39PM +0200, Michal Wilczynski wrote:
-> lib/lz4/ has never had one: get_maintainer.pl returns only the LKML
-> fallback for every file in it, including include/linux/lz4.h, which eight
-> subsystems build against.
+On Fri, Sep 25, 2026 at 01:27:30PM +0200, Michal Wilczynski wrote:
+> The in-kernel LZ4 is a fork. The decompressor was last synced with
+> upstream v1.8.3 in 2018 and the compressor with v1.7.3 in 2017, both by
+> hand. Upstream has made 488 commits against lib/ since, and the gap is
+> maintained one cherry-pick at a time.
 > 
-> This matters more now than it did. With the previous patches lib/lz4 is
-> vendored upstream sources, and someone has to bump them to new upstream
-> releases and decide what the kernel-side glue may do. I am willing to do
-> that, so add myself as its maintainer.
+> That has left real bugs in place for example the forked
+> LZ4_decompress_fast() has no bounds checks, so corrupted input runs off
+> the output buffer in both directions. 
 > 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cc3cae2e378b34aeb705cef654c720ca9f2ba223..989e1b5fab21432dd7042d1e60c4bbad85beb925 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15606,6 +15606,12 @@ S:	Supported
->  F:	drivers/net/pcs/pcs-lynx.c
->  F:	include/linux/pcs-lynx.h
->  
-> +LZ4 COMPRESSION LIBRARY
-> +M:	Michal Wilczynski <m.wilczynski@samsung.com>
-> +S:	Maintained
-> +F:	include/linux/lz4.h
-> +F:	lib/lz4/
-> +
+> This series vendors the upstream sources unmodified and adapts them at
+> build time, so a re-sync becomes a directory copy:
 
-Should this entry cover lib/decompress_unlz4.c and
-include/linux/decompress/unlz4.h as well?
+At a high level, this looks good to me, and it's similar to what was
+done with zstd.  I don't see any obvious issues with the integration.
+
+There are disadvantages to directly integrating external projects like
+this, vs. writing a small implementation from scratch for the kernel.
+But the existing LZ4 code in the kernel isn't that, but rather a fork
+from upstream anyway, and it's clearly not being maintained properly.
+
+The upstream LZ4 codebase also already avoids many of the typical
+incompatibilities with Linux kernel code that are often seen in
+userspace projects (such as assuming FPU/SIMD/vector instructions can be
+used at any time, or that the stack size is infinite, or that the C
+standard library is available, or that it's reasonable to have hundreds
+of files or 100MB of test data, etc.).
+
+And writing properly optimized compression/decompression code is quite
+difficult.  So yes, syncing with the latest LZ4 upstream seems like the
+right choice for the kernel.
 
 - Eric
 
