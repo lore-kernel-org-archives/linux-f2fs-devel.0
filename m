@@ -4,78 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E56BCC9830E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Sep 2026 22:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7273CC98328
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 26 Sep 2026 09:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=nBr+TI2qaM82OnqVnJbFCjDNXL1Id+P6pQJZLip+rX8=; b=V1lbi8fuje02uRlkf6QLhuDx5T
-	/klUFWhtqrD5tsrALof3WcespPTrOGDPF3n9wT8m0rkWD1SwTO0wGBMWxnAQPgANFbZ/aEogHouMz
-	WOIHTJpDBCeVPau2yapB4dq0yR33U2wTUO7vtIseD9jcg2ls7+5Rz3OSKMEvbno6Moek=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=pdT4P9TBqnjCEZ/wNNn/g9XOv0gl52N+FKZIB1ZHYB0=; b=O3DYmL3UTPQI6/Koa+IIctRXOP
+	eIgjyOGp6Y8d5IWALYproXJp8DHIY/0hsPuLoWaa9tgvm+IkRpzMQF3uhxjlJX040CB7hRM7yrJvt
+	kf32xjkuSE1jMCHDF2wgRoV4jmhLD+kb0EmX7jOgArU0h+7avIfMb8cdUxkjjYc5qXYk=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xAE5V-0007k6-Sr;
-	Fri, 25 Sep 2026 22:08:11 +0000
+	id 1xAP03-0006Nw-Mp;
+	Sat, 26 Sep 2026 09:47:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1xAE58-0007jT-3c
+ (envelope-from <jsjlee1020@gmail.com>) id 1xAOzm-0006Nf-UZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Sep 2026 22:07:47 +0000
+ Sat, 26 Sep 2026 09:47:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k8g2DRYbUFc/WlQ2pAkletlhQtrwe1F0NZCL2F3+zUE=; b=NlFmIlub9J1py1D09Ej8LtcqYB
- /iDchGTggIkrrEEwWo7RReFH6v68wCervu2aDOWXSgZi22HSGMCpAd3o/BgsR763BxyA0ogyDCkId
- q+SGWclRzMqRq3qLyPQwVTdvRtx12kugX+ecXik5SDAlbaGGpj1SwS1gCVYlI6vI/2ZU=;
+ bh=BkkBSW8zyrhYaiSfn9iaShOaguO3DdlMUvXnosyb8cc=; b=C1VUUboKL5AMs5psKVQ1GJCEWD
+ 0kl++wKXNVLMuRAlgmhj+L0fLziO3VQSCTKuS2mGINolwq4UqpMLO+dNk53OIguOrOYAEh8l+xvs4
+ YnmiwyCPGde1DVVEIfO/SRhakRlRCW+dRgUY0zn8otnGjQvNl287+S6xBNUjhH6duRrM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=k8g2DRYbUFc/WlQ2pAkletlhQtrwe1F0NZCL2F3+zUE=; b=lbDhTcqC58AoPLgbamL9w5qNCn
- qy0LQvA3qeJpjrybXqUF3B8F2GouxhLciW2yQQSIe61ArMmBCJHcyPHOQaoT9h+LECLwDUbEhHUi9
- i6OWyILn+6uNBX6/FO6SDVNujzQytg5Ft5sFHHE/q6L3BMOVurIBz7DQykhJOjHhzr74=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xAE54-000164-6t for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Sep 2026 22:07:47 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 871CB60136;
- Fri, 25 Sep 2026 22:07:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F871F000FF;
- Fri, 25 Sep 2026 22:07:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1790374060;
- bh=k8g2DRYbUFc/WlQ2pAkletlhQtrwe1F0NZCL2F3+zUE=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=Blm+98gnNSmmT+B1FkGka5xELWe0Sas5kxh6t5tiDl8w5RPy2GIR156rg32qYAB8h
- 0WC2HIz9I9oTU8BMJGRhVpVPYDGzzRjyfJveq8tYuLsmMYq8PIg/rRdFm5JUc5XTUv
- 91GhFUgvrNiWWbRRvN59hi3Fpb3qet+Bo+uXdpaPUiXnSpzo4uJ6julwsKMhb0hI0F
- fCnTm7iQaDrz5G7/S+Ybr+QBIQ138M/AuG4leepfCPOBvTzVcKAe7YoDWwTXpZPdWD
- sWKIAoZzsyb+GWb/CE2bNAPLaHe7PFEY5aiF2ExoAzy1jo3Uh5k6xUgU2dktwiDBax
- IMsJ0+SwguBcQ==
-Date: Fri, 25 Sep 2026 15:07:37 -0700
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Message-ID: <20260925220737.GB1903@quark>
-References: <CGME20260925113450eucas1p2fcf838f00f35e1bce0ca04a694cd0cd2@eucas1p2.samsung.com>
- <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=BkkBSW8zyrhYaiSfn9iaShOaguO3DdlMUvXnosyb8cc=; b=f
+ ihlgGMFFQuqrHavr1O7CwNZc5bP+4+kXc8vhE/cAiq6Gko2gIt40EdaeB55QXIWuBh2lRLak6PMvT
+ dwYqBlaNZ6j7TNXrlcoyrrNezfDM6xVEiXlOENB/YyLnD7GJeHOo8vPZURKiTpzQUe0u10Rs94TqE
+ tAaMedeO7UutfkAs=;
+Received: from mail-pj2-f41.google.com ([74.125.227.169])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xAOzn-00080s-AI for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 26 Sep 2026 09:47:03 +0000
+Received: by mail-pj2-f41.google.com with SMTP id
+ 98e67ed59e1d1-3a0bd71827eso804579a91.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 26 Sep 2026 02:47:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1790416017; x=1791020817; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=BkkBSW8zyrhYaiSfn9iaShOaguO3DdlMUvXnosyb8cc=;
+ b=hbmInpGEBzg8xUEp3bXdKgMZsGJgCGaCZ7DPbraEdUONrXfPqUNAK50JiIQ+SC5zhQ
+ q0Gh87RuZfQHHKWr4oLJotopMWWRr3tLOz+xRwVYMVBt/aZ4if3THtX9DT8HpPm7JMpT
+ yD6PCjqIjxZX7hJVSa2G7tWvpyoqaFBMNxIxu+wRUj+wDYbuJBungOy9ncwYwuTLZJby
+ XnKKrA5GWtJ6xNc09SxIY1oCXfJfrfaXSmM8U88ct7EtgzZwrPv3Yd9NVeQUfq/FqNYq
+ xmhwaELf99AjmyxKt0syXYJYRTm7B4SSMVEYK2YGP9TwiB5Zfq2t3tdgn1dmcrKOaSsC
+ M6cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790416017; x=1791020817;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=BkkBSW8zyrhYaiSfn9iaShOaguO3DdlMUvXnosyb8cc=;
+ b=gNDHdNTrtAcrbQJEd/5h4HW7n84r4CwtJ+qBmwCX8T2n1vdbpf4NWNNUzCS284J7Cg
+ NVfCS30Nn907yCABuwPyZgSgUkHr2pRhMe56G7f97j00NcZGq+7Veiodm9j0oCK1V1F8
+ bzWGAXTVFBq20reei4G1pJE5tGIf07gldmsJxIjyyL7X0kmTphOKwJSIxcT3QhHm6X5N
+ k1GlAXjjgO2iPeCskOq2kDt1W39l48CPL4Gzr4068lpji1Jj5Rlsg9mhn4qTCEbsljiF
+ JR1017SL8qCTIvauzWVNuBy7vevLt4DnTHC/uBnXoBRYhDr0XK3FbNanvnjqyK31JrBc
+ QKWA==
+X-Gm-Message-State: AFq9FYLJ/dQXuOQTOABuaoOt/6/mMcPazaalhirqy+I62gVC80++ytdv
+ zaTQd88xrlXHH+qjxttkVruF93A6xzaVHq+6hg7p+yAmUrZ7dTxp3zHa
+X-Gm-Gg: AYBFou2ZNm5wSDeieKoqd7QEeEFOWw+ycfGUvMvmIo1ttS/mmdhEj+TGwiOxb139Tsq
+ ZaEfIGWG25y6rKOLMA4g3gz8ETY05g0lMYvRJqo33wvnbf1eJprCVOPE172pWS9FrZE67jmr6dD
+ cDw1gtjbm/XXXKz1E+pMnyLtDJNnIGExTLLM7TNM3h5T1fdLiyW1SGopVvdsv11Ry7I24kOFu3s
+ sZb9ECkNIg2Ix83C2WFgzFYuopYjszM1pSKvinkzKVYIZGNl2Xw+qNLRDiMYmGvjh6egeMjB94W
+ QZoywi4g3mV6+hxH4DMOpe3P0KJB8elGAADLMdxGsxh1pettUJWYEUOU9hVYdVaVIxzeXr1/9Qv
+ Nlh6I3CVjzkQXrsHzpLuqi4sguKIwODTbeiNvkKKMFBSVweSmYp1D1vLDcMjSwZlYTNUFbSSJqY
+ 58jgMYBCg8qE7uWDKJZOlCUydusuAppWJnJ61fgKKmQao4X6dsDE/LOQON9BbJ5zf52o54+KWit
+ JkdltcxHVzrbmgl3IQh9hn5fKM2MLd39bHXKbqEEHSVlly/DqQgvVXiJAqPSp+kBNeLMz6ybKEw
+ zg+Ekmk=
+X-Received: by 2002:a17:90b:48d0:b0:3a0:f432:2684 with SMTP id
+ 98e67ed59e1d1-3a0f4322bffmr34471a91.9.1790416017472; 
+ Sat, 26 Sep 2026 02:46:57 -0700 (PDT)
+Received: from
+ codespaces-2362ac.ktkhmpmw22vebpok31ngjx2qsb.ix.internal.cloudapp.net
+ ([23.97.62.116]) by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a0b7d11124sm10180912a91.10.2026.09.26.02.46.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 26 Sep 2026 02:46:55 -0700 (PDT)
+From: Seongjae Jeong <jsjlee1020@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Sat, 26 Sep 2026 09:46:48 +0000
+Message-ID: <20260926094648.12124-1-jsjlee1020@gmail.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
-X-Headers-End: 1xAE54-000164-6t
-Subject: Re: [f2fs-dev] [PATCH RFC 0/9] lib/lz4: stop forking upstream LZ4,
- vendor it instead
+X-Headers-End: 1xAOzn-00080s-AI
+Subject: [f2fs-dev] [PATCH] f2fs: batch block invalidation in
+ f2fs_do_zero_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,69 +118,77 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-mips@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Bill Wendling <morbo@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Sungguk <sungguk.na@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>, Minchan Kim <minchan@kernel.org>,
- Helge Deller <deller@gmx.de>, x86@kernel.org,
- Russell King <linux@armlinux.org.uk>, Ingo Molnar <mingo@redhat.com>,
- Yann Collet <yann.collet.73@gmail.com>, Gao Xiang <xiang@kernel.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, llvm@lists.linux.dev,
- Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- linux-crypto@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
- Nick Terrell <terrelln@meta.com>, Borislav Petkov <bp@alien8.de>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-parisc@vger.kernel.org,
- Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Thomas Gleixner <tglx@kernel.org>, Justin Stitt <justinstitt@google.com>,
- Phillip Lougher <phillip@squashfs.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Sep 25, 2026 at 01:27:30PM +0200, Michal Wilczynski wrote:
-> The in-kernel LZ4 is a fork. The decompressor was last synced with
-> upstream v1.8.3 in 2018 and the compressor with v1.7.3 in 2017, both by
-> hand. Upstream has made 488 commits against lib/ since, and the gap is
-> maintained one cherry-pick at a time.
-> 
-> That has left real bugs in place for example the forked
-> LZ4_decompress_fast() has no bounds checks, so corrupted input runs off
-> the output buffer in both directions. 
-> 
-> This series vendors the upstream sources unmodified and adapts them at
-> build time, so a re-sync becomes a directory copy:
+f2fs_do_zero_range() calls f2fs_invalidate_blocks() for each mapped
+data block. Each call acquires the SIT sentry write lock and updates
+segment information.
 
-At a high level, this looks good to me, and it's similar to what was
-done with zstd.  I don't see any obvious issues with the integration.
+Batch contiguous physical block addresses into a single invalidation
+call. A NEW_ADDR slot does not end a run if the subsequent physical
+addresses are contiguous.
 
-There are disadvantages to directly integrating external projects like
-this, vs. writing a small implementation from scratch for the kernel.
-But the existing LZ4 code in the kernel isn't that, but rather a fork
-from upstream anyway, and it's clearly not being maintained properly.
+In a microbenchmark on an F2FS loop device, a fresh 64 MiB file was
+written and fsynced before timing fallocate with FALLOC_FL_ZERO_RANGE
+flag over the whole file. Across 20 runs, mean syscall time
+decreased from 16.436 ms to 10.011 ms (39%).
 
-The upstream LZ4 codebase also already avoids many of the typical
-incompatibilities with Linux kernel code that are often seen in
-userspace projects (such as assuming FPU/SIMD/vector instructions can be
-used at any time, or that the stack size is infinite, or that the C
-standard library is available, or that it's reasonable to have hundreds
-of files or 100MB of test data, etc.).
+Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
+---
+ fs/f2fs/file.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-And writing properly optimized compression/decompression code is quite
-difficult.  So yes, syncing with the latest LZ4 upstream seems like the
-right choice for the kernel.
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b0bdc7a977b9..c227b7603731 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1713,6 +1713,8 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
+ 	unsigned int ofs_in_node = dn->ofs_in_node;
+ 	blkcnt_t count = 0;
+ 	int ret;
++	block_t blkstart = 0;
++	unsigned int blklen = 0;
+ 
+ 	for (; index < end; index++, dn->ofs_in_node++) {
+ 		if (f2fs_data_blkaddr(dn) == NULL_ADDR)
+@@ -1739,16 +1741,30 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
+ 		if (dn->data_blkaddr == NEW_ADDR)
+ 			continue;
+ 
++		/*
++		 * Flush before validation so a repeated block address
++		 * can be detected through the SIT bitmap.
++		 */
++		if (blklen && blkstart + blklen != dn->data_blkaddr) {
++			f2fs_invalidate_blocks(sbi, blkstart, blklen);
++			blklen = 0;
++		}
++
+ 		if (!f2fs_is_valid_blkaddr(sbi, dn->data_blkaddr,
+ 					DATA_GENERIC_ENHANCE)) {
+ 			ret = -EFSCORRUPTED;
+ 			break;
+ 		}
+ 
+-		f2fs_invalidate_blocks(sbi, dn->data_blkaddr, 1);
++		if (!blklen)
++			blkstart = dn->data_blkaddr;
++		blklen++;
+ 		f2fs_set_data_blkaddr(dn, NEW_ADDR);
+ 	}
+ 
++	if (blklen)
++		f2fs_invalidate_blocks(sbi, blkstart, blklen);
++
+ 	if (index > start) {
+ 		f2fs_update_read_extent_cache_range(dn, start, 0,
+ 							index - start);
+-- 
+2.53.0
 
-- Eric
 
 
 _______________________________________________
