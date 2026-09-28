@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 24100C9833E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2026 05:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6B228C98328
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2026 05:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=WcVYKyQAy5uH+RS9C+muA76HUjCsrPN9+41782nG+kk=; b=hPrEpWFYRjmOGb27VmIfeyCspv
-	bjyQIDon66lVl9CdmOsYNi8nDZIGgpeRaXMgDelcW6QylCjPnOprM47q7scPdCqCVfmgx1CTFdFJb
-	UXiXGlJfBnCnkIpUhagYeWQE6aSN0RBtPs5R1J7VJlnIsIkwubTiIidWJBViNAu7HaOE=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=2HFNlgWF/T2Tzegwdp3iarKufrwS84Z0pVvY+xvYsBU=; b=RtVZOEO8xllRXYVcNrtN1+tZ3Y
+	p5jdv2wt4g3bt8Un/JuJRGo6tOWn7ceOcsVSpTueRFPbfKtECH8thhSfV1F5GztAF6nM57s5SBiYq
+	QNwtwsrp5FlwWb/cTPgZvyckDfjsmJGJfbbjbE6/+kdlf+MoBdbEaRi16f5yMnyVR8pw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xB3ln-0006Y3-1T;
-	Mon, 28 Sep 2026 05:19:19 +0000
+	id 1xB4E4-0005wT-1O;
+	Mon, 28 Sep 2026 05:48:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <senozhatsky@chromium.org>) id 1xB3ll-0006Xx-Jm
+ (envelope-from <senozhatsky@chromium.org>) id 1xB4E2-0005wM-Jw
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Sep 2026 05:19:17 +0000
+ Mon, 28 Sep 2026 05:48:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aE4CNeMPjoyGqhac0qEjC0MrhT1ea2sjSdxYtuXCv0E=; b=QZrRo6SrMVlpN5wmxwklfs7T3j
- PUsd8mSktOt2sf1jbKBjnnV74YqO5WwReVV28MD84SYsX7pFhrjuZC8Z26bj1bcHRXCdDTNj4m6q5
- kMS++uZJWT+JA7cYUNttp7lgy9faDFPKeWM/p2xkT6Zz2/ow5FqPEIEh2UfFFNpRSd6E=;
+ bh=kWV/wHWLQfhp6L6mSocYwp2pbMQ9zmUarPxSrrFDYg8=; b=eXUdS61MBIra6xDv68bAda45F4
+ 9HO5725X2qMkJjs8NPaOg4Pg9ytACAcOLiOLYUpeipaGQq01yYVlr66RSHr08KXBcu2SCuW18xRV4
+ N9qJGVMzvDDUKJbSd/4mruXOIc4p1wSWbs+SCOxF/CJt0pIdioy+CPfjm6B2t8dAw6QA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,74 +42,74 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=aE4CNeMPjoyGqhac0qEjC0MrhT1ea2sjSdxYtuXCv0E=; b=FDTqMZogWjGGp9qDDBEO63dvvs
- dNf6izXeDPm1vJ9fo+kiDdrhdDg6z4V4+eenz5VpiNDJD2TmbAp4JjWz7LIT/lbV/dfhEPOhKidyg
- lKOEyp7TZuzOGMsf9OcUpA4QnG5IuOna+AG/mvgSzxlHVcXybIUz/1q/dqcYW09hduvA=;
-Received: from mail-pz2-f40.google.com ([74.125.228.40])
+ bh=kWV/wHWLQfhp6L6mSocYwp2pbMQ9zmUarPxSrrFDYg8=; b=KGzVvTuFDPFeT95QC4Gfssdq1z
+ MNDdc8FkGDA3aPiYetZVf2lFvJDiJQ/IRkrHYMz5rqdpGBCIBYx562huLUpMMfYNUP229sD8RcX3H
+ 6wDZLVDsGAtP0mkWAIUl9P5heNEaMbbWO+EvZbd1uFNJ89GpCxrk13NZU72wSSY6mugk=;
+Received: from mail-pj2-f41.google.com ([74.125.227.169])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xB3ll-0007Dl-5j for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Sep 2026 05:19:17 +0000
-Received: by mail-pz2-f40.google.com with SMTP id
- 41be03b00d2f7-cc750a1482fso1387940a12.2
+ id 1xB4E3-000810-04 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Sep 2026 05:48:31 +0000
+Received: by mail-pj2-f41.google.com with SMTP id
+ 98e67ed59e1d1-3a0bcdf41a3so1309323a91.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 27 Sep 2026 22:19:17 -0700 (PDT)
+ Sun, 27 Sep 2026 22:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=chromium.org; s=google; t=1790572751; x=1791177551;
+ d=chromium.org; s=google; t=1790574505; x=1791179305;
  darn=lists.sourceforge.net; 
  h=in-reply-to:content-disposition:content-type:mime-version
  :references:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=aE4CNeMPjoyGqhac0qEjC0MrhT1ea2sjSdxYtuXCv0E=;
- b=a3R2fYPlkF/Haj9qIshzsmEGnxtWE2cnW4hdn4mVxfDhx4919+JC96ezE9ePQF3/QL
- PJDk0vwyJPh0Ga95qj563HJGp9b/AGpKVwiAZIAbnAXpNw+/anoXazbwouP2KVHCtI6o
- qJK3yuqzyIuFsU8XZtv4UpxCfpEScZncR//kE=
+ bh=kWV/wHWLQfhp6L6mSocYwp2pbMQ9zmUarPxSrrFDYg8=;
+ b=mhhR47DvWsrxAYVubZn6b5CjoSBJr+cA85Pfz+zEQERgk7tKxwHUT7/qy5ivw8497x
+ hBTHkYbHGVFEDwkq5QtRVwIRb1CXwbiH/4s3NT46FwX+KLpGQo2W1M7h2D3VdxsawVRs
+ dTd6aemk3V72ZznhT5AJFnzhik+IsZ8o61hN0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790572751; x=1791177551;
+ d=1e100.net; s=20260707; t=1790574505; x=1791179305;
  h=in-reply-to:content-disposition:content-type:mime-version
  :references:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=aE4CNeMPjoyGqhac0qEjC0MrhT1ea2sjSdxYtuXCv0E=;
- b=dQXjZXAWHwICquPcPIkKdgn5vR/ur1bFszmi+J0424IXnYJR3OlNAqwJEnLeEmcpF7
- 9TkHU+JiM/WOUxvjOkfSc6mnk2EO7pLcXYDLf/9Yrtj6RnqTSmhIWLB/y5kSyd9xqtst
- WUHS9E41GPOhfblS2VgZdpp7Rrv9bWGPdL6WZXdKf6M8hc9hl82bqgQ9zgHeGkgjbPgj
- b+eV4iCUw0Lr5lEeWNwhHYZoEZ9DZoYRj30/YxOeNrDFJDOsA6GEn2P4vywbqQ8Hb7XZ
- d6ujLTwm73pTwU52EWdYRX12FNXpWXU6Q5OlhPi8cHQSOrEY05qfRdus+VoDwp1PVLbS
- cxIw==
+ bh=kWV/wHWLQfhp6L6mSocYwp2pbMQ9zmUarPxSrrFDYg8=;
+ b=tYA5vqSxlBah7JTAbZAMfx0l+r0a4+xawnQa1LHIaT46nulmOq4hsNiUtTR16ncpV6
+ gNmQSI3Qz7mb8ExeJFbzQlWfOSnEkvZVvbpoEoHOYrv28gc5uoFrJHTBZrTXeSwnURde
+ 520ufWcnEHrWM1JQpsF6heZfWjdSCtfMeB7vdZWVywlFSoyyEokEN+R/IgtPBCjhAu73
+ XHDNJzzLqKdrt1pdZ7sBrSsEIC8ywjYMgbaxdbCijpQRlZjfX+x0flROv5a1GftIrwUp
+ MzB20y/VMe2kkuaBmkNgEYcF6YcBsVNuhqlNKHyEhvk4/tNwMTEaGORAFod/KVwzTDDk
+ uFIQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBzeThh67RaHRb2Y9wPwPOafHl8q1T8xD5KXmrny76meOrH4VA8g3wAL1mI5qHTQ2l8oRecoIc4Tx9u8Notv5/yk@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYKZn0t85BIluYcBlZqO4R+bJ97ecq3QyUMsslK8zF4Ts6ncs6G/
- OG9QZciAM2Nw/WQG9guzaMDv3xymZPr4fgM9zFdF8Zb1o2CLTSd+/bMPPFd0LpsSpw==
-X-Gm-Gg: AYBFou0mD+7vPi/QWOjICsdFjzW10GexXnMpFNZzvH1i4qX3cVDw701OZgqgkV+QSHc
- 6Cs1GuT0c8yd5p6YRqCnnx4y55kSVFGRozxyKV7U3nE8U6AfLDG3s7Fg9Hews3HGpRKrNw03QZ7
- fEPBGGOQjGevwD9C64wFoVD8Tqv8LKbjHRRzwlUomNRU/l7eGeL5JFygH8vBhxHhXNhQciaII8W
- 42iqXw0RIuc0wwgOAc2q4V6fMlHR5R8BSfxOC89imr7tyWXtqwxzdiSMav9xNWERy2txy6MIVta
- /Z9KabzCmbCCmbYzGhYj53laZVpUf99MRPn0qGSxXA30153r2mciYUZWT3ZENMk+sjDhCYy4mQJ
- v7HMcZg5l3/u9DYo8/VEHtZ2MUsjO98waA/xHnLHHk2W8lhZpF0nMh4jgppZRWbRrBBRr8XsyHo
- MrQhKCh93f3msHwCnewTrKrzzEBQK33sem29l1aIYuPCopgduyHWJ0zAp17vjyzXEgTrMF80vnI
- hVUyYiGa2qh6AypSF6kOUzmpKad26MnvuskOCo=
-X-Received: by 2002:a17:90a:597:b0:3a0:a055:1759 with SMTP id
- 98e67ed59e1d1-3a0bb60e55amr5032133a91.40.1790572751469; 
- Sun, 27 Sep 2026 22:19:11 -0700 (PDT)
+ AKwUvBwJATwwUx2/Pqyii1R7tlLDWJQb/Ey46q5l41mUc0Knip8MOJ/kKliHvVFlaOO+nF/3uNu4Xi+y7rVf0LegvzId@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYLsXguu0Ivgnk3I2g/HuEGGldrKQeKobJqLlD6HM8UlEkn/ChBu
+ PaF+a2eQlmTSkLVX8LF/1jLhkv8ojyUU1RFIuL5S3x73N9duTt30DIlYXzAqMLfsbQ==
+X-Gm-Gg: AYBFou0pjHtFF5cIjRDJT9Dwo6eV59GkbZc5vcPaPRZvbqL2ruLUlPTyh91dtmFna6u
+ CfQ0e44FujJtiP9x8o2m3bNcT/pmF/JRHPVQvXoP2i8txa9ICp0vLfBUFIIxjaSzvT+aYtGBs62
+ J5q91lUr5tyqu1VeawHsZojQDnTwCjw0VYO5ejjsJGVqQM5iwLWyuVAU+zD/0YmgTwSeL654Ivs
+ Sdc4++h3BUPgjcJso5uBHLgvwBb9eMd2MDmMo7NIJy8WpWV3WEyGCQq5vnB1ybM2bs4M8Bm6yZL
+ Q+enqua0lW4RRvcHM11mKZwQZUjuGfA6qj+L42w9/M1Ez9xjZG3xQu2qqNuKldsT8Fi6cBgmrct
+ MQfh7+7PS3DXPHDXgYmutLRzPzpG8lszucMEU73Vh+g03lOpCRo2eaiD/Ft5NGx6KIxRxV87E6I
+ qzNp7yb+uoxocmq7Zg4o2R7GubcuKDOIwpArMlyXDwkGpIlKj8/8yOhk/+bOv27gJU71Kt1zOBc
+ xG77/MmzczcNFILTWzwqL+d+67L21nG1pIZYyT5RYokD4OVng==
+X-Received: by 2002:a17:90b:3888:b0:3a0:cc33:2287 with SMTP id
+ 98e67ed59e1d1-3a0cc3324ccmr6256726a91.6.1790574505299; 
+ Sun, 27 Sep 2026 22:48:25 -0700 (PDT)
 Received: from google.com ([2a00:79e0:2031:6:fdbe:318b:98fe:bd96])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a0b94936ddsm18408378a91.7.2026.09.27.22.19.04
+ 98e67ed59e1d1-3a0bec30aaasm17853889a91.15.2026.09.27.22.48.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 27 Sep 2026 22:19:10 -0700 (PDT)
-Date: Mon, 28 Sep 2026 14:19:02 +0900
+ Sun, 27 Sep 2026 22:48:24 -0700 (PDT)
+Date: Mon, 28 Sep 2026 14:48:15 +0900
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Michal Wilczynski <m.wilczynski@samsung.com>
-Message-ID: <arn3TC7BgjTXWmdG@google.com>
+Message-ID: <arn9tK5MxxxfH7OW@google.com>
 References: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
- <CGME20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a@eucas1p1.samsung.com>
- <20260925-lz4-vendor-upstream-v1-1-1c7ffbe21c4b@samsung.com>
+ <CGME20260925113456eucas1p136c3cd1f08be7201ad6b3f7b0e8ff02d@eucas1p1.samsung.com>
+ <20260925-lz4-vendor-upstream-v1-3-1c7ffbe21c4b@samsung.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260925-lz4-vendor-upstream-v1-1-1c7ffbe21c4b@samsung.com>
-X-Headers-End: 1xB3ll-0007Dl-5j
-Subject: Re: [f2fs-dev] [PATCH RFC 1/9] lib/lz4: import upstream LZ4 sources
- verbatim
+In-Reply-To: <20260925-lz4-vendor-upstream-v1-3-1c7ffbe21c4b@samsung.com>
+X-Headers-End: 1xB4E3-000810-04
+Subject: Re: [f2fs-dev] [PATCH RFC 3/9] lib/lz4: add the build environment
+ for the vendored sources
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -150,19 +150,13 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On (26/09/25 13:27), Michal Wilczynski wrote:
 [..]
-> +int LZ4_compress_fast_extState(void* state, const char* source, char* dest, int inputSize, int maxOutputSize, int acceleration)
-> +{
-> +    LZ4_stream_t_internal* const ctx = & LZ4_initStream(state, sizeof(LZ4_stream_t)) -> internal_donotuse;
-> +    assert(ctx != NULL);
+> +
+> +/* LZ4_decompress_fast() and LZ4_resetStream() are still kernel API. */
+> +#define LZ4_DISABLE_DEPRECATE_WARNINGS 1
 
-Probably in some other places as well:
-
-LZ4_initStream() can return NULL, but the code immediately derefs
-the pointer.  The assert() check seems to be misplaced, unless I'm
-missing something.
-
-I suppose those need to be decoupled.  First LZ4_initStream() call and
-NULL check, then stream->internal_donotuse.
+Is this upstream code?  As far as I understand it, LZ4_decompress_fast*()
+deprecated upstream and are strongly discouraged.  Do we want to suppress
+deprecation warnings?
 
 
 _______________________________________________
