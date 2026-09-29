@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0FF5C9832A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Sep 2026 07:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60232CA5FA1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Sep 2026 07:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=oIcmRPFiuVzS1KEONhvoxWqh1BaLOndRffgQm1px6DI=; b=ezFIjjk67DuALzH7pRDNWDCIz9
-	Cfpuoq4xNRYbPTcqsh27VwMmiHZ1JJygnAmBDU1WL+iYlFL4nLm2yREP7MKrAwOzpL11QUSnxhUj3
-	sH4fhQLoO1Lcx5vS0GKAWabjZVVaNBBtyLAh0fne7ODbtZywpqNJrX/TWywy9e2Kz9x8=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=+tlZj9eFkARvz804OGkedFG9N5JKjauSLEYMcWOcd0o=; b=izulROAdTyFUtznOG7DPLbWxEE
+	z8TNDM/kTsR2n4HJxhnjNvoeHgMZocLnLbCvccz1wQUrGgMXNgKkpxXv3xW5xtup4Kk9Udkbpj0db
+	dyGmUU7469OnwjVFfod7URfM4/BIy+or9o/vbp44pdMur7uz8zJp1phB1KVLh6GYfOho=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xBSHe-0001cT-23;
-	Tue, 29 Sep 2026 07:29:47 +0000
+	id 1xBSHc-00062T-AM;
+	Tue, 29 Sep 2026 07:29:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1xBSHc-0001cL-DS
+ (envelope-from <qwjhust@gmail.com>) id 1xBSHa-00062A-8i
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 29 Sep 2026 07:29:45 +0000
+ Tue, 29 Sep 2026 07:29:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GnEfE1pe6kxoyichRQ4zL3yWerWQ5FxxofpTTQKI/p8=; b=PITvRRpb+J24uBWfzoAAUS2L8/
- 91K8y1G3rSOWJYbPMTOUNMBUR6Opq6j4Nzaqp1PgB0QkZoAfX7VrBLpJcXKUeue8OI92JWaZYNe3x
- xD+kcmNj6e99sGtz0junb26a0BEIDWq52lu7Yd3NOacW0ti9HCrfI8xXaHZYb8+hDU8k=;
+ bh=uDcPJ5rPxpj2kohFB81D4sNWuW7eNzDOVVFI71Bh/Co=; b=DOvTfDPh08qLOOVV9zG8VdtBbx
+ 5ezeNuv5fRy5Ibyhd/WSyD95eO4IC/ddJNYqYxCg/FM5pCvsq0KWkMq1nBGDUttF/ii/ecn/e91Jx
+ N2GN/mhN80lXPRlK3MPk7R7Hnh4Lf2bqknm5jgcB2kaPSkc/2FRwyQiLA02Wqyav+8tw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,75 +42,75 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GnEfE1pe6kxoyichRQ4zL3yWerWQ5FxxofpTTQKI/p8=; b=lN6I8cx0HuaGDGDkcT9V3clgUi
- UgIsQeUkmx3d3KBwfPCq79O2JrXwaXGMZrg0C8eApqGqIAEHtrnBVjo+/2UVeTadNOxQzQTWAFfrR
- ylHsJayuivjDIeCjTvUanqI4IVp/t3zVvtz5mppyVSEeiUWLSHUPFOuSLhGtIVpmgiyw=;
+ bh=uDcPJ5rPxpj2kohFB81D4sNWuW7eNzDOVVFI71Bh/Co=; b=Y4qaPECRvQAVelHkPawptH9Rap
+ KNazm9seqyM0P4TIjdHa5DUkJ1AxEPmmTP3BZ8lznuBxnSDyLDn07Xxwi0/2vwXflXRzMUSTe5gsd
+ jXTzibddb3Zr+0JQbYBFgF5vRddNArTDYywoIvMwrpDE8zg/QPE8/I/Av2Cvv5jB9BZQ=;
 Received: from mail-pj2-f39.google.com ([74.125.227.167])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xBSHW-0006PS-5m for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 29 Sep 2026 07:29:45 +0000
+ id 1xBSHa-0006PU-2B for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 29 Sep 2026 07:29:46 +0000
 Received: by mail-pj2-f39.google.com with SMTP id
- 98e67ed59e1d1-3a4805e15cfso816633a91.0
+ 98e67ed59e1d1-3a49b6bb21eso359918a91.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 29 Sep 2026 00:29:42 -0700 (PDT)
+ Tue, 29 Sep 2026 00:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790666976; x=1791271776; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1790666980; x=1791271780; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=GnEfE1pe6kxoyichRQ4zL3yWerWQ5FxxofpTTQKI/p8=;
- b=jZBMaOVmajmYT8Wm4tt9U+riaZN5mCORbO4laiObjLUnDTW3yFva1343svPZpziYTl
- KYZAhsFwDkZTjEZY23C2YmIyuzh+BxuaxO0S8NOv7XzrrLnpv7SXPm+3sb56Nx3Bm7z+
- aHUhq1lsMi96qFIItAQ9DOCbr6RsVeERb53yZ8+QyYHuu+wIv34/k7G9CXTaZ8piGmv+
- +k4rnbgXuTnWsn3L21s1S8pfnbzX8LJ04gS9xLM0//ImXgEMD4LcDgh/JdM3Az6T7mcK
- /Xy+bOkoa70Y5kYnUJRXCtglbAsoPx3X11boch3fuzZT4FF341qJaUXUG5N7NfS7RlR/
- Vsdw==
+ bh=uDcPJ5rPxpj2kohFB81D4sNWuW7eNzDOVVFI71Bh/Co=;
+ b=IFanNljUGlJDpbLROCmOKD1az3ojDVsL4HGyqc0k4PGkOE+Q0b7loV0sQpADMsyYvM
+ L0wyObAH0LQQmlmhBm05ZKDi4FiMkDFH/MCMAtptQoYxV5WfuRUYsNaKSV+obyAwO8oD
+ YWdWjSMOR6nHluPQLvy67k54HAzMryNJ7GsepV99VNB+5Fg253+et6EudE5Ca2o12LIF
+ JpLx6rzrb4DCVvu6TkPMS52LY7XDu+ibQ2y+Hs/6MNkv52xzm4456iuJd5393bhjWNpq
+ CK/joWe8TFLjfVk989Lq8o4kOR7uXTNBny1lTW6SbZI6ONaszbCBY8jUgRrZy8RzDv9D
+ /AeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790666976; x=1791271776;
+ d=1e100.net; s=20260707; t=1790666980; x=1791271780;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=GnEfE1pe6kxoyichRQ4zL3yWerWQ5FxxofpTTQKI/p8=;
- b=y104LbzbJVGP4aiZiZINL40+LgU/EvN522xvFlCb5cCgh+27edXMkCP/C9BlHwLKki
- 6ODakJ/NWkDTXYp+1gG8MeeTrq1Er8G2UFkDAJL+QnPm0+OPmtYm7UXy56OOReGQGU9a
- fBKiJA1M3NHzig2J+Ko5yVCh/ONXyXUUT/hEpbZtl7zDmDFheFiWfvLCVawrn2uE8Kw3
- AQv4B31diyhvO0qZw91+3aIdKaEqTBYNTaUwM+rKd9SfvfilVWzdpZgWtTujyRG5fGqk
- trhd8SQHuWDgrD000WR1IVFfeLcV046mTuTDBsPqUokKpvEH4O8/3aeUOUj2EhpqPi7Z
- 3TkA==
+ bh=uDcPJ5rPxpj2kohFB81D4sNWuW7eNzDOVVFI71Bh/Co=;
+ b=St3BapXVwJHpEOVQ1TIG3ryrimPCw9AiZDf4dm35VIAH07hWU68D4LU0GXnW7TBfWV
+ ku+7s+ATzEXhf2q04byKoWCmIAUw1kIBINdGFpnswkIBMkSjKcx+ansS2BEwLglV4gYU
+ Txu4wJeEgHcCea5Drg9WsLYkcPu+clXw7z8IrnmhI3PpHwqOeaEXsVTOTX73xpyYs8tT
+ ZAgL5Eqv64wEG+Uk9wwMFn1QBUTJfwxUmwMwx+02r2HrsTapJshNfhwGO9VDtQ7JrfgZ
+ sjrco0kCYBuVDHaKrpIHEaL8Jel1hXlGUiLhVNlIvHOK0wLa1U9YNJNq+GdGlbuZey9+
+ qrRA==
 X-Forwarded-Encrypted: i=1;
- AKwUvByZxU0Rve3oqJZvbaACANuw1tNVjbqTczpVfgkYfu4L1cTA80bOmklkkBV0ZVOY8iE43AAGkUvID9Vc/ec/LHLL@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYKnsr4dISh6x3XiOlBf0asa4GmEEvn0FsfvJlMAJgB8TUTNo2pM
- hhdgdQQorRBSUvSb+Vl8ioG8CiKcX8WVnHzdlMdC1Zt2gPS4HnwCtiJA
-X-Gm-Gg: AYBFou0xp2uM814oE4BzfhuUnGuectqv5vg73dcYZPZQLIaSG/bd2cMW47VhxnE8TpR
- COt3JRk99imJbYJB5cgjp+wT21D+/P9EC+Go5v9u6gCFBWzbQzU/rX08n74ekz8ric7zjo7LNsk
- oiI5N+Mowgdf61dFpeSR/I/Wt3D5sjF/XNfh7B/r3hRSct8iNncOrDxdk47+ERZYboL2F3zfCAJ
- RcXQxOx3bniXhS5aBmWKknoKnaxZilX9Dmw+rCc049eI72ncIRHY7+NWOeKH+t8VXziUL4cARry
- 28sGG6ryTPDQm0uscg2zY4Pf9sas4QNJgWBBB6X2FOZgjgx32OGylKFDP2XVKoXq+Fi4O8D4EQ2
- b7ZLH43yc3+Kj/d5SlH4MaxWW4A5F07vuhccHuYgrIGJbxuNBUHStekcZFqxA2pS47HZ8ZNBE5r
- PnxMq7tAE6lZhfXvO1Xtr8HibMCLLV7Eytldjn+zDvsusDiX18NPvIIRgg4PeN870a+VaK4yHth
- kjN6m8nuGinFgJW5+F5Iv9D23ngH9ywmnk=
-X-Received: by 2002:a17:90b:4b0f:b0:39e:4c80:f67f with SMTP id
- 98e67ed59e1d1-3a098983faemr12981101a91.30.1790666976228; 
- Tue, 29 Sep 2026 00:29:36 -0700 (PDT)
+ AKwUvBz1MIoBcV0fhAQu9xAaOB3cBB23nJXMlfCvHT47IECCXhlVNNZyQ2qVUDA/OYW6DzsNiyJMTpIaN9TG8nkGiTWI@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYIMATlqtmYOForcx0LZiQjvYPLeymibVjEInwd7vj/zrGmzFN/Z
+ jNcZuA3Q9/gQGTtqnysDIj6HTp3eO+lvdIm9E6gCWgmpqgIaMOuyYYYI
+X-Gm-Gg: AYBFou2fRjUeOPF5cvAzcBEt/IfNRIZvbTQiAve51s/xpuOcnZcOkCaY8o7DKTdNuRA
+ MsyR1Pg6tALfVXDGTfmQtbCm3dy2CGg9Y/015grxvZYJjKNIcFetgDbBdd/pF+W1E3PdPoEMwOW
+ yNA+pwwpVS5CCVdQ9BOTmSUwWnqgL3vqo3oojPD7AmGSEazI0fFvZGxgQmDi33qzdYphO5uarZo
+ 3Tl+6okmyMNdic0A/O0DEfOExN13DDuVvDzeGNy68bFAprA5fh16AxGQ1kWwiTFRXdfoj808oxh
+ 0gV5qQWdk3rNSHGPXgz0o/7YrBylbVhqwJZ5uM8WsD+LtW1gCP+O2qiXpIyImB8utyTvXFfqqjd
+ hZNcy4A7+UmObP9Ica91WiikFAa+Nn8ZI5IO2qT3bZOMWF5E/yfvsHfint5w5TSR909Qa3zRhEI
+ 7qthDc0g8HAf7e4TjB0xIoaTtRKd5tWybXeXEwNTSdsKaee4hQM5f2yxT8od3xzM84sj9o0XHwz
+ yGeEIW47xIf1mfH21hRQQFWI6cnPVFgozQ=
+X-Received: by 2002:a17:90b:35c4:b0:3a2:aebf:9211 with SMTP id
+ 98e67ed59e1d1-3a2aebf93a6mr3570966a91.15.1790666980269; 
+ Tue, 29 Sep 2026 00:29:40 -0700 (PDT)
 Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a49804220fsm3900170a91.12.2026.09.29.00.29.33
+ 98e67ed59e1d1-3a49804220fsm3900170a91.12.2026.09.29.00.29.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 00:29:35 -0700 (PDT)
+ Tue, 29 Sep 2026 00:29:39 -0700 (PDT)
 From: Wenjie Qi <qwjhust@gmail.com>
 X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Tue, 29 Sep 2026 15:29:15 +0800
-Message-ID: <233c44340813cb2186ee187c00f2522e6ad578cb.1790665952.git.qiwenjie@xiaomi.com>
+Date: Tue, 29 Sep 2026 15:29:16 +0800
+Message-ID: <e9c129c3e1670140ca3d3106b53372a40aebb372.1790665952.git.qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1790665952.git.qiwenjie@xiaomi.com>
 References: <cover.1790665952.git.qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1xBSHW-0006PS-5m
-Subject: [f2fs-dev] [RFC PATCH 2/6] f2fs: add compressed clean node cache
- representation
+X-Headers-End: 1xBSHa-0006PU-2B
+Subject: [f2fs-dev] [RFC PATCH 3/6] f2fs: bias node cache reclaim toward raw
+ entries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,709 +128,385 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-A clean node-cache entry currently retains a full block until it is
-reclaimed. Add an optional compressed representation that keeps the entry
-and its NID in memory with a smaller payload.
+Raw and compressed node-cache entries have very different memory costs.
+Counting every entry equally would overstate pressure from compressed
+entries and reclaim them too aggressively.
 
-Use an extended NODE_CACHE entry and per-mount 256, 512 and 1024-byte
-private slabs. Raw entries remain on the existing LRU, while compressed
-entries use one queue per allocation size.
+Count and scan the raw and compressed queues separately. Give raw entries
+their full block weight and compressed entries 25 percent of their
+allocation size. Use the same weights for the shrinker count and the
+per-queue scan quotas.
 
-Keep raw and compressed ownership exclusive, and make detach and teardown
-aware of the compressed queues. If the compression resources cannot be
-initialized, leave node compression disabled instead of failing the mount.
-The generic entry layout remains unchanged when the feature is disabled.
+Carry rounding credit across shrinker calls, and redistribute unused quota
+when a queue reaches its population limit. This favors reclaiming raw
+entries while keeping every compressed queue reclaimable.
 
 Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 ---
- fs/f2fs/Kconfig               |  12 ++
  fs/f2fs/Makefile              |   1 +
- fs/f2fs/cache.c               |  27 ++-
- fs/f2fs/cache.h               |   8 +
- fs/f2fs/debug.c               |  10 +-
- fs/f2fs/f2fs.h                |   7 +
- fs/f2fs/node_cache_compress.c | 303 ++++++++++++++++++++++++++++++++++
- fs/f2fs/node_cache_compress.h |  78 +++++++++
- fs/f2fs/node_cache_policy.h   |  23 +++
- fs/f2fs/super.c               |   4 +
- 10 files changed, 462 insertions(+), 11 deletions(-)
- create mode 100644 fs/f2fs/node_cache_compress.c
- create mode 100644 fs/f2fs/node_cache_compress.h
- create mode 100644 fs/f2fs/node_cache_policy.h
+ fs/f2fs/cache.c               |   2 +-
+ fs/f2fs/node_cache_compress.c |  64 ++++++++++++-
+ fs/f2fs/node_cache_compress.h |  15 ++++
+ fs/f2fs/node_cache_policy.c   | 163 ++++++++++++++++++++++++++++++++++
+ fs/f2fs/node_cache_policy.h   |   9 ++
+ fs/f2fs/shrinker.c            |   3 +-
+ 7 files changed, 254 insertions(+), 3 deletions(-)
+ create mode 100644 fs/f2fs/node_cache_policy.c
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 5916a02fb46d..5aa54916e594 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -99,6 +99,18 @@ config F2FS_FS_COMPRESSION
- 	  Enable filesystem-level compression on f2fs regular files,
- 	  multiple back-end compression algorithms are supported.
- 
-+config F2FS_FS_NODE_CACHE_COMPRESSION
-+	bool "F2FS clean node cache compression"
-+	depends on F2FS_FS
-+	select LZ4_COMPRESS
-+	select LZ4_DECOMPRESS
-+	default n
-+	help
-+	  Retain clean node-cache blocks in a private compressed store.
-+	  This is independent of file-data compression and COMPRESS_CACHE.
-+	  The store uses 256, 512 and 1024 byte slab buckets.
-+	  Compression is disabled at runtime until a nonzero threshold is set.
-+
- config F2FS_FS_LZO
- 	bool "LZO compression support"
- 	depends on F2FS_FS_COMPRESSION
 diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
-index fbf49c30b066..e1e4b98707e9 100644
+index e1e4b98707e9..79252f510daf 100644
 --- a/fs/f2fs/Makefile
 +++ b/fs/f2fs/Makefile
-@@ -9,4 +9,5 @@ f2fs-$(CONFIG_F2FS_FS_XATTR) += xattr.o
- f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
+@@ -10,4 +10,5 @@ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
  f2fs-$(CONFIG_FS_VERITY) += verity.o
  f2fs-$(CONFIG_F2FS_FS_COMPRESSION) += compress.o
-+f2fs-$(CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION) += node_cache_compress.o
+ f2fs-$(CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION) += node_cache_compress.o
++f2fs-$(CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION) += node_cache_policy.o
  f2fs-$(CONFIG_F2FS_IOSTAT) += iostat.o
 diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-index 8f81aed132ed..3d1d530cdd82 100644
+index 3d1d530cdd82..480412f6c729 100644
 --- a/fs/f2fs/cache.c
 +++ b/fs/f2fs/cache.c
-@@ -17,6 +17,7 @@
- #include "node.h"
- #include <trace/events/f2fs.h>
- #include "segment.h"
-+#include "node_cache_compress.h"
+@@ -666,7 +666,7 @@ unsigned long f2fs_shrink_cache(struct f2fs_sb_info *sbi,
+ 	if (freed >= nr_to_scan)
+ 		return freed;
  
- void f2fs_cache_wait_writeback_cond(struct f2fs_cached_block *entry,
- 					enum page_type type)
-@@ -127,7 +128,7 @@ static int f2fs_cache_refcount(struct f2fs_cached_block *entry)
+-	freed += f2fs_do_shrink_cache(NODE_CACHE(sbi), nr_to_scan - freed);
++	freed += f2fs_nc_shrink_nodes(sbi, nr_to_scan - freed);
+ 	if (freed >= nr_to_scan)
+ 		return freed;
  
- static void f2fs_do_free_cache(struct f2fs_cached_block *entry)
- {
--	kfree(entry->data);
-+	f2fs_nc_free_data(entry);
- 	kfree(entry);
+diff --git a/fs/f2fs/node_cache_compress.c b/fs/f2fs/node_cache_compress.c
+index 486da4ed6082..50e9c820eb81 100644
+--- a/fs/f2fs/node_cache_compress.c
++++ b/fs/f2fs/node_cache_compress.c
+@@ -95,8 +95,12 @@ struct f2fs_nc_ctx {
+ 	atomic_long_t attached[F2FS_NC_NR_QUEUES];
+ 	atomic64_t attached_payload[F2FS_NC_NR_QUEUES - 1];
+ 	atomic64_t attached_slot_bytes[F2FS_NC_NR_QUEUES - 1];
+-	/* Cumulative detach statistics since mount. */
++	/* Cumulative reclaim and detach statistics since mount. */
++	atomic64_t shrink_scanned[F2FS_NC_NR_QUEUES];
++	atomic64_t shrink_freed[F2FS_NC_NR_QUEUES];
+ 	atomic64_t detached[F2FS_NC_NR_QUEUES];
++	/* Signed quota history carried between shrinker calls. */
++	s64 shrink_credit[F2FS_NC_NR_QUEUES];
+ 	/* Mount reference plus references held by compressed objects. */
+ 	refcount_t refs;
+ };
+@@ -276,6 +280,64 @@ void f2fs_nc_free_data(struct f2fs_cached_block *entry)
+ 	f2fs_nc_ctx_put(ctx);
  }
  
-@@ -159,6 +160,7 @@ static struct f2fs_cached_block *f2fs_create_cache(
- {
- 	struct f2fs_sb_info *sbi = cache->sbi;
- 	struct f2fs_cached_block *entry;
-+	size_t entry_size = f2fs_nc_entry_alloc_size(cache);
- 	unsigned int flags = GFP_NOFS;
- 
- 	if (index == ULONG_MAX)
-@@ -166,10 +168,10 @@ static struct f2fs_cached_block *f2fs_create_cache(
- 
- 	if (nofail) {
- 		flags |= __GFP_NOFAIL;
--		entry = kzalloc_obj(*entry, flags);
-+		entry = kzalloc(entry_size, flags);
- 		entry->data = kmalloc(sbi->blocksize, flags);
- 	} else {
--		entry = f2fs_kzalloc(sbi, sizeof(*entry), flags);
-+		entry = f2fs_kzalloc(sbi, entry_size, flags);
- 		if (!entry)
- 			return ERR_PTR(-ENOMEM);
- 
-@@ -220,6 +222,7 @@ static struct f2fs_cached_block *f2fs_insert_cache(
- 		f2fs_bug_on(cache->sbi, !list_empty(&e->list));
- 		list_add_tail(&e->list, &cache->lru_list);
- 		cache->num_entries++;
-+		f2fs_nc_entry_attached(e);
- 	}
- 	f2fs_cache_get(e);
- 	spin_unlock_irqrestore(&cache->tree_lock, flags);
-@@ -429,8 +432,9 @@ static void f2fs_do_truncate_cache(struct f2fs_cached_block *entry,
- 	if (!radix_tree_delete(&cache->root, entry->index))
- 		f2fs_bug_on(cache->sbi, !entry->cache);
- 
--	entry->cache = NULL;
- 	cache->num_entries--;
-+	f2fs_nc_entry_detached(entry);
-+	entry->cache = NULL;
- 
- 	atomic_dec(&entry->refcount);
- 	f2fs_bug_on(cache->sbi, !f2fs_cache_refcount(entry));
-@@ -514,14 +518,24 @@ int f2fs_init_cache(struct f2fs_sb_info *sbi,
- 
- void f2fs_destroy_cache(struct f2fs_cached_block_list *cache)
- {
--	struct list_head *head = &cache->lru_list;
-+	struct list_head *head;
- 	struct f2fs_cached_block *entry;
- 	unsigned long flags;
-+	unsigned int queue;
- 
- 	f2fs_cache_wait_on_all_writeback(cache);
- next:
- 	spin_lock(&cache->list_lock);
--	if (list_empty(head)) {
-+	head = NULL;
-+	for (queue = 0; queue < F2FS_NC_NR_QUEUES; queue++) {
-+		struct list_head *candidate = f2fs_nc_queue_head(cache, queue);
-+
-+		if (candidate && !list_empty(candidate)) {
-+			head = candidate;
-+			break;
-+		}
-+	}
-+	if (!head) {
- 		spin_unlock(&cache->list_lock);
- 		return;
- 	}
-@@ -530,6 +544,7 @@ void f2fs_destroy_cache(struct f2fs_cached_block_list *cache)
- 	spin_lock_irqsave(&cache->tree_lock, flags);
- 	radix_tree_delete(&cache->root, entry->index);
- 	cache->num_entries--;
-+	f2fs_nc_entry_detached(entry);
- 	list_del_init(&entry->list);
- 	spin_unlock_irqrestore(&cache->tree_lock, flags);
- 
-diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
-index c4c3d09a0008..8a1eab71b1ae 100644
---- a/fs/f2fs/cache.h
-+++ b/fs/f2fs/cache.h
-@@ -64,6 +64,9 @@ enum f2fs_cached_state {
- 	F2FS_BLOCK_WRITEBACK,		/* cache data is writeback state */
- 	F2FS_BLOCK_REFERENCED,		/* cache was accessed recently, shrinker will skip it for once */
- 	F2FS_BLOCK_INLINE_DATA,		/* indicate inline data */
-+#ifdef CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION
-+	F2FS_BLOCK_COMPRESSED,
-+#endif
- };
- 
- enum {
-@@ -144,6 +147,11 @@ F2FS_CACHE_FLAG_CLEAR_FUNC(inline, INLINE_DATA);
- F2FS_CACHE_FLAG_TEST_FUNC(referenced, REFERENCED);
- F2FS_CACHE_FLAG_SET_FUNC(referenced, REFERENCED);
- F2FS_CACHE_FLAG_TEST_AND_CLEAR_FUNC(referenced, REFERENCED);
-+#ifdef CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION
-+F2FS_CACHE_FLAG_TEST_FUNC(compressed, COMPRESSED);
-+F2FS_CACHE_FLAG_SET_FUNC(compressed, COMPRESSED);
-+F2FS_CACHE_FLAG_CLEAR_FUNC(compressed, COMPRESSED);
-+#endif
- 
- static inline void *cache_address(const struct f2fs_cached_block *entry)
- {
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 6fe606e2c70d..a6096537b495 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -19,6 +19,7 @@
- #include "node.h"
- #include "segment.h"
- #include "gc.h"
-+#include "node_cache_compress.h"
- 
- static LIST_HEAD(f2fs_stat_list);
- static DEFINE_SPINLOCK(f2fs_stat_lock);
-@@ -297,6 +298,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- static void update_mem_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+	struct f2fs_nc_memory node_memory;
- 	int i;
- 
- 	if (si->base_mem)
-@@ -386,11 +388,9 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	si->cache_data_mem[F2FS_META_CACHE] =
- 		(unsigned long long)META_CACHE(sbi)->num_entries * sbi->blocksize;
- 
--	si->cache_entry_mem[F2FS_NODE_CACHE] =
--		(unsigned long long)NODE_CACHE(sbi)->num_entries *
--		sizeof(struct f2fs_cached_block);
--	si->cache_data_mem[F2FS_NODE_CACHE] =
--		(unsigned long long)NODE_CACHE(sbi)->num_entries * sbi->blocksize;
-+	f2fs_nc_memory_usage(sbi, &node_memory);
-+	si->cache_entry_mem[F2FS_NODE_CACHE] = node_memory.entry_bytes;
-+	si->cache_data_mem[F2FS_NODE_CACHE] = node_memory.data_bytes;
- 
- 	si->cache_mem += si->cache_entry_mem[F2FS_META_CACHE] +
- 			 si->cache_entry_mem[F2FS_NODE_CACHE];
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 089a62c054ea..16cc050124dd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -26,6 +26,10 @@
- #include <linux/part_stat.h>
- #include <linux/rw_hint.h>
- 
-+#ifdef CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION
-+struct f2fs_nc_ctx;
-+#endif
-+
- #include <linux/fscrypt.h>
- #include <linux/fsverity.h>
- 
-@@ -2106,6 +2110,9 @@ struct f2fs_sb_info {
- 	struct f2fs_cached_block_list meta_blocks;
- 	struct f2fs_cached_block_list node_blocks;
- 	struct f2fs_cached_block_list compress_blocks;
-+#ifdef CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION
-+	struct f2fs_nc_ctx *node_compress;
-+#endif
- 
- 	/* internal cache flush thread */
- 	struct f2fs_cache_kthread cache_thread;
-diff --git a/fs/f2fs/node_cache_compress.c b/fs/f2fs/node_cache_compress.c
-new file mode 100644
-index 000000000000..486da4ed6082
---- /dev/null
-+++ b/fs/f2fs/node_cache_compress.c
-@@ -0,0 +1,303 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/atomic.h>
-+#include <linux/f2fs_fs.h>
-+#include <linux/refcount.h>
-+#include <linux/slab.h>
-+
-+#include "f2fs.h"
-+#include "node_cache_compress.h"
-+
-+static const u32 f2fs_nc_bucket_sizes[] = {
-+	F2FS_NC_BUCKET_256_SIZE,
-+	F2FS_NC_BUCKET_512_SIZE,
-+	F2FS_NC_BUCKET_1024_SIZE,
-+};
-+
-+/* One private slab and active-object count for each compressed bucket. */
-+struct f2fs_nc_store {
-+	struct kmem_cache *caches[ARRAY_SIZE(f2fs_nc_bucket_sizes)];
-+	atomic_long_t objects[ARRAY_SIZE(f2fs_nc_bucket_sizes)];
-+};
-+
-+static int f2fs_nc_store_bucket_from_size(u32 alloc_size)
++static void f2fs_nc_population_snapshot(struct f2fs_nc_ctx *ctx,
++					unsigned long nr[F2FS_NC_NR_QUEUES])
 +{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(f2fs_nc_bucket_sizes); i++)
-+		if (alloc_size == f2fs_nc_bucket_sizes[i])
-+			return i;
-+	return -EINVAL;
-+}
-+
-+static struct f2fs_nc_store *f2fs_nc_store_create(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nc_store *store;
-+	char name[64];
-+	int i;
-+
-+	store = kzalloc_obj(*store, GFP_NOFS);
-+	if (!store)
-+		return NULL;
-+	for (i = 0; i < ARRAY_SIZE(f2fs_nc_bucket_sizes); i++) {
-+		if (snprintf(name, sizeof(name), "f2fs-nc-%u-%u-%u",
-+			     MAJOR(sbi->sb->s_dev), MINOR(sbi->sb->s_dev),
-+			     f2fs_nc_bucket_sizes[i]) >= sizeof(name))
-+			goto fail;
-+		store->caches[i] = kmem_cache_create(name,
-+						     f2fs_nc_bucket_sizes[i], 0,
-+				SLAB_RECLAIM_ACCOUNT | SLAB_NO_MERGE, NULL);
-+		if (!store->caches[i])
-+			goto fail;
-+	}
-+	return store;
-+
-+fail:
-+	while (i--)
-+		kmem_cache_destroy(store->caches[i]);
-+	kfree(store);
-+	return NULL;
-+}
-+
-+static void f2fs_nc_store_destroy(struct f2fs_nc_store *store)
-+{
-+	int i;
-+
-+	if (!store)
-+		return;
-+	for (i = ARRAY_SIZE(f2fs_nc_bucket_sizes); i-- > 0;) {
-+		WARN_ON_ONCE(atomic_long_read(&store->objects[i]));
-+		kmem_cache_destroy(store->caches[i]);
-+	}
-+	kfree(store);
-+}
-+
-+static void f2fs_nc_store_free(struct f2fs_nc_store *store, void *object,
-+			       u32 alloc_size)
-+{
-+	int bucket = f2fs_nc_store_bucket_from_size(alloc_size);
-+
-+	if (WARN_ON_ONCE(!store || !object || bucket < 0))
-+		return;
-+	kmem_cache_free(store->caches[bucket], object);
-+	atomic_long_dec(&store->objects[bucket]);
-+}
-+
-+/*
-+ * Per-superblock compression state.  Compressed objects hold references, so
-+ * the context can outlive its mount until every detached object is freed.
-+ */
-+struct f2fs_nc_ctx {
-+	struct f2fs_sb_info *sbi;
-+	struct f2fs_nc_store *store;
-+	/* Compressed queues only; raw entries use NODE_CACHE()->lru_list. */
-+	struct list_head queues[F2FS_NC_NR_QUEUES - 1];
-+	/* Current population and compressed bytes by queue. */
-+	atomic_long_t attached[F2FS_NC_NR_QUEUES];
-+	atomic64_t attached_payload[F2FS_NC_NR_QUEUES - 1];
-+	atomic64_t attached_slot_bytes[F2FS_NC_NR_QUEUES - 1];
-+	/* Cumulative detach statistics since mount. */
-+	atomic64_t detached[F2FS_NC_NR_QUEUES];
-+	/* Mount reference plus references held by compressed objects. */
-+	refcount_t refs;
-+};
-+
-+static struct f2fs_node_cached_block *f2fs_nc_node_entry(struct f2fs_cached_block *entry)
-+{
-+	return container_of(entry, struct f2fs_node_cached_block, base);
-+}
-+
-+static void f2fs_nc_ctx_release(struct f2fs_nc_ctx *ctx)
-+{
-+	int i;
-+
-+	for (i = 0; i < F2FS_NC_NR_QUEUES; i++)
-+		WARN_ON_ONCE(atomic_long_read(&ctx->attached[i]));
-+	f2fs_nc_store_destroy(ctx->store);
-+	kfree(ctx);
-+}
-+
-+static void f2fs_nc_ctx_put(struct f2fs_nc_ctx *ctx)
-+{
-+	if (refcount_dec_and_test(&ctx->refs))
-+		f2fs_nc_ctx_release(ctx);
-+}
-+
-+static void f2fs_nc_account_add(struct f2fs_nc_ctx *ctx, unsigned int queue,
-+				u32 len, u32 alloc_size)
-+{
-+	atomic_long_inc(&ctx->attached[queue]);
-+	if (queue == F2FS_NC_RAW)
-+		return;
-+	atomic64_add(len, &ctx->attached_payload[queue - 1]);
-+	atomic64_add(alloc_size, &ctx->attached_slot_bytes[queue - 1]);
-+}
-+
-+static void f2fs_nc_account_del(struct f2fs_nc_ctx *ctx, unsigned int queue,
-+				u32 len, u32 alloc_size)
-+{
-+	WARN_ON_ONCE(atomic_long_read(&ctx->attached[queue]) <= 0);
-+	atomic_long_dec(&ctx->attached[queue]);
-+	if (queue == F2FS_NC_RAW)
-+		return;
-+	WARN_ON_ONCE(atomic64_read(&ctx->attached_payload[queue - 1]) < len);
-+	WARN_ON_ONCE(atomic64_read(&ctx->attached_slot_bytes[queue - 1]) <
-+			alloc_size);
-+	atomic64_sub(len, &ctx->attached_payload[queue - 1]);
-+	atomic64_sub(alloc_size, &ctx->attached_slot_bytes[queue - 1]);
-+}
-+
-+size_t f2fs_nc_entry_alloc_size(struct f2fs_cached_block_list *cache)
-+{
-+	if (IS_NODE_CACHE(cache) && cache->sbi->node_compress)
-+		return sizeof(struct f2fs_node_cached_block);
-+	return sizeof(struct f2fs_cached_block);
-+}
-+
-+void f2fs_nc_init(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nc_ctx *ctx;
-+	int i;
-+
-+	ctx = kzalloc_obj(*ctx, GFP_NOFS);
-+	if (!ctx)
-+		goto fail_open;
-+	ctx->sbi = sbi;
-+	ctx->store = f2fs_nc_store_create(sbi);
-+	if (!ctx->store)
-+		goto fail_open;
-+	for (i = 0; i < ARRAY_SIZE(ctx->queues); i++)
-+		INIT_LIST_HEAD(&ctx->queues[i]);
-+	refcount_set(&ctx->refs, 1);
-+	sbi->node_compress = ctx;
-+	return;
-+
-+fail_open:
-+	if (ctx)
-+		f2fs_nc_ctx_release(ctx);
-+	f2fs_warn_ratelimited(sbi,
-+			      "node cache compression resources are unavailable");
-+}
-+
-+void f2fs_nc_destroy(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nc_ctx *ctx = sbi->node_compress;
-+
-+	if (!ctx)
-+		return;
-+	sbi->node_compress = NULL;
-+	f2fs_nc_ctx_put(ctx);
-+}
-+
-+struct list_head *f2fs_nc_queue_head(struct f2fs_cached_block_list *cache,
-+				     unsigned int queue)
-+{
-+	struct f2fs_nc_ctx *ctx;
-+
-+	if (queue == F2FS_NC_RAW)
-+		return &cache->lru_list;
-+	if (!IS_NODE_CACHE(cache) || queue >= F2FS_NC_NR_QUEUES)
-+		return NULL;
-+	ctx = cache->sbi->node_compress;
-+	return ctx ? &ctx->queues[queue - 1] : NULL;
-+}
-+
-+unsigned int f2fs_nc_entry_queue(const struct f2fs_cached_block *entry)
-+{
-+	const struct f2fs_node_cached_block *node;
-+	int bucket;
-+
-+	if (!f2fs_cache_test_compressed(entry))
-+		return F2FS_NC_RAW;
-+	node = container_of(entry, struct f2fs_node_cached_block, base);
-+	bucket = f2fs_nc_store_bucket_from_size(node->compressed_alloc_size);
-+	if (WARN_ON_ONCE(bucket < 0))
-+		return F2FS_NC_RAW;
-+	return bucket + 1;
-+}
-+
-+void f2fs_nc_entry_attached(struct f2fs_cached_block *entry)
-+{
-+	struct f2fs_nc_ctx *ctx;
-+
-+	if (!entry->cache || !IS_NODE_CACHE(entry->cache))
-+		return;
-+	ctx = entry->cache->sbi->node_compress;
-+	if (ctx)
-+		f2fs_nc_account_add(ctx, F2FS_NC_RAW, 0, 0);
-+}
-+
-+void f2fs_nc_entry_detached(struct f2fs_cached_block *entry)
-+{
-+	struct f2fs_node_cached_block *node;
-+	struct f2fs_nc_ctx *ctx;
-+	unsigned int queue;
-+	u32 len = 0, alloc_size = 0;
-+
-+	if (!entry->cache || !IS_NODE_CACHE(entry->cache))
-+		return;
-+	ctx = entry->cache->sbi->node_compress;
-+	if (!ctx)
-+		return;
-+	queue = f2fs_nc_entry_queue(entry);
-+	if (queue != F2FS_NC_RAW) {
-+		node = f2fs_nc_node_entry(entry);
-+		len = node->compressed_len;
-+		alloc_size = node->compressed_alloc_size;
-+	}
-+	atomic64_inc(&ctx->detached[queue]);
-+	f2fs_nc_account_del(ctx, queue, len, alloc_size);
-+}
-+
-+void f2fs_nc_free_data(struct f2fs_cached_block *entry)
-+{
-+	struct f2fs_node_cached_block *node;
-+	struct f2fs_nc_ctx *ctx;
-+	void *object;
-+	u32 alloc_size;
-+
-+	if (!f2fs_cache_test_compressed(entry)) {
-+		kfree(entry->data);
-+		return;
-+	}
-+	node = f2fs_nc_node_entry(entry);
-+	ctx = node->owner;
-+	object = entry->data;
-+	alloc_size = node->compressed_alloc_size;
-+	if (WARN_ON_ONCE(!ctx || !object ||
-+			 f2fs_nc_store_bucket_from_size(alloc_size) < 0))
-+		return;
-+	f2fs_cache_clear_compressed(entry);
-+	entry->data = NULL;
-+	node->owner = NULL;
-+	node->compressed_len = 0;
-+	node->compressed_alloc_size = 0;
-+	node->compressed_crc = 0;
-+	f2fs_nc_store_free(ctx->store, object, alloc_size);
-+	f2fs_nc_ctx_put(ctx);
-+}
-+
-+void f2fs_nc_memory_usage(struct f2fs_sb_info *sbi,
-+			  struct f2fs_nc_memory *memory)
-+{
-+	struct f2fs_nc_ctx *ctx = sbi->node_compress;
-+	u64 entries = 0, data = 0;
++	struct f2fs_cached_block_list *cache = NODE_CACHE(ctx->sbi);
 +	unsigned int i;
 +
-+	if (!ctx) {
-+		memory->entry_bytes = (u64)NODE_CACHE(sbi)->num_entries *
-+				sizeof(struct f2fs_cached_block);
-+		memory->data_bytes = (u64)NODE_CACHE(sbi)->num_entries *
-+				sbi->blocksize;
-+		return;
-+	}
-+	spin_lock(&NODE_CACHE(sbi)->list_lock);
++	spin_lock(&cache->list_lock);
 +	for (i = 0; i < F2FS_NC_NR_QUEUES; i++)
-+		entries += atomic_long_read(&ctx->attached[i]);
-+	data = (u64)atomic_long_read(&ctx->attached[F2FS_NC_RAW]) *
-+			sbi->blocksize;
-+	for (i = 0; i < F2FS_NC_NR_QUEUES - 1; i++)
-+		data += atomic64_read(&ctx->attached_slot_bytes[i]);
-+	spin_unlock(&NODE_CACHE(sbi)->list_lock);
-+	memory->entry_bytes = entries * sizeof(struct f2fs_node_cached_block);
-+	memory->data_bytes = data;
++		nr[i] = atomic_long_read(&ctx->attached[i]);
++	spin_unlock(&cache->list_lock);
 +}
-diff --git a/fs/f2fs/node_cache_compress.h b/fs/f2fs/node_cache_compress.h
-new file mode 100644
-index 000000000000..e1a9b45d67e3
---- /dev/null
-+++ b/fs/f2fs/node_cache_compress.h
-@@ -0,0 +1,78 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __F2FS_NODE_CACHE_COMPRESS_H__
-+#define __F2FS_NODE_CACHE_COMPRESS_H__
 +
-+#include "cache.h"
++unsigned long f2fs_nc_count_nodes(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_nc_ctx *ctx = sbi->node_compress;
++	unsigned long nr[F2FS_NC_NR_QUEUES];
++
++	if (!ctx)
++		return NODE_CACHE(sbi)->num_entries;
++	f2fs_nc_population_snapshot(ctx, nr);
++	return f2fs_nc_effective_count(nr, sbi->blocksize);
++}
++
++unsigned long f2fs_nc_shrink_nodes(struct f2fs_sb_info *sbi,
++				   unsigned long nr_to_scan)
++{
++	struct f2fs_cached_block_list *cache = NODE_CACHE(sbi);
++	struct f2fs_nc_ctx *ctx = sbi->node_compress;
++	unsigned long nr[F2FS_NC_NR_QUEUES];
++	unsigned long quota[F2FS_NC_NR_QUEUES];
++	unsigned long freed = 0;
++	unsigned int i;
++
++	if (!ctx)
++		return f2fs_shrink_cache_list(cache, &cache->lru_list,
++				ULONG_MAX, nr_to_scan, NULL);
++	f2fs_nc_population_snapshot(ctx, nr);
++	f2fs_nc_scan_quotas(nr, sbi->blocksize, nr_to_scan,
++			    ctx->shrink_credit, quota);
++	for (i = 0; i < F2FS_NC_NR_QUEUES; i++) {
++		struct list_head *head;
++		unsigned long scanned = 0;
++		unsigned long queue_freed;
++
++		if (!quota[i])
++			continue;
++		head = f2fs_nc_queue_head(cache, i);
++		if (!head)
++			continue;
++		queue_freed = f2fs_shrink_cache_list(cache, head, nr[i], quota[i],
++						     &scanned);
++		freed += queue_freed;
++		atomic64_add(scanned, &ctx->shrink_scanned[i]);
++		atomic64_add(queue_freed, &ctx->shrink_freed[i]);
++	}
++	return freed;
++}
++
+ void f2fs_nc_memory_usage(struct f2fs_sb_info *sbi,
+ 			  struct f2fs_nc_memory *memory)
+ {
+diff --git a/fs/f2fs/node_cache_compress.h b/fs/f2fs/node_cache_compress.h
+index e1a9b45d67e3..e7d6b07c1c98 100644
+--- a/fs/f2fs/node_cache_compress.h
++++ b/fs/f2fs/node_cache_compress.h
+@@ -34,6 +34,9 @@ struct list_head *f2fs_nc_queue_head(struct f2fs_cached_block_list *cache,
+ unsigned int f2fs_nc_entry_queue(const struct f2fs_cached_block *entry);
+ void f2fs_nc_entry_attached(struct f2fs_cached_block *entry);
+ void f2fs_nc_entry_detached(struct f2fs_cached_block *entry);
++unsigned long f2fs_nc_count_nodes(struct f2fs_sb_info *sbi);
++unsigned long f2fs_nc_shrink_nodes(struct f2fs_sb_info *sbi,
++				   unsigned long nr_to_scan);
+ void f2fs_nc_memory_usage(struct f2fs_sb_info *sbi,
+ 			  struct f2fs_nc_memory *memory);
+ #else
+@@ -66,6 +69,18 @@ f2fs_nc_entry_queue(const struct f2fs_cached_block *entry)
+ static inline void f2fs_nc_entry_attached(struct f2fs_cached_block *entry) { }
+ static inline void f2fs_nc_entry_detached(struct f2fs_cached_block *entry) { }
+ 
++static inline unsigned long f2fs_nc_count_nodes(struct f2fs_sb_info *sbi)
++{
++	return NODE_CACHE(sbi)->num_entries;
++}
++
++static inline unsigned long f2fs_nc_shrink_nodes(struct f2fs_sb_info *sbi,
++						 unsigned long nr_to_scan)
++{
++	return f2fs_shrink_cache_list(NODE_CACHE(sbi),
++			&NODE_CACHE(sbi)->lru_list, ULONG_MAX, nr_to_scan, NULL);
++}
++
+ static inline void f2fs_nc_memory_usage(struct f2fs_sb_info *sbi,
+ 					struct f2fs_nc_memory *memory)
+ {
+diff --git a/fs/f2fs/node_cache_policy.c b/fs/f2fs/node_cache_policy.c
+new file mode 100644
+index 000000000000..3adcbf89d37d
+--- /dev/null
++++ b/fs/f2fs/node_cache_policy.c
+@@ -0,0 +1,163 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/math64.h>
++#include <linux/overflow.h>
++#include <linux/shrinker.h>
++#include <linux/string.h>
++
 +#include "node_cache_policy.h"
 +
-+struct f2fs_nc_ctx;
++#define F2FS_NC_RECLAIM_SCALE_PCT	25U
++#define F2FS_NC_SCORE_HEADROOM		4U
 +
-+/* Attributed cache memory, excluding worker workspace and slab metadata. */
-+struct f2fs_nc_memory {
-+	u64 entry_bytes;	/* Cache-entry storage. */
-+	u64 data_bytes;	/* Raw buffers plus compressed slab slots. */
-+};
-+
-+#ifdef CONFIG_F2FS_FS_NODE_CACHE_COMPRESSION
-+/* Extended NODE_CACHE entry; base must remain the first member. */
-+struct f2fs_node_cached_block {
-+	struct f2fs_cached_block base;
-+	struct f2fs_nc_ctx *owner;	/* Context owning compressed data. */
-+	u32 compressed_len;		/* Valid compressed payload bytes. */
-+	u32 compressed_alloc_size;	/* Private-slab slot size. */
-+	u32 compressed_crc;		/* CRC of the original node block. */
-+};
-+
-+static_assert(offsetof(struct f2fs_node_cached_block, base) == 0);
-+
-+size_t f2fs_nc_entry_alloc_size(struct f2fs_cached_block_list *cache);
-+void f2fs_nc_init(struct f2fs_sb_info *sbi);
-+void f2fs_nc_destroy(struct f2fs_sb_info *sbi);
-+void f2fs_nc_free_data(struct f2fs_cached_block *entry);
-+struct list_head *f2fs_nc_queue_head(struct f2fs_cached_block_list *cache,
-+				     unsigned int queue);
-+unsigned int f2fs_nc_entry_queue(const struct f2fs_cached_block *entry);
-+void f2fs_nc_entry_attached(struct f2fs_cached_block *entry);
-+void f2fs_nc_entry_detached(struct f2fs_cached_block *entry);
-+void f2fs_nc_memory_usage(struct f2fs_sb_info *sbi,
-+			  struct f2fs_nc_memory *memory);
-+#else
-+static inline size_t f2fs_nc_entry_alloc_size(struct f2fs_cached_block_list *cache)
++static void f2fs_nc_queue_weights(u32 blocksize,
++				  u64 weight[F2FS_NC_NR_QUEUES])
 +{
-+	return sizeof(struct f2fs_cached_block);
++	weight[F2FS_NC_RAW] = blocksize;
++	weight[F2FS_NC_256] = F2FS_NC_BUCKET_256_SIZE *
++			F2FS_NC_RECLAIM_SCALE_PCT / F2FS_NC_PERCENT_MAX;
++	weight[F2FS_NC_512] = F2FS_NC_BUCKET_512_SIZE *
++			F2FS_NC_RECLAIM_SCALE_PCT / F2FS_NC_PERCENT_MAX;
++	weight[F2FS_NC_1024] = F2FS_NC_BUCKET_1024_SIZE *
++			F2FS_NC_RECLAIM_SCALE_PCT / F2FS_NC_PERCENT_MAX;
 +}
 +
-+static inline void f2fs_nc_init(struct f2fs_sb_info *sbi) { }
-+
-+static inline void f2fs_nc_destroy(struct f2fs_sb_info *sbi) { }
-+
-+static inline void f2fs_nc_free_data(struct f2fs_cached_block *entry)
++static u64 f2fs_nc_queue_mass(unsigned long nr, u64 weight,
++			      unsigned long budget)
 +{
-+	kfree(entry->data);
++	u64 limit;
++	u64 count;
++
++	if (!nr || !weight || !budget)
++		return 0;
++	/* Keep both the quota product and signed score arithmetic bounded. */
++	limit = min_t(u64, S64_MAX / F2FS_NC_SCORE_HEADROOM /
++			F2FS_NC_NR_QUEUES,
++			div64_u64(U64_MAX, budget));
++	if (limit < weight)
++		return 1;
++	count = min_t(u64, nr, div64_u64(limit, weight));
++	return count * weight;
 +}
 +
-+static inline struct list_head *f2fs_nc_queue_head(struct f2fs_cached_block_list *cache,
-+						   unsigned int queue)
++u64 f2fs_nc_effective_count(const unsigned long nr[F2FS_NC_NR_QUEUES],
++			    u32 blocksize)
 +{
-+	return queue == F2FS_NC_RAW ? &cache->lru_list : NULL;
++	u64 weight[F2FS_NC_NR_QUEUES];
++	u64 cap = (u64)SHRINK_EMPTY - 1;
++	u64 count = 0;
++	u64 remainder = 0;
++	u64 carry;
++	u64 carry_remainder;
++	unsigned int i;
++
++	if (!blocksize)
++		return 0;
++	f2fs_nc_queue_weights(blocksize, weight);
++	for (i = 0; i < F2FS_NC_NR_QUEUES; i++) {
++		u64 quotient, count_remainder;
++
++		quotient = mul_u64_u64_div_u64(nr[i], weight[i], blocksize);
++		if (quotient > cap - count)
++			return cap;
++		count += quotient;
++		div64_u64_rem(nr[i], blocksize, &count_remainder);
++		remainder += count_remainder * weight[i] % blocksize;
++	}
++	carry = div64_u64_rem(remainder, blocksize, &carry_remainder);
++	if (carry_remainder)
++		carry++;
++	if (carry > cap - count)
++		return cap;
++	return count + carry;
 +}
 +
-+static inline unsigned int
-+f2fs_nc_entry_queue(const struct f2fs_cached_block *entry)
++void f2fs_nc_scan_quotas(const unsigned long nr[F2FS_NC_NR_QUEUES],
++			 u32 blocksize, unsigned long requested,
++		s64 credit[F2FS_NC_NR_QUEUES],
++		unsigned long quota[F2FS_NC_NR_QUEUES])
 +{
-+	return F2FS_NC_RAW;
++	u64 weight[F2FS_NC_NR_QUEUES];
++	u64 mass[F2FS_NC_NR_QUEUES], total_mass;
++	s64 score[F2FS_NC_NR_QUEUES];
++	unsigned long population = 0, budget, assigned = 0;
++	unsigned int round, i;
++
++	memset(quota, 0, sizeof(*quota) * F2FS_NC_NR_QUEUES);
++	f2fs_nc_queue_weights(blocksize, weight);
++	for (i = 0; i < F2FS_NC_NR_QUEUES; i++) {
++		if (!nr[i] || !weight[i])
++			credit[i] = 0;
++		if (weight[i] &&
++		    check_add_overflow(population, nr[i], &population))
++			population = ULONG_MAX;
++	}
++	budget = min(requested, population);
++	if (!budget || !blocksize)
++		return;
++	total_mass = 0;
++	for (i = 0; i < F2FS_NC_NR_QUEUES; i++) {
++		mass[i] = f2fs_nc_queue_mass(nr[i], weight[i], budget);
++		total_mass += mass[i];
++	}
++	if (!total_mass)
++		return;
++	for (i = 0; i < F2FS_NC_NR_QUEUES; i++)
++		score[i] = mass[i] ? clamp_t(s64, credit[i],
++						-(s64)total_mass,
++						(s64)total_mass) : 0;
++
++	for (round = 0; round < F2FS_NC_NR_QUEUES + 1 && assigned < budget;
++	     round++) {
++		u64 active_mass = 0;
++		unsigned long before = assigned;
++		bool capped = false;
++
++		for (i = 0; i < F2FS_NC_NR_QUEUES; i++)
++			if (mass[i] && quota[i] < nr[i])
++				active_mass += mass[i];
++		if (!active_mass)
++			break;
++		for (i = 0; i < F2FS_NC_NR_QUEUES; i++) {
++			unsigned long capacity, share;
++			u64 product, quotient, remainder;
++
++			if (!mass[i] || quota[i] >= nr[i])
++				continue;
++			capacity = nr[i] - quota[i];
++			quotient = mul_u64_u64_div_u64(budget - assigned,
++						       mass[i], active_mass);
++			share = min_t(u64, quotient, capacity);
++			if (share < quotient)
++				capped = true;
++			quota[i] += share;
++			before += share;
++			product = (budget - assigned) * mass[i];
++			remainder = product - quotient * active_mass;
++			score[i] = clamp_t(s64, score[i], -(s64)active_mass,
++					   (s64)active_mass) + (s64)remainder;
++		}
++		assigned = before;
++		while (assigned < budget) {
++			unsigned int best = F2FS_NC_NR_QUEUES;
++
++			for (i = 0; i < F2FS_NC_NR_QUEUES; i++) {
++				if (!mass[i] || quota[i] >= nr[i])
++					continue;
++				if (best == F2FS_NC_NR_QUEUES ||
++				    score[i] > score[best])
++					best = i;
++			}
++			if (best == F2FS_NC_NR_QUEUES)
++				break;
++			quota[best]++;
++			score[best] -= active_mass;
++			assigned++;
++			if (capped)
++				break;
++		}
++		if (!capped || assigned == budget)
++			break;
++	}
++	for (i = 0; i < F2FS_NC_NR_QUEUES; i++)
++		credit[i] = mass[i] ? score[i] : 0;
 +}
-+
-+static inline void f2fs_nc_entry_attached(struct f2fs_cached_block *entry) { }
-+static inline void f2fs_nc_entry_detached(struct f2fs_cached_block *entry) { }
-+
-+static inline void f2fs_nc_memory_usage(struct f2fs_sb_info *sbi,
-+					struct f2fs_nc_memory *memory)
-+{
-+	memory->entry_bytes = (u64)NODE_CACHE(sbi)->num_entries *
-+			sizeof(struct f2fs_cached_block);
-+	memory->data_bytes = (u64)NODE_CACHE(sbi)->num_entries * sbi->blocksize;
-+}
-+#endif
-+
-+#endif /* __F2FS_NODE_CACHE_COMPRESS_H__ */
 diff --git a/fs/f2fs/node_cache_policy.h b/fs/f2fs/node_cache_policy.h
-new file mode 100644
-index 000000000000..efe906bfcc58
---- /dev/null
+index efe906bfcc58..42af4ad1698f 100644
+--- a/fs/f2fs/node_cache_policy.h
 +++ b/fs/f2fs/node_cache_policy.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __F2FS_NODE_CACHE_POLICY_H__
-+#define __F2FS_NODE_CACHE_POLICY_H__
+@@ -8,6 +8,7 @@
+ #define F2FS_NC_BUCKET_512_SIZE		512U
+ #define F2FS_NC_BUCKET_1024_SIZE	1024U
+ #define F2FS_NC_MAX_OBJECT_SIZE		F2FS_NC_BUCKET_1024_SIZE
++#define F2FS_NC_PERCENT_MAX		100U
+ 
+ /*
+  * Keep compressed queues in the same order as f2fs_nc_bucket_sizes[].
+@@ -20,4 +21,12 @@ enum f2fs_nc_queue {
+ 	F2FS_NC_1024,
+ 	F2FS_NC_NR_QUEUES,
+ };
 +
-+#include <linux/types.h>
++u64 f2fs_nc_effective_count(const unsigned long nr[F2FS_NC_NR_QUEUES],
++			    u32 blocksize);
++void f2fs_nc_scan_quotas(const unsigned long nr[F2FS_NC_NR_QUEUES],
++			 u32 blocksize, unsigned long requested,
++		s64 credit[F2FS_NC_NR_QUEUES],
++		unsigned long quota[F2FS_NC_NR_QUEUES]);
 +
-+#define F2FS_NC_BUCKET_256_SIZE		256U
-+#define F2FS_NC_BUCKET_512_SIZE		512U
-+#define F2FS_NC_BUCKET_1024_SIZE	1024U
-+#define F2FS_NC_MAX_OBJECT_SIZE		F2FS_NC_BUCKET_1024_SIZE
-+
-+/*
-+ * Keep compressed queues in the same order as f2fs_nc_bucket_sizes[].
-+ * Raw entries remain on NODE_CACHE(sbi)->lru_list.
-+ */
-+enum f2fs_nc_queue {
-+	F2FS_NC_RAW,
-+	F2FS_NC_256,
-+	F2FS_NC_512,
-+	F2FS_NC_1024,
-+	F2FS_NC_NR_QUEUES,
-+};
-+#endif /* __F2FS_NODE_CACHE_POLICY_H__ */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 294f6f2c28a5..461209293dba 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -32,6 +32,7 @@
- #include <linux/fserror.h>
+ #endif /* __F2FS_NODE_CACHE_POLICY_H__ */
+diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+index 29f488531492..a4e9e61557cc 100644
+--- a/fs/f2fs/shrinker.c
++++ b/fs/f2fs/shrinker.c
+@@ -11,6 +11,7 @@
  
  #include "f2fs.h"
-+#include "node_cache_compress.h"
  #include "node.h"
- #include "segment.h"
- #include "xattr.h"
-@@ -2071,6 +2072,7 @@ static void f2fs_put_super(struct super_block *sb)
++#include "node_cache_compress.h"
  
- 	f2fs_destroy_cache(COMPRESS_CACHE(sbi));
- 	f2fs_destroy_cache(NODE_CACHE(sbi));
-+	f2fs_nc_destroy(sbi);
- 	f2fs_destroy_cache(META_CACHE(sbi));
+ static LIST_HEAD(f2fs_list);
+ static DEFINE_SPINLOCK(f2fs_list_lock);
+@@ -40,7 +41,7 @@ static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi,
+ static unsigned long __count_cache(struct f2fs_sb_info *sbi)
+ {
+ 	return META_CACHE(sbi)->num_entries +
+-		NODE_CACHE(sbi)->num_entries +
++		f2fs_nc_count_nodes(sbi) +
+ 		COMPRESS_CACHE(sbi)->num_entries;
+ }
  
- 	/* Should check the page counts after dropping all node/meta pages */
-@@ -5263,6 +5265,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	f2fs_init_cache(sbi, META_CACHE(sbi), F2FS_META_CACHE);
- 	f2fs_init_cache(sbi, NODE_CACHE(sbi), F2FS_NODE_CACHE);
- 	f2fs_init_cache(sbi, COMPRESS_CACHE(sbi), F2FS_COMPRESS_CACHE);
-+	f2fs_nc_init(sbi);
- 
- 	err = f2fs_get_valid_checkpoint(sbi);
- 	if (err) {
-@@ -5581,6 +5584,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- free_compress_cache:
- 	f2fs_destroy_cache(COMPRESS_CACHE(sbi));
- 	f2fs_destroy_cache(NODE_CACHE(sbi));
-+	f2fs_nc_destroy(sbi);
- 	f2fs_destroy_cache(META_CACHE(sbi));
- 	f2fs_destroy_page_array_cache(sbi);
- free_percpu:
 -- 
 2.43.0
 
