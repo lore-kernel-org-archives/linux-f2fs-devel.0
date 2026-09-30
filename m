@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5CBB8CA5FB1
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2026 08:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3980ECA5FC1
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2026 08:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xhGEM8k6agTMDyaP1cXvikRN2DD9i8QXfnsKZO6hdxM=; b=Cte5GbbYcba2juVQMZDRRbLv5g
-	U1zNXkqpmdL0ptPpVC4IRs5g8+IjmEf1eeF5aDve332g5K+9DJh25tOgJb9pvWaYHco6d0BwVoHV3
-	ZTZzs0YlMv+g+/f+AEBW0KLB+uU1kgOu9+oYcG5xWBTqiq2OBIc+z5UQ4tPbN4+MzKh8=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=D4/tS9Z3yb43Fx1ykLrYHNF8bUNHvleqLJAs+U5lY5c=; b=Xth81KgllSXbIFLpPkPfyX5RvO
+	qJXTOWsmp9d9Gj0dim0dYSc1u5EZznxMu+2i4PUNM47GVZvunVn5EKHSSvzeptMiPIAvSclz66h5f
+	w2MzMSORf4m1ztTvLRWyZhz5CJLZ8ZWMdv97y2sxOXkP+6HtlbY/yDifD7X/ov43vUKo=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xBpOx-0000zH-Uo;
-	Wed, 30 Sep 2026 08:10:55 +0000
+	id 1xBpXx-0002ED-0D;
+	Wed, 30 Sep 2026 08:20:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xBpOw-0000zA-LP
+ (envelope-from <chao@kernel.org>) id 1xBpXv-0002Dy-6T
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Sep 2026 08:10:54 +0000
+ Wed, 30 Sep 2026 08:20:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jZbp4O7AEq6zBMXrMUVa/0pgZAfHinTr8WzmDWALHlQ=; b=eZlM7uXIYGyP7jyc6WlwWE/lzH
- 3orqMgOiDfAbnfEyq4A4IDKxcg+AhySQlgj6/eyQqoeDY8N5l+DH7EhHQN98EltnBr4dby4loq+Gq
- cK7+qCpwkUTdpqeXBiihdo0Rdi25ctU2YIwFxTxd8SIS2jtJbVrXmKb0RvjI/Lj6JAzg=;
+ bh=JDjw+45ZNrtvu5F2t9lQCEebxqfaUjTzsJjMtfW+q48=; b=B97q7q/N4IcUNy4VLQaVrP7qL+
+ VjLQUTqRoiG3JsrQzeLmOGEiGxjbA11OqDYGvzbBaEdlmj7E3aJKjd3Rz8sEbgoewFc0+wLlVU+KQ
+ RhMcvvBngq8/ljNcqw8Fibu06SMgUPwwnVMUKEo4UjMdRKJVdy78BN8pMOjLFHwhTeFk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jZbp4O7AEq6zBMXrMUVa/0pgZAfHinTr8WzmDWALHlQ=; b=Wqpsx3S0wRV5xl/7rgaGeYH0wL
- NuPxahUE7tZDRLZ6wBHzsSps4ph27RyvQqCbg7fBCZ/qcnYGjfvD5ns2yPq4qQAObUFyjePW80/pL
- /zzMwbqNnCcWCBpFJSaoNTeTt+qLarxdt1pcTsWTfafrGFAFS9/kIDGGQkSiuylh+GyU=;
+ bh=JDjw+45ZNrtvu5F2t9lQCEebxqfaUjTzsJjMtfW+q48=; b=lArKJbYuViQEgaZOxer1JtxmqW
+ IhkNq4tfK/3klZTr2ZkRKPkBF7L+H31vbvGJb7pqG6yhy0B8YIGNd6e4MmuzzWUrqnyR1eyE2seZj
+ gOx8sWyV9DpbsdNgaWZTiMyqkOs2/A35VeaTdI3IAmReq5Jo4hqxLg3yIHRammj1fLKE=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xBpOu-00056U-0W for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Sep 2026 08:10:54 +0000
+ id 1xBpXa-0005Wx-FT for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 30 Sep 2026 08:20:11 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id AC669409F5;
- Wed, 30 Sep 2026 08:10:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 188AC1F000FF;
- Wed, 30 Sep 2026 08:10:44 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 1A71143824;
+ Wed, 30 Sep 2026 08:19:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA55D1F000FF;
+ Wed, 30 Sep 2026 08:19:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1790755846;
- bh=jZbp4O7AEq6zBMXrMUVa/0pgZAfHinTr8WzmDWALHlQ=;
+ s=k20260515; t=1790756385;
+ bh=JDjw+45ZNrtvu5F2t9lQCEebxqfaUjTzsJjMtfW+q48=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=T1yWPbUG3iO+OpaM28OQMX2lrKF/J6y5LfEooBGVEWjLX94L2dNBxIUt+j/kzt42C
- f5QBxfG2pzJpNlFUN3vJOEAuiXwKtABqLfnhf1BBd6/SGfYqtpOFaoj174QHSqKYnG
- DJMhGOCbLuB1eUyE2RaaRM5JiNGPSAUwdYpzJ6rDn63D+o/hQS7q+uLqDESWquL6Yu
- MXcCHBvQkfR9UF/X91InZnFTV55nLQD5K27gFDoufjl6DW2hlmG2S/IbpmMXHO7bDh
- nwjfdsWjqktoh8dugmG+sy5IBLJzizE8PmHDU9wArhaIBsDWm14pWh6xZGkLix6vIr
- rrhpeEwY11Z3g==
-Message-ID: <989ede44-7d64-48b1-af9b-a0a45f824ab3@kernel.org>
-Date: Wed, 30 Sep 2026 16:10:43 +0800
+ b=BVHiiujRfXo4lkjG0Xe27sjzAAibGxO1GEfBaiQC06ZMGsL8CPZg4SEawGP7ZnC3h
+ A3kTawXNUNP30NfDDI/GqHIDxsAcFHJtmHZPtjc2piUEzzjlQ3N4gKcgXfJ7F6EqXh
+ 7XNLIgPea2BU/uhD8VweCZ5Iq2RIQU41dnsfyl54ftq3pIIlKPD4WFL4y/6avNA3DQ
+ E+4vcx8Loii9VnezNjNp/WkWzGVROkHzKBj1uSsL8j6VUEd0izqh0y8L0irwoDgHhI
+ LeTijnJwrwMy5Jn4xz1cIS9lSPOLbIbPDknxvbD3lLnis0Nhuoj2nHyFqAbYamJs7T
+ bt1AV2Y9qgNdw==
+Message-ID: <95029d2e-4cea-4c2b-a253-9b7efd989028@kernel.org>
+Date: Wed, 30 Sep 2026 16:19:36 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Seongjae Jeong <jsjlee1020@gmail.com>, jaegeuk@kernel.org
-References: <20260918133922.8163-1-jsjlee1020@gmail.com>
+To: Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>,
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <qi.zheng@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Kairui Song <kasong@tencent.com>
+References: <20260920-remove-pg_private-v5-0-bb68b6a21869@nvidia.com>
+ <20260920-remove-pg_private-v5-7-bb68b6a21869@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20260918133922.8163-1-jsjlee1020@gmail.com>
-X-Headers-End: 1xBpOu-00056U-0W
-Subject: Re: [f2fs-dev] [PATCH] f2fs: reject device aliasing without a
- multi-device configuration
+In-Reply-To: <20260920-remove-pg_private-v5-7-bb68b6a21869@nvidia.com>
+X-Headers-End: 1xBpXa-0005Wx-FT
+Subject: Re: [f2fs-dev] [PATCH v5 07/17] f2fs: convert the ->private flag
+ helpers to folio-only
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,30 +103,39 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: syzbot+ae5b8eb92ed40411ce16@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, daehojeong@google.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-mm@kvack.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Tal Zussman <tz2294@columbia.edu>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/18/26 21:39, Seongjae Jeong wrote:
-> A malformed F2FS image can enable F2FS_FEATURE_DEVICE_ALIAS without
-> providing a multi-device configuration. For a regular single-device
-> filesystem, f2fs_scan_devices() returns without allocating sbi->devs.
+On 9/21/26 10:28, Zi Yan wrote:
+> page-based ->private flag helpers are used in the compression path, where
+> large folios are not enabled. They can use folio versions with
+> page_folio(). The two remaining users in data.c and segment.c can use
+> fio->folio instead of fio->page (two are in a union).
 > 
-> In this state, f2fs_dev_is_alloc_blocked() passes the device alias
-> feature check and dereferences FDEV(0), resulting in a NULL pointer
-> dereference during segment allocation.
+> Drop page-based helpers after the conversion and rename
+> PAGE_PRIVATE_{GET,SET,CLEAR}_FUNC() and the PAGE_PRIVATE_* flags to
+> F2FS_FOLIO_PRIVATE_* to match. Convert the folio/page union from
+> f2fs_io_info union to folio only, since no page user is left.
 > 
-> Device aliasing requires at least one secondary device. Reject
-> superblocks that enable device aliasing without entries for both the
-> main and secondary devices in sanity_check_raw_super().
+> The folio helpers do a plain read-modify-write where the page ones used
+> set_bit()/clear_bit(). It is fine because the converted code either holds
+> folio lock or, in f2fs_compress_write_end_io(), matches what the
+> non-compressed code does in f2fs_write_end_bio().
 > 
-> Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
-> Reported-by: syzbot+ae5b8eb92ed40411ce16@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=ae5b8eb92ed40411ce16
-> Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
+> Assisted-by: LLM
+> Suggested-by: Tal Zussman <tz2294@columbia.edu>
+> Co-developed-by: David Hildenbrand (Arm) <david@kernel.org>
+> Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
+> To: Jaegeuk Kim <jaegeuk@kernel.org>
+> To: Chao Yu <chao@kernel.org>
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Tal Zussman <tz2294@columbia.edu>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
