@@ -4,77 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 02ECFCA5FCB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2026 17:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 27932CA5FC4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2026 23:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=DOQk0x9ABVkjCKtoGncQIiEUqBP7h6gV7dHArlAmloE=; b=GPuLkZtrd83galwMCqfxt+7Bf1
-	sMRdLdF59KEZHUo5pS//vP5HZ58xEThrA+CrSl7eN/WnI8Y27qg4TWvsSOCdhAbh07IaYFP1CQ2H7
-	JyplD8M0gHGTMjc2RUOOSZymMzaaGkKr2Urrb/Mffia9QavO1GdD0ta+Ow/jNbBTmsG4=;
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=6Nc14fnHNTYQ4NfGMUHjUDndL4dgSAYjaKO6kCix+cw=; b=GUZosTmIChi0GrMQEbpqHT9pVM
+	ife/szqc7EfW4oqaZADQKe10/QrAA4WvC9C2r0VhTNb0+yMOxNx3g5OOxYibHyX2eUbejGMu5Ea8U
+	tv6DObeQ0cFsc0Ut6pXy6qsxjwVkuYzAFBEpQ1nyVa5Bqg7CDYi8sIQCzOssFeTm7ei8=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xBxyl-0006rN-1f;
-	Wed, 30 Sep 2026 17:20:27 +0000
+	id 1xC48Q-0006hL-P8;
+	Wed, 30 Sep 2026 23:54:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xBxyZ-0006q6-TQ
+ (envelope-from <chao@kernel.org>) id 1xC48N-0006hD-Gy
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Sep 2026 17:20:16 +0000
+ Wed, 30 Sep 2026 23:54:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tuVOnxNWCgPPQeO5g01VIr/PzkqI2Sr+czEJMlodnZg=; b=Bn4QmTIKvL137IA39UdzOteZu/
- qWodgh2onC2okdXvYRTVc/ItT6w3PvEk5z9JQnwrNyxnqghygzKwpPdqMwd/MhFH+ACjrY+bI7Ie9
- c2RQ1Cq1R3MbFIyAIwSXjEqXHESc0IVpsoL3Is/rUTz2weVpEndMN/Gmr6jpJJkC2yz4=;
+ bh=LLgbJMciNYXzfOaMeH8TIVdRk5weLJbhP8q1PNI6ADw=; b=X+3SsRqsviYQmvvCAqlwfR56Pn
+ G7tb8hV001pZTqMwXpnsrJBURq3I3HLNENeIdPB0NunTOPZKHA83H9jH8606fERRa3J6YSs6BSwiq
+ l1iK+L5gKYse3jfck7Ex1lNQdsa/chcQI1jMmf7G5oLbiijzZiVl4kZtyEkqJmPbTxMg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tuVOnxNWCgPPQeO5g01VIr/PzkqI2Sr+czEJMlodnZg=; b=DvoayDDCRBsO/VcqNYQSZbfoD1
- vJr8Zv5+2mpBPM0AB+vFaQt+P5Wm7a8BXQe+JIthidXR9+oTqtWEynOVn2uIuhtCsne1NQ5GCKgff
- 2I49Rj4VilabSR2Z5AkQc0HSQLaJuakj7azEJuF9S8+I9sxwsqU0kGsoUtXWWuI4zYA0=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=LLgbJMciNYXzfOaMeH8TIVdRk5weLJbhP8q1PNI6ADw=; b=P
+ sAFvtp2Y5QYjA6tzWB/c5iCe4wyiSqjMiBlFrCn90lQh6WFjbhonw0hu8VQ/VTCj1mkM1KGVjbyrp
+ YCsXzXnfd30nBrUa4GybzobaGoVzd5bDVjBEOJRwv8daV47XnMzsSsFYpwzdyU2COmCot9MkNUYOM
+ j5h88jQX85t/5RV0=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xBxyX-0002XW-MB for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Sep 2026 17:20:16 +0000
+ id 1xC48N-0002KJ-Kr for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 30 Sep 2026 23:54:48 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 6267C43685;
- Wed, 30 Sep 2026 17:20:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F4F1F00898;
- Wed, 30 Sep 2026 17:20:08 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id F0A40601FF
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 30 Sep 2026 23:54:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27C61F000FF;
+ Wed, 30 Sep 2026 23:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1790788808;
- bh=tuVOnxNWCgPPQeO5g01VIr/PzkqI2Sr+czEJMlodnZg=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=JEHQ4Pl16XgadK8EliWwRtgnSpzQOnB+YQmtbYd2E5feJmujXQQrlO5aj8AaYcbJe
- T0h75ZYuUY7QEwMTXGGsxzdIu4ToNJVCjS8A5DekzvpdtCF0hoN19NfmPmgrk+6BE9
- tZ/9zxhJU2N0NhgEB2mC/qqhiE8CL0CD3B1MdKVHsFqy1WPweDJIaJa66KU6kSsZUs
- TSWuvZjKcmxRC8O5PXiNClOT9Q5FtfTXKZdzoMU8Jrk31AVVwCPC/uvacB94DCoyA7
- 69TlJgFF1+2H39mo520QV/Qjq987C1wduBbaoR7XN4sGBp1LnT5+Abu638d9d5y6vn
- ZwPa2WvJgBqrg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 3A36F3A566F2; Wed, 30 Sep 2026 17:20:08 +0000 (UTC)
+ s=k20260515; t=1790812481;
+ bh=LLgbJMciNYXzfOaMeH8TIVdRk5weLJbhP8q1PNI6ADw=;
+ h=From:To:Cc:Subject:Date;
+ b=WIkU2sJtnTGPhQtXkWtnyDs+DQjrUhwvJ1epEhSB4+iDfyUB/oNFYJJJi21XSrd2z
+ dHkGpOVnUCLOJYCBC0frKDfpRKwpDCryj4qzCgaT8nuXezr1BoZqlyFfpz7jCHAmTS
+ wEhLLcwi1tMJkQ4UjimSazBx9M5aN9znjX/yLocoQU5nc7JOkelSOb3CZBmmj7qGJX
+ 1k5uGrFy3bVVjqH5FOl5sVRnc/A17+jokE/ZMHRuvIOXxdZrTzVghvdh5AkJ9yAbXq
+ tcTgt3HOy71TKhgOYq0ZJqDl5eXCmxSSOssWqHu1XILdxHFJ+18694BsVX4fz1PZNu
+ R+3es9gT3uvHw==
+To: jaegeuk@kernel.org
+Date: Wed, 30 Sep 2026 23:54:34 +0000
+Message-ID: <20260930235435.3789910-1-chao@kernel.org>
+X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
 MIME-Version: 1.0
-Message-Id: <179078880677.2027760.7016145024100060677.git-patchwork-notify@kernel.org>
-Date: Wed, 30 Sep 2026 17:20:06 +0000
-References: <20260917142222.1591270-1-arnd@kernel.org>
-In-Reply-To: <20260917142222.1591270-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-X-Headers-End: 1xBxyX-0002XW-MB
-Subject: Re: [f2fs-dev] [PATCH] f2fs: quota: fix unused-label warning
+X-Headers-End: 1xC48N-0002KJ-Kr
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: cache: pin cached block in
+ f2fs_end_cache_writeback()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,42 +85,84 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: zhangxp1998@gmail.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
- jnhuang95@gmail.com, ebiggers@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, daehojeong@google.com
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+From: Chao Yu <chao@kernel.org>
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Like page cache folios, writeback does not hold an active reference on
+the cached block during I/O flight, relying instead on truncation or
+shrinker callers to wait on F2FS_BLOCK_WRITEBACK before releasing the entry.
 
-On Thu, 17 Sep 2026 16:21:42 +0200 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The newly added label causes a warning when QUOTA is turned off:
-> 
-> fs/f2fs/super.c: In function '__f2fs_remount':
-> fs/f2fs/super.c:3142:1: error: label 'restore_holder' defined but not used [-Werror=unused-label]
->  3142 | restore_holder:
->       | ^~~~~~~~~~~~~~
-> 
-> [...]
+However, in f2fs_end_cache_writeback(), clear_and_wake_up_bit() executes
+two distinct steps:
+1. clear_bit_unlock(F2FS_BLOCK_WRITEBACK, &entry->state): clears the bit.
+2. wake_up_bit(&entry->state, F2FS_BLOCK_WRITEBACK): hashes &entry->state
+   to look up the waitqueue and wakes waiting tasks.
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: quota: fix unused-label warning
-    https://git.kernel.org/jaegeuk/f2fs/c/4faeea625cf7
+Once step 1 clears the bit, a concurrent waiter in f2fs_do_truncate_cache()
+or f2fs_do_shrink_cache() is immediately unblocked. The waiter can proceed
+to delete the entry from the radix tree, drop the final reference, and
+kfree() the entry before step 2 finishes, causing wake_up_bit() to access
+freed memory:
 
-You are awesome, thank you!
+CPU 0 (I/O completion)               CPU 1 (Truncation / Shrinker)
+- f2fs_cache_write_end_io()
+ - f2fs_end_cache_writeback(entry)
+  - clear_and_wake_up_bit()
+   - clear_bit_unlock(WRITEBACK)
+   : bit is cleared!
+                                     - f2fs_do_truncate_cache(entry)
+                                      - f2fs_cache_wait_writeback(entry)
+                                      : sees WRITEBACK cleared!
+                                      - radix_tree_delete(&cache->root, ...)
+                                      - f2fs_put_cache(entry, true)
+                                       - atomic_dec_and_test(&refcount) == 0
+                                       - f2fs_do_free_cache(entry)
+                                        - kfree(entry->data);
+                                        - kfree(entry); <--- FREED!
+   - smp_mb__after_atomic()
+   - wake_up_bit(&entry->state, ...)
+   : Dereferences &entry->state on freed entry! (UAF)
+
+Mirror the logic in folio_end_writeback() by acquiring a temporary reference
+via f2fs_cache_get() before clear_and_wake_up_bit() and releasing it with
+f2fs_cache_put() once wake_up_bit() completes. This guarantees the entry
+can not be freed until wake_up_bit() has finished.
+
+This fixes commit 399410a90ca7 ("f2fs: cache: implement metadata cache").
+
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/cache.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
+index 38fc5eb17f92..7831e53f5678 100644
+--- a/fs/f2fs/cache.c
++++ b/fs/f2fs/cache.c
+@@ -117,7 +117,15 @@ void f2fs_end_cache_writeback(struct f2fs_cached_block *entry)
+ 	 */
+ 	f2fs_cache_update_tag(entry, F2FS_CACHE_TAG_WRITEBACK,
+ 						F2FS_CACHE_TAG_NONE);
++	/*
++	 * Writeback does not hold an entry reference of its own, relying
++	 * on truncation to wait for the clearing of F2FS_BLOCK_WRITEBACK.
++	 * But here we must make sure that the entry is not freed and
++	 * reused before clear_and_wake_up_bit().
++	 */
++	f2fs_cache_get(entry);
+ 	clear_and_wake_up_bit(F2FS_BLOCK_WRITEBACK, &entry->state);
++	f2fs_cache_put(entry);
+ }
+ 
+ static int f2fs_cache_refcount(struct f2fs_cached_block *entry)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
 
