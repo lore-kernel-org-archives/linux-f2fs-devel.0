@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3742BCA5FC1
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2026 08:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5CBB8CA5FB1
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2026 08:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=O7pYyfc+3GGT5jkbChJ8sD4wO/zVSLRVe0cAARlm11k=; b=UuzzDa8TfW+k60uX5omCvwmhB/
-	DdClLxv0j7L3vGTxpuITZJsdNgJTdrjUURM/GeoY8u/MYYZQOOb/XexcCMP3i210ZVVfqjRdmlyG3
-	g2zZNI2WOuR4xymxeGp4hpQ6LRVqDlJ40GJOxLaoVSKgyzyFgdu03lUzBEDWUeIyOcgE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=xhGEM8k6agTMDyaP1cXvikRN2DD9i8QXfnsKZO6hdxM=; b=Cte5GbbYcba2juVQMZDRRbLv5g
+	U1zNXkqpmdL0ptPpVC4IRs5g8+IjmEf1eeF5aDve332g5K+9DJh25tOgJb9pvWaYHco6d0BwVoHV3
+	ZTZzs0YlMv+g+/f+AEBW0KLB+uU1kgOu9+oYcG5xWBTqiq2OBIc+z5UQ4tPbN4+MzKh8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xBpGN-0002u9-Hm;
-	Wed, 30 Sep 2026 08:02:04 +0000
+	id 1xBpOx-0000zH-Uo;
+	Wed, 30 Sep 2026 08:10:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xBpGM-0002u2-K1
+ (envelope-from <chao@kernel.org>) id 1xBpOw-0000zA-LP
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Sep 2026 08:02:03 +0000
+ Wed, 30 Sep 2026 08:10:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mdcJAQl+W8tBL1aeydL1oDL5UIGU1+BTd8hClzUjYEQ=; b=jyw6XpP2Bz67pEy4/KQUkKFMHv
- CR6X1UPjSQiLI9kCjCU1fkHX7Mi7t0UXyhc20XSMi5hWiJTTH0QFRHt9Fp8fRaHK/+pnyHjhBmVOV
- vrjmuYvcSo2KzWyOyNmhwx2TBhRUboRHVrsv6PRw4czL01NfIxU+vpaUGcDpCUKmcJhs=;
+ bh=jZbp4O7AEq6zBMXrMUVa/0pgZAfHinTr8WzmDWALHlQ=; b=eZlM7uXIYGyP7jyc6WlwWE/lzH
+ 3orqMgOiDfAbnfEyq4A4IDKxcg+AhySQlgj6/eyQqoeDY8N5l+DH7EhHQN98EltnBr4dby4loq+Gq
+ cK7+qCpwkUTdpqeXBiihdo0Rdi25ctU2YIwFxTxd8SIS2jtJbVrXmKb0RvjI/Lj6JAzg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mdcJAQl+W8tBL1aeydL1oDL5UIGU1+BTd8hClzUjYEQ=; b=QO/5Vp8Xr03OaMuKv995Ky9ulJ
- IE3YDEIjRN5Z+505aGTRnCu9HHnbmKgYM9ruUHVfKzhrgjFRQPtNbqyj0NVx7ntMXM7Ajz90xxu9Y
- xjXXgv0Q5P4G9Ix4epjeJSZbfXwMenbngbBrOBQXj4KUM5gTYflQUXsv0QuUE4SWG+e0=;
+ bh=jZbp4O7AEq6zBMXrMUVa/0pgZAfHinTr8WzmDWALHlQ=; b=Wqpsx3S0wRV5xl/7rgaGeYH0wL
+ NuPxahUE7tZDRLZ6wBHzsSps4ph27RyvQqCbg7fBCZ/qcnYGjfvD5ns2yPq4qQAObUFyjePW80/pL
+ /zzMwbqNnCcWCBpFJSaoNTeTt+qLarxdt1pcTsWTfafrGFAFS9/kIDGGQkSiuylh+GyU=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xBpGL-0004ep-Ru for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Sep 2026 08:02:03 +0000
+ id 1xBpOu-00056U-0W for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 30 Sep 2026 08:10:54 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 8712340BC0;
- Wed, 30 Sep 2026 08:01:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFBF1F000FF;
- Wed, 30 Sep 2026 08:01:54 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id AC669409F5;
+ Wed, 30 Sep 2026 08:10:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 188AC1F000FF;
+ Wed, 30 Sep 2026 08:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1790755316;
- bh=mdcJAQl+W8tBL1aeydL1oDL5UIGU1+BTd8hClzUjYEQ=;
+ s=k20260515; t=1790755846;
+ bh=jZbp4O7AEq6zBMXrMUVa/0pgZAfHinTr8WzmDWALHlQ=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=fdhSLPfDesTuRyS/RI8wThEM7xi6+mkmSKnRTywZy7NOoDrksGCqNcc+vbgNgaNA2
- K5/aRtrcQjaqa9Cf4v8zh8POdjQV7VhlHsjSluS1DMgo8MQsBnqIbkhAie/aYmMuEh
- 8CNm+99yK+3+wDCH30LIcp9BelJ3XFv2YMqPvgLZoYZRKXIq3/73Ce0+ZdTajv9S9w
- qwXpx2osUxuRO68pyfoD39lV7hZE2ScoRk2PGOmeMmk5GjS372Rif+jFG9QRE96Wdr
- xgojF4uGTmpKxSkZBGUQFwxNn0LxYo9uSH+nLkeonWTB71yqIxhg4pR6LMlQ1TMgdR
- 3IMMJhUq7Pz2Q==
-Message-ID: <c72042df-4b66-4cdd-bccb-5abd1e3b6da7@kernel.org>
-Date: Wed, 30 Sep 2026 16:01:52 +0800
+ b=T1yWPbUG3iO+OpaM28OQMX2lrKF/J6y5LfEooBGVEWjLX94L2dNBxIUt+j/kzt42C
+ f5QBxfG2pzJpNlFUN3vJOEAuiXwKtABqLfnhf1BBd6/SGfYqtpOFaoj174QHSqKYnG
+ DJMhGOCbLuB1eUyE2RaaRM5JiNGPSAUwdYpzJ6rDn63D+o/hQS7q+uLqDESWquL6Yu
+ MXcCHBvQkfR9UF/X91InZnFTV55nLQD5K27gFDoufjl6DW2hlmG2S/IbpmMXHO7bDh
+ nwjfdsWjqktoh8dugmG+sy5IBLJzizE8PmHDU9wArhaIBsDWm14pWh6xZGkLix6vIr
+ rrhpeEwY11Z3g==
+Message-ID: <989ede44-7d64-48b1-af9b-a0a45f824ab3@kernel.org>
+Date: Wed, 30 Sep 2026 16:10:43 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Arnd Bergmann <arnd@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Jianan Huang <jnhuang95@gmail.com>
-References: <20260917142222.1591270-1-arnd@kernel.org>
+To: Seongjae Jeong <jsjlee1020@gmail.com>, jaegeuk@kernel.org
+References: <20260918133922.8163-1-jsjlee1020@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260917142222.1591270-1-arnd@kernel.org>
-X-Headers-End: 1xBpGL-0004ep-Ru
-Subject: Re: [f2fs-dev] [PATCH] f2fs: quota: fix unused-label warning
+In-Reply-To: <20260918133922.8163-1-jsjlee1020@gmail.com>
+X-Headers-End: 1xBpOu-00056U-0W
+Subject: Re: [f2fs-dev] [PATCH] f2fs: reject device aliasing without a
+ multi-device configuration
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,25 +89,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Kelvin Zhang <zhangxp1998@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Eric Biggers <ebiggers@kernel.org>, Daeho Jeong <daehojeong@google.com>
+Cc: syzbot+ae5b8eb92ed40411ce16@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, daehojeong@google.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/17/26 22:21, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 9/18/26 21:39, Seongjae Jeong wrote:
+> A malformed F2FS image can enable F2FS_FEATURE_DEVICE_ALIAS without
+> providing a multi-device configuration. For a regular single-device
+> filesystem, f2fs_scan_devices() returns without allocating sbi->devs.
 > 
-> The newly added label causes a warning when QUOTA is turned off:
+> In this state, f2fs_dev_is_alloc_blocked() passes the device alias
+> feature check and dereferences FDEV(0), resulting in a NULL pointer
+> dereference during segment allocation.
 > 
-> fs/f2fs/super.c: In function '__f2fs_remount':
-> fs/f2fs/super.c:3142:1: error: label 'restore_holder' defined but not used [-Werror=unused-label]
->   3142 | restore_holder:
->        | ^~~~~~~~~~~~~~
+> Device aliasing requires at least one secondary device. Reject
+> superblocks that enable device aliasing without entries for both the
+> main and secondary devices in sanity_check_raw_super().
 > 
-> Fixes: 3f140a60c92a ("f2fs: quota: fix stale lock holder on remount failure")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
+> Reported-by: syzbot+ae5b8eb92ed40411ce16@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=ae5b8eb92ed40411ce16
+> Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
