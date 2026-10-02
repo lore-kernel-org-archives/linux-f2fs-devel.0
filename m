@@ -4,111 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6639FCA5FCF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Oct 2026 18:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 55DC9CA5FD4
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Oct 2026 06:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=0FYGuFZe/kEpII8c6gmsPg3Th+2TmpQzkXgo99LBbME=; b=e6dfQ9GyGJgYETxG3aYM7PzWeC
-	j5EpBWdAl+L4B20hjTyF5S+0akK0D8Kf4zINwbwXU85rFdlvsXzTPRkDQ0xRrtXcPypNEzlsO4cxe
-	cgbxkDdxs9WflQT8USy0ephuAAnmCmPK/g3TgtJ4AOTSRIOf2FUtXpr4OzogNC7dqPNA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=JnfPJMEl8ApdlZ0xKJp/62QNbA8OkxFytsAl48ORd3o=; b=O7RP5cjVtFT9sDEC+3VtXugbcU
+	zaWtGYOxoZDGzwoGpB2eoSFbrKUar1TH782jCLX1Hta0b3OQMB0hkJ7/SkFjOXxi6jLwh+fnf0Er3
+	8SYAxrtXRsfUJBXUPT1rovpm/4tZjlegx+cASMKNSN2eVuiEWhNh8W4xULNl3pr7mdtI=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xCLCZ-0000rU-Np;
-	Thu, 01 Oct 2026 18:08:16 +0000
+	id 1xCX4x-000142-7z;
+	Fri, 02 Oct 2026 06:49:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1xCLCX-0000rC-Ro
+ (envelope-from <jsjlee1020@gmail.com>) id 1xCX4w-00013w-GC
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Oct 2026 18:08:14 +0000
+ Fri, 02 Oct 2026 06:49:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lLND6mqvtrw/hYdQey6ykKNo6QnpNvUQNznvBKs4ZJI=; b=gLgmkAgqBhJ9tyETdGoZZSPka5
- XkQL9vry2+McyuPewoIPljnsOjZbBuQah93cvpo2u0UKyw5QEpRRbK/F+akMX6vIC1uz8KDJHSMQ2
- JmKSpfb4+PEkuNrdX16KZUCv/eL+0jTM/9u3XMA+G1Q/e3FKRcn2OwVXNniMt+LKpiQI=;
+ bh=b2I2VmL6WnuxgQWDSKKBuDVc6+oZPGkIWa4vAQHTcFI=; b=T6E2vjRQgbANzA3Cn82gk8OB2n
+ jV2hvAfswVzeneg0s0vBMt/zjVD6WjLJNyGmUoxngyLq5oRKCpRisSCQe+91FoyEGskHhgI0GmAR/
+ SUQvYYVxjKfPP6phc+louEYPfQBxdiuGcq7eeE0ROJNsj9wJLYiHsKn+3mgjjqYtqYV4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lLND6mqvtrw/hYdQey6ykKNo6QnpNvUQNznvBKs4ZJI=; b=C
- 5/6c4a74pguUpNNt6zNEzIA1JNFNjjxtgpm+0W+VXb1aLJ1dky33V9vqzRtOUIi3VKHSEoRhGf9vN
- HVz/AFnxdV4DyTRfbjnDmNKfGSwsigb3l0q2bq+TfEqZadpLikEJJDWlZCZwUgqmGf4JWtpv5kqHg
- 3u2UGD0UhFkmVu0A=;
-Received: from mail-pz2-f42.google.com ([74.125.228.42])
+ List-Owner:List-Archive; bh=b2I2VmL6WnuxgQWDSKKBuDVc6+oZPGkIWa4vAQHTcFI=; b=R
+ WJmrbtDm67yfv2QwElcmftnUUYTY8xYMhXL6P0Hu7F3EcBJFuIF0XNlBsYqXIKkqzplXrm7HmxRCA
+ jteHqsBZ+Erm8TNJpFv/xN2zWQnDhM00k2ZSyPRQSLVDok0Cw7PuTHA/9vLmBcogg9KX5N936uUB/
+ 3RpWYZ70DJQ/uC1g=;
+Received: from mail-pz2-f41.google.com ([74.125.228.41])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xCLCY-00029p-85 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Oct 2026 18:08:14 +0000
-Received: by mail-pz2-f42.google.com with SMTP id
- 41be03b00d2f7-cc797656e36so2455574a12.3
+ id 1xCX4w-0007nd-Rd for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 02 Oct 2026 06:49:11 +0000
+Received: by mail-pz2-f41.google.com with SMTP id
+ d2e1a72fcca58-85469b355ffso3122355b3a.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 01 Oct 2026 11:08:14 -0700 (PDT)
+ Thu, 01 Oct 2026 23:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790878088; x=1791482888; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1790923745; x=1791528545; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=lLND6mqvtrw/hYdQey6ykKNo6QnpNvUQNznvBKs4ZJI=;
- b=Dnvbz0xSsL07ROjLk8DbCsJ3L3MrHqU+1cU5fCgZgtz2akOqEZkNEurK0Dw8UFN4l6
- DbzLtypHgZ2irMzbc9LVcuTNuKLoQO2nfmLrN4OfKWoA2l4i/RV1fXr4MVDdBiep+aRZ
- 3jdUCYy9nJyTj9acvovB1CyqfITIF5qWVhlEpZT9CnoFob0qBMfHjEJ43wbErPUpHdBB
- /+FqPhLX9K4j8sb59nbuVgR3A8cze/ulIWihBv4kCD6KQxmC9jWTGs3fFgCfly4eB6p5
- zqN/RIn7fLhcPSYY8oxwVvuJFNq3twbW5HGBQpAPgzMSjSg3ebaTRL9NIyRrLDuMJ/VS
- WOoA==
+ bh=b2I2VmL6WnuxgQWDSKKBuDVc6+oZPGkIWa4vAQHTcFI=;
+ b=N0yLmX2RV+9KuNJ2Fc3eT/MpZNyj5PGmmzIP2vA0wFF2Qq+NIXl0LQGry5AljYQ1xV
+ yfQAC7i0FUDbI4a7d2Uj+VFgSWp8xzsdjbPaMe9pXvbQkKNeS97mS2Gyc9gv4AEIyy9T
+ 2h3SLQRmwB27LytUiIrc9C9ayRWfrzW4POe65XKmRxsCKJG4NRAE97HHWkPxefjLIS7Q
+ pVHoPI/qxLl6ebWXS6DY/ln9cJ4/KQ0ElKwK9cpQcMwgO+TadeSNX/r7e84ZymHkzSv/
+ qKxYrZm840qiH5YeO+OeucNNycHbOI4w4/DWh5iGhSsXmlked+w7lRXw5eiPiSNH6Op/
+ qYcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790878088; x=1791482888;
+ d=1e100.net; s=20260707; t=1790923745; x=1791528545;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lLND6mqvtrw/hYdQey6ykKNo6QnpNvUQNznvBKs4ZJI=;
- b=Lu9HPXOmoUaorpt6ZO5maXzH0oL/mObrq5FSFDj3Bn7l7sYIa5VmerOYfaYqQiIOAn
- 2CaL2bwPrX213KwuRJVK3y7hbcNhd8YKuxWNi7L4BzdPy5X64qlCahaT4F3u7rkcg6I4
- 2wwitweogXg+cbFOH4C/ET5ypsfp6ToZ0XUHFPXtP4he05ojkiy1/BXdlH1fuElV5gag
- jOupMdvmt3eKq7qz9L4tYkznr89qGo0jw6kO+BtRfggaZMsRhx79sae9+QNCeTH0kvCn
- P03QmC/rV9xOVGJMDA1XaqUPCq+oGtV1pZ7yNhRjlrQ8kwGmei7t1EY9190M2hoTwaIW
- qczg==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzxVmastoPtwYs6vsIJaj4JAY/Uf7Zasy4G7H22cUczRMFgAm0Bj1pk31MOB507xUlV+E5so42KN79IRQq521lR@lists.sourceforge.net
-X-Gm-Message-State: AFuF++mID9JuQMsgEOIq1bf+6zswTD0LgRF+a6oXNN2XgFtYgndaxPRm
- 5w6Ps67Xb7Zg6nmgdGw+BcA97ptZz8QjJiMJEHfSGwfSeq53kC5ILWx0
-X-Gm-Gg: AYBFou2j7MXQfYBnUEbdWvzXuwWEBRMS8FvC5Q8AIjNFVRLn8S5fRWhqu+VSRvGpZGc
- VXxMCtNlp0X8L0Fml7ddgFkfiL7xqEvp3/pglOnuxdvZJa3MmPdTt57AER10hgqDcqbKnvf7dK5
- /6jLYdhxx5/YDmZLggT+OSHHKh9p40elK8MPQrHxl2eHeKvSiO2gTHP6tFr+4qUs/mt0wb8keJh
- 1psitA0jQSWzuZSCSNoDTraDQQYFAoGLqyUUJfYCvR3egZV7B2tcUgQHPtW/z6ViSBvQD0PYPRO
- 2psYG1W0wpINKpdtWNsxQ4bRkWxOV/PmUS16Jwk+fLerE60RhH83iLHcaPDvo+AQ3J2PuS7BhoP
- B/Xcu58CrOD8imxS+4ptrj0H9ejmtOFm02d+XqXdRJ7YL55aO+0+cx7JlqZiEQ0JklZ2utmadRM
- RKyCqTopuE6i9m+hi5iyFDFZw/unTYTrkqpCrT2f6NNVoFKsSt5ObpEsmtgcSYosfE4Nj534utw
- rSiV39gGwpNI/tlZS/Nb7ugEUlZr8rg/mKWzIjy6wGhK39YuqhASmqh89oS7zry7BuODc61gi6v
- E/cYbCYQPUUf5ro=
-X-Received: by 2002:a05:6a20:918c:b0:3dd:fdc6:ee7b with SMTP id
- adf61e73a8af0-3e0bd44aa4cmr130932637.66.1790878088371; 
- Thu, 01 Oct 2026 11:08:08 -0700 (PDT)
-Received: from f2fs-test.c.googlers.com.com
- (225.134.16.34.bc.googleusercontent.com. [34.16.134.225])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc9f737a231sm949a12.18.2026.10.01.11.08.07
+ bh=b2I2VmL6WnuxgQWDSKKBuDVc6+oZPGkIWa4vAQHTcFI=;
+ b=zQ8ytEMOTnsIo0R45GohMDlJvN3+40LrS9xw3MkXGyR2CKz10bSNQmlWiIWtEgHuLc
+ kAmHpMzHqeEJpp9WitfQDPxbiRASi7JvusOwXh8675zGfKz+W1BM9W1NGrYYyKiaykyu
+ gteWx4Ech1ZAVnLX9RZOIM8aleJy7cfDawF7L8ttBTogYvbCUgFFbr6lmABVuQAKsoTE
+ Wu3COJUDIV3x7Hn7wvMsOrWVr4CM3h5/QnHpBR/TwgUCEK+EEhpnfeo+cOe23sp5x+XS
+ oAs5gaJHIhFjQ2XPRenlUOB3Hc6xn5eGd695Teql3qk7jRc4iBrJMe3nVoy8OJ+IXp0a
+ lkGw==
+X-Gm-Message-State: AFuF++lzxc3WZIHsqLjkzRQBoOhgjasnWFcQgOXHUtyXHFI14mUjZ3RG
+ l++OYxrwufbLTEHdY8Gxuz7ifEYp7hNuK9Ur+HwAJJKhly0Q0w31sMQ5
+X-Gm-Gg: AYBFou2j/L9NZBbaShPfbIvADNzkqrx1nnDAxXQhaU/iaA/e84QZrMt2eyhgMUXkPtI
+ f0hZVq0kuEAN4NeHiEQPOcOp2y7HMeeZCuFHrT3AHQqQbqfTJGJ6HIOm21IaNvpm90jmYTmnyCW
+ oTjK148IhKoNaW2x422aPAPYM7Rd78TDmaG8lBC4oLs8n7mnk0J7KX7EADH+BXAO6hjFQbplqrP
+ Drg4+Xpydjj1Kj2OZkb1WvrmovMTrI7kznAWt+vIkzk2j6QT7Bz4zi+fu4qqbwa+EvaGfGn7BlR
+ Dwfe/ddm3TM0aZNElrHFsTYJrwA0jDTPbAc1hflpiyEaYMEIbc8sder7Fa6pNqdLI2n8wpsb5UZ
+ QkxMco7tuc6Kxc1gtYiVqhpZUMIR1r77vIovcgDLtDXLphGFvQqN32qvDS6FdSjdJq7MBLy6c1n
+ qnB4+TvvZOpQ27FWfdrEELzO39Bpk/HicHlX6k2PFiymMrRKnv4LIQHdCs70Ldw6RmkPG+dfx3h
+ RkvAjH0a/JyEUywenZk0JIjYxGcr10p+E8LIM78csWFiPXzj0+9sHgJoJZKMRGCzTGFDcL+Qw==
+X-Received: by 2002:a05:6a00:b89:b0:87a:50f9:2930 with SMTP id
+ d2e1a72fcca58-88af5ac3f05mr1926461b3a.55.1790923744971; 
+ Thu, 01 Oct 2026 23:49:04 -0700 (PDT)
+Received: from
+ codespaces-2362ac.m2fxbej512jepnsor2itp05j3d.ix.internal.cloudapp.net
+ ([207.46.224.87]) by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-88b0b8f5b20sm573055b3a.11.2026.10.01.23.49.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 01 Oct 2026 11:08:07 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Thu,  1 Oct 2026 18:07:58 +0000
-Message-ID: <20261001180758.2099491-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
+ Thu, 01 Oct 2026 23:49:04 -0700 (PDT)
+From: Seongjae Jeong <jsjlee1020@gmail.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Fri,  2 Oct 2026 06:48:53 +0000
+Message-ID: <20261002064853.37782-1-jsjlee1020@gmail.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-X-Headers-End: 1xCLCY-00029p-85
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: enable fix_on when CP_RESIZEFS_FLAG
- is set in auto-fix mode
+X-Headers-End: 1xCX4w-0007nd-Rd
+Subject: [f2fs-dev] [PATCH] f2fs: avoid unnecessary reads in
+ f2fs_update_meta_block()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,47 +117,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+When the packed SSA feature is enabled, f2fs_update_meta_block()
+uses f2fs_get_meta_cache_retry(), which reads the target block from
+disk if the cache entry is not uptodate.
 
-Commit 9a31cefa2966 ("fsck.f2fs: allow fsck to fix issues with online
-resize due to SPO") added logic in sanity_check_ckpt() to recalculate
-and fix user_block_count when CP_RESIZEFS_FLAG is set after a sudden
-power-off during online resize.
+However, f2fs_update_meta_block() overwrites the entire filesystem
+block with memcpy(), so the existing contents are not needed.
+Partial updates to packed SSA blocks are handled separately in
+write_sum_block().
 
-However, sanity_check_ckpt() calls f2fs_should_proceed() and checks
-c.fix_on before repairing user_block_count, while f2fs_should_proceed()
-did not check CP_RESIZEFS_FLAG when setting c.fix_on in auto_fix (-a) or
-preen (-p) mode. As a result, running 'fsck.f2fs -a' after an SPO during
-online shrink leaves c.fix_on unset and fails to repair the checkpoint.
+Use f2fs_grab_meta_cache() unconditionally to avoid reading blocks
+that will be fully overwritten. Also remove the error check, since
+f2fs_grab_meta_cache() retries allocation failures internally and
+does not return an error pointer.
 
-Check CP_RESIZEFS_FLAG in f2fs_should_proceed() so that auto-fix and
-preen modes properly enable c.fix_on and recover the filesystem.
-
-Fixes: 9a31cefa2966 ("fsck.f2fs: allow fsck to fix issues with online resize due to SPO")
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
 ---
- fsck/mount.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/segment.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 2fd8e1c..8479ed1 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1515,6 +1515,7 @@ static int f2fs_should_proceed(struct f2fs_super_block *sb, u32 flag)
- 	if (!c.fix_on && (c.auto_fix || c.preen_mode)) {
- 		if (flag & CP_FSCK_FLAG ||
- 			flag & CP_DISABLED_FLAG ||
-+			flag & CP_RESIZEFS_FLAG ||
- 			flag & CP_QUOTA_NEED_FSCK_FLAG ||
- 			c.invalid_sb & SB_NEED_FIX ||
- 			(exist_qf_ino(sb) && (flag & CP_ERROR_FLAG))) {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 794e0d99fc7c..51858f64e43e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2844,13 +2844,7 @@ void f2fs_update_meta_block(struct f2fs_sb_info *sbi,
+ {
+ 	struct f2fs_cached_block *entry;
+ 
+-	if (!f2fs_sb_has_packed_ssa(sbi))
+-		entry = f2fs_grab_meta_cache(sbi, blk_addr);
+-	else
+-		entry = f2fs_get_meta_cache_retry(sbi, blk_addr);
+-
+-	if (IS_ERR(entry))
+-		return;
++	entry = f2fs_grab_meta_cache(sbi, blk_addr);
+ 
+ 	memcpy(cache_address(entry), src, F2FS_BLKSIZE(sbi));
+ 	f2fs_mark_cache_dirty(entry);
 -- 
-2.56.0.rc1.315.gc6ed9934b7-goog
+2.53.0
 
 
 
