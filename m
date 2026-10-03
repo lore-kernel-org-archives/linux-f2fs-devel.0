@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C65B5CA5FDD
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Oct 2026 23:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3A57CA5FDD
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Oct 2026 23:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:References:In-Reply-To:From:To:MIME-Version:Date:Message-ID:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=oc6Z5fVoqA/LnirdHBK8PcHjoBVdcV+735zC33unYps=; b=VhFY2TZx9NayRbO62BMvcNZ58L
-	rVcGr3Gs2utUIG2+AbeQaGfcBCtRXPynwWXqEF94bArSKb0yLmTgldOXabtXnsFZSPjGSp6iJHnAN
-	DEbOGjpYR8EaJIK+LcNKDtaYShqsatWRdoahCQe85T0g1MSIlE5NHfvgd0yob8H2+Gus=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=szZGWjgh4AQGqzi3QXQkuNdjTaISlp4hdJMgVHeu8S4=; b=CfSu20TDWFCPRccfvIbsFOZG1o
+	GByMmitEWLPPLNUiw9a3sfcLnjRStY5tRcfVY2Om2G+zOcVwGGtkmOiSEghYULUMwvZp47qxTSVQ7
+	yOtkkXXiLSHZv9PEkZEtvjOhdy88Z0NWGJ1O3DMfmyLOH121tB4sm4nqCeWBXgOHMdSI=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xD9JY-00083q-4F;
-	Sat, 03 Oct 2026 23:38:48 +0000
+	id 1xD9VD-00060w-Nk;
+	Sat, 03 Oct 2026 23:50:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <m.wilczynski@samsung.com>) id 1xD9JW-00083i-Kc
+ (envelope-from <m.wilczynski@samsung.com>) id 1xD9VC-00060o-3L
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Oct 2026 23:38:47 +0000
+ Sat, 03 Oct 2026 23:50:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
  In-Reply-To:From:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DCSSTKMktb+HuS50/2vCoVXjx6kQyokLqg66BRCB0B4=; b=Bkgvp7l16/qrwJXOYH7nR6nIb8
- bmay0dPyFtCeC2H10LuZPtXJsfg0moRl35OpXiu8lfs908LVtL5ySbHlwWvkVZcSf2gaXh7haB6IW
- rp4E9250xuxKcjSbo94WZsD7zZZRCp7L05iNy222R2Pp+HhZQJMyb2PaN5oa8aZzlMEo=;
+ bh=6il4wp6k9x9TZkz/+h7OllEoUNqhyj9iIClTYmBbfBE=; b=IEaHnhsVdh5VBFPcfn3iA4O3iJ
+ IJlng+UH9NL4I+5o4Y7vnYp2reY4SXeE+Cp71YUN0QFZA73za3ZddzU0lAS3l+bQqzWkow2l19hus
+ 5fIAobXSlwsceN3Nwk9v+72TLpkRFwwFCWvOf106n08J9o6fYeN5CgWsMMS8S7/C0cXA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=References:Content-Type:Content-Transfer-Encoding:In-Reply-To:From:Cc:To:
@@ -42,55 +42,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DCSSTKMktb+HuS50/2vCoVXjx6kQyokLqg66BRCB0B4=; b=HtidP9y6U8EBRAugPgMGC81pnT
- +rdM6u9jJUmR5xiC3sjqAKbo4smcmo4yYozsWqsd58Rpc7rFyyNfLwRq0nTkVijJFD+K9433a7ORV
- Wq2djFYcjXsHtmkEyOKCUdVtgNZqvQlck+pU3k1XtEHOytss1L/xQbGJxw9KMDTO7Y6o=;
+ bh=6il4wp6k9x9TZkz/+h7OllEoUNqhyj9iIClTYmBbfBE=; b=ME42xK/1W4mHJxkBEq+d+3i9sC
+ yV1pZJVtI4IMg/dTvCZQmQge6OwhqbO4T89oyItBrh56PQg8stj/brsOfxzwW7Xv6JHVRsyiLCgke
+ 6AapuAS72eZ+4O7jhU2CIASrDkUqmJHJAhLWblSqx6EQpygZAG8bEvtMX0mIYyQifQCo=;
 Received: from mailout1.w1.samsung.com ([210.118.77.11])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xD9JW-0003mC-GE for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Oct 2026 23:38:47 +0000
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ id 1xD9VB-0000gA-Mc for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 03 Oct 2026 23:50:50 +0000
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
  by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id
- 20261003233839euoutp019b93e0a38d74f7844d866dcf976a036b~bKVRYyCTw2859728597euoutp01F;
- Sat,  3 Oct 2026 23:38:39 +0000 (GMT)
+ 20261003235042euoutp010ae13b921807e43a815feb68ae19742a~bKfy8ONYY1131411314euoutp01C;
+ Sat,  3 Oct 2026 23:50:42 +0000 (GMT)
 DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com
- 20261003233839euoutp019b93e0a38d74f7844d866dcf976a036b~bKVRYyCTw2859728597euoutp01F
+ 20261003235042euoutp010ae13b921807e43a815feb68ae19742a~bKfy8ONYY1131411314euoutp01C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1791070719;
- bh=DCSSTKMktb+HuS50/2vCoVXjx6kQyokLqg66BRCB0B4=;
+ s=mail20170921; t=1791071442;
+ bh=6il4wp6k9x9TZkz/+h7OllEoUNqhyj9iIClTYmBbfBE=;
  h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
- b=JHm5783mcsClVTOaAWZXZGUM5Mak3g4ei3h3Phsta5hYe2YrnBr40qBI7wEY0xmvN
- UMD5Hqg1kFQ/WCC4EuAuxIXk8MsORKJXSu+n5fnbc6nyJUT/p+4BAj2I/JULzrOMYS
- TIDbvU8ViajQeQ9onvYQmblwNgBjnxB65Btm5B/c=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
- eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
- 20261003233838eucas1p237c405e495deb98ca1ab7bffb909923a~bKVQa7ruV0031900319eucas1p2V;
- Sat,  3 Oct 2026 23:38:38 +0000 (GMT)
+ b=J6UYA23GbXzSgWDiylsYXmqPqrWmGrxHinr+zo153Mh5xVMO3Fq4093yCW56RM5zv
+ TyAOK++gZXWwfZ1rhR13Mfp5PEywRRMqi6WkuWaomAKaDMbZmHoF11QNolqip1ZlRU
+ w4hnoy1FfOTb+5wYvNiuKO9RUPya9G8Bd3toECJc=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+ eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+ 20261003235041eucas1p15384f0a3889321f025161bbe2b71bb94~bKfyB3g9T0047100471eucas1p1e;
+ Sat,  3 Oct 2026 23:50:41 +0000 (GMT)
 Received: from [192.168.1.44] (unknown [106.210.136.40]) by
- eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
- 20261003233836eusmtip19df22b79e12bcb1dd0f2058e4a99ebb4~bKVO0uuxI2102321023eusmtip1C;
- Sat,  3 Oct 2026 23:38:36 +0000 (GMT)
-Message-ID: <d60a30e1-7e9d-4061-a61f-d50909665c19@samsung.com>
-Date: Sun, 4 Oct 2026 01:38:36 +0200
+ eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+ 20261003235039eusmtip254e0d6be44f5a841ebd1c20bd2d1c117~bKfwWPKr40220102201eusmtip2G;
+ Sat,  3 Oct 2026 23:50:39 +0000 (GMT)
+Message-ID: <fac0f401-bbd3-444b-a755-53cc393673de@samsung.com>
+Date: Sun, 4 Oct 2026 01:50:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Sergey Senozhatsky <senozhatsky@chromium.org>
 Content-Language: en-US
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <arnpj53cgDErAQEz@google.com>
-X-CMS-MailID: 20261003233838eucas1p237c405e495deb98ca1ab7bffb909923a
+In-Reply-To: <arn3TC7BgjTXWmdG@google.com>
+X-CMS-MailID: 20261003235041eucas1p15384f0a3889321f025161bbe2b71bb94
 X-Msg-Generator: CA
-X-RootMTR: 20260925113504eucas1p25e50de59c02681fc1385220be8acd184
+X-RootMTR: 20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a
 X-EPHeader: CA
-X-CMS-RootMailID: 20260925113504eucas1p25e50de59c02681fc1385220be8acd184
+X-CMS-RootMailID: 20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a
 References: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
- <CGME20260925113504eucas1p25e50de59c02681fc1385220be8acd184@eucas1p2.samsung.com>
- <20260925-lz4-vendor-upstream-v1-7-1c7ffbe21c4b@samsung.com>
- <arnpj53cgDErAQEz@google.com>
-X-Headers-End: 1xD9JW-0003mC-GE
-Subject: Re: [f2fs-dev] [PATCH RFC 7/9] lib/lz4: switch the decompressor to
- the vendored sources
+ <CGME20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a@eucas1p1.samsung.com>
+ <20260925-lz4-vendor-upstream-v1-1-1c7ffbe21c4b@samsung.com>
+ <arn3TC7BgjTXWmdG@google.com>
+X-Headers-End: 1xD9VB-0000gA-Mc
+Subject: Re: [f2fs-dev] [PATCH RFC 1/9] lib/lz4: import upstream LZ4 sources
+ verbatim
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -130,31 +130,38 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
 
-On 9/28/26 06:16, Sergey Senozhatsky wrote:
+On 9/28/26 07:19, Sergey Senozhatsky wrote:
 > On (26/09/25 13:27), Michal Wilczynski wrote:
 > [..]
->> -static FORCE_INLINE int LZ4_decompress_generic(
-> [..]
->> -			/* Necessarily EOF when !partialDecoding.
->> -			 * When partialDecoding, it is EOF if we've either
->> -			 * filled the output buffer or
->> -			 * can't proceed with reading an offset for following match.
->> -			 */
->> -			if (!partialDecoding || (cpy == oend) || (ip >= (iend - 2)))
->> -				break;
+>> +int LZ4_compress_fast_extState(void* state, const char* source, char* dest, int inputSize, int maxOutputSize, int acceleration)
+>> +{
+>> +    LZ4_stream_t_internal* const ctx = & LZ4_initStream(state, sizeof(LZ4_stream_t)) -> internal_donotuse;
+>> +    assert(ctx != NULL);
 > 
-> Worth noting, these lines are downstream commit eafc0a02391b
-> (lz4: fix LZ4_decompress_safe_partial read out of bound).
+> Probably in some other places as well:
 > 
-> Is this intended or are we "loosing" some of the downstream fixes?
+> LZ4_initStream() can return NULL, but the code immediately derefs
+> the pointer.  The assert() check seems to be misplaced, unless I'm
+> missing something.
 > 
+> I suppose those need to be decoupled.  First LZ4_initStream() call and
+> NULL check, then stream->internal_donotuse.
 
-Yeah it's intended, eafc0a02391b was itself a backport of upstream
-c5d6f8a8be39  which is in v1.9.3 and later; its own commit message links
-it. The same check is at lib/lz4/upstream/lz4.c in this series.
+Good catch, this assert() is a noop in the kernel (as any build without
+LZ4_DEBUG), so a NULL, undersized or misaligned wrkmem oopses in
+LZ4_compress_fast(), and LZ4_compress_destSize() and LZ4_resetStreamHC()
+carry on with an uninitialised state.
 
-And upstream's version also clamps a literal run that would read past
-the end of the input, which the backport didn't take.
+No in-tree caller hits it (all use kmalloc/vmalloc), and I listed the
+alignment requirement as a behaviour change in the cover letter. Still,
+the vendored files need to stay verbatim.
+
+So in v2 our own entry points can check alignment with a WARN_ON_ONCE()
+and bail out early. It might be something that we can fix upstream as
+well.
+
+
+> 
 
 Best regards,
 -- 
