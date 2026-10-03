@@ -4,73 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3A561CA5FEC
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Oct 2026 13:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8DB16CA5FDD
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Oct 2026 22:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:In-Reply-To:References:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=3cdIfDCpJ8AjXaBnsIjnLP4pf6gDmYdPwLSFaGgA3XY=; b=lskCQtjY2ym8uFuVXTbhzVy3mo
-	9tblzR10th+4DK3IP5KNl5Br6vEwfuPhVqShCpANGN2yYWPNK1axJqRPIOCnxYN0h/KNPYel3L1wL
-	5xcpr0/VT3Ryq5tTks50JfvHs6NtuAnSmqcZRQBrzKekV0WpSwzV18Mw16QVQnJ6t708=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:References:In-Reply-To:From:To:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=ve0ITk1Cxq1gAaZQduJq+QuCPN43QySNi2zBOZT1GfE=; b=Y5evV7ZmTY/pjc04kBbdYLM3xg
+	tgZSN4utuy2y8N8wwOO/pzz20LOtFhoVeNK2PLQGVotLvTvOPhwre/bJZERJZuYRWwPgmrVkN9s5w
+	ic0Qba31usKC2UAXBGqKiLpKyUHDNjmxgzBwE/yBoNIj6MSlj3nh1bydFgKaRWjNOFxY=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xD0DV-0004x0-MC;
-	Sat, 03 Oct 2026 13:55:58 +0000
+	id 1xD8Tx-00070x-LW;
+	Sat, 03 Oct 2026 22:45:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhaonanzhe@xiaomi.com>) id 1xD0DU-0004wq-DH
+ (envelope-from <m.wilczynski@samsung.com>) id 1xD8Tl-00070l-Cf
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Oct 2026 13:55:57 +0000
+ Sat, 03 Oct 2026 22:45:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :In-Reply-To:References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ In-Reply-To:From:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=v853H5nbgkgr1qTo8CTt2cgimrFmXWP9hw3M8VPC68c=; b=TysyBfhocFZ6OesjCqOi3ek5Oi
- UsPyZq4W4oYZuEt7JlA9wqHZvj5MNY4M+x+/E0lBWnQR+UBRMnRwKYoQsf1/yanvTbnr4IbIluPE2
- mfGAsvbzCHm7C561GBwL0h8ft41WXNghq8Bd8e5q5XwNhsDr6ewuVrCQEXzRW3G4p8UQ=;
+ bh=vFhGMCg6Ji/JXdFQ3B6wXXIZQgQ9xvpb3HvqRmvxgSk=; b=P3BZU8EKs+XsvxDCAzUJ+GHZp4
+ d0RoBxjuCLrOwXHR1hnm0mMjCvQdsKyBSwjjPDFfqdr8edcfA8TRYqN7ZTutdys42BqQP6juyHk0r
+ PyzPbbKWtE/IQOvycZ6jzSjUssQDC695FoQg6OifeVtYXXxB9zpon2teomRw9ORVRWTM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:In-Reply-To:
- References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ h=References:Content-Type:Content-Transfer-Encoding:In-Reply-To:From:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=v853H5nbgkgr1qTo8CTt2cgimrFmXWP9hw3M8VPC68c=; b=My9MfRRyrIX2O/7XZVRBdMS2NT
- wYgC4/IiYChBYDwoaBaHOCopdq7Bbfg+/1w+ZFnV38RNvppY3qauP+CCFPWywQf1F7fXgayFr5Xzb
- E0ayT3Iy+loqwSMfZwzIQqBbjZIvc2IeCBcLLEMlCBpZ/1IzCOOfY7LU23nPnjFr+j68=;
-Received: from outboundhk.mxmail.xiaomi.com ([118.143.206.90])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1xD0DU-0007Bh-Hd for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Oct 2026 13:55:57 +0000
-X-CSE-ConnectionGUID: doLpPFXHT3SmBJwqDKhSFg==
-X-CSE-MsgGUID: SHV/oX2PSWCdmyWyROdTzA==
-X-IronPort-AV: E=Sophos;i="6.27,138,1786982400"; d="scan'208";a="164483996"
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Thread-Topic: [External Mail]Re: [f2fs-dev] [PATCH v2 00/14] f2fs: support &
- optimize large folios for writable files
-Thread-Index: AQHdUP5ie3mQoHhgTEqJEObMEGLkWrbr0dIK
-Date: Sat, 3 Oct 2026 13:40:16 +0000
-Message-ID: <6ccdf4eef9b242bc96d28d511f754a30@xiaomi.com>
-References: <20260915041909.2903887-1-zhaonanzhe@xiaomi.com>,
- <ar1CJBRumJ0hcNdB@google.com>
-In-Reply-To: <ar1CJBRumJ0hcNdB@google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.237.8.166]
+ bh=vFhGMCg6Ji/JXdFQ3B6wXXIZQgQ9xvpb3HvqRmvxgSk=; b=OSqKl931WE6w6vnZbU0Z3V4kv3
+ VFXdF7M9jYf91mx2iHdLQSSgzZgRXnX5AeIgou6vsMj6G+xdKnsVy8xVpvns6M7qG7T2DJbQnNlIW
+ /OZQ28n9Sryu3CMRClsPd2cqLKtOdOnG4aOcmHWf0FfJlEkTl9rC7lE27qisl+ImEnA4=;
+Received: from mailout2.w1.samsung.com ([210.118.77.12])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1xD8Tk-000800-On for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 03 Oct 2026 22:45:18 +0000
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id
+ 20261003224508euoutp02c41c30b489eaee9363e860f2478d6027~bJmji_WXc2979329793euoutp02u;
+ Sat,  3 Oct 2026 22:45:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com
+ 20261003224508euoutp02c41c30b489eaee9363e860f2478d6027~bJmji_WXc2979329793euoutp02u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1791067508;
+ bh=vFhGMCg6Ji/JXdFQ3B6wXXIZQgQ9xvpb3HvqRmvxgSk=;
+ h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+ b=RLbFDHwuh3NRChlB5DbAnpf5fbQ/9VI4LqGu4llTjFUiXPQ562rniZUJozx7F6f0C
+ O998yLIejmOOpMfO2undeRdQGMIbbwvHHW6qvrglXgdLXRekz3Vq8zAZ0mrAGgSxG4
+ yLsO68CPN7a6ZuBi2t//4zMj/AdCV8fhYFGTexlA=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+ eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+ 20261003224507eucas1p200ece20a05f4aac2eeb0180f041df0fe~bJmigAu1f3080530805eucas1p2D;
+ Sat,  3 Oct 2026 22:45:07 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+ eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+ 20261003224505eusmtip1f6ac4f841c43fd74cce4c31cdfba487f~bJmg3wbbL2072920729eusmtip1D;
+ Sat,  3 Oct 2026 22:45:05 +0000 (GMT)
+Message-ID: <9c5913c0-11c8-4db8-844b-ea2ef29bf5db@samsung.com>
+Date: Sun, 4 Oct 2026 00:45:05 +0200
 MIME-Version: 1.0
-X-Headers-End: 1xD0DU-0007Bh-Hd
-Subject: [f2fs-dev] =?gb2312?b?tPC4tDogW0V4dGVybmFsIE1haWxdUmU6ICBbUEFU?=
- =?gb2312?b?Q0ggdjIgMDAvMTRdIGYyZnM6IHN1cHBvcnQgJiBvcHRpbWl6ZSBsYXJnZSBm?=
- =?gb2312?b?b2xpb3MgZm9yIHdyaXRhYmxlIGZpbGVz?=
+User-Agent: Mozilla Thunderbird
+To: Eric Biggers <ebiggers@kernel.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20260925213926.GA1903@quark>
+X-CMS-MailID: 20261003224507eucas1p200ece20a05f4aac2eeb0180f041df0fe
+X-Msg-Generator: CA
+X-RootMTR: 20260925113507eucas1p2ddb94f2077b679426aa86dd1d492eaf3
+X-EPHeader: CA
+X-CMS-RootMailID: 20260925113507eucas1p2ddb94f2077b679426aa86dd1d492eaf3
+References: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
+ <CGME20260925113507eucas1p2ddb94f2077b679426aa86dd1d492eaf3@eucas1p2.samsung.com>
+ <20260925-lz4-vendor-upstream-v1-9-1c7ffbe21c4b@samsung.com>
+ <20260925213926.GA1903@quark>
+X-Headers-End: 1xD8Tk-000800-On
+Subject: Re: [f2fs-dev] [PATCH RFC 9/9] MAINTAINERS: add an entry for the
+ LZ4 compression library
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,43 +102,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: =?gb2312?B?1dTEz9Xc?= via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: =?gb2312?B?1dTEz9Xc?= <zhaonanzhe@xiaomi.com>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Dev Jain <Dev.Jain@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- David Hildenbrand <David.Hildenbrand@arm.com>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- =?gb2312?B?1cWyqQ==?= <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Nanzhe Zhao <nzzhao@126.com>,
- =?gb2312?B?wO7F9LfJ?= <lipengfei28@xiaomi.com>,
- Ryan Roberts <Ryan.Roberts@arm.com>
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-mips@vger.kernel.org,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Bill Wendling <morbo@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Sungguk <sungguk.na@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, Minchan Kim <minchan@kernel.org>,
+ Helge Deller <deller@gmx.de>, x86@kernel.org,
+ Russell King <linux@armlinux.org.uk>, Ingo Molnar <mingo@redhat.com>,
+ Yann Collet <yann.collet.73@gmail.com>, Gao Xiang <xiang@kernel.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, llvm@lists.linux.dev,
+ Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ linux-crypto@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+ Nick Terrell <terrelln@meta.com>, Borislav Petkov <bp@alien8.de>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-parisc@vger.kernel.org,
+ Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Thomas Gleixner <tglx@kernel.org>, Justin Stitt <justinstitt@google.com>,
+ Phillip Lougher <phillip@squashfs.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGkgSmFlZ3VrOg0KT2guLi4uLi4sIEknbSBvbiBob2xpZGF5IGZyb20gIE9jdCAxIHRvIE9jdCA3
-LHNvIHRoZSBuZXh0IHZlcnNpb24gbWF5IG5vdCBiZQ0KdGhhdCBzb29uIGFuZCBJIGFwb2xvZ2l6
-ZSBmb3QgdGhhdC4gSSd3aWxsIGNhdGNoIG9uIHRoYXQgb25jZSBJJ3ZlIGdvdCB0aW1lLg0KDQpU
-aGFua3MsDQpOYW56aGUNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoN
-Cg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0K
-DQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoN
-Cg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0K
-DQoNCg0KIy8qKioqKiqxvtPKvP68sMbkuL28/rqs09DQocPXuavLvrXEsaPD3NDFz6KjrL32z97T
-2reiy824+MnPw+a12Na31tDB0LP2tcS49sjLu/LIutfpoaO9+9a5yM66zsbky/vIy9LUyM66ztDO
-yr3KudPDo6iw/MCotauyu8/e09rIq7K/u/Kyv7fWtdjQucK2oaK4tNbGoaK78smit6KjqbG+08q8
-/tbQtcTQxc+ioaPI57n7xPq07crVwcuxvtPKvP6jrMfrxPrBory0tee7sLvy08q8/s2o1qq3orz+
-yMuyosm+s/2xvtPKvP6joSBUaGlzIGUtbWFpbCBhbmQgaXRzIGF0dGFjaG1lbnRzIGNvbnRhaW4g
-Y29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGZyb20gWElBT01JLCB3aGljaCBpcyBpbnRlbmRlZCBv
-bmx5IGZvciB0aGUgcGVyc29uIG9yIGVudGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3RlZCBhYm92
-ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3JtYXRpb24gY29udGFpbmVkIGhlcmVpbiBpbiBhbnkgd2F5
-IChpbmNsdWRpbmcsIGJ1dCBub3QgbGltaXRlZCB0bywgdG90YWwgb3IgcGFydGlhbCBkaXNjbG9z
-dXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3NlbWluYXRpb24pIGJ5IHBlcnNvbnMgb3RoZXIgdGhh
-biB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpIGlzIHByb2hpYml0ZWQuIElmIHlvdSByZWNlaXZl
-IHRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkgcGhvbmUg
-b3IgZW1haWwgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSBpdCEqKioqKiovIw0KCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFp
-bGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8v
-bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+
+
+On 9/25/26 23:39, Eric Biggers wrote:
+> On Fri, Sep 25, 2026 at 01:27:39PM +0200, Michal Wilczynski wrote:
+>> lib/lz4/ has never had one: get_maintainer.pl returns only the LKML
+>> fallback for every file in it, including include/linux/lz4.h, which eight
+>> subsystems build against.
+>>
+>> This matters more now than it did. With the previous patches lib/lz4 is
+>> vendored upstream sources, and someone has to bump them to new upstream
+>> releases and decide what the kernel-side glue may do. I am willing to do
+>> that, so add myself as its maintainer.
+>>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  MAINTAINERS | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index cc3cae2e378b34aeb705cef654c720ca9f2ba223..989e1b5fab21432dd7042d1e60c4bbad85beb925 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15606,6 +15606,12 @@ S:	Supported
+>>  F:	drivers/net/pcs/pcs-lynx.c
+>>  F:	include/linux/pcs-lynx.h
+>>  
+>> +LZ4 COMPRESSION LIBRARY
+>> +M:	Michal Wilczynski <m.wilczynski@samsung.com>
+>> +S:	Maintained
+>> +F:	include/linux/lz4.h
+>> +F:	lib/lz4/
+>> +
+> 
+> Should this entry cover lib/decompress_unlz4.c and
+> include/linux/decompress/unlz4.h as well?
+
+Yes I'll add both in v2.
+Thanks a lot for looking at the series as a whole.
+
+> 
+> - Eric
+> 
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
