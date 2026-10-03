@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F88BCA5FDD
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Oct 2026 23:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C65B5CA5FDD
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Oct 2026 23:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:References:In-Reply-To:From:To:MIME-Version:Date:Message-ID:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=VeCnTacZ1Wt0q3+EpobSixbqDL6lpLtit5aXiP37vu8=; b=IgVTDVzAZFPArtl089YNAjArXk
-	7mVBtHsfcqtoLfg4oI+hwp1qCCX8SOTNERY7cuNjMibl9FJMw12nXRQ4yZZCI3AQyhZ6qgrM4J05+
-	S4TaGd1ycc6HG5+nBgs3L7jFBjzI8fRUjpudLnJxcGSif2kxDwyOMkIigkv4mO0wtqFU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=oc6Z5fVoqA/LnirdHBK8PcHjoBVdcV+735zC33unYps=; b=VhFY2TZx9NayRbO62BMvcNZ58L
+	rVcGr3Gs2utUIG2+AbeQaGfcBCtRXPynwWXqEF94bArSKb0yLmTgldOXabtXnsFZSPjGSp6iJHnAN
+	DEbOGjpYR8EaJIK+LcNKDtaYShqsatWRdoahCQe85T0g1MSIlE5NHfvgd0yob8H2+Gus=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xD9Fs-0005mZ-FX;
-	Sat, 03 Oct 2026 23:35:00 +0000
+	id 1xD9JY-00083q-4F;
+	Sat, 03 Oct 2026 23:38:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <m.wilczynski@samsung.com>) id 1xD9Fr-0005mS-0u
+ (envelope-from <m.wilczynski@samsung.com>) id 1xD9JW-00083i-Kc
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Oct 2026 23:34:59 +0000
+ Sat, 03 Oct 2026 23:38:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
  In-Reply-To:From:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=06jrm1eJOKkEfVYjfM8urZVFEtTHJTgdf4MXi9Zr75I=; b=GH1qi/C2NgMmeUglhyzrV0n+mt
- lN8NhsM5Lo/E81W5R9vqHB1BZq1WvTpzV9N6vFENflRdblOPBU8b+1CjNJHy7U4ZB2tDDceedHW6F
- dQK9ESiJI++DtWpM7hJ5WJ3UclXMxFpu+WKTee8dKTc/R7/L78PQfMjP4fF7cM6n0wL4=;
+ bh=DCSSTKMktb+HuS50/2vCoVXjx6kQyokLqg66BRCB0B4=; b=Bkgvp7l16/qrwJXOYH7nR6nIb8
+ bmay0dPyFtCeC2H10LuZPtXJsfg0moRl35OpXiu8lfs908LVtL5ySbHlwWvkVZcSf2gaXh7haB6IW
+ rp4E9250xuxKcjSbo94WZsD7zZZRCp7L05iNy222R2Pp+HhZQJMyb2PaN5oa8aZzlMEo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=References:Content-Type:Content-Transfer-Encoding:In-Reply-To:From:Cc:To:
@@ -42,55 +42,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=06jrm1eJOKkEfVYjfM8urZVFEtTHJTgdf4MXi9Zr75I=; b=JZhxFFLEeYVpnwUWieHq3cWwX7
- 2ndAVRsZnVFOCrAtkGr7Pm1hu16n564reOW8L/iDxjfi/xIBM4HNS9o5SK3CfleEKr1faP2A8oEkD
- tW6QyZo5dmwccATz16nPTXGm7G3likN1160czGxn9thdbkuZf5ZUI7WY/pV46ze+/Xps=;
-Received: from mailout2.w1.samsung.com ([210.118.77.12])
+ bh=DCSSTKMktb+HuS50/2vCoVXjx6kQyokLqg66BRCB0B4=; b=HtidP9y6U8EBRAugPgMGC81pnT
+ +rdM6u9jJUmR5xiC3sjqAKbo4smcmo4yYozsWqsd58Rpc7rFyyNfLwRq0nTkVijJFD+K9433a7ORV
+ Wq2djFYcjXsHtmkEyOKCUdVtgNZqvQlck+pU3k1XtEHOytss1L/xQbGJxw9KMDTO7Y6o=;
+Received: from mailout1.w1.samsung.com ([210.118.77.11])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xD9Fp-0003ip-MC for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Oct 2026 23:34:58 +0000
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id
- 20261003233450euoutp02c1894a969f4aa7dcdc13711324b510bc~bKR8fdgbC2968329683euoutp02C;
- Sat,  3 Oct 2026 23:34:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com
- 20261003233450euoutp02c1894a969f4aa7dcdc13711324b510bc~bKR8fdgbC2968329683euoutp02C
+ id 1xD9JW-0003mC-GE for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 03 Oct 2026 23:38:47 +0000
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id
+ 20261003233839euoutp019b93e0a38d74f7844d866dcf976a036b~bKVRYyCTw2859728597euoutp01F;
+ Sat,  3 Oct 2026 23:38:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com
+ 20261003233839euoutp019b93e0a38d74f7844d866dcf976a036b~bKVRYyCTw2859728597euoutp01F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1791070490;
- bh=06jrm1eJOKkEfVYjfM8urZVFEtTHJTgdf4MXi9Zr75I=;
+ s=mail20170921; t=1791070719;
+ bh=DCSSTKMktb+HuS50/2vCoVXjx6kQyokLqg66BRCB0B4=;
  h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
- b=QA/UIMngsEzopfyR2oMgeAvIpsxY8XFVWR6aszTu2KASkTE9HgfdfrEoibwj1+Ish
- q+q0jX7mWyllAGunxNTWrLk9JIZLUZdZDUhz/mwcYRQDpGduTJEE52K7M5/4/L7CfC
- t/2nqVLqsIrV+xGRicpyEUeoh56qvM0ZzTVHWVaE=
+ b=JHm5783mcsClVTOaAWZXZGUM5Mak3g4ei3h3Phsta5hYe2YrnBr40qBI7wEY0xmvN
+ UMD5Hqg1kFQ/WCC4EuAuxIXk8MsORKJXSu+n5fnbc6nyJUT/p+4BAj2I/JULzrOMYS
+ TIDbvU8ViajQeQ9onvYQmblwNgBjnxB65Btm5B/c=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
- eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
- 20261003233448eucas1p1a273f9ebf3e825f88405f45e28ff1fc6~bKR66LqvF0047100471eucas1p1Z;
- Sat,  3 Oct 2026 23:34:48 +0000 (GMT)
+ eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+ 20261003233838eucas1p237c405e495deb98ca1ab7bffb909923a~bKVQa7ruV0031900319eucas1p2V;
+ Sat,  3 Oct 2026 23:38:38 +0000 (GMT)
 Received: from [192.168.1.44] (unknown [106.210.136.40]) by
  eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
- 20261003233446eusmtip1e9b417cfe901275fcda452a3fc458927~bKR5M2kGA1826618266eusmtip1H;
- Sat,  3 Oct 2026 23:34:46 +0000 (GMT)
-Message-ID: <34143c5f-5b1c-4ae2-90e7-d999d10b73cf@samsung.com>
-Date: Sun, 4 Oct 2026 01:34:46 +0200
+ 20261003233836eusmtip19df22b79e12bcb1dd0f2058e4a99ebb4~bKVO0uuxI2102321023eusmtip1C;
+ Sat,  3 Oct 2026 23:38:36 +0000 (GMT)
+Message-ID: <d60a30e1-7e9d-4061-a61f-d50909665c19@samsung.com>
+Date: Sun, 4 Oct 2026 01:38:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Sergey Senozhatsky <senozhatsky@chromium.org>
 Content-Language: en-US
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <arnosKlQYVIdmTR7@google.com>
-X-CMS-MailID: 20261003233448eucas1p1a273f9ebf3e825f88405f45e28ff1fc6
+In-Reply-To: <arnpj53cgDErAQEz@google.com>
+X-CMS-MailID: 20261003233838eucas1p237c405e495deb98ca1ab7bffb909923a
 X-Msg-Generator: CA
-X-RootMTR: 20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a
+X-RootMTR: 20260925113504eucas1p25e50de59c02681fc1385220be8acd184
 X-EPHeader: CA
-X-CMS-RootMailID: 20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a
+X-CMS-RootMailID: 20260925113504eucas1p25e50de59c02681fc1385220be8acd184
 References: <20260925-lz4-vendor-upstream-v1-0-1c7ffbe21c4b@samsung.com>
- <CGME20260925113452eucas1p170bfdb34dfbf670a14a6f8f0c2f5094a@eucas1p1.samsung.com>
- <20260925-lz4-vendor-upstream-v1-1-1c7ffbe21c4b@samsung.com>
- <arnosKlQYVIdmTR7@google.com>
-X-Headers-End: 1xD9Fp-0003ip-MC
-Subject: Re: [f2fs-dev] [PATCH RFC 1/9] lib/lz4: import upstream LZ4 sources
- verbatim
+ <CGME20260925113504eucas1p25e50de59c02681fc1385220be8acd184@eucas1p2.samsung.com>
+ <20260925-lz4-vendor-upstream-v1-7-1c7ffbe21c4b@samsung.com>
+ <arnpj53cgDErAQEz@google.com>
+X-Headers-End: 1xD9JW-0003mC-GE
+Subject: Re: [f2fs-dev] [PATCH RFC 7/9] lib/lz4: switch the decompressor to
+ the vendored sources
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -130,45 +130,31 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
 
-On 9/28/26 06:12, Sergey Senozhatsky wrote:
+On 9/28/26 06:16, Sergey Senozhatsky wrote:
 > On (26/09/25 13:27), Michal Wilczynski wrote:
 > [..]
->> +#ifndef LZ4_FAST_DEC_LOOP
->> +#  if defined __i386__ || defined _M_IX86 || defined __x86_64__ || defined _M_X64
->> +#    define LZ4_FAST_DEC_LOOP 1
->> +#  elif defined(__aarch64__) && defined(__APPLE__)
->> +#    define LZ4_FAST_DEC_LOOP 1
->> +#  elif defined(__aarch64__) && !defined(__clang__)
->> +     /* On non-Apple aarch64, we disable this optimization for clang because
->> +      * on certain mobile chipsets, performance is reduced with clang. For
->> +      * more information refer to https://protect2.fireeye.com/v1/url?k=e59d343e-8402d40e-e59cbf71-000babe403ab-24cad800d51083a3&q=1&e=1265adcb-d286-42f9-9d57-b9b998ba2ed0&u=https%3A%2F%2Fgithub.com%2Flz4%2Flz4%2Fpull%2F707 */
->> +#    define LZ4_FAST_DEC_LOOP 1
->> +#  else
->> +#    define LZ4_FAST_DEC_LOOP 0
->> +#  endif
->> +#endif
+>> -static FORCE_INLINE int LZ4_decompress_generic(
+> [..]
+>> -			/* Necessarily EOF when !partialDecoding.
+>> -			 * When partialDecoding, it is EOF if we've either
+>> -			 * filled the output buffer or
+>> -			 * can't proceed with reading an offset for following match.
+>> -			 */
+>> -			if (!partialDecoding || (cpy == oend) || (ip >= (iend - 2)))
+>> -				break;
 > 
-> I just checked https://protect2.fireeye.com/v1/url?k=f36de8be-92f2088e-f36c63f1-000babe403ab-1972efa3caab0762&q=1&e=1265adcb-d286-42f9-9d57-b9b998ba2ed0&u=https%3A%2F%2Fgithub.com%2Flz4%2Flz4%2Fpull%2F707 and it seems that
-> LZ4_FAST_DEC_LOOP is enabled on aarch64 now, but we still disable it.
-> Am I missing something?
+> Worth noting, these lines are downstream commit eafc0a02391b
+> (lz4: fix LZ4_decompress_safe_partial read out of bound).
+> 
+> Is this intended or are we "loosing" some of the downstream fixes?
 > 
 
-You're right for clang builds. v1.10.0 enables the fast loop on aarch64
-only with GCC clang has been excluded since PR you mentioned. Upstream
-has since changed that neither of those commits is released yet:
+Yeah it's intended, eafc0a02391b was itself a backport of upstream
+c5d6f8a8be39  which is in v1.9.3 and later; its own commit message links
+it. The same check is at lib/lz4/upstream/lz4.c in this series.
 
-0aa33884faf5 ("[LZ4] Limit disabling LZ4_FAST_DEC_LOOP to
-aarch64+clang+android")
-
-ed86bc1ed802 ("AArch64: Enable LZ4_FAST_DEC_LOOP for Android")
-
-
-The first is already enough for the kernel.
-
-For v2 I'll backport both commits into the vendored lz4.c the same
-way patch 2 backports 5ef1f16929b5. They apply cleanly in order and
-give exactly upstream's current condition, and they go away at the next
-resync.
+And upstream's version also clamps a literal run that would read past
+the end of the input, which the backport didn't take.
 
 Best regards,
 -- 
