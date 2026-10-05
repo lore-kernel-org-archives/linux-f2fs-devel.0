@@ -4,80 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AEEC1CA5FF0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2026 13:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE532CA5FFE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2026 15:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Message-ID:To:Date:Sender:Cc:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=bwyVzpwsJRL8MIya1KQRwgCbeT8qXvLFifVjU9iV/zY=; b=hLycvRgvg5q4kSLsMzgqZf+mTg
-	VCnnDLkI7q9zqQAfcrwuGHgUkAyF62LNUMNZk9s07hxvFhubseIEHFUo4QCQCYMYqwarGKvv6zcYq
-	GlZ+u53iKOAWcymecWNbdyWztSN1bWdNz9TCbh/ZqJIklRlP7W+29V6aIN7qBd64yWG0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Eqn9cuNKl2d2tGJ0+ogAdj8HjFpgKMpt3EiXhUEobMk=; b=A+nJQQswdoe1pOlnyeEGQk6y0G
+	sio2qTOPPIRVXOEdoYQk/uQVscsUTxh/WASsuS23GJ+/JgICeqZr5zb7QvS5FkHadBZseYy3c4U2E
+	FM3Zl0hLaOm3YBshSmHQbkOH7aljwNxZL09meG2guWmAdYw79V2j+oFkja2N1wIeqVLw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xDimh-0001Td-8z;
-	Mon, 05 Oct 2026 13:31:15 +0000
+	id 1xDkZT-0006OH-3S;
+	Mon, 05 Oct 2026 15:25:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1xDimf-0001TV-LM
+ (envelope-from <ebiggers@kernel.org>) id 1xDkZR-0006O5-MF
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Oct 2026 13:31:14 +0000
+ Mon, 05 Oct 2026 15:25:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YJVFrcH51dcWxKvIvBoz5wPALOazHMgdkbmMui1YFvM=; b=F35wLZITcJSx3OHJ1cyPZ1kDh4
- 6p5rus6PEixMQojvL11pn51TjfwgGFgke1VUXh7Qw4Dqfhtb2/uUb0f6Xq7HEUaTZtgf+PqacZaZC
- 8eIz4XbfKXuow0CvJvTjTS7/+zEiExCnCUT2CXVcr553rbU2QwwygWZqLMjMkFyPj0QQ=;
+ bh=Baen8PQryX8eDiBxdXY1HWpb+ZNaxbRwgEV7WU05tqU=; b=Uk6Fh7HE1jhquAOEJNmD2xHZa5
+ /FSpUYgxjc1e5UWDs91FOO3PS4jSGOZSkWvk5l+njqLK28DWhMcUtxg/EQgmLv7Ot55SC3xForLzj
+ +4cGHnxueDufw1wUc2rH95DZ/al53eDYggrzot+EpHv7RWg4NsyTTS9H5OQmUm6RQXes=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YJVFrcH51dcWxKvIvBoz5wPALOazHMgdkbmMui1YFvM=; b=Xrcwu9J8d24Hyv2DFb3PPXpTHT
- +sGBgIHjrzHP83kzrFC2sg97tlPMjEQLaiu0YMuP2IYnhba95SIfXoM8LBLtRaC4OkT1mIxO4Mihv
- n8gtTueDhf1Le1ahEjZxJCZ5Rx4A4xbRfOCMY8NgYhS8dM6ZdXYgMD2CMoVEG9SV8CuA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=Baen8PQryX8eDiBxdXY1HWpb+ZNaxbRwgEV7WU05tqU=; b=cHPcu9urzoHj9xI0PZkqDkOx+5
+ h7814roYWmt/s6yM3bqEXUKb1Wbxs3phyzE/1WuQK5bs776lr1N4W+h7r8coG68uRa/R9Oc17pLF7
+ TeOeQx94JJR6cdfLZ6e/xuOqOHtMMYC0qTnzKUz2OcQ96ckasUiTmY2nG+GBCox2jsgs=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xDimc-0008Ma-4w for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Oct 2026 13:31:14 +0000
+ id 1xDkZR-0002Ux-Sf for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Oct 2026 15:25:42 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id ECDD043920;
- Mon,  5 Oct 2026 13:31:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F051F000FF;
- Mon,  5 Oct 2026 13:31:00 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 4FE9460514;
+ Mon,  5 Oct 2026 15:25:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47881F000FF;
+ Mon,  5 Oct 2026 15:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791207063;
- bh=YJVFrcH51dcWxKvIvBoz5wPALOazHMgdkbmMui1YFvM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=NZ6Jfn/XZvbHZ9XZWUeKBjHSx8Gwxg6v9+i6QIGrWRSYK6B+BD325E+wAPloxoe/i
- Fs0cNZt9HTSfTT2fIuyt6SYI1V09qLZotsQ26++U92UybnNUaDw0daQxMq6OXEmHz0
- i0PFp2xlI5bN8hSzGOBBRCH3JWS+H70cQojexrMqnWd03bd2zyUxgPDLGWsM8ic8Ku
- QnX5ZkA4xjMnqmwLM1PpJtDCy+KyfG/1LhrPesOPoEB6lMAvHhPjgubeCTHc9m14iL
- +eol8QKhP1q2npvOdrJ21JxbWpF29PQuDSXup+Vj4YervpvvbsjXI7A0l5yidd80/U
- VY/SQv9Bzlw+w==
-Date: Mon, 5 Oct 2026 15:30:58 +0200
-To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20261005133058.GA3436@quark>
-References: <20261002223705.2175542-1-aalbersh@kernel.org>
- <20261002232542.GA15366@quark>
- <asDvqctUgrxflcCa@nidhogg.toxiclabs.cc>
- <asN8lCPmZpA0tp5S@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
+ s=k20260515; t=1791213936;
+ bh=Baen8PQryX8eDiBxdXY1HWpb+ZNaxbRwgEV7WU05tqU=;
+ h=Date:From:To:Subject:References:In-Reply-To;
+ b=ID6twCZ23CBIvdE9pAjZ6ib+JeVI5jvnlRg29iEXhzywXTUzKtDVFgBUtQL+uMMMd
+ zwDMldBFSZTvuvlhXH/4KdBf7ivwpSbS7U/d//6j9OWsYDgmmXxOdTjXpFUwI9HcM+
+ hcgyYhMOkhbZ++sRytWl1FVOBw7DFC/Bbb3isWxfwipLerjc0r7sktNWPTo5hll9jv
+ UVa89486q7L19xV13hG6d6zl/Y+Jd7pql1kbE5YlfTzUMnSarUZ2ednQa5ecv5kiEf
+ 0HCupdVY0K6o+p42VLDuHiSgvWNlDKMFc+oL1qiKaFQAX2xnxBgr4CXxcugGNBZ1la
+ J2Qku6R5Mv19Q==
+Date: Mon, 5 Oct 2026 17:25:31 +0200
+To: Svyatoslav Nikolenko <nsvatoslav515@gmail.com>, jaegeuk@kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <20261005152531.GD3436@quark>
+References: <20261002114338.12073-1-nsvatoslav515@gmail.com>
+ <20261002232934.GB15366@quark>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <asN8lCPmZpA0tp5S@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
-X-Headers-End: 1xDimc-0008Ma-4w
-Subject: Re: [f2fs-dev] [PATCH v17 00/21] fs-verity support for XFS with
- post EOF merkle tree
+In-Reply-To: <20261002232934.GB15366@quark>
+X-Headers-End: 1xDkZR-0002Ux-Sf
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: convert pagecache_read() to use
+ folios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,49 +91,26 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, djwong@kernel.org,
- Carlos Maiolino <cem@kernel.org>, david@fromorbit.com,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Oct 05, 2026 at 01:26:18PM +0200, Andrey Albershteyn wrote:
-> On 2026-10-03 14:07:23, Carlos Maiolino wrote:
-> > On Fri, Oct 02, 2026 at 04:25:42PM -0700, Eric Biggers wrote:
-> > > On Sat, Oct 03, 2026 at 12:36:41AM +0200, Andrey Albershteyn wrote:
-> > > > Andrey Albershteyn (19):
-> > > >   fsverity: report validation errors through fserror to fsnotify
-> > > >   fsverity: expose ensure_fsverity_info()
-> > > >   fsverity: pass digest size and hash of the all-zeroes block to ->write
-> > > >   fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
-> > > >   fsverity: don't allow setting DAX file attribute on fsverity files
-> > > >   fsverity: hoist statx reporting of fs-verity flag
-> > > 
-> > > Would it be helpful if I applied these six patches to fsverity/for-next
-> > > for 7.4, or do you want to wait for the full series to go in at once
-> > > (presumably through the XFS tree)?
-> > > 
-> > > - Eric
-> > > 
+On Fri, Oct 02, 2026 at 04:29:34PM -0700, Eric Biggers via Linux-f2fs-devel wrote:
+> On Fri, Oct 02, 2026 at 02:43:37PM +0300, Svyatoslav Nikolenko wrote:
+> > Replace page-based APIs with folio equivalents in pagecache_read()
+> > to migrate fs/f2fs/verity.c away from struct page.
 > > 
-> > It's your call, I *think*, this is too late for xfs 7.4, so I want to
-> > queue it as soon as possible for 7.5.
-> > 
-> > If you want to take the fsverity patches into 7.4, go for it, then the
-> > xfs ones I'll pull in once yours are merged.
-> > 
-> > Sounds reasonable?
-> > 
-> > Carlos
-> > 
+> > Signed-off-by: Svyatoslav Nikolenko <nsvatoslav515@gmail.com>
 > 
-> Fine with me too
+> This will conflict with
+> https://lore.kernel.org/fsverity/20261002223705.2175542-5-aalbersh@kernel.org
+> 
+> I'm checking if that one will go into 7.4.  If so, this one won't be
+> needed.
 
-Applied patches 1-6 to
-https://git.kernel.org/pub/scm/fs/fsverity/linux.git/log/?h=for-next
+I applied
+https://lore.kernel.org/fsverity/20261002223705.2175542-5-aalbersh@kernel.org
+for 7.4, so there's no need for this one.
 
 - Eric
 
