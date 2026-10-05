@@ -4,111 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5ADCCA5FCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2026 19:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 28846CA5FF5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2026 20:16:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=yvurHEjIbnsapaqecX3gASwJEqmOvLOCw3eD2qGQnAU=; b=IBr11AfWFOYKVXuzPy3kwWwwgv
-	5ANcDRH7+uSbtzRu50K2x2O+r+JHH7etS/UpgF7fgc1ZWc1O7zXv18pGzRykIkpftQx4TDbn93g9z
-	LbjfumVboiYVFRGneoeIeIhMs8PoFgyYL5uRPo0dNkLpKviIS6KXLLZDEObced5Y4S/Q=;
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=qO2qPB0V7HfPllOxKqy54zsTbmkhioxbSsnhVK7VTWI=; b=CqWvLQSc8JquaCjWmC0r5pKFRY
+	y7PnUVlJiwm9epR4+qU5MWjm+mchw9CppD/ecWS6ZfBCNHeVLOX+KvPZj5lhH0RUHkq+dvEIwltwU
+	mjMonKALQY8H9yBubVrxLp1EYWYfhJD/L0bI9hBkt93hZ+QBzfLSuGMvGPXYLS4UJsp0=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xDoFc-00066H-JN;
-	Mon, 05 Oct 2026 19:21:29 +0000
+	id 1xDp6l-0002nQ-7g;
+	Mon, 05 Oct 2026 20:16:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1xDoFb-000665-IN
+ (envelope-from <qkrwngud825@gmail.com>) id 1xDp6k-0002nF-AQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Oct 2026 19:21:28 +0000
+ Mon, 05 Oct 2026 20:16:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=; b=NkHp1Mgtgk6n+yqmmSB2xmNzsO
- QqK61rINzbdIMs8xAdl0EkkI5lhSSmx9OPokUaQDUj/c0JsfYCrvwB3KDCExfu5lRlj9YZ3nfY7Ew
- E9xXH1Js+sEkjxPs0b94ylol2dQKitVyjwvDA+G5vO2g36dOgNHeDNuna7lkbO8vw9/U=;
+ bh=A03NCvNhh3WeozLGLnn96zZOJNDuJhAaaIYn6yhKNOw=; b=LS4lDM0K/Ch5RKC8QT6XcfgRI1
+ XqKjqeSF106DNjUpdGMjiHFx1XpEbWVltAfWv6XrcPLuifiD2UU0aaPIVnNRvbVaDk3ry4usv7GpF
+ kevzadm86x0Pqhl9ShHn6Wy94+EeIeKokVPuhP6F8qtVNN95ofPZ/OgJOCmDyEXg4DfM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=; b=j
- 9UZVJem2/Dv8MGh/Tr/kcHDCB/WpoNH3Athsg+UmoA+qzC76nOhS0bUXGvegKktOq3ooSe+Zo26va
- FwGnh9NWkUYaJsXQaUwwoAN9UAStilATIKkDcq83fYCKoEgWtkba+F9Re+DAzIOMv75d+HJEjzLc4
- FrvZ7XlPsTovsSRo=;
-Received: from mail-pj2-f42.google.com ([74.125.227.170])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=A03NCvNhh3WeozLGLnn96zZOJNDuJhAaaIYn6yhKNOw=; b=A8SJ8sA/0losoV/SQuX93HD1Y4
+ ZCUFg0jKo31Gvhmt72Jiuga5Xf+cPEHqNhrEy7+VnGkrpBiJizrixkQ/xX/cNA4E6trosH3BbYUza
+ nQQNg2qtaTuflbC5dF+WOR56RzIDQGJb8zCVtNsP01fs6ToEeE49tzK8dzyKZr/Heibk=;
+Received: from mail-pj1-f44.google.com ([209.85.216.44])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xDoFZ-0007ua-PN for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Oct 2026 19:21:28 +0000
-Received: by mail-pj2-f42.google.com with SMTP id
- 98e67ed59e1d1-396ccb65437so1147295a91.3
+ id 1xDp6k-0000QH-P5 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Oct 2026 20:16:23 +0000
+Received: by mail-pj1-f44.google.com with SMTP id
+ 98e67ed59e1d1-3a0a911e8d6so1027782a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 05 Oct 2026 12:21:25 -0700 (PDT)
+ Mon, 05 Oct 2026 13:16:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791228080; x=1791832880; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=;
- b=ABVC+U7z93GYXv62EI3KuFY/Wbq9cAyKCwFlCwOXw89b1vFXN7JZxpHUS3DFZjndUX
- 37kSRBa92cAkl5/uOi0t+O2rPZRcckoIbgwbCPKz/L/ClYn54ofbfumCx5aNxsodI3TG
- 79TYBdu5PO66ZLhrVpoZ+7lFcxhNP3qfJ+6yKK1PZLwRbfcZ0ZFeccvPDbhW+HzhABgW
- QolPX5EzGR6B32CB+MucFr515QLFcMWdVYi5EaMWijv3a3c+jaHpp4LUV3fd0OsOjSay
- aP59LCnkhDfolau6zJCtpQcrs9TGdIRTFT1xc/mxV9Khxx4qOu186D2/rXgAAGrKWWjj
- CL5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791228080; x=1791832880;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1791231377; x=1791836177; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=;
- b=cdP38nuFT3tTg/yPtmCMWloRQp/faf/HAqSHPRIuUIZcE3DSAM8P92VsqeoNxMqqgM
- kP0KsPzST2zobc/Xfjk9JR1d887aWHwMY4OET6lBw52HFqA0jjD9f7vTFBiHi4x8ji0E
- 4tq4ZvNVnBLnu9kWOzh8K4H1IJ3fP74MV+kozIBeDkWT0iL5ZRihAhMKzr/aUIpLY1bN
- +o6QOdBr8ZiaMpz9ScEOJUyNtWc9E0ZtpLi2wy7dgdGoNCVmcuAW7rqxB8WAtOFUzrUA
- 9pRhAihkgj9p4qt+f8AK0kJVDD8Gua5yk7Fpay0E8eL3HtiBfUTMcbPGa2hf4eaBfGSf
- zaJw==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzVhwlzblx88pE+1ENovVn/zgb73edS8/T98MUo22LnaBz6DAa5P3jvBmj/JrQ+MTZoWzVSrNrFZ7XoqsSycKHm@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYK86+KFeT3g5MFr8D7r+RlAcDUQF2+smUQmdXNr2k/a9vYxsz4A
- cyCGk9OCAQOoYOjBwNJXdxN9Y0gH9Ujhb+nA8glRtJDHhZSizd27O4Q7IcAjRg==
-X-Gm-Gg: AYBFou3MHdVy44R70sgFbNKkxlpXfgE5SZeVMnf3xVjDseZoltLgKKSEnYSKufy4wGp
- kRtMNVJ0I0povHBkAoLn3QngOPoDK0BqOXlIIo1u7H+zlcyFTW3x2+sMD4kLkM7FzoYx1c7Komx
- GZqsVMgQrIrmsFxgz9Cm1OTRAaBhNNZppSg5kKJdu3bhAGTPBLIb2io39ECTp2vJaBYow3Zdunw
- dUYFu6tZh3+FxAoKDuuqk9cK/ob5DvVy1gNZ9hgaAhgnhiL+1LjRq9Wj2zq9ascEY+ji5aNcs6O
- cZ69pZqw1CuNjNr5U6EouRsGIofn5KmCF9NofgfxnUV7sSIoaI5EIMxG3WjvAx4irMjORbm1DER
- srral9+WdkD8bVjpa6TBQ5WPBNveLk7ahtcYj530XB9AGoV8oo5x2e5ys0AXoXZwnF7eiRvVKaW
- iq1PwjfcHmrpo9lh2ToTG9iHGYMUNH0LRMfNixpBNrnr7ZXx4b2OCTb5zeyZM59Mi9inbMfgIKO
- Qv/b79sb2F5laTlXFY2Jwr0jAFfOgumLgUZdm+XOcmX8GpksMIOGAEzutnK8kwhkrLMte6gYhhT
- zjb54y9IUWZBZSs=
-X-Received: by 2002:a17:90a:dfc5:b0:3a1:8b70:d46b with SMTP id
- 98e67ed59e1d1-3a6ce80d87amr8315562a91.42.1791228079952; 
- Mon, 05 Oct 2026 12:21:19 -0700 (PDT)
-Received: from f2fs-test.c.googlers.com.com
- (225.134.16.34.bc.googleusercontent.com. [34.16.134.225])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a85436fb54sm820286a91.10.2026.10.05.12.21.18
+ bh=A03NCvNhh3WeozLGLnn96zZOJNDuJhAaaIYn6yhKNOw=;
+ b=qPZu3gk3paReyOMJGqSIRRifdkAiFN1RnvDJLJQnhMztKTst/bZksRniVyM85mk2tx
+ FPIwRQwJDUivszT0OggeJ7NciOlwMXv6YDIOlhEPZ9u2MwFvh1mdmL/yWyZERKye8paB
+ R7R70L4pZWq8fvkntSuOstk7es5ZB0a8D1kOli8sRWHf8H+SC9Dj5rHERz6I9k8Vm+fW
+ 57vMKrycYs7pl7WIAcJC6bCnyiG1NMECBgoPywkSrpzNfdSWvWWJA+aBJ1mUdBlgvzCx
+ ZOpSSpH48YZatURqE2IW66vagqlQyW9u9f5bXOJVHBd0apdO4vp6pBq16+DRllkk5vOu
+ b/Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791231377; x=1791836177;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=A03NCvNhh3WeozLGLnn96zZOJNDuJhAaaIYn6yhKNOw=;
+ b=qr2rg9xvZNTSiTEb8eT8mZPdFq8cl4zn3OR2roeJKsD3t2EPYhwiSEkGMCpGNvh6xs
+ pvYzZ4J8EGzk/8UYZ0TtokOVc/dx4im/5hOqeq4EG82VmcYIee/EGrBRsoSBdJETfo1F
+ mc2QIuYwmQ3OqQox8ZK4GYKiirCuIFN+zCDWRO6nV0NJjzWbxMBY2zHoJsjejqJ6b7t/
+ 68X/wwEZRhYUASrmTYjd+ongQz+IUmEaQqN7qKKLpPZaFACYbD4+ah94CpRkePh8RIj9
+ NVvn6YAagr1r4nLJ4yyWc6ycVhd15hQmgkNcIS/THgkwgGxKdKz2dwN8SzDHaP6qZdJp
+ cKJw==
+X-Gm-Message-State: AFq9FYLlUBCJopPR1BwN5V2wCaRI3P+UmQCb5TY1zaJ2wVW9OW9Vw2Kn
+ BGOsG3eI0lwXAWoph0u9YrASASesM7st/bq466EMQGAj1tw5VmRqcYMLWzBCYLae
+X-Gm-Gg: AYBFou1dIe1q/gnFsE2FtPhLmXuD8iwhPcyvO6bFiwQR+foF3bsanH8CcqiUN6LXCHC
+ NEQE0g2aBTwj7KqltM6XWoljrYocwW0Mqflhf+dUGErFhjKN8upZoqCM4L16/Mv+ot0Gt8vr3Bd
+ 7e/il/Uf39+68qOvayB0EJWFlnp/4ut22++VeImcg5cFTfjfEOUbGLhaSktENF5mWD1GW/0dAfH
+ b9Q8KzCCQdtEbhQIMuU08lX8jUVEqBcHay53w+4SuG4+NtKpP96d3dwTQ2ej729YAddFg8lh8PI
+ bsaaP9zs8eGgKd3iwmSGdZRlqk/Hqz+uZbm8yuDCs0P1wpyIrNQMbb/Css0YTvKy+L3NGuAtUl6
+ WpyIN1qAArubprSVoAX8MbivDPNP/7fzUnZwMBTuO24XCHe1CanwV3ZRB5Lgp0cpRysReB1m2t9
+ J6kcDRf77rebD3zKu/8IGKrcwnViD2SWuopjizsPbR2uP32t1bSHrKdcismP1SpOZkjOWiBGnPk
+ zIrIDASFyM6Ix0vqnpPGt0I45UAa4bM3B6eskjttIg4UrGpwh2NBfKapSXSoH7uqztZ0SUuu3Qq
+ 9q67PlpDBYb/GfMU8T/nyXvFlaeDa5C30Qt/NRkFMLqnRwwfHtpS8fiYS+/nJsecQyWWRo4S8eY
+ BNA7vFCFe424INnBakvIDc+gpggrJWvDtcRSSzR3HMTBrwey8773I7A==
+X-Received: by 2002:a17:90b:544b:b0:3a0:cb48:df6b with SMTP id
+ 98e67ed59e1d1-3a7873db380mr7016691a91.34.1791231376833; 
+ Mon, 05 Oct 2026 13:16:16 -0700 (PDT)
+Received: from arter97-x1 ([58.124.177.116]) by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a854257d18sm1149443a91.7.2026.10.05.13.16.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 12:21:18 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Mon,  5 Oct 2026 19:21:13 +0000
-Message-ID: <20261005192114.1511660-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
+ Mon, 05 Oct 2026 13:16:16 -0700 (PDT)
+From: Juhyung Park <qkrwngud825@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Tue,  6 Oct 2026 05:16:05 +0900
+Message-ID: <20261005201605.693574-2-qkrwngud825@gmail.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261005201605.693574-1-qkrwngud825@gmail.com>
+References: <20261005201605.693574-1-qkrwngud825@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1xDoFZ-0007ua-PN
-Subject: [f2fs-dev] [PATCH] f2fs: cache: count the temporary pins apart from
- the regular references
+X-Headers-End: 1xDp6k-0000QH-P5
+Subject: [f2fs-dev] [PATCH 2/2] f2fs-tools: remove LZ4_MEMORY_USAGE
+ definition
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,133 +119,31 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+liblz4 defines this from r118's commit back in 2014.
 
-f2fs_unlock_cache() and f2fs_end_cache_writeback() take a temporary
-reference on the entry around clear_and_wake_up_bit(), so that the entry
-is not freed before wake_up_bit() returns. f2fs_destroy_cache() waits
-for the LOCKED and WRITEBACK bits and then expects the refcount to be 1,
-but the bit waits can return as soon as the bit is cleared, before the
-I/O completion drops the temporary reference. When the completion runs
-in process context and is preempted there (e.g. dm-flakey in
-generic/311), umount hits:
-
-  kernel BUG at fs/f2fs/cache.c:567!
-  f2fs_destroy_cache+0x260/0x268
-  f2fs_put_super+0x1fc/0x428
-
-Count the temporary references in units of F2FS_CACHE_PIN_BIAS, like
-GUP_PIN_COUNTING_BIAS for folios, and check only the regular references
-in f2fs_destroy_cache(). A leaked regular reference is still caught
-there, without waiting for the completion.
-
-The pinned entry is freed by whichever of f2fs_cache_put() and
-f2fs_cache_unpin() drops the refcount to zero, as before. The shrinker
-still skips an entry while it is pinned, since the refcount is then
-neither 1 nor below 3.
-
-Fixes: 6e392158cf54 ("f2fs: cache: pin cached block in f2fs_end_cache_writeback()")
-Fixes: 61ba87b33e87 ("f2fs: cache: pin cached block in f2fs_unlock_cache()")
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Juhyung Park <qkrwngud825@gmail.com>
 ---
- fs/f2fs/cache.c | 40 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 34 insertions(+), 6 deletions(-)
+ fsck/compress.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-index 04b5408cbc5..a75578cd4e3 100644
---- a/fs/f2fs/cache.c
-+++ b/fs/f2fs/cache.c
-@@ -18,7 +18,7 @@
- #include <trace/events/f2fs.h>
- #include "segment.h"
- 
--static bool f2fs_cache_put(struct f2fs_cached_block *entry);
-+static void f2fs_free_cache(struct f2fs_cached_block *entry);
- 
- void f2fs_cache_wait_writeback_cond(struct f2fs_cached_block *entry,
- 					enum page_type type)
-@@ -111,6 +111,27 @@ void f2fs_start_cache_writeback(struct f2fs_cached_block *entry)
- 				F2FS_CACHE_TAG_WRITEBACK);
- }
- 
-+/*
-+ * The temporary references taken around clear_and_wake_up_bit() are counted
-+ * in units of F2FS_CACHE_PIN_BIAS, like GUP_PIN_COUNTING_BIAS for folios, so
-+ * that they can be told apart from the regular references.
-+ */
-+#define F2FS_CACHE_PIN_BIAS	(1 << 16)
-+
-+static void f2fs_cache_pin(struct f2fs_cached_block *entry)
-+{
-+	atomic_add(F2FS_CACHE_PIN_BIAS, &entry->refcount);
-+}
-+
-+static void f2fs_cache_unpin(struct f2fs_cached_block *entry)
-+{
-+	int ref = atomic_sub_return(F2FS_CACHE_PIN_BIAS, &entry->refcount);
-+
-+	WARN_ON_ONCE(ref < 0);
-+	if (!ref)
-+		f2fs_free_cache(entry);
-+}
-+
- void f2fs_end_cache_writeback(struct f2fs_cached_block *entry)
- {
- 	/*
-@@ -125,9 +146,9 @@ void f2fs_end_cache_writeback(struct f2fs_cached_block *entry)
- 	 * But here we must make sure that the entry is not freed and
- 	 * reused before clear_and_wake_up_bit().
- 	 */
--	f2fs_cache_get(entry);
-+	f2fs_cache_pin(entry);
- 	clear_and_wake_up_bit(F2FS_BLOCK_WRITEBACK, &entry->state);
--	f2fs_cache_put(entry);
-+	f2fs_cache_unpin(entry);
- }
- 
- static int f2fs_cache_refcount(struct f2fs_cached_block *entry)
-@@ -135,6 +156,12 @@ static int f2fs_cache_refcount(struct f2fs_cached_block *entry)
- 	return atomic_read(&entry->refcount);
- }
- 
-+/* the number of regular references, excluding the temporary ones */
-+static int f2fs_cache_users(struct f2fs_cached_block *entry)
-+{
-+	return f2fs_cache_refcount(entry) & (F2FS_CACHE_PIN_BIAS - 1);
-+}
-+
- static void f2fs_do_free_cache(struct f2fs_cached_block *entry)
- {
- 	kfree(entry->data);
-@@ -326,9 +353,9 @@ void f2fs_unlock_cache(struct f2fs_cached_block *entry)
- 	 * Pin the entry here to make sure it is not freed before wake_up_bit()
- 	 * completes.
- 	 */
--	f2fs_cache_get(entry);
-+	f2fs_cache_pin(entry);
- 	clear_and_wake_up_bit(F2FS_BLOCK_LOCKED, &entry->state);
--	f2fs_cache_put(entry);
-+	f2fs_cache_unpin(entry);
- }
- 
- bool f2fs_put_cache(struct f2fs_cached_block *entry, bool unlock)
-@@ -564,7 +591,8 @@ void f2fs_destroy_cache(struct f2fs_cached_block_list *cache)
- 	f2fs_bug_on(cache->sbi, f2fs_cache_test_dirty(entry));
- 	f2fs_bug_on(cache->sbi, f2fs_cache_test_writeback(entry));
- 	f2fs_bug_on(cache->sbi, !list_empty(&entry->list));
--	f2fs_bug_on(cache->sbi, f2fs_cache_refcount(entry) != 1);
-+	/* the I/O completion may not have unpinned the entry yet */
-+	f2fs_bug_on(cache->sbi, f2fs_cache_users(entry) != 1);
- 	f2fs_put_cache(entry, true);
- 	goto next;
- }
+diff --git a/fsck/compress.c b/fsck/compress.c
+index 5314b6b52034..6fe3cfe6177a 100644
+--- a/fsck/compress.c
++++ b/fsck/compress.c
+@@ -30,7 +30,6 @@
+ #define LZO_WORK_SIZE			ALIGN_UP(LZO1X_1_15_MEM_COMPRESS, 8)
+ #endif
+ #ifdef HAVE_LIBLZ4
+-#define LZ4_MEMORY_USAGE		14
+ #define LZ4_MAX_INPUT_SIZE		0x7E000000 /* 2 113 929 216 bytes */
+ #define LZ4_MEM_COMPRESS		sizeof(LZ4_stream_t)
+ #define LZ4_ACCELERATION_DEFAULT	1
 -- 
-2.56.0.rc1.315.gc6ed9934b7-goog
+2.55.0
 
 
 
