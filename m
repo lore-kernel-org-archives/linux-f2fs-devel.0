@@ -4,78 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F4E1CA5FFC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2026 17:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5ADCCA5FCE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2026 19:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=3Xie7FfwmH21pswPdadXzztgFGa17GvJ3hGveRZfkIU=; b=TlxnauH3qUYncP9GXLzBUmcTK3
-	vxHoepEpTRqZ1/WzhDwTXouCVOeDW2nYm71JbdWXnMxIYnsBZkoiLUGFgQ0xz0NBn6z6MSNSUVA5+
-	xsM7js1j2NABBwdy9D9aFXl1ZrpY7laAFT+cT4wrW89mgDFXulBNnGi7QibO/g0NhgnU=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=yvurHEjIbnsapaqecX3gASwJEqmOvLOCw3eD2qGQnAU=; b=IBr11AfWFOYKVXuzPy3kwWwwgv
+	5ANcDRH7+uSbtzRu50K2x2O+r+JHH7etS/UpgF7fgc1ZWc1O7zXv18pGzRykIkpftQx4TDbn93g9z
+	LbjfumVboiYVFRGneoeIeIhMs8PoFgyYL5uRPo0dNkLpKviIS6KXLLZDEObced5Y4S/Q=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xDmKw-0003dy-6L;
-	Mon, 05 Oct 2026 17:18:50 +0000
+	id 1xDoFc-00066H-JN;
+	Mon, 05 Oct 2026 19:21:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1xDmKu-0003dk-T0
+ (envelope-from <daeho43@gmail.com>) id 1xDoFb-000665-IN
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Oct 2026 17:18:49 +0000
+ Mon, 05 Oct 2026 19:21:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=g6msS6X1Nm9a4FfZxp/QaUWM7UJBVtBa+hinGO0mETc=; b=TGuxI92nE6GxFMPDnSkE7Eb7vc
- 3ehF76x94BRIimiXrnHf0PVTxYV5hvXIdmIsbhirZTntJWlpfAbVj1/TE1TwRivUt4hMnKYa25BVV
- GK72tDm+ncWb7uyVA2p7DNq9+Sb5evJrKJ+MBSLYx5+EiejA2vVNmuTKEB/KHftocLE8=;
+ bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=; b=NkHp1Mgtgk6n+yqmmSB2xmNzsO
+ QqK61rINzbdIMs8xAdl0EkkI5lhSSmx9OPokUaQDUj/c0JsfYCrvwB3KDCExfu5lRlj9YZ3nfY7Ew
+ E9xXH1Js+sEkjxPs0b94ylol2dQKitVyjwvDA+G5vO2g36dOgNHeDNuna7lkbO8vw9/U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=g6msS6X1Nm9a4FfZxp/QaUWM7UJBVtBa+hinGO0mETc=; b=Wk711rsn48oT3axUP2nBLIqiHb
- a/p3RMp7bqJ0YlESE2IdvdBD0VSe1CmKfLjD4JrwmjhdOjwwQayJMz1TY8snphQrCjQzwnvQzVEZ6
- iFNcqh7O42tbLu5OQixX+zMzifsli88OGp3LLHbCYj6e2ZDMXtFcbzf6PfBrpOSWr5nY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xDmKs-0005bg-QR for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Oct 2026 17:18:49 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 2CE9D60204;
- Mon,  5 Oct 2026 17:18:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02AB71F00898;
- Mon,  5 Oct 2026 17:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791220720;
- bh=g6msS6X1Nm9a4FfZxp/QaUWM7UJBVtBa+hinGO0mETc=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=VUEJgA4PKsah0xZT1lr870C9hqSqsRunnnz04WlLURfD/UJTmN2lwjvFaHrddePZ6
- AqhbxYIsXMxfNHO7b+56xgy5Zo/jCpIrLLpnxjdp0ZdCdC7E8h0G2PzWnKJr6GB0EV
- /c+uo8VabxCcfoNi/iFpE7WFI41xxZYVncIFZalb1AMdiDe3t3UosVDI5kc5UWCixe
- 3dwxa8cVGNKvsWJ4Tw+5i9b/BrMGdnLCshVqHpBLaWbukNMK45WiuXKIHH2gTvPzdh
- M/GZGdStGehJ5buPe6Toee94Xfg0c7bp1TuXjTn/MhYrHixG6otjZ4wpts+PbgX4qA
- qVxVficX6gx4Q==
-Date: Mon, 5 Oct 2026 19:18:35 +0200
-To: djwong@kernel.org, ebiggers@kernel.org, hch@lst.de, 
- Carlos Maiolino <cem@kernel.org>
-Message-ID: <asPEIapeSklgcsUa@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
-References: <20261002223705.2175542-1-aalbersh@kernel.org>
- <20261002223705.2175542-16-aalbersh@kernel.org>
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=; b=j
+ 9UZVJem2/Dv8MGh/Tr/kcHDCB/WpoNH3Athsg+UmoA+qzC76nOhS0bUXGvegKktOq3ooSe+Zo26va
+ FwGnh9NWkUYaJsXQaUwwoAN9UAStilATIKkDcq83fYCKoEgWtkba+F9Re+DAzIOMv75d+HJEjzLc4
+ FrvZ7XlPsTovsSRo=;
+Received: from mail-pj2-f42.google.com ([74.125.227.170])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xDoFZ-0007ua-PN for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Oct 2026 19:21:28 +0000
+Received: by mail-pj2-f42.google.com with SMTP id
+ 98e67ed59e1d1-396ccb65437so1147295a91.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 05 Oct 2026 12:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1791228080; x=1791832880; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=;
+ b=ABVC+U7z93GYXv62EI3KuFY/Wbq9cAyKCwFlCwOXw89b1vFXN7JZxpHUS3DFZjndUX
+ 37kSRBa92cAkl5/uOi0t+O2rPZRcckoIbgwbCPKz/L/ClYn54ofbfumCx5aNxsodI3TG
+ 79TYBdu5PO66ZLhrVpoZ+7lFcxhNP3qfJ+6yKK1PZLwRbfcZ0ZFeccvPDbhW+HzhABgW
+ QolPX5EzGR6B32CB+MucFr515QLFcMWdVYi5EaMWijv3a3c+jaHpp4LUV3fd0OsOjSay
+ aP59LCnkhDfolau6zJCtpQcrs9TGdIRTFT1xc/mxV9Khxx4qOu186D2/rXgAAGrKWWjj
+ CL5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791228080; x=1791832880;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=ZEnRrgsQfhAwpSCq6/7foeNKRR+8Ltv0O6gdOmb9ryo=;
+ b=cdP38nuFT3tTg/yPtmCMWloRQp/faf/HAqSHPRIuUIZcE3DSAM8P92VsqeoNxMqqgM
+ kP0KsPzST2zobc/Xfjk9JR1d887aWHwMY4OET6lBw52HFqA0jjD9f7vTFBiHi4x8ji0E
+ 4tq4ZvNVnBLnu9kWOzh8K4H1IJ3fP74MV+kozIBeDkWT0iL5ZRihAhMKzr/aUIpLY1bN
+ +o6QOdBr8ZiaMpz9ScEOJUyNtWc9E0ZtpLi2wy7dgdGoNCVmcuAW7rqxB8WAtOFUzrUA
+ 9pRhAihkgj9p4qt+f8AK0kJVDD8Gua5yk7Fpay0E8eL3HtiBfUTMcbPGa2hf4eaBfGSf
+ zaJw==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzVhwlzblx88pE+1ENovVn/zgb73edS8/T98MUo22LnaBz6DAa5P3jvBmj/JrQ+MTZoWzVSrNrFZ7XoqsSycKHm@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYK86+KFeT3g5MFr8D7r+RlAcDUQF2+smUQmdXNr2k/a9vYxsz4A
+ cyCGk9OCAQOoYOjBwNJXdxN9Y0gH9Ujhb+nA8glRtJDHhZSizd27O4Q7IcAjRg==
+X-Gm-Gg: AYBFou3MHdVy44R70sgFbNKkxlpXfgE5SZeVMnf3xVjDseZoltLgKKSEnYSKufy4wGp
+ kRtMNVJ0I0povHBkAoLn3QngOPoDK0BqOXlIIo1u7H+zlcyFTW3x2+sMD4kLkM7FzoYx1c7Komx
+ GZqsVMgQrIrmsFxgz9Cm1OTRAaBhNNZppSg5kKJdu3bhAGTPBLIb2io39ECTp2vJaBYow3Zdunw
+ dUYFu6tZh3+FxAoKDuuqk9cK/ob5DvVy1gNZ9hgaAhgnhiL+1LjRq9Wj2zq9ascEY+ji5aNcs6O
+ cZ69pZqw1CuNjNr5U6EouRsGIofn5KmCF9NofgfxnUV7sSIoaI5EIMxG3WjvAx4irMjORbm1DER
+ srral9+WdkD8bVjpa6TBQ5WPBNveLk7ahtcYj530XB9AGoV8oo5x2e5ys0AXoXZwnF7eiRvVKaW
+ iq1PwjfcHmrpo9lh2ToTG9iHGYMUNH0LRMfNixpBNrnr7ZXx4b2OCTb5zeyZM59Mi9inbMfgIKO
+ Qv/b79sb2F5laTlXFY2Jwr0jAFfOgumLgUZdm+XOcmX8GpksMIOGAEzutnK8kwhkrLMte6gYhhT
+ zjb54y9IUWZBZSs=
+X-Received: by 2002:a17:90a:dfc5:b0:3a1:8b70:d46b with SMTP id
+ 98e67ed59e1d1-3a6ce80d87amr8315562a91.42.1791228079952; 
+ Mon, 05 Oct 2026 12:21:19 -0700 (PDT)
+Received: from f2fs-test.c.googlers.com.com
+ (225.134.16.34.bc.googleusercontent.com. [34.16.134.225])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a85436fb54sm820286a91.10.2026.10.05.12.21.18
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 05 Oct 2026 12:21:18 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Mon,  5 Oct 2026 19:21:13 +0000
+Message-ID: <20261005192114.1511660-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20261002223705.2175542-16-aalbersh@kernel.org>
-X-Headers-End: 1xDmKs-0005bg-QR
-Subject: Re: [f2fs-dev] [PATCH v17 15/21] xfs: add fs-verity support
+X-Headers-End: 1xDoFZ-0007ua-PN
+Subject: [f2fs-dev] [PATCH] f2fs: cache: count the temporary pins apart from
+ the regular references
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,219 +120,134 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: fsverity@lists.linux.dev, david@fromorbit.com,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-10-03 00:36:56, Andrey Albershteyn wrote:
-> Add integration with fs-verity. XFS stores fs-verity descriptor and
-> Merkle tree in the inode data fork at first block aligned to 64k past
-> EOF.
-> 
-> The Merkle tree reading/writing is done through iomap interface. The
-> data itself is read to the inode's page cache. When XFS reads from this
-> region iomap doesn't call into fsverity to verify it against Merkle
-> tree. For data, verification is done at ioend completion in a workqueue.
-> 
-> When fs-verity is enabled on an inode, the XFS_IVERITY_CONSTRUCTION
-> flag is set meaning that the Merkle tree is being build. The
-> initialization ends with storing of verity descriptor and setting
-> inode on-disk flag (XFS_DIFLAG2_VERITY). Lastly, the
-> XFS_IVERITY_CONSTRUCTION is dropped and I_VERITY is set on inode.
-> 
-> The descriptor is stored in a new block aligned to 64k after the last
-> Merkle tree block. The size of the descriptor is stored at the end of
-> the last descriptor block (descriptor can be multiple blocks).
-> 
-> Pro-actively remove any unwritten extents as we use last extent to
-> locate descriptor.
-> 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_fsverity.c | 425 +++++++++++++++++++++++++++++++++++++++++-
->  fs/xfs/xfs_fsverity.h |   2 +
->  fs/xfs/xfs_message.c  |   4 +
->  fs/xfs/xfs_message.h  |   1 +
->  fs/xfs/xfs_mount.h    |   2 +
->  fs/xfs/xfs_super.c    |   7 +
->  6 files changed, 440 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-> index 976e05257bf9..8cffcafc19aa 100644
-> --- a/fs/xfs/xfs_fsverity.c
-> +++ b/fs/xfs/xfs_fsverity.c
-> @@ -6,13 +6,22 @@
->  #include "xfs_fs.h"
->  #include "xfs_shared.h"
->  #include "xfs_format.h"
-> -#include "xfs_log_format.h"
->  #include "xfs_trans_resv.h"
->  #include "xfs_mount.h"
->  #include "xfs_inode.h"
-> +#include "xfs_log_format.h"
-> +#include "xfs_trans.h"
-> +#include "xfs_trace.h"
-> +#include "xfs_quota.h"
->  #include "xfs_fsverity.h"
-> +#include "xfs_iomap.h"
-> +#include "xfs_error.h"
-> +#include "xfs_health.h"
-> +#include "xfs_bmap_util.h"
-> +#include "xfs_icache.h"
->  #include <linux/fsverity.h>
->  #include <linux/iomap.h>
-> +#include <linux/pagemap.h>
->  
->  struct kmem_cache *xfs_fsverity_ioend_cache;
->  mempool_t xfs_fsverity_ioend_pool;
-> @@ -51,3 +60,417 @@ xfs_fsverity_is_file_data(
->  	return fsverity_active(VFS_IC(ip)) &&
->  			offset < xfs_fsverity_metadata_offset(ip);
->  }
-> +
-> +/*
-> + * Retrieve the verity descriptor.
-> + */
-> +static int
-> +xfs_fsverity_get_descriptor(
-> +	struct inode		*inode,
-> +	void			*buf,
-> +	size_t			buf_size)
-> +{
-> +	struct xfs_inode	*ip = XFS_I(inode);
-> +	struct xfs_mount	*mp = ip->i_mount;
-> +	__be32			d_desc_size;
-> +	u32			desc_size;
-> +	u64			desc_size_pos;
-> +	int			error;
-> +	u64			desc_pos;
-> +	struct xfs_bmbt_irec	rec;
-> +	int			is_empty;
-> +	uint32_t		blocksize = i_blocksize(VFS_I(ip));
-> +	xfs_fileoff_t		last_block_offset;
-> +
-> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> +	/*
-> +	 * Serialize reading of inode->i_flags with xfs_scrub clearing of this
-> +	 * flag if inode is corrupted.
-> +	 */
-> +	if (!(inode->i_flags & S_VERITY)) {
-> +		xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> +		return -ENODATA;
-> +	}
-> +	error = xfs_bmap_last_extent(NULL, ip, XFS_DATA_FORK, &rec, &is_empty);
-> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> +	if (error)
-> +		return error;
-> +
-> +	if (is_empty)
-> +		return -ENODATA;
-> +
-> +	last_block_offset =
-> +		XFS_FSB_TO_B(mp, rec.br_startoff + rec.br_blockcount);
-> +	if (last_block_offset <= xfs_fsverity_metadata_offset(ip))
-> +		return -ENODATA;
-> +
-> +	desc_size_pos = last_block_offset - sizeof(__be32);
-> +	error = fsverity_pagecache_read(inode, (char *)&d_desc_size,
-> +			sizeof(d_desc_size), desc_size_pos);
-> +	if (error)
-> +		return error;
-> +
-> +	desc_size = be32_to_cpu(d_desc_size);
-> +	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE))
-> +		return -ERANGE;
-> +	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos))
-> +		return -ERANGE;
-> +
-> +	if (!buf_size)
-> +		return desc_size;
-> +
-> +	if (XFS_IS_CORRUPT(mp, desc_size > buf_size))
-> +		return -ERANGE;
-> +
-> +	desc_pos = round_down(desc_size_pos - desc_size, blocksize);
-> +	if (desc_pos < xfs_fsverity_metadata_offset(ip))
-> +		return -ERANGE;
-> +
-> +	error = fsverity_pagecache_read(inode, buf, desc_size, desc_pos);
-> +	if (error)
-> +		return error;
-> +
-> +	return desc_size;
-> +}
-> +
-> +static int
-> +xfs_fsverity_write_descriptor(
-> +	struct file		*file,
-> +	const void		*desc,
-> +	u32			desc_size,
-> +	u64			merkle_tree_size)
-> +{
-> +	int			error;
-> +	struct inode		*inode = file_inode(file);
-> +	struct xfs_inode	*ip = XFS_I(inode);
-> +	unsigned int		blksize = ip->i_mount->m_sb.sb_blocksize;
-> +	u64			tree_last_block =
-> +			xfs_fsverity_metadata_offset(ip) + merkle_tree_size;
-> +	u64			desc_pos =
-> +			round_up(tree_last_block, XFS_FSVERITY_START_ALIGN);
-> +	u64			desc_end = desc_pos + desc_size;
-> +	__be32			desc_size_disk = cpu_to_be32(desc_size);
-> +	u64			desc_size_pos =
-> +			round_up(desc_end + sizeof(desc_size_disk), blksize) -
-> +			sizeof(desc_size_disk);
-> +
-> +	error = iomap_fsverity_write(file, desc_size_pos, sizeof(__be32),
-> +			(const void *)&desc_size_disk,
-> +			&xfs_buffered_write_iomap_ops,
-> +			&xfs_iomap_write_ops);
-> +	if (error)
-> +		return error;
-> +
-> +	return iomap_fsverity_write(file, desc_pos, desc_size, desc,
-> +			&xfs_buffered_write_iomap_ops,
-> +			&xfs_iomap_write_ops);
-> +}
-> +
-> +/*
-> + * Try to remove all the fsverity metadata after a failed enablement.
-> + */
-> +static int
-> +xfs_fsverity_delete_metadata(
-> +	struct xfs_inode	*ip)
-> +{
-> +	struct xfs_trans	*tp;
-> +	struct xfs_mount	*mp = ip->i_mount;
-> +	int			error;
-> +
-> +	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
-> +	if (error) {
-> +		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
-> +		return error;
-> +	}
-> +
-> +	truncate_inode_pages(VFS_I(ip)->i_mapping, XFS_ISIZE(ip));
+From: Daeho Jeong <daehojeong@google.com>
 
-Oh I haven't paid enough attention here, it has to be moved before
-xfs_ilock(ip, XFS_MMAPLOCK_EXCL) not just before the lock, to exclude
-ABBA with writeback/reclaim taking folio lock and waiting for trans
-space.
+f2fs_unlock_cache() and f2fs_end_cache_writeback() take a temporary
+reference on the entry around clear_and_wake_up_bit(), so that the entry
+is not freed before wake_up_bit() returns. f2fs_destroy_cache() waits
+for the LOCKED and WRITEBACK bits and then expects the refcount to be 1,
+but the bit waits can return as soon as the bit is cleared, before the
+I/O completion drops the temporary reference. When the completion runs
+in process context and is preempted there (e.g. dm-flakey in
+generic/311), umount hits:
 
-I will send v18 if more feedback will arrive, otherwise, I can
-resend just this patch (or could be fixed during merge?).
+  kernel BUG at fs/f2fs/cache.c:567!
+  f2fs_destroy_cache+0x260/0x268
+  f2fs_put_super+0x1fc/0x428
 
+Count the temporary references in units of F2FS_CACHE_PIN_BIAS, like
+GUP_PIN_COUNTING_BIAS for folios, and check only the regular references
+in f2fs_destroy_cache(). A leaked regular reference is still caught
+there, without waiting for the completion.
+
+The pinned entry is freed by whichever of f2fs_cache_put() and
+f2fs_cache_unpin() drops the refcount to zero, as before. The shrinker
+still skips an entry while it is pinned, since the refcount is then
+neither 1 nor below 3.
+
+Fixes: 6e392158cf54 ("f2fs: cache: pin cached block in f2fs_end_cache_writeback()")
+Fixes: 61ba87b33e87 ("f2fs: cache: pin cached block in f2fs_unlock_cache()")
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/cache.c | 40 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 34 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
+index 04b5408cbc5..a75578cd4e3 100644
+--- a/fs/f2fs/cache.c
++++ b/fs/f2fs/cache.c
+@@ -18,7 +18,7 @@
+ #include <trace/events/f2fs.h>
+ #include "segment.h"
+ 
+-static bool f2fs_cache_put(struct f2fs_cached_block *entry);
++static void f2fs_free_cache(struct f2fs_cached_block *entry);
+ 
+ void f2fs_cache_wait_writeback_cond(struct f2fs_cached_block *entry,
+ 					enum page_type type)
+@@ -111,6 +111,27 @@ void f2fs_start_cache_writeback(struct f2fs_cached_block *entry)
+ 				F2FS_CACHE_TAG_WRITEBACK);
+ }
+ 
++/*
++ * The temporary references taken around clear_and_wake_up_bit() are counted
++ * in units of F2FS_CACHE_PIN_BIAS, like GUP_PIN_COUNTING_BIAS for folios, so
++ * that they can be told apart from the regular references.
++ */
++#define F2FS_CACHE_PIN_BIAS	(1 << 16)
++
++static void f2fs_cache_pin(struct f2fs_cached_block *entry)
++{
++	atomic_add(F2FS_CACHE_PIN_BIAS, &entry->refcount);
++}
++
++static void f2fs_cache_unpin(struct f2fs_cached_block *entry)
++{
++	int ref = atomic_sub_return(F2FS_CACHE_PIN_BIAS, &entry->refcount);
++
++	WARN_ON_ONCE(ref < 0);
++	if (!ref)
++		f2fs_free_cache(entry);
++}
++
+ void f2fs_end_cache_writeback(struct f2fs_cached_block *entry)
+ {
+ 	/*
+@@ -125,9 +146,9 @@ void f2fs_end_cache_writeback(struct f2fs_cached_block *entry)
+ 	 * But here we must make sure that the entry is not freed and
+ 	 * reused before clear_and_wake_up_bit().
+ 	 */
+-	f2fs_cache_get(entry);
++	f2fs_cache_pin(entry);
+ 	clear_and_wake_up_bit(F2FS_BLOCK_WRITEBACK, &entry->state);
+-	f2fs_cache_put(entry);
++	f2fs_cache_unpin(entry);
+ }
+ 
+ static int f2fs_cache_refcount(struct f2fs_cached_block *entry)
+@@ -135,6 +156,12 @@ static int f2fs_cache_refcount(struct f2fs_cached_block *entry)
+ 	return atomic_read(&entry->refcount);
+ }
+ 
++/* the number of regular references, excluding the temporary ones */
++static int f2fs_cache_users(struct f2fs_cached_block *entry)
++{
++	return f2fs_cache_refcount(entry) & (F2FS_CACHE_PIN_BIAS - 1);
++}
++
+ static void f2fs_do_free_cache(struct f2fs_cached_block *entry)
+ {
+ 	kfree(entry->data);
+@@ -326,9 +353,9 @@ void f2fs_unlock_cache(struct f2fs_cached_block *entry)
+ 	 * Pin the entry here to make sure it is not freed before wake_up_bit()
+ 	 * completes.
+ 	 */
+-	f2fs_cache_get(entry);
++	f2fs_cache_pin(entry);
+ 	clear_and_wake_up_bit(F2FS_BLOCK_LOCKED, &entry->state);
+-	f2fs_cache_put(entry);
++	f2fs_cache_unpin(entry);
+ }
+ 
+ bool f2fs_put_cache(struct f2fs_cached_block *entry, bool unlock)
+@@ -564,7 +591,8 @@ void f2fs_destroy_cache(struct f2fs_cached_block_list *cache)
+ 	f2fs_bug_on(cache->sbi, f2fs_cache_test_dirty(entry));
+ 	f2fs_bug_on(cache->sbi, f2fs_cache_test_writeback(entry));
+ 	f2fs_bug_on(cache->sbi, !list_empty(&entry->list));
+-	f2fs_bug_on(cache->sbi, f2fs_cache_refcount(entry) != 1);
++	/* the I/O completion may not have unpinned the entry yet */
++	f2fs_bug_on(cache->sbi, f2fs_cache_users(entry) != 1);
+ 	f2fs_put_cache(entry, true);
+ 	goto next;
+ }
 -- 
-- Andrey
+2.56.0.rc1.315.gc6ed9934b7-goog
+
 
 
 _______________________________________________
