@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 722BCCA6006
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Oct 2026 08:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A3AECA5FFF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Oct 2026 08:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=kCx8tzQASWGj4Kup+rbf0xCy8VWQNWCCGj+DkkhvH6Q=; b=a6H3rOgJjnUHvWLvLehY/Y3+eH
-	Rzb5odI0HoRX5Bk2umTm7IEZmIy9Gzv5gwwsnigOON18CoOCIgV6MDnR0wPUVQ2ed7yX3lcCgbQSo
-	KNIoA0T5wn9Rhl+4fRmBjumb7OangQzrPdP7qRJOqZgL1bVXiQfOygj6OeK0EUQW5+oM=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=POmTy/LkPCrdIS9Pr5gyQcFvjMWPjv4TLrEZ4+eX7Gs=; b=B76sTa6hW3gcKisqlJXYAtV5xh
+	UgO7LvSKA9mf82NOL/KShTCm6IwFrFMLekAw1z9xzc/5Ay39LlOXdGnk+8L0y9Mex/B8LXA/VtalL
+	uTVHWxXIvMSS9CkS0HkNrlnaRsKXi+rjV9+S3v1zklFYw3JX/+z3ZwqGY1Lo+ro1RseI=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xE0yp-000696-1P;
-	Tue, 06 Oct 2026 08:56:59 +0000
+	id 1xE0yw-0006sW-CK;
+	Tue, 06 Oct 2026 08:57:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1xE0yl-00068Z-Nf
+ (envelope-from <asj@kernel.org>) id 1xE0yu-0006sC-S6
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Oct 2026 08:56:55 +0000
+ Tue, 06 Oct 2026 08:57:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yTPg7WgNbGqn4E0eJg50IlBitUMXBRXH6jwA/Ev1yYc=; b=ToUuE5KC/PrXhLG2JzarbrDLFt
- wpXw/fQsNQDDSf1oA/GXVOKFEBR1MaW6n6H6VJNj2v58/NCdiWANHTQ2Gf8rntVwSzsi/nQW8+2cr
- iuDrChX+c8mrJJmc159NG+Ye9LckV95YhmMAnyLwDy9/0PGVeLqmWrhHZjBxDSlEdpBI=;
+ bh=GUebb0cGvHp4BdkfYsUDUeqJGoIKudolDlGlrishWBE=; b=IMld/AWiOAYFNT946uGZhE4DBF
+ G0aSsboWosgCrj6CBuMV1L6fPHqkv2a9wvXT7X5BwFkfEXGax1L0k5RSJptA6gmLVR0vOhbeywywH
+ RB9HlDGLkjx+nLj/63rdLLg30FLN0BYsMqiHtob1lokLquNQnc4S6e0S0GjPyl6hKMyY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=yTPg7WgNbGqn4E0eJg50IlBitUMXBRXH6jwA/Ev1yYc=; b=kjrRnObtPeQei5mk6nfroUNpXi
- XvQpTDQglaWmJXDH39WHlVnIG1W2ancEGMbGGLs182EEeIfIcAJL+048ZrIRrE/UP/T+KMG5+0QPU
- 871KFaAFDXlLgIc0Tt6ocFYVPL6JqT8J9qc9csB13Ag1cZlP0jdOJ+gq3uvTtJzy/vK8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=GUebb0cGvHp4BdkfYsUDUeqJGoIKudolDlGlrishWBE=; b=ccneywn423zJ02E1/1zM9yHCeB
+ H6xZb1yaScrplTbyZP1uh7ywrPr0MhWNfm9qc/1zMB4XqzDFUnfRRVKyfcBX/g6uYV3YLVQNmdGgO
+ ZNH01lj++4k9ROS9NRgNivEt5xPNkm+TPwOUYH1Vy/1p+DdyqQq/ZKdDFSqWCBuK0Sdc=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xE0yk-000269-Cb for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Oct 2026 08:56:55 +0000
+ id 1xE0ys-00026V-1e for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Oct 2026 08:57:02 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id C7BF76022A
+ by sea.source.kernel.org (Postfix) with ESMTP id BBBDB43921
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  6 Oct 2026 08:56:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16341F00893;
- Tue,  6 Oct 2026 08:56:46 +0000 (UTC)
+ Tue,  6 Oct 2026 08:56:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174471F00893;
+ Tue,  6 Oct 2026 08:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791277008;
- bh=yTPg7WgNbGqn4E0eJg50IlBitUMXBRXH6jwA/Ev1yYc=;
+ s=k20260515; t=1791277016;
+ bh=GUebb0cGvHp4BdkfYsUDUeqJGoIKudolDlGlrishWBE=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=VIyJTUM5V6A2hzrluI06O2pv8CMghQkGaLA4/m/bkadkBdjQ5IQPOca6zasX2hjUB
- OeFF9xSwFHM00CFx0rX5NVsEvyoVOxoOwwHsh1B6tx5JoxIXNNv3iqaDQ3fxoY+Kxf
- wQT53h0NwCBpUZ5FQAr3CNryW3C6L0hDWGjG3pjq1Su1XErfffrRuC/RlgIxPlOrPA
- IqCotloCa93t96LQj+3su8eopYkorHlyPd6ZBEMdxg1D4WlPGV1P26TLbz2RBBWuVE
- pNMshtn6Ltbm+Zg4kmtMgavo22KGohl9KWGnLyY1SyXY6rYJliES9SUNppz/uDLVzC
- vdlJL0fItfjqw==
+ b=ftRZk7nW1BpZgcaBlEa3E9brge7CnBItaVC9XUi9foeP1xoJ4BlItlOa6rD+wwwBz
+ IfHAq5rdM5Ll70vEeQfd+/fpskwp9IshiWIdSTY7zOfvdoeBfGtdXqlRH4LZPfhTBk
+ Oz6lZ3UvR/eziKyrTypFjaSoR6KSX3zQlMBr+d3Vf5HPJX28GNP+kfqitpMOcLtDk1
+ 3h67mLLhmJ59UAuZLOXKIPjogiAn9p0B97V+gcTnLG9YNNt+U+KD3ybukjzbqC40Ls
+ y/P7C1gfuec3GZXhpuMklFnOf67KVuxdncgWroWoy4UPRzYk4YLxPjqdexppu9E9eA
+ SuClHAo/EqH+w==
 To: fstests@vger.kernel.org
-Date: Tue,  6 Oct 2026 16:55:43 +0800
-Message-ID: <8aebfe6024e971c967497284c702862f16cbe570.1791272793.git.asj@kernel.org>
+Date: Tue,  6 Oct 2026 16:55:47 +0800
+Message-ID: <caf98f05a61c028dc1af75c11785cece28d400da.1791272793.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1791272793.git.asj@kernel.org>
 References: <cover.1791272793.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1xE0yk-000269-Cb
-Subject: [f2fs-dev] [PATCH 17/21] fstests: add _change_metadata_uuid helper
+X-Headers-End: 1xE0ys-00026V-1e
+Subject: [f2fs-dev] [PATCH 21/21] fstests: _create_loop_device_like_bdev()
+ remove unused variable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,42 +95,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-_change_metadata_uuid changes the UUID of the golden filesystem before it
-is cloned.
+Remove unused local dev.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
 ---
- common/rc | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ common/rc | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/common/rc b/common/rc
-index bc0522dbcdd3..7feeec04a500 100644
+index 58e4c234b0f4..5bc4c52bb8d0 100644
 --- a/common/rc
 +++ b/common/rc
-@@ -1577,6 +1577,23 @@ _scratch_resvblks()
- 	esac
- }
+@@ -4815,7 +4815,6 @@ _create_loop_device_like_bdev()
+ {
+ 	local file=$1
+ 	local bdev=$2
+-	local dev
+ 	local blksize
  
-+# Change the metadata UUID of the given device to a newly generated one.
-+# Args:
-+#   $1: Block device path to modify.
-+_change_metadata_uuid()
-+{
-+	local dev=$1
-+
-+	case $FSTYP in
-+	xfs)
-+		$XFS_ADMIN_PROG -U generate $dev >> $seqres.full
-+		;;
-+	btrfs)
-+		$BTRFS_TUNE_PROG -m $dev
-+		;;
-+	esac
-+}
-+
- # Create a small loop image, run an optional tuning function ($2) on it,
- # clone it, and attach both to loop devices, returned in ($1).
- # Args:
+ 	test -b "$bdev" || \
 -- 
 2.43.0
 
