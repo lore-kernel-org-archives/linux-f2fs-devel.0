@@ -4,79 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6D310CA5FED
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Oct 2026 09:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F4FFCA5FF1
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Oct 2026 10:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=1A2fWixpYh/rHEcRDS5At3Z0IGZj3hRvWlDqTuYP/KE=; b=Tuz6OK8FB9UUElgfRHdaBeeMCr
-	xR2/VFEu9tBz3Dyz+fD62Co7LURWMSnSrHuKdu3/WKfezgT6lKajkKhHu1gq5pEHSnzih7unNSIUa
-	khMNg6S9WM8JmAZ4era52iogCBK8UEZar5yC8PWuDaMP5hcPhDOzFRHx9VurQxhWIccg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=vtsr512MCQ5BjIGQHiUr/pL4SNcrnYenGTXsvoCF/OQ=; b=HzAkzOpmFnyEUahBlCE8Yies/J
+	+j36xo87J9suv7vnc03JrF+x0486rj821NauAs/jY+xHp+yg+ZkmqytA4c2Mf66vx8YJns1f6FMu3
+	0mCYpg2WBJWrh8sHs31STIUF7/uuviFdxxlHObcktPN3WrKZ4p2miSGOrrdq8g5ZgcLk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xE15q-0006RN-Gj;
-	Tue, 06 Oct 2026 09:04:14 +0000
+	id 1xEOj2-0005kR-QR;
+	Wed, 07 Oct 2026 10:18:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1xE15p-0006RG-47
+ (envelope-from <chao@kernel.org>) id 1xEOim-0005jt-E5
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Oct 2026 09:04:13 +0000
+ Wed, 07 Oct 2026 10:17:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PgeNokXIlRBGGeHOkLtJQ5VDem+6R26Oh7feIv6Fbzk=; b=G32ojiPx03QLDikpRFwy5E80zp
- FOtbDQJK6aylHPNJ1ikun3c/I9xHiBgMa4+1JGche6QnFoBN8jvM3zjFf8x3HE0OqmlheMLx5gJW7
- E8kCbyQpCF6Me/aqdiHEATgj101alp75F21p5tEeMRG6OLs6vbJD1M2tbHjlQCoQDaUs=;
+ bh=Y0GnRc4T4ZE9nqw5bVtX9AvOSXcgvcWFrOaRGb2SBZA=; b=W5kWsmBgRcIGCtt3MBKiFCjHD1
+ ryxpNGP8GSL/lhRmL/zZNdMlzRAx0PUOsQafzec4VGF+Hsf3dKdl2O+Bt7pfh5aNmHXSidBv+n8Zp
+ CljsIcaQQQulZ281XkoySBa40CWy1/6mkpVELV7CafeVjy/LHG40UfLG3F40DvnflGPw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=PgeNokXIlRBGGeHOkLtJQ5VDem+6R26Oh7feIv6Fbzk=; b=hK+OVEQHkP4tQ3EZ5sbPNWEmOU
- iLKaSIYWrnvWBK52QvqVnQCarqIGYmCavTJ+qhVH2aD4hIJ2h8k+mqrMv0f29YJ5timy4mNjprQDz
- iDdhGuJD5XNC1vwLlmjL2PeCd6k4X1Y3K/A19VFqR4BF4FICF7E7eNtsZO0WyWGwkABU=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Y0GnRc4T4ZE9nqw5bVtX9AvOSXcgvcWFrOaRGb2SBZA=; b=F
+ nNp8YNGW/BUFaXY5pyK+EvoY+y33umvjzhV8oe7kM7MEy6Qq0I8RQ/qVDI9UTfsqxPFG14Gj8n/Sc
+ mDG7HMMJflfl26dGaONLSZTXecxWU4OvdPeQjAvRaRioJzWUNie+5J04oqVZNG2KP4n6SgfTGwVIE
+ w7BW3pSdViNVDSlc=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xE15m-0000hd-N1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Oct 2026 09:04:13 +0000
+ id 1xEOii-000334-5W for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Oct 2026 10:17:57 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 11C136022A;
- Tue,  6 Oct 2026 09:04:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F50F1F000FF;
- Tue,  6 Oct 2026 09:04:01 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 8B82B601FB;
+ Wed,  7 Oct 2026 10:17:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D5E71F0089C;
+ Wed,  7 Oct 2026 10:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791277444;
- bh=PgeNokXIlRBGGeHOkLtJQ5VDem+6R26Oh7feIv6Fbzk=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=Cv+Iwz6EcV7+p4TS0689Vi+owN+wS6+WTmpfgTmF0wiiAGIvV1GhvYsdLl9yQ2ne7
- HMaTDRA8mE6/kgQPkxjrvctzXetFjupG1ZWZfE+MKB2AT8zKP9P90m+kNilyEZuQGJ
- Y1sYeVcUJ/w2M4TeydnP2vCYx9qnh5hbITYASlKMNznUNeewrq/FRCJdpH0lgSkfAs
- OalzBxscMcTLeiZhV0gXyDELtvgG/5Yden/XakB9B06IF0/pL5+IRnGspiQyeiSUbA
- W8Ye83zx8uuEA6UuHg2c3eW3BWgKlZ2msR8xr9vstSx2g00AnFuwOpkmh230viqP69
- Ys94/DWQ+G/+Q==
-Date: Tue, 6 Oct 2026 11:03:59 +0200
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <asS3a5f8JKzVmlta@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
-References: <20261002223705.2175542-1-aalbersh@kernel.org>
- <20261002223705.2175542-16-aalbersh@kernel.org>
- <asPEIapeSklgcsUa@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
- <20261005211235.GF2705364@frogsfrogsfrogs>
+ s=k20260515; t=1791368270;
+ bh=Y0GnRc4T4ZE9nqw5bVtX9AvOSXcgvcWFrOaRGb2SBZA=;
+ h=From:To:Cc:Subject:Date;
+ b=WXJr9iWzUetPxK+2oME2HcLBQfpvbTLx+pVOqI1/8VNqJvZL2n6MPZKNfVCB7Wo1o
+ 1rA+gxL9GtPv2ST/DmmkjKfNmfjELQjFqi6oalbxc+5+kxAdxIFOnvSZM8NGaXZlBh
+ 9pOeEuICelhpcu7TE8Q7vL0sppc/+XNZm/dWneTDnNDSztYYmb8Pt8tSav4NS+oN0j
+ 31HvrBEcLiZ8Bi61o+MhUTSKKjpUUIYvo3/TOAXUwfLqzGfGPzD8bQZaWbsD9zGGFu
+ b8ZWPK7DR5GmM+65lQDoNPfSYiFTRQaKxN4NJE/VASoVvhf1KIeQ8DqtJZ9OtgicWJ
+ LZwbl4pTmEXvA==
+To: jaegeuk@kernel.org
+Date: Wed,  7 Oct 2026 10:17:38 +0000
+Message-ID: <20261007101738.2348038-1-chao@kernel.org>
+X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20261005211235.GF2705364@frogsfrogsfrogs>
-X-Headers-End: 1xE15m-0000hd-N1
-Subject: Re: [f2fs-dev] [PATCH v17 15/21] xfs: add fs-verity support
+X-Headers-End: 1xEOii-000334-5W
+Subject: [f2fs-dev] [PATCH] Revert "f2fs: skip node_change lock for inline
+ data writes"
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,65 +84,131 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, david@fromorbit.com,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- hch@lst.de, linux-btrfs@vger.kernel.org
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-10-05 14:12:35, Darrick J. Wong wrote:
-> On Mon, Oct 05, 2026 at 07:18:35PM +0200, Andrey Albershteyn wrote:
-> 
-> <snip>
-> 
-> > > +/*
-> > > + * Try to remove all the fsverity metadata after a failed enablement.
-> > > + */
-> > > +static int
-> > > +xfs_fsverity_delete_metadata(
-> > > +	struct xfs_inode	*ip)
-> > > +{
-> > > +	struct xfs_trans	*tp;
-> > > +	struct xfs_mount	*mp = ip->i_mount;
-> > > +	int			error;
-> > > +
-> > > +	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> > > +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
-> > > +	if (error) {
-> > > +		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
-> > > +		return error;
-> > > +	}
-> > > +
-> > > +	truncate_inode_pages(VFS_I(ip)->i_mapping, XFS_ISIZE(ip));
-> > 
-> > Oh I haven't paid enough attention here, it has to be moved before
-> > xfs_ilock(ip, XFS_MMAPLOCK_EXCL) not just before the lock, to exclude
-> > ABBA with writeback/reclaim taking folio lock and waiting for trans
-> > space.
-> 
-> Hrm?  You have to hold IOLOCK and MMAPLOCK, and *not* hold ILOCK, to
-> truncate the pagecache.  IOWs,
-> 
-> 	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> 	truncate_inode_pages(VFS_I(ip)->i_mapping, XFS_ISIZE(ip));
-> 
-> 	error = xfs_trans_alloc(...);
-> 	if (error)
-> 		...
-> 
-> 	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> 	xfs_trans_ijoin(tp, ip, 0);
+From: Chao Yu <chao@kernel.org>
 
-Yeah sorry, you are right, I'm confusing myself
+This reverts commit 66eec36c2421383e5b32e9c1740f656474c80df8.
 
+Fault injection + shutdown stress test reports inconsistent inline
+data after "f2fs_io shutdown 2" (mode=lfs, nonzone, segs=1):
+
+[__chk_dentries:2067] [  6]-[0x26] name[0MVNBi,Cv33...] len[0x20] ino[0x4190] type[0x7]
+[ASSERT] (fsck_chk_inode_blk:1142)  --> [0x4190] junk inline data
+[fsck_chk_inode_blk:1150] ino[0x4190] has inline data!
+...
+[FSCK] other corrupted bugs                           [Fail]
+
+ino 0x4190 is an encrypted symlink, the inode block pointed by the
+last checkpoint's NAT entry contains valid inline data, however
+F2FS_DATA_EXIST is not set in i_inline (i_size is stale as well).
+
+The node_change rwsem was taken in prepare_write_begin() for inline
+inodes in order to serialize write_begin with block_operations():
+checkpoint holds node_change for write from the last check of
+F2FS_DIRTY_IMETA until all dirty node blocks are flushed, so either
+1) FI_DATA_EXIST is set before the check, the inode is in DIRTY_META
+   list, and f2fs_sync_inode_meta() -> f2fs_update_inode() syncs
+   F2FS_DATA_EXIST and i_size into the inode block before it is
+   written by checkpoint, or
+2) FI_DATA_EXIST is set after block_operations(), then the inode
+   block written by this checkpoint does not contain the new inline
+   data.
+
+Commit 66eec36c2421 ("f2fs: skip node_change lock for inline data
+writes") skips the lock for writes which fit in inline area, assuming
+setting FI_DATA_EXIST only dirties inode metadata.
+However, dirtying inode metadata after F2FS_DIRTY_IMETA was checked,
+while f2fs_write_inline_data() (which never holds any checkpoint
+lock) copies inline data into the inode block, breaks the above
+ordering, then checkpoint persists an inode block which has inline
+data but stale i_inline/i_size:
+
+- f2fs_symlink                       - f2fs_write_checkpoint
+ - f2fs_add_link                      - block_operations
+  - f2fs_init_inode_metadata
+  : i_inline = F2FS_INLINE_DATA
+  - f2fs_update_parent_metadata
+  : clear FI_NEW_INODE
+                                       - f2fs_flush_inline_data
+                                       - f2fs_lock_all
+                                       - f2fs_down_write(node_change)
+                                       : F2FS_DIRTY_IMETA is zero, skip
+                                         f2fs_sync_inode_meta()
+ - page_symlink
+  - f2fs_write_begin
+   - prepare_write_begin
+   : missed f2fs_map_lock(), i.e.
+     f2fs_down_read(node_change), so
+     it isn't blocked by checkpoint
+    - set_inode_flag(FI_DATA_EXIST)
+    : inode becomes dirty, too late
+  - f2fs_write_end
+   - f2fs_i_size_write
+ - filemap_write_and_wait_range
+  - f2fs_write_single_data_page
+   - f2fs_write_inline_data
+    - memcpy_from_folio
+    - f2fs_mark_cache_dirty
+    : ientry has inline data, but
+      no F2FS_DATA_EXIST in i_inline
+                                       - f2fs_down_write(node_write)
+                                       - f2fs_writeback_node_caches
+                                        - __write_node_cache
+                                        : write ientry w/ stale i_inline
+                                       : F2FS_DIRTY_IMETA isn't rechecked
+                                      - f2fs_flush_nat_entries
+                                      - do_checkpoint
+- f2fs_io shutdown 2
+: dirty inode is lost, fsck finds "junk inline data"
+
+Besides the fsck error, for regular inline file, stale i_size may
+cause data loss after sudden power-off even if checkpoint is
+committed.
+
+Let's revert the commit to restore node_change serialization for
+inline data writes, and add a comment above f2fs_map_lock().
+
+Fixes: 66eec36c2421 ("f2fs: skip node_change lock for inline data writes")
+Cc: Seongjae Jeong <jsjlee1020@gmail.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+Drop original one or apply this revert patch is both fine to me.
+ fs/f2fs/data.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6d4ba5e77906..4bfa301a5df6 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3915,11 +3915,15 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 
+ 	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
+ 	if (f2fs_has_inline_data(inode)) {
+-		if (pos + len > MAX_INLINE_DATA(inode)) {
++		if (pos + len > MAX_INLINE_DATA(inode))
+ 			flag = F2FS_GET_BLOCK_DEFAULT;
+-			f2fs_map_lock(sbi, &lc, flag);
+-			locked = true;
+-		}
++		/*
++		 * it needs to cover FI_DATA_EXIST and inline data update w/
++		 * node_change, otherwise concurrent checkpoint may persist
++		 * inline data only w/o F2FS_DATA_EXIST.
++		 */
++		f2fs_map_lock(sbi, &lc, flag);
++		locked = true;
+ 	} else if ((pos & PAGE_MASK) >= i_size_read(inode)) {
+ 		f2fs_map_lock(sbi, &lc, flag);
+ 		locked = true;
 -- 
-- Andrey
+2.49.0
+
 
 
 _______________________________________________
