@@ -4,100 +4,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 300E4CA600E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Oct 2026 10:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4DFBCCA600B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Oct 2026 10:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Sz7mDBC0IDe5KTEDLt0/iV3O1rWk/76/6ToPwtVZo6w=; b=MTfEDbAPzMsY4rL3H53rs0p+np
-	uPapyxFEmPgHLW3uo9HBFuWymvw47u+mrrX7Tp6mEmnoJmfB4fWrG1wQzodGeaQZRhRiflEmS/4Qa
-	WNxqqIQQGUkhxfZMpSB5+oh6bQL7lHDo2QjrbG5adZhdfM/yN/tTs7GphgOR2NMAkZJk=;
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:Date:In-Reply-To:References:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=42jUKv4PKgBRekIY6shOPdYyDBg292HTx6BRNIc38Vc=; b=Sg74xC75Ajb4HJmtxwDHe5GgZR
+	R0olSR6n8w8fvHJhLbT13qiUK3t/+89R6/aPMmT484NziHdfPmACAEAyi1ztK8lhozw04woPJoag1
+	ZIZNjL4NiqgO6/YlFajWltuTNGmHbot5B5QzlppZuNHrC0r/F82bEn/3VAIh4KK9KBts=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xEkxC-0008G3-AD;
-	Thu, 08 Oct 2026 10:02:23 +0000
+	id 1xElkx-0000rN-J6;
+	Thu, 08 Oct 2026 10:53:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3aGPHagwKAKkSYadbJTXfbTRPXXPUN.LXV@flex--jprusakowski.bounces.google.com>)
- id 1xEkwk-0008FW-Ao for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Oct 2026 10:01:55 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <jprusakowski@google.com>) id 1xElku-0000rG-8k
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Oct 2026 10:53:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=v7wb7Vc4+qw5NtWsgABpAo/ja//V46/BzB1YtSmuwSc=; b=XZbFdBvRrQMl/tVjz7y+IQlkTw
- ZDv3U7mMdqqXzkA6lMK8eSrHYeQS9v5Sn2uzUgjznDYyj6l1MwyPVEaqxURE6VQqzAJjZyVd7Nf+S
- kfsmS32eB/xkgryIHYIdHmyGlZQVVgslUn4wwEB8oeJOywbUcIVrjRdpBbhNpZbogOaY=;
+ bh=RdIfW0TB1524JNRu+zC/enwNslep7VME5A2W7emIiNg=; b=aVSn9Z+Ub3xDolMeyjUnUCfLwP
+ 2S+/8RxzhyyB3kEBdPvUnCR/5UdSydKoVDMod6Z1ugkNl75Ec3svhyagttKSVDF9gSjtkXTWDEf6p
+ aGbc2UfQYSQOWc0w4KNRDzgdkafVBCDecqXfQym52iGm17hJPj0XzjtZYNzfCOb05Y5s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=v7wb7Vc4+qw5NtWsgABpAo/ja//V46/BzB1YtSmuwSc=; b=M
- JEsRps8SPhgtGOuH7+rWklPnDO8dD8Iu9dLAwBJ4x1ODdsZalLzYWi3t/P8tfC6jP+UKz0O6or8XQ
- /tx3EL3M3oyDu5xKi+W4iFMjVehmxfuMekQJemiO25CCkeXBKm3u73o10YUoBrj2Q3+Q8/sb/a/9x
- V/zdi28t0xlB7mXE=;
-Received: from mail-lf1-f70.google.com ([209.85.167.70])
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=RdIfW0TB1524JNRu+zC/enwNslep7VME5A2W7emIiNg=; b=j1ent8FVu8wUhKCaq4KzEdYJ+T
+ 9Zm8ECqO2FbY6Z43vTzC+hoyNrX8/mWYGbA8dJbjGkSfLlEHiR/P84xZv31SWqPjkUKrrfbdZX6JE
+ JahkH0RlkQT8MGEs2e48qenlR+0SQZG6NKH/18cgFNwGZgZ/r2ka3MGgR6I42v89hLtU=;
+Received: from mail-qt1-f181.google.com ([209.85.160.181])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xEkwi-00027l-BA for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Oct 2026 10:01:54 +0000
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5ba4284e23eso3359785e87.2
+ id 1xElku-0003Ql-5i for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Oct 2026 10:53:44 +0000
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-5337c7b9937so273531cf.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 08 Oct 2026 03:01:52 -0700 (PDT)
+ Thu, 08 Oct 2026 03:53:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791456818; cv=none;
+ d=google.com; s=arc-20260327;
+ b=h2dl/GeMUotjU/eK6+KjUb+TxGbwt9Y30+jtTtC/Eo9lP5sakEFHmFpbhLY1ges5QV
+ FImzp0xF8tKl5IbJ9B7SsQN47JXwzPdZtlH0NkAC7XqLymwrTqcC5z+PHeVzUShYVUVU
+ 963UUp0kZdlL4CDoUjHPfSm9tUZ5PUMhRWIr8VS4C186/oqL5Ba/fufZNNqhalVQAfRK
+ RwydMhGbH6kpuPYk5dnupE+z3fqnDbHKcBPBxZGLmTbXBs+Dv8rMY0aM/+NhpfjkKZGJ
+ asOYqBbTm9tH9f/LbcFj61AskwPYS3VSVdGU0P+1Dw5KB+6AL3v/fRxPb8yR8KFcuy9+
+ HIHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=RdIfW0TB1524JNRu+zC/enwNslep7VME5A2W7emIiNg=;
+ fh=TyDbKPgI6mxI7qFD5nuHbG897K2E5whltF+19bQiiTE=;
+ b=RqlJ9UK/JagrKaIwzIIBKXo+neL/cgI/1qlox20SCCmKq1vSf5NhrFGSPPaKAAEyZl
+ rhGOkat7DdDacLi/gJ6Vv2PzpjtGIN1AiV6ZGF0zCg51yUeK+99Hp54rGuGb7NidfFsg
+ coGjhxuqyEoxjflPq1YZzCW7eJw7MH0jOKMJZrs//L2S6tZmBr16kyLK6sOxlb6Bbd9n
+ NNLuiFwO0UIxuu7b6uO2axwff85mZJRGxeW8pfoZww3+fkWQ0AFu/0gK6YMK4G9bYt8/
+ t/tkuLiXXsxwXANH99wfeYte+NAuUHTzf2V56sLjO81QFySc7eA4gz+eq6dTs1tWU8lg
+ BQQw==; darn=lists.sourceforge.net
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1791453706; x=1792058506;
+ d=google.com; s=20251104; t=1791456818; x=1792061618;
  darn=lists.sourceforge.net; 
- h=content-type:cc:to:from:subject:message-id:mime-version:date:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=v7wb7Vc4+qw5NtWsgABpAo/ja//V46/BzB1YtSmuwSc=;
- b=OsNtdxtRiGWyCoLjuphOL0iwv6AWS2b32yEwwi6h8i4T+Ik4LWGC9357TMjPmkOBK8
- pJSMsPM7pVaFw1p5EEjqi+YnHAtUJ8A7UxBTFEKDNF9O0NF78N5NkKDCVvSicHKEl3uB
- QBNWA92jFdsxVnAc+uhZqATBXJIkn4xgperC5Cs/4p4lghpmEat50EedyJqLN4aE8qt/
- 1lIS4i2E8seZDlClpkaxoGNHjwhScXjeOVRd3wTrgk6b+qgoMWDb4iQU6hugm/6oRc9T
- tn04kursax+pcdp9hBUiOIQl9vJAkt9Hkhs81i2xZ6y+/db/iNRtEbD2paVV+v5sCSDB
- Ec/Q==
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=RdIfW0TB1524JNRu+zC/enwNslep7VME5A2W7emIiNg=;
+ b=kwwcdqKkppCE8/G2iQmccW00Nw947J2QfqLmXT7Js1hI+AlHh6orkG7yB/pR/VVA0d
+ 7E64z7GL5mEI66IsNt0Q3SE24xmKawDxMudL8v5AhWem8QKEBQqNh6o3ADfaGV1Bg8e+
+ BUAOE//HpK0eAdm0ABAYKcuZHBU5RMJlYESgvJReTX/ydCMAmr/CGZiqLkKtTOkhTKCp
+ Araw1+NwLpnxrlbsOTQRqBFsZhXJr/+k9QQh2kr5Sv24eSGZaWuELwO7AuLEcUm2It7g
+ u08Jj07wPY1TFP/LVPBUZzongBXmuGwJ1qDkQavBYdaDKKyJt1z05NN6XRSCtPJDmBTf
+ at4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791453706; x=1792058506;
- h=content-type:cc:to:from:subject:message-id:mime-version:date
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=v7wb7Vc4+qw5NtWsgABpAo/ja//V46/BzB1YtSmuwSc=;
- b=VF8Xpue0SM3pOS4z8Q8AJoKoaacIaPwXjHNpRuju9eBukZiC82/8mWc5DeSIbF5GOA
- 8RjLjrHRSM5DdG5sJiuJUOuQbLMDsfQ66Aqjp85peWkrdSiXqqj2eogE8QNFQVo3Nm+t
- un/H8tYNn5hYx6jK1+AmJXAQRYdAYB7f0+rKUxY7s1pA9kozm3CI1d8bptLGqsqDu4cP
- CVxpyA6SMyiTb1EShoWqmZwe9iu/b5rLnOKczdPy+E6csCdW9Al0TCGnPwp/1uHuNo+/
- /t180S5lkx+SxcExnqI/tmVZ/6ROXkWQBJEDyOJTrShTKal7A1/Nag5CSa5uJ/mBAY7P
- BQRw==
+ d=1e100.net; s=20260707; t=1791456818; x=1792061618;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=RdIfW0TB1524JNRu+zC/enwNslep7VME5A2W7emIiNg=;
+ b=JVNG1E0KKm5ZqbfZXwsNI04oV6nNc1CLywm5XnXx/XjT1EkaPrNZ4O4UVvMzKDAp6G
+ MP0B7Af2YdtgGDC6fMAlUg33TV3a+cR7s4t46Hsv7qOOBetrzrj7qFa4fORciVDZE5Ds
+ GhXPESXwhW6BK9p7jMQdBRdwCZ35ZXcQ3uE0JPCctifZELVT0qILeK6TRKEU2vcRyMAi
+ gxLNDzg+WueQX8eFJQzMqAMQ20itYPf4y2agfGXjzAIHK/a6E6nQKbgk2QWsrEssUtXJ
+ OvsdG9moQ3nCfbM5rCPFHHVURXuDBiQQ9K6ovZE6mD9LO/NFWWgxAjYBF+NRQf79N80d
+ c5WA==
 X-Forwarded-Encrypted: i=1;
- AKwUvBwGViIEjI3H1CS1OFWgCU6Pt9+qKWkxCtxz+PuJvSFPu/1VKZO4vdL3EbuyyiUrXjxGN9j7AAwtw1jiUFGqi2NQ@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYLaTYPLB0wFOidL41goZ6npfWswgrQvLotKdprprUeXZhxQdDF+
- P0Ma0hKwwiCb6pbDCng9LCXi9JOl/CY6gOmfGM+V+cZHXZmiVM+sd4oBnh9cMRnXC7ESyCBIKcK
- 8mNzP4WTnqCoDWe1glDB3vQZYSz8L5A==
-X-Received: from edew21-n2.prod.google.com
- ([2002:a05:6402:a215:20b0:6aa:e5de:ffcb])
- (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:518b:b0:6aa:734a:a093 with SMTP id
- 4fb4d7f45d1cf-6aff4575abfmr4787816a12.42.1791452008928; 
- Thu, 08 Oct 2026 02:33:28 -0700 (PDT)
-Date: Thu,  8 Oct 2026 09:33:17 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.56.0.360.g66cac248cb-goog
-Message-ID: <20261008093317.2792726-1-jprusakowski@google.com>
-To: Zorro Lang <zlang@kernel.org>, Chao Yu <chao@kernel.org>,
- fstests@vger.kernel.org
-X-Headers-End: 1xEkwi-00027l-BA
-Subject: [f2fs-dev] [PATCH] generic/622: increase sleep time for lazytime
- expiration on compressed f2fs
+ AKwUvByViOttic9s4iaYr11F5Nh0kzZEaehQIJPuLPoT4APY+rMnuzBdVN9AP0oBo8+DncnrQF5dPRAbxbDjUwZ0aeDp@lists.sourceforge.net
+X-Gm-Message-State: AFuF++krerbSb+96iPV6YoyZPzLh1kp3BKE2sImRDnMNLcgeF/uK5FSV
+ Nr/Tufqp66tUkDnu6G1QjgbHY4JyszhC00d1X0MuZUggijU/R8GXsYLyj4T2hiZNnQtnTk4Qj97
+ SFDM3MsoT5jgcNoIk5dCjxS3dwYoXSP/xTdG85zrc
+X-Gm-Gg: AYBFou3pcqGULFRy65mEGkwSP8g0k6FCnHph5kq4VqnIyHin1bL4pfRJLAT5NdH0TnW
+ xShDKryCpLMd8YgMsxqfu+yb2+oK5PJkgUsLLTW2Olmz5SNN1heg4W6TgDRdYIxSZs8yLbmlFJf
+ KWFW+NfQm8IWO4mfuOZ4P+MxRs48bvGSQzk0pxzpbysRpAiiG5p11fMGAJsDpnXhQwvtkwHGXCK
+ obZMWeUvKxMQOqcw7/gOeGpDKV8jTaLjABuxyw7L9W6PU4w7jEkhRL7BAjfucBEaVvdENPEXpOW
+ z8DX5ZliVaa+RUCO+//rNhRxxE0OSA1+9bYWcNQ8//L6KwzUJ3cN4wcsdp38RWtVil3W6u3Fcj5
+ Bj8ltcosER3U0MQ==
+X-Received: by 2002:a05:622a:8cb:b0:531:282:6560 with SMTP id
+ d75a77b69052e-5358ba57e28mr13693771cf.15.1791456817740; Thu, 08 Oct 2026
+ 03:53:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20261008093102.2791457-1-jprusakowski@google.com>
+ <asdjv0byRIgx2DBO@infradead.org>
+In-Reply-To: <asdjv0byRIgx2DBO@infradead.org>
+Date: Thu, 8 Oct 2026 12:53:26 +0200
+X-Gm-Features: AclHuK8T47iztnOQ3wUy_EMdakQ9CJulz201rAPWZy9Jb7GPVkr9zBdUs-yMDfs
+Message-ID: <CAHwWncgG88o3dbhHuHYgCoqGZJ_X8C7wLP0S5ppwRDM450jMcA@mail.gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+X-Headers-End: 1xElku-0003Ql-5i
+Subject: Re: [f2fs-dev] [PATCH] generic/794: add fsync_mode=strict mount
+ option for f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,68 +138,20 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Jan Prusakowski via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jan Prusakowski <jprusakowski@google.com>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In generic/622, expire_timestamps() tests whether lazytime timestamp
-updates are persisted after dirtytime expiration. It configures
-dirtytime_expire_seconds to 1 second and enables continuous writeback
-of dirty inodes, followed by sleeping for 2 seconds to allow the
-asynchronous VFS flusher thread to expire the I_DIRTY_TIME inode,
-invoke the filesystem's write_inode callback, and flush the dirty
-metadata before the test executes _scratch_shutdown -f.
+> It looks like this sneaked into the other tests, but this option
+> is bullshit and we should remove it from the other tests.
+>
+> The f2fs default is simply broken, and the justification in the
+> documentation is incorrect.  f2fs should absolutely fail all these
+> tests in default mode because it actually is broken.
 
-However, on F2FS with transparent compression enabled, compressed files
-cannot use inline data and writes use out-of-place updates (OPU) with
-higher latency in the compression and writeback pipeline. Because the
-inode is only eligible for expiration after 1 second, only about 1 second
-remains in the 2-second sleep window for the flusher thread to schedule,
-expire the inode, and mark the inode page dirty before
-restore_expiration_settings resets dirtytime_expire_seconds to 24 hours
-and shutdown occurs. If the flusher thread is delayed, the subsequent
-shutdown checkpoint ignores the unexpired I_DIRTY_TIME inode, causing
-the test to intermittently fail with:
-
-    FAIL: lazytime mtime wasn't persisted by expiration
-    ondisk_time (...) != expected_time (...)
-
-Increase the sleep duration in expire_timestamps() from 2 to 4 seconds
-when running on F2FS in compress mode to give sufficient margin for the
-flusher thread to reliably expire the lazytime inode and dirty the inode
-page before shutdown.
-
-Change-Id: I208bf14c189b54cc209059b0fd2de9e403a073f2
-Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
----
- tests/generic/622 | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/tests/generic/622 b/tests/generic/622
-index e8ead300..5879e85e 100755
---- a/tests/generic/622
-+++ b/tests/generic/622
-@@ -60,8 +60,14 @@ expire_timestamps()
- 	__expire_inodes
- 
- 	# Userspace doesn't have direct visibility into when inodes are dirty,
--	# so the best we can do is sleep for a couple seconds.
--	sleep 2
-+	# so the best we can do is sleep for a couple seconds.  On F2FS with
-+	# compression enabled, out-of-place updates and compression writeback
-+	# add extra latency, so sleep a bit longer.
-+	if [[ "$FSTYP" == "f2fs" && "$MOUNT_OPTIONS" == *compress* ]]; then
-+		sleep 4
-+	else
-+		sleep 2
-+	fi
- 	restore_expiration_settings
- }
- 
--- 
-2.55.0.1082.g2b9226bbc0-goog
-
+Hi Christoph, I can see your point. Let me look into it again.
 
 
 _______________________________________________
