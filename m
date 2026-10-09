@@ -4,79 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0DD3FCA6012
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 08:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9A947CA5FED
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 08:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xnlJ/xUI6QiHxjnvXmyf9d4gyLoJRKBF9mBKG+Y0PeM=; b=QbSTUklzpe2d6EbTJIceM40pGL
-	UCzFgWvchhhP+SEaQ1YTSQU8p9vv5iBXuDwIkVCJV78/+9y1GNEr/93nS3pzqlxqwt7E6Kes8M2ny
-	ckiwQ1OjL8j1P433j3jInwZs/+c4w9yqiFvM6s51lCQWbfiBOBb+jbXEaAYLaCf4p6AU=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Egz3v2e1AZmS8JpE1+HSXmQIGy8OnAd4iTPaj6Gm0gA=; b=gPnJfawdWo+E31zI6Znj3pQ/jC
+	gDWtq56uzaQJBkW1Mj5xpSYM4xQ8sdheDlCLhpkqaedZWVCPa5rs4qJ2Ce0o7HTe3QXMvXmAtDUGn
+	Fw/StpOUmTlW3hDVmCGrGKRRrcLEfc2A/h+QEA4YwS6E60s1BBtelmm6kFzoJD/F0bok=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xF6Nw-0008IU-Is;
-	Fri, 09 Oct 2026 08:55:22 +0000
+	id 1xF6OZ-0002oQ-WF;
+	Fri, 09 Oct 2026 08:56:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xF6Nr-0008GE-O6
- for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 08:55:17 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3G6zIagwKAPIdjlomUeiqmecaiiafY.Wig@flex--jprusakowski.bounces.google.com>)
+ id 1xF6OY-0002oI-It for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 09 Oct 2026 08:56:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o+UzLAz30/55bQE/HG+JQhNOGPlk+V9zlOAxlU1PhQo=; b=iPukQwIiMvEem8eqANmgCiOqDJ
- ECpwPTXq2HUvAAQ7rY7j/k6sUfWhSPVr5emdH4dtXL7lgK+SCvUBnIYgVK+lzmk3IRyeHmaY3+kGW
- DRRiBbpoEbqegYop+G4rID2haCu4Q2qbHCbT05R4QH1V/4z5/LXiRZ2toNZJUpx9SNQ4=;
+ bh=XkufVygYf3das1AkCg5Yl8KsorAKzoeCOi7nexNmHV0=; b=LrmSIIGOY7322npfcGkZVAmPb5
+ o7HvuOITYL8WPgYGSWqHzR0+nSu0423Elv2dZnQBY3FiI5XC8LVpJpMSHkCPJ17jNKYJxxfndXZO6
+ VQSTFJZi35ha7fsI8yB+GRvRd/KS/h3YEXkMbExRTTIHLLq2bZmDQqVKqjF/dVYs/5Hw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=o+UzLAz30/55bQE/HG+JQhNOGPlk+V9zlOAxlU1PhQo=; b=f1TF5ZQfH9uLbjlYXoEX21qiBf
- r5/W5M5aKgr7CtHuRLdkagkoeKO7uEGl2qbF+m0HiU4nKeMz1bTauIpWilV8DWCM78yKevXMggugS
- rEBTKxliyIaT2OIhUgvohNZhdTkoR5JedGPJsO6fONfI9rx9Wnp75wqsm5KS3RkF8gvE=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xF6No-00044z-Nf for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 08:55:17 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 13E84602C3;
- Fri,  9 Oct 2026 08:55:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0AB1F00893;
- Fri,  9 Oct 2026 08:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791536110;
- bh=o+UzLAz30/55bQE/HG+JQhNOGPlk+V9zlOAxlU1PhQo=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=FRcII014FwTy1cxgsXHO/AyCMVyVOnwB4pMaRsKpGsz/Y12aYP2TDh1DAtLTkx9TN
- BsSgUp4aRPYa70dH3n9y8uAx9d2RUQPTEXOls1S/3FLBZPmDkZgqubPOzGSaejDpuB
- Aa0o+bIM5QJboRXdhVVVpmRZODQm6hOKFNW6tuNHGfU/Ie3wmBV7wUgaRj/UxnQxPZ
- M0lQIl8RJLW9cRdqJ06qQ4cE/YqU2JdXNYH9zcPrsMUky34DizlH8Jz5JcsHoZkX5a
- gl0/yQ3mtyNXCNhHwuFeuKM+gIMPezgfimp9LOfuM5L8QKXNbFkJl80Y8Yw+p6b3pm
- g8d2TNQVzydxw==
-Message-ID: <296d69c0-b284-4186-a71d-9754df409690@kernel.org>
-Date: Fri, 9 Oct 2026 16:55:08 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20261004170456.4104287-1-daeho43@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20261004170456.4104287-1-daeho43@gmail.com>
-X-Headers-End: 1xF6No-00044z-Nf
-Subject: Re: [f2fs-dev] [PATCH] f2fs: convert inline quota files when
- turning quota on
+ h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=XkufVygYf3das1AkCg5Yl8KsorAKzoeCOi7nexNmHV0=; b=I
+ ZwYZ61tBK92b4mXzt5ujA7PbXHfIvSD4OkAABAa6yothN9qtAyecIf55Mo1tKPVZh4FBSLiKOjBzc
+ O5xtTc4iARExWQz8YBIUkjB99tFMx9Ilr3M7dgeVhq8FYOAdk2kF+7S0sAPbjfVoTRNDTJDjfQHVJ
+ GyqHlMZdjYruGabw=;
+Received: from mail-ej1-f69.google.com ([209.85.218.69])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xF6OX-0002EG-V8 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 09 Oct 2026 08:56:03 +0000
+Received: by mail-ej1-f69.google.com with SMTP id
+ a640c23a62f3a-c2d93b92937so611065966b.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 09 Oct 2026 01:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20251104; t=1791536155; x=1792140955;
+ darn=lists.sourceforge.net; 
+ h=content-type:cc:to:from:subject:message-id:mime-version:date:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=XkufVygYf3das1AkCg5Yl8KsorAKzoeCOi7nexNmHV0=;
+ b=HTjsZHOvx3fxaIWiQ1Zz8IQvtmWq3IG1aV8lJwhwLfg2yKvyiSqSGIbgxPQLOtCc2m
+ slAChOiitDf4BIi9gCX2O+RN7uVEZEAd1uMswWOGoCW3FguTRnJNVh4EjWB5lRsvFHzY
+ 5SYWZcceu9Akq8ZrrUelmPBUv/1QM5BBxgZhOUG5E7aAdgxA4XfPXhsZCS9nd1ndLczq
+ 5bnLHGtIN1oP3vzpPUo7kmjoEjqz0KnSfaqeQWqrhrI1630NSqg4dOMRnRuCWl9Sz2mL
+ Rjm+xHxH5HfcmDd1zSTgnguWe6N8sZlAhqGWgVteoMlMEGSPxZoktJTv68uCc6sodpN7
+ 65fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791536155; x=1792140955;
+ h=content-type:cc:to:from:subject:message-id:mime-version:date
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=XkufVygYf3das1AkCg5Yl8KsorAKzoeCOi7nexNmHV0=;
+ b=pB0xMydQV4B6IQ6QY9r4V22QHDvUwOQCuVMBoEQkBvSE+x1A/XocgbiWIkD+tLSVsT
+ owjrH/l3diLT/9GwCr6LP91m98MK0o1YM0CaTHVGQnveqYJkNu+v9MGI8HzBqt9BIwhy
+ iodXFJ+/snRcKn0nJulxqNFznr23pfeGDAlobKjj1jQIT7+Yt8DteHXueHVETlmhH/lT
+ 4VSKv783xxF3iBJ2xTue1vwsY1WbZla8DV+qu8JiAaPfBw6e1Z1Cpaj2oY37JfthwimC
+ o43U8+PuC6aQKUqTMmM/b7zqH3MepdxbPtDBqFUjpFbR40yVkftp4ecPKBt26iIhuHI2
+ XWVA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzwwh4F5wi6uwDSuVix0N+q7FvK3afTEBkhioNQfVHXFSl7IaBXS/80f/zYE564C6qDufYVkGv1NpRJetGEuFTa@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYI1eSu8TdFtXSd48yUyC8yvPmY2SMnlIUxlunJgIxVrkO4qndDT
+ M+q0x8zEKT6Qw7p5tH/vcUVwDGShiuXO0mJFIIp82Q+v2aa0nSZ0VBWzZ5N3ZphEOIQn6lyx8c2
+ P4Ywr4UxSX/3FY2iLT1WdpxPZ/9MjHA==
+X-Received: from ejcxk3.prod.google.com ([2002:a17:907:d803:b0:c2a:e413:97d5])
+ (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:961a:b0:c25:2a78:15ed with SMTP id
+ a640c23a62f3a-c31a9a04e08mr114472166b.6.1791536155187; 
+ Fri, 09 Oct 2026 01:55:55 -0700 (PDT)
+Date: Fri,  9 Oct 2026 08:55:43 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.56.0.385.gd3acb90ef8-goog
+Message-ID: <20261009085544.2450966-1-jprusakowski@google.com>
+To: Zorro Lang <zlang@kernel.org>, Chao Yu <chao@kernel.org>,
+ fstests@vger.kernel.org
+X-Headers-End: 1xF6OX-0002EG-V8
+Subject: [f2fs-dev] [PATCH v2] generic/622: increase sleep time for lazytime
+ expiration
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,52 +108,74 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Jan Prusakowski via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jan Prusakowski <jprusakowski@google.com>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 10/5/26 01:04, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> With a block size larger than 4KB, the inline data area is large enough
-> to hold a freshly created quota file (quotacheck writes 6KB), so
-> aquota.user/aquota.group stay inline after quotaon. f2fs does not
-> expect quota files to be inline, and this causes two problems:
-> 
-> 1. Quota file corruption. f2fs_write_single_data_page() sends quota
->    inodes straight to f2fs_do_write_data_page(), which sees NULL_ADDR
->    for index 0, treats the folio as truncated and drops it. Updates to
->    the quota file are lost once the folio is reclaimed, so the quota
->    tree reads stale data: chown/chgrp fail with EIO and quota entries
->    of users disappear. For example, the kernel log shows:
-> 
->      find_free_dqentry: Data block full but it shouldn't
->      qtree_write_dquot: Error -5 occurred while creating quota
-> 
-> 2. Deadlock. Writing a quota file past MAX_INLINE_DATA converts it from
->    f2fs_write_begin() under f2fs_lock_op(). dquot_transfer() is called
->    from f2fs_setattr() with f2fs_lock_op() already held, so chown/chgrp
->    take cp_rwsem for read twice and hang, together with the checkpoint
->    and every other writer, once a checkpoint waits for cp_rwsem in
->    between (seen with generic/232).
-> 
-> Quota files only grow and there are at most MAXQUOTAS of them, so there
-> is no point in keeping them inline. Convert them in f2fs_quota_on() and
-> after dquot_quota_on_mount(), which keeps every block size on the same
-> path as 4KB blocks, where quota files never fit inline. Quota sysfiles
-> are created by mkfs with real blocks and are not affected.
-> 
+In generic/622, expire_timestamps() tests whether lazytime timestamp
+updates are persisted after dirtytime expiration. It configures
+dirtytime_expire_seconds to 1 second and enables continuous writeback
+of dirty inodes, followed by sleeping for 2 seconds to allow the
+asynchronous VFS flusher thread to expire the I_DIRTY_TIME inode,
+invoke the filesystem's write_inode callback, and flush the dirty
+metadata before the test executes _scratch_shutdown -f.
 
-Cc: stable@kernel.org
+However, on filesystems or configurations with higher writeback
+overhead -- such as F2FS with transparent compression enabled, where
+compressed files cannot use inline data and writes use out-of-place
+updates (OPU) with higher latency in the compression and writeback
+pipeline -- the 2-second sleep window can occasionally be insufficient.
+Because the inode is only eligible for expiration after 1 second, only
+about 1 second remains in the 2-second sleep window for the flusher
+thread to schedule, expire the inode, and mark the inode page dirty
+before restore_expiration_settings resets dirtytime_expire_seconds to
+24 hours and shutdown occurs. If the flusher thread is delayed, the
+subsequent shutdown checkpoint ignores the unexpired I_DIRTY_TIME inode,
+causing the test to intermittently fail with:
 
-> Fixes: d7e9a9037de2 ("f2fs: Support Block Size == Page Size")
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
+    FAIL: lazytime mtime wasn't persisted by expiration
+    ondisk_time (...) != expected_time (...)
 
-Thanks,
+Increase the sleep duration in expire_timestamps() from 2 to 4 seconds
+to give sufficient margin for the flusher thread to reliably expire the
+lazytime inode and dirty the inode page before shutdown.
+
+Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
+---
+Changes in v2:
+- Increase sleep time to 4 seconds unconditionally with an explanatory
+  comment instead of using an F2FS-specific conditional.
+- Remove the non-standard Change-Id trailer.
+
+ tests/generic/622 | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/tests/generic/622 b/tests/generic/622
+index cb0f5828..16088199 100755
+--- a/tests/generic/622
++++ b/tests/generic/622
+@@ -60,8 +60,12 @@ expire_timestamps()
+ 	__expire_inodes
+ 
+ 	# Userspace doesn't have direct visibility into when inodes are dirty,
+-	# so the best we can do is sleep for a couple seconds.
+-	sleep 2
++	# so the best we can do is sleep for a few seconds.  Because
++	# dirtytime_expire_seconds is 1 second, sleeping for 4 seconds leaves
++	# enough margin after expiration for background writeback to finish even
++	# on filesystems with higher writeback overhead (e.g. F2FS with file
++	# compression).
++	sleep 4
+ 	restore_expiration_settings
+ }
+ 
+-- 
+2.56.0.360.g66cac248cb-goog
+
 
 
 _______________________________________________
