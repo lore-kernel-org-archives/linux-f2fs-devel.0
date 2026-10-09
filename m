@@ -4,76 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D00E9CA6012
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 09:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4AEBCA6019
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 10:13:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=sA0CDuLlNBOe1ee8nLaqeRiUR0fnqxvgbzOF+pZ91+4=; b=Rg2g2fLj+OC/63sfr/MtD7zXfl
-	DZg4AD5wEUpxtwf2bc+gByaklN5A+kW/jzb4t0rMp37u/zGnhhZcOdW+btNNS295MGFkaZnESlFwy
-	eaRuj2Wlj1H6EVRAqzyCY8XdNwR1cAZxqonlGJdhkzGBwmJ0Qa5zI10QHs8C+RUhtXxM=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=1iBxTL8ttTTddu0temUf4LnziWT2IdJEJ2VZRLWFsVo=; b=Bme1KN1P/0yyrfxh8yYwVawq4T
+	2pkCYWK16aUB9QLOe0Ys1B/tUBswL3392OREDyxOocWSvvCcREIfQ0hnPW2rPv65Ji5/wM1/WDXgV
+	kp7JnslhHJC8/7QF35qoMT+q/8Zbhde7pm8GqHDVdfHN0lx040t+HP7WNqtXSfz5XwAE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xF6lC-0003Gd-DY;
-	Fri, 09 Oct 2026 09:19:27 +0000
+	id 1xF7bu-0000iO-1h;
+	Fri, 09 Oct 2026 10:13:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xF6kz-0003GO-6O
+ (envelope-from <qwjhust@gmail.com>) id 1xF7bt-0000iE-72
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 09:19:13 +0000
+ Fri, 09 Oct 2026 10:13:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lmRsxzJpvFpXZtvtc8++BiVUKIRqaS/6hlFfbzTGoiU=; b=gUqF9dKvqmACIiG6ggBWsmx7xL
- hF2a3Dc54qZYPea+60ju/WVjDlae5QUwJ4oo9OF+XuhCAYNPX+FG/gnUXifYhF/p28LTzy+GCwTQ6
- ptex9Rr4+ufuGDuzTjTY0k5a/MTIPbcxr/xMEt8ga/iSFtiKE5IG3cZsxiLWjyNmw6aE=;
+ bh=vYXNKmY4LQUdBMbioRIMCa/Hf9fKGkwJzJMs+UpAab8=; b=T8MoouW3Q3qDpvT1+ip85Dd/2m
+ 28lekgyP5WHR4/q2ou+Dg21IBV7ryp0hmHSjgQFXWcrku4NE1uZ3Egaw2EW0HV3fPIkxEpRyuj9S6
+ Xm+7Pwk+6YFAP+ouEJThxpso4Ju/Q50VylRLUtoymmukB9vgVCYdUDLynD7C3YBnpqu0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lmRsxzJpvFpXZtvtc8++BiVUKIRqaS/6hlFfbzTGoiU=; b=U
- diEA4MWJfSip0Rl+ABNdCdKHtxJrj3LnHUwYSd9hTroc+SumzBRYMDjxyD51jIQqkHN8mCge5gmeq
- JKzYgonfs5WfeBbQ9dPJzy4ZCsm+mPUfZQM1NcaxdRFGJsNw3atYfRUfJVmhptUJgco/47NSNgIpr
- lMpvzLcMGaNzDLHg=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xF6ky-0004is-Do for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 09:19:13 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id CCF78602CA
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=vYXNKmY4LQUdBMbioRIMCa/Hf9fKGkwJzJMs+UpAab8=; b=ZYEGKYFTfv8SE28dnJ4DSbL5XV
+ DsYW5q1DniioRYP8GykhfCJeauwseq7PEle0GWJr3zYwWaRh2j5AOIUnlKjCH9kWaBqWoaFg2A+ti
+ OhD5XHaCf3ekVE9bsELwN9hQn2d6Ce5hZ2L8oVNNv3pXD/vnshjasi+uXTp/x+oWIJc0=;
+Received: from mail-pf1-f181.google.com ([209.85.210.181])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xF7bt-00045D-K4 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 09 Oct 2026 10:13:53 +0000
+Received: by mail-pf1-f181.google.com with SMTP id
+ d2e1a72fcca58-890d52c7c7bso3450709b3a.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  9 Oct 2026 09:19:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D091F000FF;
- Fri,  9 Oct 2026 09:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791537546;
- bh=lmRsxzJpvFpXZtvtc8++BiVUKIRqaS/6hlFfbzTGoiU=;
- h=From:To:Cc:Subject:Date;
- b=VInPo4GuDlPuhjJf1epsdemGR3ejYwIvuJUga9DPNk8s8/Fw/n7Vd54MRES5f1rKi
- tIzentf7BFa7gYFC5c+Vgmt23XXBuAIVZJPj+QK8Z8DptJb4B9EuenP2tGehbVfWFv
- j3XrV1Z2Lo+jX0IGm2h6VGz702aOoZ+7LciBOBBu6j8h4E8sfkKB2GeHwyAWoE0pd0
- 9kQ6boNnaSl7GnJp3WNtWLdsCG8cRnF6TPSZh0zFDQ1f3re345ksuSB3zj6KnAcIkI
- XHvf4JlOuELJvTkmJWyxlWhHaIjlhmGhYrIRFp+XKYsmEHiVzq64tv9TYqdLoNVpwY
- p2X64+NB7Y88A==
-To: jaegeuk@kernel.org
-Date: Fri,  9 Oct 2026 17:18:57 +0800
-Message-ID: <20261009091857.1326197-1-chao@kernel.org>
-X-Mailer: git-send-email 2.56.0.385.gd3acb90ef8-goog
+ Fri, 09 Oct 2026 03:13:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1791540828; x=1792145628; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=vYXNKmY4LQUdBMbioRIMCa/Hf9fKGkwJzJMs+UpAab8=;
+ b=kIGyBPtcSjrbvwcE1LfPO5CoF5kKiQdFUrtH5BqWLEs8QLRlKSq/Ni1JVPuDH7pnl0
+ dJmx/vd6VOmQPQioYk+KrG9gskwoF40mEmpIFjuSDd1RhzKZgD+TUgwaxfrt8C5EagOA
+ Q8qvNk+ewSikkcxDE9bzBHbZ4f7u9fn1WVNV/9/7FvvCEncQvVELk71Hl7k6LaVD3h1D
+ c9dOd8uwhgnhvA7oOrMTkgzoZdBa2ltJcWqSZsKViGM5IlZkL0Tmgs9bG0FxS5797vwp
+ 7TqZYzIq1rg8Xl36ZFeHKJvFi5RsLHvvTnmkzi/gzeOlzkM+pbs91qRliGfNTVvfnzig
+ N3eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791540828; x=1792145628;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=vYXNKmY4LQUdBMbioRIMCa/Hf9fKGkwJzJMs+UpAab8=;
+ b=o6OTBWPN50KjvMD1Snu4nXSy9/JdGSdGtiSedbIuAhLxribxRkXOlVJORtN2U0ecSx
+ UqsxURaGmlHzO5COBOShFfGo24yxS2lQqRXbq3XOMoB9zlyLIiCNIksdVKfUcjoJgoge
+ Cb37b/0qA5M8S4yu1gebHkGqIehm2MTN5xXI8fQQ0/zwaUeDpAF0mkwxbPSXU80BfdIM
+ tuFrJv06UaJ8L9YJ9hWGM2fVo82QeD6a97qBQKbWVIaZRCzcrHUG1EcPdI8G+4DqRVUX
+ TbGSWPyna2eyOpW1Z5uqrHicDEPVuiJ5NMIMCpxmrTrOJAxvH2nWCj2l2bYZSQG3hN1z
+ fJpQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvByL+lcxPRBIroczv2iN7R5h9Kam/fDPigkA7qzsLnhK+9dOveImsX2svVLPjJOMuoPS4mf7NhUhqRYfT7JPCwcV@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYKIf0YReoa8kTf3NSxeWR7E/ju7fKWiIy3HVdqYFgt7bZUxyl6O
+ Bf22rMJf/rJi2820unwAg3Gpr94KQOjs3+zyduSnymuAJ4RVKyW6khAh
+X-Gm-Gg: AYBFou12hIqWPJX1w13VzZ20j5JLWqWZogx0kybOLLEQX6OZDvW5X+EbuZCsyYDvOIm
+ DxIKsoWw8Gow0EtxljCOF64fDM5zb2vkmUIRgtbELgKNDnGPy15d6gZp9BcPSHz32ZPVoAGeyC4
+ rupFtAtll6NgpYwF+0WsbqobxSF76q1A/o13m4SozP53K7eui9XGJbRi5dqDGK1yrljokpa4vAy
+ 3G6IfCmQppktx4TlYakzRUOTG3m2TS0y7cZX6PqrErGFBkZc1YBukEpFM1rRfQdjUFCTqbZZRjS
+ Znn9XQnmp3lRvSMr4aH5AuyVxWMuQyEvjur4CjnA0ui+jAZdx6Rj5HCmYjCRIaJZWkeM6x7njDn
+ GPBNnrG1iKthMeP8+XsjO59plXH28KgoRZAGOAE4Qw0npUIrFoDQ0C9cJrePZp1g0nZ6QtsnmOR
+ wWq3s4ykmvnQ8L5gqNECDCE1ZVJq+LwqQLhD9kO1KufB1XoaSZtzPn3jYDdVjNp02cjrhlYBGuz
+ o84YpwrQRCwNXcb7nPHwbD9Qp7crGaDY9s=
+X-Received: by 2002:a05:6a00:4295:b0:874:706d:856a with SMTP id
+ d2e1a72fcca58-897c79daa3bmr1137358b3a.27.1791540827847; 
+ Fri, 09 Oct 2026 03:13:47 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-896c37e2238sm683707b3a.22.2026.10.09.03.13.44
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 09 Oct 2026 03:13:47 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: chao@kernel.org
+Date: Fri,  9 Oct 2026 18:13:40 +0800
+Message-ID: <20261009101340.3525944-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261009091857.1326197-1-chao@kernel.org>
+References: <20261009091857.1326197-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1xF6ky-0004is-Do
-Subject: [f2fs-dev] [PATCH v2 3/5] f2fs: cache: wake up f2fs_writeback when
- exceeding threshold
+X-Headers-End: 1xF7bt-00045D-K4
+Subject: Re: [f2fs-dev] [PATCH v2 3/5] f2fs: cache: wake up f2fs_writeback
+ when exceeding threshold
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,207 +121,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: qwjhust@gmail.com, jaegeuk@kernel.org, qiwenjie@xiaomi.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao@kernel.org>
+Hi Chao,
 
-This patch introduces cache_wb_dirty_threshold and cache_wb_total_threshold
-sysfs nodes under /sys/fs/f2fs/<disk>/, and allows waking up the
-f2fs_writeback kthread when both thresholds are exceeded.
+> +	if (dirty_threshold && nr_dirty < dirty_threshold)
+> +		return false;
+> +
+> +	/* don't wake up f2fs_writeback if both thresholds are zero */
+> +	return total_threshold || dirty_threshold;
 
-By default, cache_wb_total_threshold is zero, so if dirty cache number exceeds
-cache_wb_dirty_threshold, it will trigger writebacking.
+There is a related case with only the total threshold enabled. With
+cache_wb_dirty_threshold=0 and cache_wb_total_threshold=1, clean cached
+entries keep the predicate true even when there are no dirty meta/node
+caches. Writeback does not necessarily evict those entries, so the
+thread can keep looping without sleeping.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- don't wake up f2fs_writeback if both thresholds are zero.
- Documentation/ABI/testing/sysfs-fs-f2fs | 14 +++++++
- fs/f2fs/cache.c                         | 55 ++++++++++++++++++++++++-
- fs/f2fs/cache.h                         |  5 +++
- fs/f2fs/sysfs.c                         |  8 +++-
- 4 files changed, 80 insertions(+), 2 deletions(-)
+I checked this in QEMU using dev-test plus my both-zero fix, which has
+the same predicate for these fixed threshold values. In a three-second
+idle interval, the writeback thread used about three CPU seconds;
+the total cache count was 22 and the dirty count was zero at both
+sample points.
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 5b196806b3bc..f50739f90ae9 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -1027,3 +1027,17 @@ Contact:	"Chao Yu" <chao@kernel.org>
- Description:	This is a writable entry to control writeback interval of
- 		f2fs_writeback-x:y, the range is [100, 30000], by default the value
- 		is 5000, unit is ms.
-+
-+What:		/sys/fs/f2fs/<disk>/cache_wb_dirty_threshold
-+Date:		October 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This is a writable entry for metadata cache, it is used to control
-+		dirty cache threshold of to wake up f2fs_writeback-x:y for writeback,
-+		by default the value is 8192, unit is blocks.
-+
-+What:		/sys/fs/f2fs/<disk>/cache_wb_total_threshold
-+Date:		October 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This is a writable entry for metadata cache, it is used to control
-+		total cache threshold to wake up f2fs_writeback-x:y for writeback,
-+		by default the value is 0, unit is blocks.
-diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-index f385fe928b5b..986e679f2d16 100644
---- a/fs/f2fs/cache.c
-+++ b/fs/f2fs/cache.c
-@@ -81,6 +81,7 @@ bool f2fs_mark_cache_dirty(struct f2fs_cached_block *entry)
- 		f2fs_cache_update_tag(entry, F2FS_CACHE_TAG_NONE,
- 						F2FS_CACHE_TAG_DIRTY);
- 		inc_cache_count(cache->sbi, type);
-+		f2fs_wake_up_cache_wb(cache->sbi);
- 		return true;
- 	}
- 
-@@ -681,6 +682,44 @@ unsigned long f2fs_shrink_node_cache(struct f2fs_sb_info *sbi,
- 	return f2fs_do_shrink_cache(NODE_CACHE(sbi), nr_to_scan);
- }
- 
-+static inline unsigned long f2fs_total_cached_entries(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long total = META_CACHE(sbi)->num_entries +
-+			      NODE_CACHE(sbi)->num_entries;
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	if (test_opt(sbi, COMPRESS_CACHE))
-+		total += COMPRESS_CACHE(sbi)->num_entries;
-+#endif
-+	return total;
-+}
-+
-+static inline bool f2fs_should_wake_up_cache_wb(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+	unsigned int total_threshold;
-+	unsigned int dirty_threshold;
-+	s64 nr_dirty;
-+
-+	if (!cache_thread->cache_wb_task)
-+		return false;
-+
-+	total_threshold = cache_thread->cache_wb_total_threshold;
-+	dirty_threshold = cache_thread->cache_wb_dirty_threshold;
-+
-+	if (total_threshold &&
-+		f2fs_total_cached_entries(sbi) < total_threshold)
-+		return false;
-+
-+	nr_dirty = get_nr_caches(sbi, F2FS_DIRTY_META) +
-+		   get_nr_caches(sbi, F2FS_DIRTY_NODES);
-+
-+	if (dirty_threshold && nr_dirty < dirty_threshold)
-+		return false;
-+
-+	/* don't wake up f2fs_writeback if both thresholds are zero */
-+	return total_threshold || dirty_threshold;
-+}
-+
- static int f2fs_cache_writeback_kthread(void *data)
- {
- 	struct f2fs_sb_info *sbi = data;
-@@ -693,7 +732,8 @@ static int f2fs_cache_writeback_kthread(void *data)
- 		unsigned int interval = cache_thread->cache_wb_interval;
- 
- 		wait_event_freezable_timeout(*wq,
--				kthread_should_stop(),
-+				kthread_should_stop() ||
-+				f2fs_should_wake_up_cache_wb(sbi),
- 				msecs_to_jiffies(interval));
- 
- 		if (kthread_should_stop())
-@@ -719,6 +759,17 @@ static int f2fs_cache_writeback_kthread(void *data)
- 	return 0;
- }
- 
-+void f2fs_wake_up_cache_wb(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+
-+	if (!f2fs_should_wake_up_cache_wb(sbi))
-+		return;
-+
-+	if (wq_has_sleeper(&cache_thread->cache_wb_wq))
-+		wake_up(&cache_thread->cache_wb_wq);
-+}
-+
- int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-@@ -731,6 +782,8 @@ int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- 
- 	init_waitqueue_head(&cache_thread->cache_wb_wq);
- 	cache_thread->cache_wb_interval = DEF_DIRTY_CACHE_TIMEOUT;
-+	cache_thread->cache_wb_dirty_threshold = DEF_CACHE_WB_DIRTY_THRESH;
-+	cache_thread->cache_wb_total_threshold = 0;
- 	snprintf(name, sizeof(name), "f2fs_writeback-%u:%u",
- 			MAJOR(dev), MINOR(dev));
- 
-diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
-index 3df3a562c46f..7a94fb8139d3 100644
---- a/fs/f2fs/cache.h
-+++ b/fs/f2fs/cache.h
-@@ -234,13 +234,18 @@ unsigned long f2fs_shrink_node_cache(struct f2fs_sb_info *sbi,
- #define MIN_DIRTY_CACHE_TIMEOUT 100
- #define MAX_DIRTY_CACHE_TIMEOUT 30000
- 
-+#define DEF_CACHE_WB_DIRTY_THRESH	(8192)
-+
- struct f2fs_cache_kthread {
- 	struct task_struct *cache_wb_task;
- 	wait_queue_head_t cache_wb_wq;
- 	unsigned int cache_wb_interval;
-+	unsigned int cache_wb_dirty_threshold;
-+	unsigned int cache_wb_total_threshold;
- };
- 
- int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi);
- void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
-+void f2fs_wake_up_cache_wb(struct f2fs_sb_info *sbi);
- 
- #endif /* _LINUX_F2FS_CACHE_H */
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index afce74744d4d..95f8dc0c4218 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1019,7 +1019,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 					a->struct_type == GC_THREAD);
- 	bool thread_entry = !strcmp(a->attr.name, "ckpt_thread_ioprio") ||
- 			!strcmp(a->attr.name, "critical_task_priority") ||
--			!strcmp(a->attr.name, "cache_wb_interval");
-+			!strcmp(a->attr.name, "cache_wb_interval") ||
-+			!strcmp(a->attr.name, "cache_wb_dirty_threshold") ||
-+			!strcmp(a->attr.name, "cache_wb_total_threshold");
- 
- 	if (gc_entry || thread_entry) {
- 		if (!down_read_trylock(&sbi->sb->s_umount))
-@@ -1363,6 +1365,8 @@ ATGC_INFO_RW_ATTR(atgc_age_threshold, age_threshold);
- 
- /* WB_THREAD ATTR */
- WB_THREAD_RW_ATTR(cache_wb_interval, cache_wb_interval);
-+WB_THREAD_RW_ATTR(cache_wb_dirty_threshold, cache_wb_dirty_threshold);
-+WB_THREAD_RW_ATTR(cache_wb_total_threshold, cache_wb_total_threshold);
- 
- F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(free_segments);
-@@ -1552,6 +1556,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(adjust_lock_priority),
- 	ATTR_LIST(critical_task_priority),
- 	ATTR_LIST(cache_wb_interval),
-+	ATTR_LIST(cache_wb_dirty_threshold),
-+	ATTR_LIST(cache_wb_total_threshold),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
--- 
-2.49.0
+Should the thread wait when no dirty caches remain, even if the total
+threshold is still met, or is different behavior intended for this mode?
 
+Best regards,
+Wenjie
 
 
 _______________________________________________
