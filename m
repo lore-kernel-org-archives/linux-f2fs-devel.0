@@ -4,77 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 701D4CA6019
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 11:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B1A88CA6018
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 11:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Cd+NjCUZ2JdtiyK+r+0IWXz4KfZca9wSabQJEJ/2LVc=; b=TK7hSeHy8IASkrjareAQ/vtMAi
-	phIamXnW/tgONlMm7xFE8qG+D1mk9p8pjDBR9yLG8MkOFQsI61cS2/D4+4hoCTnSvd7CX20MiZBu9
-	fVZgsDzoyr9DWnpPBv3Q8MD2JxntOCyLznemi7gIaesMZfOQgni4/9u4HPtj0i/s7Lgk=;
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=9/yJo30OR2oJSFf/DXKWMQKL0eZSHuIiBNscVAVIujM=; b=XfD/uiduB1/3LDtuB+Tpo5yUvj
+	mu7f0z17b8rmn1Vr5DeQkIf9l/yQpqZ3zR2JAoAMSQUEX2n8lRc4TkYiZYGSzktONsFW7LdB4yeLP
+	ltKoZ+I6kc9Yz4pbFurRXx0iknFRtH/TZtYr2w8VgCYMOuMYlyYdDq7QZ1UrbwJGfXjE=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xF8fp-0004lt-HC;
-	Fri, 09 Oct 2026 11:22:01 +0000
+	id 1xF8gQ-0004ni-A8;
+	Fri, 09 Oct 2026 11:22:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xF8fo-0004le-1T
+ (envelope-from <chao@kernel.org>) id 1xF8gO-0004nc-Os
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 11:22:00 +0000
+ Fri, 09 Oct 2026 11:22:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wkKYxpwXQrJN7QJ00Jh4R5X/o+mpVJfA6MnR/Y4L3Yg=; b=YlZhu930Il0h+GiIFPyy/P7t3n
- yJADzByOyekm87mHSqf242tsz4IHW/8CnokFNdoPNC2uasZhqynsyo4HVR8dcikobbiwMzCaX7Efw
- pdrvZ+sGw4GFeg0zBRWLj/WMl099OW24pGbLLhMbnyHAJDtgD1My05IS5Pni2lyrLuUs=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=wkKYxpwXQrJN7QJ00Jh4R5X/o+mpVJfA6MnR/Y4L3Yg=; b=CwLh0xpzpJJdJoNWQY/jzN6rZs
- I8S6GJYh/p5usjsvjIBgrpUrXExanOStT65sLkMgE+oJREWsYKqKSBIJ6zrMPZN2xIGACfDjtFz/9
- oXN341sS/g2xPOxOUVciOpwYro1gb7AvM5agLhAwPk9ZO0lOYxIp1rLiLlGJrE3v/qQI=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=tfLCHx9ts12uhEo+xZi32GpJWOlrmmwc1JfHCdulA5Q=; b=gj0U/7nA/aGMeqjt65Nt4u8kav
+ 1aeiqWe2Z016Z0VWY1Z0/9CmkbAmdIRoa+K+tKyICj6qEsnt2sE9TNivQfU/Pn2o6ypweiAk07tmV
+ 2y+xvGoTi9e8WF7H2e7WaEdYHhxFP7uevoc83t0iNrd0tWqHGBZPbhkkL+NQaJ3nUtC4=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=tfLCHx9ts12uhEo+xZi32GpJWOlrmmwc1JfHCdulA5Q=; b=j
+ fPx+07gIYB5Ysey9eBT6jbYaPJ9gcF8CQDCb0lZ8Hlco4vzUa5o1kavFGY7Qog/7cG7hyqZ4Nwver
+ UKhRlCb0feoAZCsM+yVQ96DAZqJIcaXQmxwDOSnhCg6q7Qd+o5fJ1O1pmXeNT5cyLdAP1jIgxisQd
+ F4XdS6STCL7bQljU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xF8fj-0005bR-PH for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 11:21:59 +0000
+ id 1xF8gO-0005cQ-73 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 09 Oct 2026 11:22:36 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 287D960DBE;
- Fri,  9 Oct 2026 11:21:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 734421F00893;
- Fri,  9 Oct 2026 11:21:48 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id E5C4D41FDD;
+ Fri,  9 Oct 2026 11:22:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E0631F000FF;
+ Fri,  9 Oct 2026 11:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791544909;
- bh=wkKYxpwXQrJN7QJ00Jh4R5X/o+mpVJfA6MnR/Y4L3Yg=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=OPl2TKjSs6yso7zTmbi1JtQbu0Hunkpt+dbV7ockUB21S8Zej/LeecyJrzF2eouCV
- kXUqXkEPW23IY8pfI7OxwFFN+TBi+C4+6irMosEF4AEslTS1rB5XGno4XQ6CK1p9fI
- Z4beufHbhlEO5Q6/IZSmX9JaVDzWUg0bvvWigrv+Q2JrwMeAfKVvvSkx/hcTiiZkZq
- 1W6P1RB28dnmcKKp/PwgvRugNHMeceB/XS1oQWZpcKzmEyr71SWWIAa4xYObbyfhwK
- WQHef6yVY7aDHgwZuZET5TcCJf6NjCZ87bwzRny3ifTyjm4ZrSL5uYwiLv3WlPEJ+X
- avggcW9d3bLUw==
+ s=k20260515; t=1791544950;
+ bh=tfLCHx9ts12uhEo+xZi32GpJWOlrmmwc1JfHCdulA5Q=;
+ h=From:To:Cc:Subject:Date;
+ b=Sz0mQq8Y6dk6GIAiv7h2cKr4ekNSPhLiwuA936nIQVpH7zHwIpKCeVGLIeznsen7n
+ 1FrOltUVsEFqppe6qiEGYIknJux+keWdanluwTrbxlnYkbEzY1XTcAsvIxz/NoPVV9
+ EPZuomClXoe4r/DhxdEQw9JW7US0dfzvqQYtnC9BXqCAPPfExdWlpJ6n4BL66dP+k0
+ aFL2CiEfxgMgIABrnCNl016kVO0vGOOJrkOhL2VHEEzChZiPt9SFM9btTiYdswxxj7
+ 9DMg4HdSsl7BL4Y1sOrvcHYSiRuSMFI3o1dq02CJKoIVxYJy0EaPCAX8Niq+TIw9BO
+ /DgxDNz7qdVrg==
 To: stable@vger.kernel.org
-Date: Fri,  9 Oct 2026 11:21:39 +0000
-Message-ID: <20261009112140.2275137-2-chao@kernel.org>
+Date: Fri,  9 Oct 2026 11:22:18 +0000
+Message-ID: <20261009112220.2276173-1-chao@kernel.org>
 X-Mailer: git-send-email 2.56.0.385.gd3acb90ef8-goog
-In-Reply-To: <20261009112140.2275137-1-chao@kernel.org>
-References: <20261009112140.2275137-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1xF8fj-0005bR-PH
-Subject: [f2fs-dev] [PATCH RESEND 6.6.y 2/3] f2fs: fix to shrink gc_lock
- coverage in f2fs_gc_range()
+X-Headers-End: 1xF8gO-0005cQ-73
+Subject: [f2fs-dev] [PATCH RESEND 6.12.y 1/3] f2fs: fix to reclaim space in
+ f2fs_allocate_pinning_section()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,136 +95,107 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <chao@kernel.org>
 
-[ Upstream commit 5d49025a4e596c4c9ac0c519ef9f9a2c91396856 ]
+[ Upstream commit fa487f56efba6344aef67d871688f0908fe08af3 ]
 
-In f2fs_allocate_pinning_section(), we will hold gc_lock before calling
-f2fs_gc_range() to migrate section in conventional zone, we may suffer
-worse case because we may need to traverse and migrate multiple sections
-if we failed to move blocks in section due to lot of reasons: ENOMEM,
-fail to migrate block of pinfile, racing on i_gc_rwsem.
+It needs to trigger checkpoint to free space reclaimed by f2fs_gc_range(),
+otherwise, fallocate() on pinfile will fail easily even there is slash
+space in conventional zone.
 
-To avoid hold gc_lock for long time to block checkpoint, let's hold
-the lock and only try to migrate one section.
+[Testcase]
+nullblk_create.sh 512 2 1024 1024
+mkfs.f2fs /dev/nullb0 -f -m
+mount /dev/nullb0 /mnt/f2fs/
+touch /mnt/f2fs/pinfile
+f2fs_io pinfile set /mnt/f2fs/pinfile
+mkdir /mnt/f2fs/dir/
+for((i=0;i<3934;i++)) do { dd if=/dev/zero of=/mnt/f2fs/dir/$i bs=1M count=1;} done
+sync
+for((i=0;i<3934;i+=2)) do { rm /mnt/f2fs/dir/$i;} done
+for((i=0;i<1950;i++)) do { rm /mnt/f2fs/dir/$i;} done
+sync
+f2fs_io fallocate 0 0 $((1024*1024*1024)) /mnt/f2fs/pinfile
+sync
+stat /mnt/f2fs/pinfile
+f2fs_io fiemap 0 $((1024*1024*1024)) /mnt/f2fs/pinfile
+
+[Before]
+fallocate failed: Resource temporarily unavailable
+  File: /mnt/f2fs/pinfile
+  Size: 109051904       Blocks: 213208     IO Block: 4096   regular file
+Device: 250,0   Inode: 4           Links: 1
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2026-08-12 20:04:02.264000000 +0800
+Modify: 2026-08-12 20:04:26.784000000 +0800
+Change: 2026-08-12 20:04:26.784000000 +0800
+ Birth: -
+root@localhost:~#
+root@localhost:~#
+root@localhost:~#
+root@localhost:~# f2fs_io fiemap 0 $((1024*1024*1024)) /mnt/f2fs/pinfile
+Fiemap: offset = 0 len = 1073741824
+        logical addr.    physical addr.   length           flags
+0       0000000000000000 0000000002e00000 0000000000200000 00001000
+1       0000000000200000 000000002dc00000 0000000000400000 00001000
+2       0000000000600000 000000002e400000 0000000000600000 00001000
+3       0000000000c00000 000000007a400000 0000000005c00000 00001001
+
+[After]
+  File: /mnt/f2fs/pinfile
+  Size: 1073741824      Blocks: 2099216    IO Block: 4096   regular file
+Device: 250,0   Inode: 4           Links: 1
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2026-08-12 19:47:49.428000000 +0800
+Modify: 2026-08-12 19:49:06.808000000 +0800
+Change: 2026-08-12 19:49:06.808000000 +0800
+ Birth: -
+Fiemap: offset = 0 len = 1073741824
+        logical addr.    physical addr.   length           flags
+0       0000000000000000 0000000002e00000 0000000000200000 00001000
+1       0000000000200000 000000003aa00000 0000000000400000 00001000
+2       0000000000600000 000000003b400000 0000000000200000 00001000
+3       0000000000800000 000000007a200000 0000000005e00000 00001000
+4       0000000006600000 0000000002800000 0000000000200000 00001000
+5       0000000006800000 0000000003200000 0000000000400000 00001000
+6       0000000006c00000 0000000003000000 0000000000200000 00001000
+7       0000000006e00000 0000000003600000 0000000037200000 00001000
+8       000000003e000000 000000003b200000 0000000000200000 00001000
+9       000000003e200000 000000003a800000 0000000000200000 00001000
+10      000000003e400000 000000003ae00000 0000000000400000 00001000
+11      000000003e800000 000000003b600000 0000000001800000 00001001
 
 Cc: stable@kernel.org
 Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
 Cc: Daeho Jeong <daehojeong@google.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[ Chao Yu: backport to 6.6.y:
-  - drop file.c changes as f2fs_ioc_reserve_dev_alias() is not present in 6.6
-  - use f2fs_{down,up}_write(&sbi->gc_lock) as 6.6 lacks lock tracing
-  - use IS_CURSEC() in gc.c as cursec pinning is not present in 6.6
-  - pass dry_run_sections == 0 to do_garbage_collect() as in 6.6 ]
+[ Chao Yu: backport to 6.12.y:
+  - retain existing f2fs_up_write(&sbi->gc_lock) as 6.12 lacks lock tracing ]
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/gc.c      | 33 ++++++++++++++++++++++++---------
- fs/f2fs/segment.c |  4 +---
- 3 files changed, 26 insertions(+), 13 deletions(-)
+ fs/f2fs/segment.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 63d3450f895e..bf6f58c110f2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3921,7 +3921,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control);
- void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
- int f2fs_gc_range(struct f2fs_sb_info *sbi,
- 		unsigned int start_seg, unsigned int end_seg,
--		bool dry_run, unsigned int dry_run_sections);
-+		bool dry_run, unsigned int dry_run_sections, bool lock);
- int f2fs_resize_fs(struct file *filp, __u64 block_count);
- int __init f2fs_create_garbage_collection_cache(void);
- void f2fs_destroy_garbage_collection_cache(void);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ac21950f53cd..8a37461fc278 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -2034,7 +2034,7 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
- 
- int f2fs_gc_range(struct f2fs_sb_info *sbi,
- 		unsigned int start_seg, unsigned int end_seg,
--		bool dry_run, unsigned int dry_run_sections)
-+		bool dry_run, unsigned int dry_run_sections, bool lock)
- {
- 	unsigned int segno;
- 	unsigned int gc_secs = dry_run_sections;
-@@ -2045,29 +2045,44 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
- 			.ilist = LIST_HEAD_INIT(gc_list.ilist),
- 			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
- 		};
-+		int err = 0;
-+
-+		if (lock)
-+			f2fs_down_write(&sbi->gc_lock);
- 
- 		/*
- 		 * avoid migrating empty section, as it can be allocated by
- 		 * log in parallel.
- 		 */
- 		if (!get_valid_blocks(sbi, segno, true))
--			continue;
-+			goto next;
- 
- 		if (IS_CURSEC(sbi, GET_SEC_FROM_SEG(sbi, segno)))
--			continue;
-+			goto next;
- 
- 		do_garbage_collect(sbi, segno, &gc_list, FG_GC,
- 						dry_run_sections == 0);
- 		put_gc_inode(&gc_list);
- 
--		if (!dry_run && get_valid_blocks(sbi, segno, true))
--			return -EAGAIN;
-+		if (!dry_run && get_valid_blocks(sbi, segno, true)) {
-+			err = -EAGAIN;
-+			goto next;
-+		}
- 		if (dry_run && dry_run_sections &&
--		    !get_valid_blocks(sbi, segno, true) && --gc_secs == 0)
--			break;
-+			!get_valid_blocks(sbi, segno, true)) {
-+			--gc_secs;
-+			goto next;
-+		}
- 
- 		if (fatal_signal_pending(current))
--			return -ERESTARTSYS;
-+			err = -ERESTARTSYS;
-+next:
-+		if (lock)
-+			f2fs_up_write(&sbi->gc_lock);
-+		if (err)
-+			return err;
-+		if (dry_run && dry_run_sections && !gc_secs)
-+			return 0;
- 	}
- 
- 	return 0;
-@@ -2102,7 +2117,7 @@ static int free_segment_range(struct f2fs_sb_info *sbi,
- 		f2fs_allocate_segment_for_resize(sbi, type, start, end);
- 
- 	/* do GC to move out valid blocks in the range */
--	err = f2fs_gc_range(sbi, start, end, dry_run, 0);
-+	err = f2fs_gc_range(sbi, start, end, dry_run, 0, false);
- 	if (err || dry_run)
- 		goto out;
- 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c5c94ac40860..6bc1b57a7835 100644
+index 30ea0b7fb1fb..328799ec670d 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -3147,9 +3147,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
- 	f2fs_unlock_op(sbi);
+@@ -3267,10 +3267,13 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
+ 		err = f2fs_gc_range(sbi, 0, sbi->first_seq_zone_segno - 1,
+ 				true, ZONED_PIN_SEC_REQUIRED_COUNT);
+ 		f2fs_up_write(&sbi->gc_lock);
+-
+-		gc_required = false;
+-		if (!err)
++		if (err)
++			return err;
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (!err) {
++			gc_required = false;
+ 			goto retry;
++		}
+ 	}
  
- 	if (f2fs_sb_has_blkzoned(sbi) && err && gc_required) {
--		f2fs_down_write(&sbi->gc_lock);
--		err = f2fs_gc_range(sbi, 0, GET_SEGNO(sbi, FDEV(0).end_blk), true, 1);
--		f2fs_up_write(&sbi->gc_lock);
-+		err = f2fs_gc_range(sbi, 0, GET_SEGNO(sbi, FDEV(0).end_blk), true, 1, true);
- 		if (err)
- 			return err;
- 		err = f2fs_sync_fs(sbi->sb, 1);
+ 	return err;
 -- 
 2.49.0
 
