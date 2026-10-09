@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D404ACA6012
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 08:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 55B80CA5FED
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2026 08:35:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=C2NjzV/qbkKGt8RuJ6SZLe8mcL/EDadGy4brfJhGUTc=; b=Ttw7snvVe3fCpeNdzRLDxVSlFr
-	OktW5CtS3WDj0e95G2e8PG7LEzv8tVBbkY6ohOZlT9JzZY4inZDwDUY/HPfXl0hfXfKpPtOPORcox
-	S3tpFsIA/TbDapqVKeuPt75UuBLVFcejoe+9howVrYAZxWMP3zRKYM7rDZXqdpbO3zw0=;
+	bh=PQtbOVCZv8vL7WRAef1l4rxi0tm4IkovW3pwbJfLkP0=; b=ZG1YnViF1ZpB/fQERhy5hrC52b
+	uL0GKheNZ16wBdVLrvRWtlXctMwtww6uERY3CdsRD5CEIlbW/IIIXIuS0ZfmZlw38CVRxKbRh5Bb0
+	RnRpeE0xMxBY49wwaNSzHX6Bx5kXi6aPuJLToL1gBbqvuAl1z1ok+8S0KKY1ZLIZpoOg=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xF5zR-000262-Oa;
-	Fri, 09 Oct 2026 08:30:06 +0000
+	id 1xF656-0002Ff-3p;
+	Fri, 09 Oct 2026 08:35:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xF5zQ-00025w-Jd
+ (envelope-from <chao@kernel.org>) id 1xF654-0002FY-Vv
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 08:30:05 +0000
+ Fri, 09 Oct 2026 08:35:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q4jmmasQ/0jT937eO5jL+cJshoUDEJU04avQ9ToLdpU=; b=Y3FMGT6BWJchc1LvSIII0IesKu
- shZDSWdTYmmnx46dQ27z+KA2V+nRTVmzETX9f1E7a/6ugAA/bW6mUg8J9jwbVkR/NKAAmvCZvCd8S
- npMtQV3V0mSk9zBYGwS1xlQhID4ouvx+eLqT1SaqobIF3yVmQ6TL/Q6C52lZutrURz2E=;
+ bh=LJp1ABo9XG9ZF+W5UNjHtd6WdeHvlA8w8SgIAeqqbUA=; b=O7+WrDOqe/7tscjbY2dJ1BcYns
+ 0gcCwR/ZJ9Qe+xHlzDF8kP6WQwrVRp5SuKXM2Zx5np4CHuKJBH9PuhvBq8wzYsXPOH9SCLqZ/JyXM
+ URiEZYycp7jLUe7VrnMia6WjB+1zgJ6h0xmvfHXokqwY6S5ubL8/x+5P32biuXyyB8+A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=q4jmmasQ/0jT937eO5jL+cJshoUDEJU04avQ9ToLdpU=; b=Ya+3zkevRLLvAu7mNe/ehpzRGT
- 8OZtvsYFiNhwnF8SKTOEHIegCsXZbV8QI+Ucas+8FYa3bRyL4/SmnEkfKp1xM59XoPBwHedUcvq2+
- 4Ah6uAfUrsIlOjmHivZrj2CzaMMO25hmVeQ49HJOjRA/dnJfZgkiCDXYlLRRskOL+T2I=;
+ bh=LJp1ABo9XG9ZF+W5UNjHtd6WdeHvlA8w8SgIAeqqbUA=; b=cBRIpHe8MLQvc8r6YpCEuk8wyG
+ J3W2IuUt4L/iwaVEfktMdZQipFk+WlsRaGwUsb1RsklcyOdd033aY3zBf2wj75HG7FzMI4CB1/0fB
+ qfKpMrqKRrrd4iT0Ri3Ne9ZCYcVkWong0xZntYEKm5AvGBh11H2hR6GPzAtOHAHXQBvY=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xF5zQ-0002TK-NP for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 09 Oct 2026 08:30:05 +0000
+ id 1xF652-0000rD-SB for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 09 Oct 2026 08:35:55 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 0B1F0601F9;
- Fri,  9 Oct 2026 08:29:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFE931F000FF;
- Fri,  9 Oct 2026 08:29:57 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 418A6601F9;
+ Fri,  9 Oct 2026 08:35:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F301F000FF;
+ Fri,  9 Oct 2026 08:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791534598;
- bh=q4jmmasQ/0jT937eO5jL+cJshoUDEJU04avQ9ToLdpU=;
+ s=k20260515; t=1791534947;
+ bh=LJp1ABo9XG9ZF+W5UNjHtd6WdeHvlA8w8SgIAeqqbUA=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=VQjINi6FGbYwSlk7R64p+A9Y3z/pYDooJ0nSJloIGXeRWqN5H69bJKE0o4FHZlUMx
- VSCvqDuPbzG7U6tRnpHdFJ/NAVzJ6JyZaHCZfGket7x8FgUSvZUa6luBuHsoR2+y4v
- hhZexMOyb1V23iLiBkx/JTTEwJIsyCTvrGFHQ+a1jLwHYQJXxQY9Xt6TdO2Dl8l9+a
- iot5pGdEVVQ71xzhoW6ei7nFyMlAv5HkdQWa7R4fR4U3QlmzHDCorc4TAAlstkMnwM
- q8n4ZGMFWbf32e1ZSv5w3qwhBZBCadZUfDeRNc91kyKh/y/ES6Z6LUTQ/E4TfBnx0Q
- BwevlEf6cJJmQ==
-Message-ID: <29c03ab9-fdf8-4e45-8432-84690e656157@kernel.org>
-Date: Fri, 9 Oct 2026 16:29:55 +0800
+ b=ZrrGn15xHDm0VBgW6cpZpvLBFU48SqjH9iXbyqj1D1FjB9srg4CbU5KN8mODXGbRs
+ LAJPTXHifupnXvMnMuB37aOfvA2ATmG6MQdISYboACKENt8IhC5i7FFhj/yE9XyjIm
+ YG3SeW6COSUtuv1TQpM4AEIj5hAU0kTxEehtvHvDw71pyUM2JGBjRSJEL6MSQIEgrr
+ PrJMGBftKH9kgo+P/Te/wRwyXeJAEoiWFLVX4gH/2vLkUaazpkmEzcbMWoI3ixmXoS
+ jWles1FkEFLrmUObz4BJJbMru066TuSZQkj9EV447jKM+AY51OCuyO7kg5uFzjYPT2
+ BKvZdBLvvuBpw==
+Message-ID: <63812000-4677-4af6-a3e1-4e87e39f0d88@kernel.org>
+Date: Fri, 9 Oct 2026 16:35:44 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20261009035354.3330915-1-qiwenjie@xiaomi.com>
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20261002171704.3652570-1-daeho43@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20261009035354.3330915-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1xF5zQ-0002TK-NP
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid cache writeback busy loop with
- zero thresholds
+In-Reply-To: <20261002171704.3652570-1-daeho43@gmail.com>
+X-Headers-End: 1xF652-0000rD-SB
+Subject: Re: [f2fs-dev] [PATCH] f2fs: disallow mmap write and data-modifying
+ fallocate on atomic files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,49 +90,65 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 10/9/26 11:53, Wenjie Qi wrote:
-> When both cache writeback thresholds are zero,
-> f2fs_should_wake_up_cache_wb() returns true even with no dirty caches.
-> This makes wait_event_freezable_timeout() return immediately and the
-> writeback thread busy-loop instead of waiting for its periodic timeout.
+On 10/3/26 01:17, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Return false when both thresholds are disabled so periodic writeback
-> can proceed without busy-looping.
+> Stores through a shared writable mapping and fallocate with
+> FALLOC_FL_PUNCH_HOLE, FALLOC_FL_ZERO_RANGE, FALLOC_FL_COLLAPSE_RANGE or
+> FALLOC_FL_INSERT_RANGE do not go through ->write_begin, so they bypass
+> the COW inode and modify the original inode directly. Reject them while
+> the file is in atomic write mode, as fallocate already does for pinned
+> and compressed files. A write fault gets SIGBUS and fallocate gets
+> -EOPNOTSUPP.
 > 
-> Fixes: d7f084b1ad93 ("f2fs: cache: wake up f2fs_writeback when exceeding threshold")
-> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+> fallocate without these flags only preallocates blocks and stays
+> allowed.
+> 
+> Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 > ---
-> Based on f2fs/dev-test at ce439a2b0690.
+>  fs/f2fs/file.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
->  fs/f2fs/cache.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-> index c76c4660606c5..88d4e479c8469 100644
-> --- a/fs/f2fs/cache.c
-> +++ b/fs/f2fs/cache.c
-> @@ -740,7 +740,8 @@ static inline bool f2fs_should_wake_up_cache_wb(struct f2fs_sb_info *sbi)
->  	    nr_dirty < cache_thread->cache_wb_dirty_threshold)
->  		return false;
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index ef4d218e694..56c686b8580 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -140,6 +140,10 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  		return VM_FAULT_SIGBUS;
+>  	}
 >  
-> -	return true;
-> +	return cache_thread->cache_wb_total_threshold ||
-> +		cache_thread->cache_wb_dirty_threshold;
+> +	/* mmap stores bypass the COW inode and would break atomicity */
+> +	if (f2fs_is_atomic_file(inode))
+> +		return VM_FAULT_SIGBUS;
 
-Thanks for the fix, do you mind I fold this into original patch? as it
-is still in dev-test.
+Will we suffer race issue due to the check w/o lock?
 
 Thanks,
 
->  }
+> +
+>  	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
+>  		err = -EIO;
+>  		goto out;
+> @@ -2113,9 +2117,11 @@ static long f2fs_fallocate(struct file *file, int mode,
 >  
->  static int f2fs_cache_writeback_kthread(void *data)
+>  	/*
+>  	 * Pinned file should not support partial truncation since the block
+> -	 * can be used by applications.
+> +	 * can be used by applications. Atomic files should not either, since
+> +	 * these modify the original inode directly and break atomicity.
+>  	 */
+> -	if ((f2fs_compressed_file(inode) || f2fs_is_pinned_file(inode)) &&
+> +	if ((f2fs_compressed_file(inode) || f2fs_is_pinned_file(inode) ||
+> +	     f2fs_is_atomic_file(inode)) &&
+>  		(mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE |
+>  			FALLOC_FL_ZERO_RANGE | FALLOC_FL_INSERT_RANGE))) {
+>  		ret = -EOPNOTSUPP;
 
 
 
