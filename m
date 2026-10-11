@@ -4,90 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3AFC4CA9EC7
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Oct 2026 07:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15F26CA9EC9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Oct 2026 08:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Date:In-Reply-To:References:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sRIvvCxOBpFBbGbRo9JAfMIpQFOdlCd+d9vUaWsf+Rg=; b=Gh11KwtFiqiTbOT73mGzCdsbGb
-	8AtyLdjs7/13ercykjqEcEp2WLoB3bxS0CUJUWo68tJVb+I9FE/hZzv6v02F52c5v2YqZBKE8F/DZ
-	PWTpfYNnclvxWxsPNQJsG7Kc4rO4flf6QQcZYAdUAVMMCGb9MjQtLxdlgr1WB3jCNgOs=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=rINo9JHhj8kkHu8KPBFPkA7I1U4cHL0/pjdU0ebQH9g=; b=WRx5o91oRhuDnj3KgEcT4nnWkC
+	VOQTc1nhQbH2mMztx9xXPy6+NJ3WCmdXVhJGtv5JjH4oGHTO04P/bsLlnkwRhC9MbeWDwtD6jW1w/
+	hF+FNpJstr4FV43iQ3VAGODwjQZaTo49JDjyzfLQBMQDn9U833C6n0701avUuOk/4uuY=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xFoI2-00062K-GU;
-	Sun, 11 Oct 2026 07:48:14 +0000
+	id 1xFoTg-0007w6-JJ;
+	Sun, 11 Oct 2026 08:00:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <baohua@kernel.org>) id 1xFoHR-00061g-9S
+ (envelope-from <chao@kernel.org>) id 1xFoTf-0007w0-A5
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Oct 2026 07:47:37 +0000
+ Sun, 11 Oct 2026 08:00:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JlRrshqoncb1nPc1YH8iKssdhdAAi72cR+g7ttfhdUY=; b=a7SCkv/sWW0JwjTemJzt9t1YmN
- 5T1FKNHBWpxrzdPZnIJnjUcdv4iINXOCVg9oD4Vv58vexDVpBMtNOYmpVHAdeCQB2MYk3SD8UI014
- omnjWrrYlFk/GxNdYBojFFn1CuZdCIgWf5fT6hrjVyvTtlVuB76ZDVb3IJLACe92eG2U=;
+ bh=BldPchgRPYf8807oLd4yoj0+uSTzoKV/uAiOC/vtc6w=; b=HQ56r/nC50WELdPcfRYso4jZVU
+ PvJmdgFAAWUdZnSlLdy+PQfvXWx8z4F4coxghBCHKFYZd05An4DmgkHfLVucXLxMnqWcMETHgl0Iy
+ XpngM/XTZzj5ddO2I8FrMW0W9OORojDrzbrga3V8HcDmG3Z8cWx77d4gaprBGh4kw0WI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JlRrshqoncb1nPc1YH8iKssdhdAAi72cR+g7ttfhdUY=; b=K4ROSNW2ncQUNxcHbAiVmMJsI3
- uvvr+EzK1OJaBnx041+ZVIhQvEEZJLvNLR6t+QOwcSEOCZ5ESMUylQAx0v/y7DrlB3A3hM2rcGfaa
- u1cz/om8GqQ1EyoOiExyWMyelD2+m0aoAZRnpNoxf3XjivKBxzR3Pr5XrEFnmBSHIbSE=;
+ bh=BldPchgRPYf8807oLd4yoj0+uSTzoKV/uAiOC/vtc6w=; b=VkooZIRwzY2oK7EDWW7RDmvyXj
+ jcTrpBw6Jn462WmgfU8S1ux5nz27ipDew/fRSXTiAy7NsO+6m1bqGtO6sPRGK6l/lCXN2qHYfvpQM
+ DxqdGQjNFoT+gq0mcrhkZxwFoy8o0m+ddDOLKbNocYyjAPX5wBClfE8qsb0QwnMt2Wkg=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xFoHQ-0003sG-Gm for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Oct 2026 07:47:37 +0000
+ id 1xFoTe-000488-Ji for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 11 Oct 2026 08:00:15 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 1512840926
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 11 Oct 2026 07:47:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1CF1F0089E
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 11 Oct 2026 07:47:30 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 509A840954;
+ Sun, 11 Oct 2026 08:00:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19E831F0089B;
+ Sun, 11 Oct 2026 08:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791704851;
- bh=JlRrshqoncb1nPc1YH8iKssdhdAAi72cR+g7ttfhdUY=;
- h=References:In-Reply-To:From:Date:Subject:To:Cc;
- b=nfNI+E/dTSNIroxxRtO8T9R1PI+d3ZqG6O/vhF5YJFFlA8vS3sI8rSIrCUUwFLpo/
- OiKzrr4WuRmMFc9CbIBqjcskPUbxclMDCtmI8Y8QhawMkuRBOyjHi4dSuhwPk2w/Ex
- 7v1Y9+IFdYfmwBAy0fM9pyafPjgW6D9cwy0j8CibQoRbwN2OKweNpIpbUYbUzh/yBd
- Zqj4DguZkzs40dGfx0wCPOfIc+RRK0BHQYs+yac1a+U14sL3SwR1BzL6vYwgrH/yAc
- BNgRJz7GDb2L4AeTPrGQHgzqSegm75Ck2kNpcKwYsXKrPdh0MA58MGZ7V3G+HOefKX
- W47aSiS/5r4IA==
-Received: by mail-qt1-f171.google.com with SMTP id
- d75a77b69052e-53391786e55so18171011cf.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 11 Oct 2026 00:47:30 -0700 (PDT)
-X-Gm-Message-State: AFq9FYKxLMrhDjr86OQYvai4JlKlNBgOjhv1VgFKEmLf/3bCsx4HOXqj
- uLVulnk/CYTY4aC18X0goiIcLMeu/lfBVov3D/l4nZ0A91bl8MnXZqsBu09BfReO5/Z2vLUNXig
- LUbT0AsYCTVaxNHuwV2NOCPs4kGlrq5E=
-X-Received: by 2002:a05:620a:44c1:b0:93e:9927:fd34 with SMTP id
- af79cd13be357-93ebd2244camr1017488585a.28.1791704850198; Sun, 11 Oct 2026
- 00:47:30 -0700 (PDT)
+ s=k20260515; t=1791705609;
+ bh=BldPchgRPYf8807oLd4yoj0+uSTzoKV/uAiOC/vtc6w=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=Ar6eCvN8aC/KY4dbcb8yUHCoXAjmrDhgTDtAl235n6kBA69nZzOoYqd5W5wlsEAKB
+ nz3z9u+oXnA0+HfgMos2WsghNQsblZeFPl3x2OHNKNPOBK4zUUspxriYJtBiY2XbU5
+ 0Xv1FG+vfw9NM6+KIk1hCIhGjLz7A6pkg5KVLVq64Bphh+7r0RlQ1axiFqzibQvLfd
+ 4dfNRn2JSB8Cowkct5lvHdpwy6IEgg+tWbaPZsIzTv7BHK/3Z9dpxphIvA1hhBS13U
+ upe3/EO3S4j18NmqimZ67C+nZj1x2PWuv19xFevjSKvyx0+QXmSha5QUqxE3E/ML5X
+ O7cPeShtfxvyg==
+Message-ID: <b76e45ca-b455-4c2f-82c8-abbb596acb86@kernel.org>
+Date: Sun, 11 Oct 2026 16:00:06 +0800
 MIME-Version: 1.0
-References: <20261011040232.2940423-1-zhaonanzhe@xiaomi.com>
-In-Reply-To: <20261011040232.2940423-1-zhaonanzhe@xiaomi.com>
-Date: Sun, 11 Oct 2026 15:47:18 +0800
-X-Gmail-Original-Message-ID: <CAGsJ_4y-9mmwjjb3UAb4=meONcn_SjYVgDuQJJ5QbdA-3Y=XeQ@mail.gmail.com>
-X-Gm-Features: AclHuK9sQwDYiz6jpVGp-nkoQLz8HOVchDFynrkGu0-9gSXFWAXjND2_2qgQY40
-Message-ID: <CAGsJ_4y-9mmwjjb3UAb4=meONcn_SjYVgDuQJJ5QbdA-3Y=XeQ@mail.gmail.com>
-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-X-Headers-End: 1xFoHQ-0003sG-Gm
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: remove mappedtodisk flag usage in
- mmap write path
+User-Agent: Mozilla Thunderbird
+To: Zhan Xusheng <zhanxusheng1024@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20261005154954.2097054-1-zhanxusheng@xiaomi.com>
+Content-Language: en-US
+In-Reply-To: <20261005154954.2097054-1-zhanxusheng@xiaomi.com>
+X-Headers-End: 1xFoTe-000488-Ji
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix defragment writeback range
+ truncation on 32-bit
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,49 +87,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Barry Song via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Barry Song <baohua@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org,
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Zhan Xusheng <zhanxusheng@xiaomi.com>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gU3VuLCBPY3QgMTEsIDIwMjYgYXQgMTI6MDLigK9QTSBOYW56aGUgWmhhbyA8emhhb25hbnpo
-ZUB4aWFvbWkuY29tPiB3cm90ZToKPgo+IFBHX21hcHBlZHRvZGlzayB3YXMgaW5oZXJpdGVkIGZy
-b20gdGhlIG5vYmgvYnVmZmVyLWhlYWQgZXJhLiAgSG93ZXZlciwKPiBmMmZzIGhhcyBubyBidWZm
-ZXIgaGVhZHMgYW5kIHRoZSBmbGFnIGlzIG5vIGxvbmdlciBtZWFuaW5nZnVsLiAgVGhlIG9ubHkK
-PiB1c2VyIG9mIHRoZSBmbGFnIGlzIHRoZSAibm8gaG9sZXMiIHNob3J0Y3V0IGluIGYyZnNfdm1f
-cGFnZV9ta3dyaXRlKCksCj4gd2hpY2ggbWFrZXMgbW1hcCB3cml0ZSBmYXVsdHMgc2tpcCBtYXJr
-aW5nIHRoZSBmb2xpbyBkaXJ0eS4gIENoYW8gWXUKPiBwb2ludGVkIG91dCB0aGF0IHRoaXMgaXMg
-bm90IG9ubHkgYSBjbGVhbnVwOiBpdCBjYXVzZXMgdGhlIGZvbGxvd2luZwo+IHJhY2UgY29uZGl0
-aW9uIHdpdGggZmlsZXN5c3RlbSBmcmVlemluZzoKClNvbWVob3csIEkgZmVlbCB0aGF0ICJSZW1v
-dmUgdGhpcyBzaG9ydGN1dCBpbgpgZjJmc192bV9wYWdlX21rd3JpdGUoKWAgYW5kIHN0b3Agc2V0
-dGluZyBpdCBpbgpgZjJmc19yZWFkX3NpbmdsZV9wYWdlKClgIiBzaG91bGQgY29tZSBiZWZvcmUg
-IkNoYW8gWXUKcG9pbnRlZCBvdXQgdGhhdCB0aGlzIGlzIG5vdCBvbmx5IGEgY2xlYW51cDogaXQg
-Y2F1c2VzCnRoZSBmb2xsb3dpbmciLgoKV2UncmUgc2F5aW5nIHRoYXQgcmVtb3ZpbmcgdGhpcyBz
-aG9ydGN1dCBpcyBib3RoIGEgY2xlYW51cAphbmQgYSBmaXggZm9yIHRoZSByYWNlLCByaWdodD8K
-Cj4KPiAgQ1BVMCAod3JpdGUgZmF1bHQpICAgICBDUFUxIChmcmVlemVfc3VwZXIpCj4gIC0tLS0g
-ICAgICAgICAgICAgICAgICAgLS0tLQo+ICBmMmZzX3ZtX3BhZ2VfbWt3cml0ZSgpCj4gIHNiX3N0
-YXJ0X3BhZ2VmYXVsdCgpCj4gIC8qIHNob3J0Y3V0OiBubyBkaXJ0eSAqLwo+ICBzYl9lbmRfcGFn
-ZWZhdWx0KCkKPgo+ICAgICAgICAgICAgICAgICAgICAgICAgIHNiX3dhaXRfd3JpdGUoU0JfRlJF
-RVpFX1BBR0VGQVVMVCkKPiAgICAgICAgICAgICAgICAgICAgICAgICAvKiBubyB3YWl0ZXIsIHBh
-c3NlcyAqLwo+ICAgICAgICAgICAgICAgICAgICAgICAgIHN5bmNfZmlsZXN5c3RlbSgpCj4gICAg
-ICAgICAgICAgICAgICAgICAgICAgLyogZm9saW8gbm90IGRpcnR5LCBza2lwcGVkICovCj4KPiAg
-ZmluaXNoX2ZhdWx0KCkKPiAgLyogUFRFIHdyaXRhYmxlICovCj4gIGZhdWx0X2RpcnR5X3NoYXJl
-ZF9wYWdlKCkKPiAgZm9saW9fbWFya19kaXJ0eSgpCj4gIC8qIGRpcnR5IGZvbGlvIG9uIGEgZnJv
-emVuIGZzICovCj4KPiBJdCB3aWxsIGFsc28gc2tpcCBBUFBfTUFQUEVEX0lPIGlvc3RhdC9SRVFf
-VElNRSB1cGRhdGVzIGFuZCBwb3N0LUVPRgo+IGZvbGlvIHplcm9pbmcuCj4KPiBSZW1vdmUgdGhp
-cyBzaG9ydGN1dCBpbiBmMmZzX3ZtX3BhZ2VfbWt3cml0ZSgpIGFuZCBzdG9wIHNldHRpbmcgaXQg
-aW4KPiBmMmZzX3JlYWRfc2luZ2xlX3BhZ2UoKS4KCkkgbWVhbiwgdGhpcyBzZW50ZW5jZSBzaG91
-bGQgYmUgbW92ZWQgZWFybGllciwgb3IgdGhlCnByZWNlZGluZyBzZW50ZW5jZXMgc2hvdWxkIGJl
-IHJld29yZGVkLgoKPgo+IFJlcG9ydGVkLWJ5OiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+Cj4g
-TGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtZjJmcy1kZXZlbC80OTZiOTEzYy1l
-YjgxLTRmYTgtYmU3Mi1jNmEwNmExMGFiYTJAa2VybmVsLm9yZy8KPiBGaXhlczogZmJmYTJjYzU4
-ZDUzICgiZjJmczogYWRkIGZpbGUgb3BlcmF0aW9ucyIpCj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5l
-bC5vcmcKPiBTaWduZWQtb2ZmLWJ5OiBOYW56aGUgWmhhbyA8emhhb25hbnpoZUB4aWFvbWkuY29t
-Pgo+IC0tLQoKUmV2aWV3ZWQtYnk6IEJhcnJ5IFNvbmcgPGJhb2h1YUBrZXJuZWwub3JnPgoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+On 10/5/26 23:49, Zhan Xusheng wrote:
+> f2fs_defragment_range() flushes the range it is about to defragment:
+> 
+> 	filemap_write_and_wait_range(inode->i_mapping,
+> 				pg_start << PAGE_SHIFT,
+> 				(pg_end << PAGE_SHIFT) - 1);
+> 
+> pg_start and pg_end are pgoff_t, 32 bits on 32-bit kernels, so both
+> shifts are evaluated in 32 bits and truncated before they are widened to
+> the loff_t parameters.  pg_end is only capped by the file's page count,
+> so for a file larger than 4 GiB the shift wraps.
+> 
+> For a 5 GiB file pg_end is 1310720 and the range collapses from
+> [0, 5 GiB) to [0, 1 GiB), leaving the rest of the dirty pages unwritten
+> before the blocks are moved.  For 8 GiB the shift yields 0, the minus one
+> makes it (loff_t)-1, and the range becomes [0, LLONG_MAX].
+> 
+> The matching call in f2fs_collapse_range() already casts:
+> 
+> 	filemap_write_and_wait_range(inode->i_mapping,
+> 				(loff_t)index << PAGE_SHIFT,
+> 				((loff_t)pg_end << PAGE_SHIFT) - 1);
+> 
+> Do the same here.  On i386 the shift changes from "shl $0xc,%ecx" to
+> "shld", i.e. from a 32-bit shift to a double-precision one.
+> 
+
+Cc: stable@kernel.org
+
+> Fixes: d323d005ac4a ("f2fs: support file defragment")
+> Signed-off-by: Zhan Xusheng <zhanxusheng@xiaomi.com>
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
