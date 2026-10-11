@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00C7ACA9EC9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Oct 2026 12:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2358BCA9EC9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Oct 2026 12:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Pm8Uk1Hoa1OgDjqOAkMfIoUFQN7ZVZliXvFrqJo6C+w=; b=BZy5jNXLx11RJl+pbyJMaqqdnw
-	DQNcoXXgQWBA9I8i8XG8GXdsPZgYGHByOIhGVB+i9SiI009BWio4cdhoxar2WL55R8VScjMyTIuid
-	zqE6BKGy2gqASvzMvnpwVNjRha1I/AbFpmP9gM69VMPoTa0A9phXMYnLf4vmHxNUx1eU=;
+	bh=7uMHkdnTJQBj6+A2D+VKVvx9WY/K/USVM4RHZkHd8zg=; b=N3yyIKy/FQ2FwVxixbCOyCIGxd
+	CSLsTFUhWdcYR+aVSMlb/+KuL8QzuDGFbbvGaZ7MDf14vx2LIimVbMFZmDp+xUBcUjTFsJ5081E4x
+	NR+R4IMTmu1CQzAGMubNrZdXalRcpOv00PTb+bqTC62PZ9+VJjvgPEQki2IQ537ujKLA=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xFsWv-0006fI-Em;
-	Sun, 11 Oct 2026 12:19:54 +0000
+	id 1xFscZ-00078Y-P8;
+	Sun, 11 Oct 2026 12:25:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xFsWt-0006f0-Hc
+ (envelope-from <chao@kernel.org>) id 1xFscZ-00078O-0O
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Oct 2026 12:19:52 +0000
+ Sun, 11 Oct 2026 12:25:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+bUjhFFNvi7S7NmKFHZzl4mLcYN4K5RNcVEHvKxPa9g=; b=NLSLrW/6Id52WcUCD08n7FuShx
- GWqL6Fs9PJ8nsAJ5vdtnsyw1cIQGk+Pg2mf0D2CxCoPrnrIHbRTobBpvZHHcZFubQNpo0iJcDJI9+
- Jx1DfEQ53fIvZn1wqmdrXhwtjCVCsHv6FTkMX1+Iumh8FMp7DgfzHzF29TP2mH3CjDe4=;
+ bh=irOGxmKVDrEZKvZjgOaKPJglMLW7T/ynGH3oeMhA5Dc=; b=TDTK9syV6rDLQgXcT9MOfAfqru
+ D24B0mUOGAzKkghvhMmUg/t+nDK5vk9LOQCPUxpQ7IxHZwtCk3AHAJAaLfR/Zs7e2FO6IARgOyuS4
+ owAxnqe42GkT5g+eihp9DVaJs8WxgiLFKufJGytoFhsgCTDCJNgrIYAj5thItCnsujmY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+bUjhFFNvi7S7NmKFHZzl4mLcYN4K5RNcVEHvKxPa9g=; b=IQ6YE6mwbiN3NqfY0V6w1EN3OJ
- 0/bMK74n+hE8GN0eDN+dgptDIC7zedWv9ATP+mZs5tWGW6vemESjVjwAORUjejA11EQMlxBc6If/F
- borga0Ku5rzTsZ5kMFb3C5ZNRcCsNGCWOK/9/RAkw6j1iDen5xjq1sfD53sTA2Xo+qMU=;
+ bh=irOGxmKVDrEZKvZjgOaKPJglMLW7T/ynGH3oeMhA5Dc=; b=QpNgWh7WyQjR7pEillszkt8TZY
+ 9RcGPe7jdr5vNZg5OLmfGrymfzwdwS2Ic1QcqMQr23LwXzQRoJEbt2GoB6t+piVzguQYf0TeLY+IY
+ peDDy5aY/4WYmdBpPtVTm1hOZ2lo2TBl0QM1mVClUEe+ALcGpVde7EkFU18vCdNtFA0U=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xFsWt-00039j-QJ for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Oct 2026 12:19:52 +0000
+ id 1xFscZ-0003Ep-AS for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 11 Oct 2026 12:25:43 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 17637600AA;
- Sun, 11 Oct 2026 12:19:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA0C61F0089B;
- Sun, 11 Oct 2026 12:19:44 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 9936D600E2;
+ Sun, 11 Oct 2026 12:25:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49D241F0089B;
+ Sun, 11 Oct 2026 12:25:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791721185;
- bh=+bUjhFFNvi7S7NmKFHZzl4mLcYN4K5RNcVEHvKxPa9g=;
+ s=k20260515; t=1791721536;
+ bh=irOGxmKVDrEZKvZjgOaKPJglMLW7T/ynGH3oeMhA5Dc=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=GXchIvvBEpadoNVj1j6O/e333xRnubs7XV+E1ZwL7NAmkOFBgWTsqjGYTIG+drT9u
- +b6djf5DQ6gVSz/cAj5Rxon4VRkIpNOrJStQJn0LJnvhVPjlxCGI4hYCBrwTRZEbsw
- wpXyEn4qGi1XofPX3JI7POC0+gU5OzqdqdPVqy68iX5AgoUe6cYlg3+DKeTpSJchB0
- Lg+kBwIM5VIHOhj0Put0HMHFNpWvssYaBD+1T2uvh/ilFaSWwOPzukOn9ItInFLGv7
- On3G0rRH0FSigJBPhgO41ZT7751THbNF3C6/p8TIhcWBZUij8dJlT10BN8Ass+nVmD
- xnjMUu7DSQQIg==
-Message-ID: <ce9280bf-f88c-490d-bede-816ed76e94c0@kernel.org>
-Date: Sun, 11 Oct 2026 20:19:43 +0800
+ b=HRVlA/MuFOOBYYxt+yvZc7WrB9DTZooIq0n+/qthPKkL1OrO5egtQcqKfRd8EHCeJ
+ VT0J6rNLR8zvWXZnC4mbqiYIQbja9qeC0x6MPJ/IlwFXGgfrzSXSGlkDi0UgYfjwkF
+ mvh39De4NklF0SJCfBA8b1h6HdMDrQzbQL4w1IMAxXrSa0MzJTlrIrzioFa4x+8FpO
+ 6WaIsZq4MVabg8dD64/6OZXfnnzPhEo5jiqzPnpH7sqhxJXNHWzE+wMjlD5mt2ff5h
+ bq0BkvsaUfgq8E+oIbPwLVTqEFWhKqaiJoKxq8TCNhM/t60X3DgB/jznU9rV/jbY2P
+ Feh7NV0CDbVaA==
+Message-ID: <8cbb8aee-189f-4c69-927c-7deb1a50ab8f@kernel.org>
+Date: Sun, 11 Oct 2026 20:25:33 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Kaixuan Li <kaixuanli0131@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260918165507.1267942-1-kaixuanli0131@gmail.com>
+References: <20260919130925.1899994-1-kaixuanli0131@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260918165507.1267942-1-kaixuanli0131@gmail.com>
-X-Headers-End: 1xFsWt-00039j-QJ
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check every cur_*_segno[] entry on
- readonly images
+In-Reply-To: <20260919130925.1899994-1-kaixuanli0131@gmail.com>
+X-Headers-End: 1xFscZ-0003Ep-AS
+Subject: Re: [f2fs-dev] [PATCH] f2fs: bound the SIT/NAT bitmaps by the
+ checkpoint pack
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,27 +94,31 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/19/26 00:55, Kaixuan Li wrote:
-> sanity_check_ckpt() bounds-checks cur_node_segno[] and cur_data_segno[]
-> against main_segs, but on an image with the RO feature the goto that skips
-> the duplicate-segno cross-checks also leaves the enclosing loop, so only
-> index 0 of each array is ever checked.
+On 9/19/26 21:09, Kaixuan Li wrote:
+> sit_ver_bitmap_bytesize and nat_ver_bitmap_bytesize are used as memcpy
+> lengths into and out of sbi->ckpt, which is sized from cp_payload alone,
+> and nothing compares either length against that allocation.
 > 
-> An unchecked index reaches __set_sit_entry_type() through build_curseg() ->
-> reset_curseg(), which writes se->type through &sit_i->sentries[segno]. With
-> segment_count_main 120 and cur_data_segno[1] set to 200, KASAN reports
-> three out-of-bounds writes during mount and the mount then succeeds.
+> sanity_check_ckpt() has checked these two fields since c77ec61ca0a4, which
+> added them after a crafted image overran build_sit_info(). That check ties
+> each length to a segment count; it never compares either against the
+> allocation, which is the half this adds.
 > 
-> Use continue so every index is bounds-checked, and skip the node-vs-data
-> cross-check explicitly, which is the other thing the old goto skipped.
+> Mounting over-reads in build_sit_info() and build_node_manager(), and the
+> first checkpoint writes the same lengths back through the same pointers,
+> so the over-read's contents reach the on-disk checkpoint. An unmount is
+> enough; the filesystem does not have to be used.
+> 
+> Bound both ends the way __bitmap_ptr() lays them out. The three branches
+> differ, so a single sum of the two lengths would still admit a small
+> overflow when cp_payload is non-zero.
 > 
 
 Cc: stable@kernel.org
 
-> Fixes: a7d9fe3c3388 ("f2fs: support RO feature")
-> Signed-off-by: Kaixuan Li <kaixuanli0131@gmail.com>
+> Fixes: c77ec61ca0a4 ("f2fs: fix to do sanity check with {sit,nat}_ver_bitmap_bytesize")
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+The overflow issue exists before this commit?
 
 Thanks,
 
