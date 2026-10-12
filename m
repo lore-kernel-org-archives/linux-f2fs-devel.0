@@ -4,77 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9B036CA9ECF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Oct 2026 16:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5AA5CCA9ED1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 02:54:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+h9NVF6dYkvNaouEpuuLWAPDcX/4RJn/7yuvvq6jCmg=; b=gzJy8b94YjqL2hroViSFi/rLLi
-	mu1vESn5Owr4Ub2VjlnmtB4bPVNa55Bt7uZ8Pbfsntt1v8H12wSZCWgxGgKNRzf67DwJEagsv9j7U
-	rSi4FZxiFqoFiHFr/UXfvM8STmCwlOxErNBDGm2CsCuTnNgkACydikjh5UcFVmwdHfsQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=BfMWS+2dmrDvE1hPs2MiZoD9n6I3taZuWB4u0u6Eu4w=; b=g/LD+kvtIgLwMH/rH+yyf8qOxn
+	CmHfQiABLuHz/60GmPUpCyaeDlaux7A1mG+lRel2MLmCB7nbjVVcHh4Jcg7f73ldN9PBMGwrojBDW
+	zWLKGLJasVPcGbnunPDfNrospYYaEDDF8RvIb7uOtsBoguEAB1E3KJ/O2SnJBe3gz7oY=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xFwj6-0000KX-B6;
-	Sun, 11 Oct 2026 16:48:44 +0000
+	id 1xG6Bi-0005MX-8U;
+	Mon, 12 Oct 2026 02:54:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1xFwj4-0000KQ-Tv
+ (envelope-from <jnhuang95@gmail.com>) id 1xG6Bh-0005MR-Af
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Oct 2026 16:48:42 +0000
+ Mon, 12 Oct 2026 02:54:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=P7uNgjLR1ue2A+THKCnp1XkskAQJ4zRbuEndOSWWT90=; b=K58j3QRmUHSJmhyJ+fw11jNrge
- dlWx/cbcSMTxBr9933nYJhqG2IicGrBJBXgQ4DAKSYxgTHN2UECkUvTk+W8Q0cc9lrF8XGcmRaBEz
- e0iilg4SwDsXfEdtIXOYXy73rPy8L9fTYSoN3BOLbpfmRrs1DE/RcnJJFGvPB4NTj/gc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=P7uNgjLR1ue2A+THKCnp1XkskAQJ4zRbuEndOSWWT90=; b=N6ZnQByDy0lxEVU8WhtMZY4wjU
- zy25L9JuiXkeiegdeHMiTmMUcLmimNBH1rQLPJorRQfqwEoGwiBIsfnUfM3A8c4L55BsOUD9iIUme
- u2rhGUvGfMgvS/Vx72IS+TnAx1MxFLH4e9KMN1Mk27VchZqsz4nGeaNg4z0GLPwx/t5o=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xFwj4-0006f8-IT for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Oct 2026 16:48:42 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id C27BF43AC4;
- Sun, 11 Oct 2026 16:48:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2AFC1F0089E;
- Sun, 11 Oct 2026 16:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791737316;
- bh=P7uNgjLR1ue2A+THKCnp1XkskAQJ4zRbuEndOSWWT90=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=PoV53xnQllFG0C9C1Jl4xSjUw/61Y7xGtmyOW+RKm9Pv+NlN5UQv5cCOd1o4vF3I8
- 4WMWuigw83ag+/DEtTO0flVB9nLh8Es2nt223+IN/95yfBpe0/pbVbL0Unjnwnnzj5
- jXimlSG53CDPOzXynHGiFrBlJZz4ADDyNUCsMhfiLFxqGlUH/9LcYdCHz5uBLSgJhC
- m1CxXYdQA/VsAhUaaovW7xLs2eGKOSPYOEYsMDQ9bJ52ZzpEhqM87oqjk79AS5wSDu
- DtE/w2fq+XoXvYKcUsRQFscWXmKEnItBnwgaxzZow9jtZmZhAO42SKPo3YFW86LIXS
- r4B+mCB8o0RnA==
-To: stable@vger.kernel.org
-Date: Sun, 11 Oct 2026 12:48:13 -0400
-Message-ID: <2026-10-11-1-daily-reply-0006-f2fs-pinfile-6-12@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261009112220.2276173-1-chao@kernel.org>
-References: <20261009112220.2276173-1-chao@kernel.org>
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=u/DRWkttqQoIGBR0GONeTzB4dOwo8mbIklzruyiYFLo=; b=RJSk5Lks6BcxNQ6BAM/oPkRiCs
+ XqfC5lj8Kve3oXAhsaxnfZdaLqGbB1WoqI+WFnCDsMG+wc5mytbf3lEd5laMvq1BXZaGtQ+L3Kl7W
+ +jDlaKDuD/CsdwsAaC3mR8Xb57hVpmy5MvFtds/8V9MkrEl6GPdxHx/HBvX6ltgivQnQ=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=u/DRWkttqQoIGBR0GONeTzB4dOwo8mbIklzruyiYFLo=; b=Y
+ KVcnMpFjtU0pscc3AW/qNkcdrFTRxr17o/Fa4wDdT9rIzWAoN7PVfcgNqO+OHKduYfKPofVS4S4s6
+ tAdigjyf7rEmrNCH5YZzf4sOq3BRrZcZU/vATHvTmfD1/wbi6i3lBZCeOHo4mVVPQ26qCWeNTYSph
+ U6UF98fqTwsuekSs=;
+Received: from mail-pl1-f169.google.com ([209.85.214.169])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xG6Bh-0003YM-Jx for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Oct 2026 02:54:53 +0000
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-2db80fcdf8bso7612015ad.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 11 Oct 2026 19:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1791773688; x=1792378488; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=u/DRWkttqQoIGBR0GONeTzB4dOwo8mbIklzruyiYFLo=;
+ b=l8bK5ox9Q23H04zhYKnXzb88fuLNbogMtKCJT+nCswu2sHidh3TJdame4P4NdvDe6U
+ yCa9kIUahzMlcTLwAmI4o/ZHDUKaLCVDtA6ufNR6Bi1L8ADY49ehi8J7S3X86BcefcLV
+ 1vboI58JLdy9IBHfe3HGiuLy7xqeeOTC0ZxCW804b+Ae44fnX7OLHSTM0WcZD56mWH90
+ e+mssTQu84Rh3YrM8eh1Z79rQYo6bIfpOJAEVv9vYD6BXt3tsYE8LYX3Q7156TSoCEHc
+ pVlyZguVjXiH8YlK7qwN1oftGytoIqqDjzzTL60GC/dlnzVbhggNf87kOqJaDHvglh9a
+ uvmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791773688; x=1792378488;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=u/DRWkttqQoIGBR0GONeTzB4dOwo8mbIklzruyiYFLo=;
+ b=kgXbptSE4e4Qyzk0Bshcq5CMwxFmkX/9XcajppWwrCK9ggWHfdgYe7rpIqRZQ72W47
+ oaoXS6a6mvlzG1vBTH6t/Vz7zByfGxBNNd3MSUOv7n+F/1fjlrRiLhxz+Z1gejOKWiDA
+ afL2d1sNonzG9n3/TyDzHrMvGh+TaE4/ohg6zAOlffnY96ehWvO/CY5ttUysYezRZ11S
+ BZDvMd+SG9ZOM6M+6jR3lzRDDYumjnegzyvbOd+LT/ZQZCT/YAwN+KxmXt5WQlblLZIn
+ OTnInSGMOAA9IqoKV1i+2hibMbjp/pA6MT9Ax4EwKSSS6Nkel+b8Rb/4OqAVWLoQ50Ov
+ D8cw==
+X-Gm-Message-State: AFq9FYLBzzs3TJkWhPCcq+xCNPFpL8+/e4yKIJQsaEx56qCfFhcAfF7O
+ 15gV6lrcXPDX52WJB0PneDCU/K/IslhuWpewxPjZJj3kxj2qQiTadHR+uHpaTJ93fEA=
+X-Gm-Gg: AYBFou02jzOA2bnaqUgX/4qI8dPzP/dPG440mV8+4VlY6hjMaGncjOHWsPWlHDOZy3Q
+ 4RbnZZJ6yxXVpIo+SDrRQ6yQmaNf1BPSFCGPzd98W8bROw6cG2oymIq/x46Hphg1UTuiGnYQ4mh
+ v6T54aQzEsx+jfCd+MmhxpqadLBxgqyjioNIuWUMzVEyap7x7kv6LpgT1NZSqI/Ovo8swJTWEBD
+ bj0KnLrUjbYkjQlNv9GMMmX3vRG8UQ5m/an/qcXaN3QJS3jQbUTmKhyFaaQVZkMb4IJBy7DFQRn
+ obsxN/PC9NCalPMILadtkxP8egPg+l4f97GrOTmiQwHpeQ8xApslyap9qMch+/6qHOa+nO9Kifs
+ p+YEZ6DYCcHq1DjRAHb0YvBQIyuW33zE0mNqiXucMfst9XU7uTVxVF6ALT6QF/ntzn3S2J6xCT+
+ GM956ZwTxLTb64xelMB8ekCjkRxVwD6vOr1QA3Y26qCiMSwDCsPw3EBMt/gZCrNTPRHLC8z+dz7
+ hTc3yiPgXofF3vXHfXshQAEbhfZLw/Fnfpqug==
+X-Received: by 2002:a17:903:2309:b0:2e3:1bb4:6121 with SMTP id
+ d9443c01a7336-2e842ab7fa0mr64478485ad.49.1791773687789; 
+ Sun, 11 Oct 2026 19:54:47 -0700 (PDT)
+Received: from 4ce604c9y2.bytedance.net ([61.213.176.57])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e84219e6b6sm36605375ad.20.2026.10.11.19.54.45
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 11 Oct 2026 19:54:47 -0700 (PDT)
+From: Jianan Huang <jnhuang95@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net, chao@kernel.org, jaegeuk@kernel.org
+Date: Mon, 12 Oct 2026 10:54:42 +0800
+Message-ID: <20261012025442.770777-1-jnhuang95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-Headers-End: 1xFwj4-0006f8-IT
-Subject: Re: [f2fs-dev] [PATCH RESEND 6.12.y 1/3] f2fs: fix to reclaim space
- in f2fs_allocate_pinning_section()
+X-Headers-End: 1xG6Bh-0003YM-Jx
+Subject: [f2fs-dev] [PATCH v2] f2fs: quota: fix quota flush failure during
+ filesystem freeze
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,25 +115,89 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Sasha Levin via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Sasha Levin <sashal@kernel.org>
-Cc: Sasha Levin <sashal@kernel.org>, Daeho Jeong <daehojeong@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, stable@kernel.org
+Cc: Jianan Huang <jnhuang95@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-> It needs to trigger checkpoint to free space reclaimed by f2fs_gc_range(),
-> otherwise, fallocate() on pinfile will fail easily even there is slash
-> space in conventional zone.
+Quota flush retries can be exhausted during filesystem freeze.
 
-Queued the series for 6.12, thanks. Patches 2/3 and 3/3 are queued for
-6.18 as well.
+freeze_super() and the quota checkpoint may race as below.
 
+freeze_super()                       f2fs_ckpt
+- down_write(&sb->s_umount)
+- sb->s_writers.frozen = SB_FREEZE_PAGEFAULT
+- sync_filesystem()
+ - f2fs_sync_fs()
+  - f2fs_issue_checkpoint()
+   - queue CP_SYNC -----------------> - block_operations()
+                                      - down_read_trylock(s_umount)
+                                        : fails; freeze holds write lock
+                                      - quota flush retries exhausted
+                                      - set CP_QUOTA_NEED_FSCK_FLAG
+
+During the PAGEFAULT sync pass, freeze_super() holds s_umount for
+write, but umount_lock_holder is not set until f2fs_freeze().  Thus
+quota writeback tries to acquire s_umount again and can exhaust retries.
+
+With checkpoint merge enabled, f2fs_issue_checkpoint() may dispatch
+CP_SYNC to f2fs_ckpt. That thread also cannot acquire the freeze lock.
+
+Record current as umount_lock_holder around the VFS PAGEFAULT sync so
+checkpoint runs in the freeze caller and quota flush uses its existing
+s_umount write lock.
+
+Fixes: eb85c2410d6f ("f2fs: quota: fix to avoid warning in dquot_writeback_dquots()")
+Signed-off-by: Jianan Huang <jnhuang95@gmail.com>
+---
+Changes since v1:
+- Add a separate VFS sync_fs wrapper to avoid renaming f2fs_sync_fs().
+
+ fs/f2fs/super.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 00da08504d55..fa105ca14653 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2146,6 +2146,25 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
+ 	return err;
+ }
+ 
++static int f2fs_sync_fs_super(struct super_block *sb, int sync)
++{
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	bool freeze_sync = sync &&
++			sb->s_writers.frozen == SB_FREEZE_PAGEFAULT;
++	int err;
++
++	/* freeze_super() holds s_umount for write during this sync pass. */
++	if (freeze_sync)
++		sbi->umount_lock_holder = current;
++
++	err = f2fs_sync_fs(sb, sync);
++
++	if (freeze_sync)
++		sbi->umount_lock_holder = NULL;
++
++	return err;
++}
++
+ static int f2fs_freeze(struct super_block *sb)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -3757,7 +3776,7 @@ static const struct super_operations f2fs_sops = {
+ #endif
+ 	.evict_inode	= f2fs_evict_inode,
+ 	.put_super	= f2fs_put_super,
+-	.sync_fs	= f2fs_sync_fs,
++	.sync_fs	= f2fs_sync_fs_super,
+ 	.freeze_fs	= f2fs_freeze,
+ 	.unfreeze_fs	= f2fs_unfreeze,
+ 	.statfs		= f2fs_statfs,
 -- 
-Thanks,
-Sasha
+2.43.0
+
 
 
 _______________________________________________
