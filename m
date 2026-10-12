@@ -4,80 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4CDCCA9EBD
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 03:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3CA32CA9EBB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 03:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=cL97B9CCpqfYwPwokTTxpFH10wyz9Y2HWxylVI0bIfE=; b=W3mkj0zloIjBXVTqNgYhSDzCM2
-	7jOiPvCG6upd/mWaam6okI1FD8jgIMyF9xk/9zQ2mHqb6/UQEH0M2VuPLcJt+xxQgJE8svvBsmQ9y
-	6TVO051VHQZFLbcZBBGO6M1ddKpWs3TbfuC1idhSsB4D1O+apEG1CCkmNodhgj4+w27c=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=oYQrh9xAiqNiM12+q3QE18UMFbTjk4Auevqu/InNq1c=; b=BauFjBIN7OqhW9ti118CeARTqa
+	TgSY1v+arTWmd4nUF+4GnwReN9VRRmTgU1oB6KZU6gaaZorsjwfO8+TtPN7ZZRi3p0hKXceLIwkJL
+	1ulKdR3VtuWajWkac03bU3Wv6OBaGyEBR9UDC3H3FdT/hsDlzDLAwS+c8blAVoOoD0E8=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xG6N6-0005eH-AU;
-	Mon, 12 Oct 2026 03:06:41 +0000
+	id 1xG6iB-0002cl-Rf;
+	Mon, 12 Oct 2026 03:28:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xG6N5-0005eB-2f
+ (envelope-from <nzzhao@126.com>) id 1xG6hy-0002cW-EU
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Oct 2026 03:06:39 +0000
+ Mon, 12 Oct 2026 03:28:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=n9ZRVZAhPl0REZUvWy9Yao07ThdaPGKA/SPLB+UrlLQ=; b=EcSo7xBf5SSFnTYmPIpOcOXd0J
- 7ploOAvu5kD5sp0mdb+dmzEQT8S27He7S6qIS2Rm4NdpM92GONrsmhyfQHRMqxXZXaWfE4SgwUth+
- xXcaQezsek8QcPU4ODtLBqOvD+IhEjN4ea9FA0kEzsHtsGD55S+xzXEGEa2AOaP/OwvA=;
+ d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+ Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+ Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=GHHdCBbvsJkfjljitJdjv/XMRgi7CMj6eI9DeUjJ3AM=; b=MxuEv7UV6Tmmd29m7VDCOkXsk7
+ 9mIH0xPI2YwoCDXU6rw7baiiWs1CM5n6yPJW4jLL6MANjkEJ49FrjIGWjnl2ECSb3tLIusqxg+Wmi
+ wWZ1ycqOykTREjyKFwCJ06FqgNnL0Bt5fM9UgYQOu/Xq4aiGysmQQ0P1eRGcGswT1Edk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Sender:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=n9ZRVZAhPl0REZUvWy9Yao07ThdaPGKA/SPLB+UrlLQ=; b=RnIo+7fm7JQj3RG6xTSyWWrymU
- 3Q8agQ5bmC9zKzTb/3f0aoPOzxl4Hm7jSVd57EMLSUk1PReyZ92Ir0qJOD88eoOzuXf/SIlt1JOJX
- Rg0VkcpYmgcn6vbWIBcGf2QDLPd003W/kHygyAcBc9dEHRhHfH2VgBYyNNyR8mwnpPM8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=GHHdCBbvsJkfjljitJdjv/XMRgi7CMj6eI9DeUjJ3AM=; b=Sqmt/VGwejZd5BHSFdbCADREra
+ X1awxmC1CFORz4hewc89te6IloRij8AZtzU3Qt6uR/mQQRzDRmMGKXicvXmhcOav1CRJmxPVTxnEc
+ OFCpVy6aTZh+jTzNPaEpUZQEYVjck/EyU7cIPNtOitT+oP8Kq6eDU1l/GdtPixhovT+k=;
+Received: from m16.mail.126.com ([220.197.31.8])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xG6N5-0003mJ-Df for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Oct 2026 03:06:39 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id E2AAD41808;
- Mon, 12 Oct 2026 03:06:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2C51F0089B;
- Mon, 12 Oct 2026 03:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791774393;
- bh=n9ZRVZAhPl0REZUvWy9Yao07ThdaPGKA/SPLB+UrlLQ=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=fkHjlQ+WdOiIsPLnMTSxK89S6+KXM2Kfu37oDdOHwd+qyvL7oUiULjfq+avuvWwdH
- Aw67iK23Duv9PQpG27FaE2/oZqRkiUlfkx/mkxZUp2PFHTklEWddSg61fQNNCT1BPk
- c+TnUAuKDGPN1UyRqCRKeZT6nTqm7SZrCblkhZX40ES63GkQltMUAnvEMHXFJRV7Ch
- sWtjjYJcS4mtoAZBkEWXBXOwBvPqYDYrQmFdBvmL/pCJVw3SIWp0SU8hvradm7hOpK
- hfTb+gFNnYFv9ocg3ld0b0VWjm81ehOR9TMZNQZ1VS17eFGVBPq4XLcvwvrfteZHme
- 00+mj+Wiq596A==
-Message-ID: <e12debf8-87d0-4c17-8973-98e950c2047f@kernel.org>
-Date: Mon, 12 Oct 2026 11:06:27 +0800
+ id 1xG6hv-00048i-2M for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Oct 2026 03:28:11 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=GH
+ HdCBbvsJkfjljitJdjv/XMRgi7CMj6eI9DeUjJ3AM=; b=ZiXXKS7uHd3jvFOXou
+ 4SkbEl1R4CUgoRNMDpEbmKcmFPwUSqgiASSB0il1AdB22H430ju1FNhe7mkOm3AQ
+ HAIi2Yhb5LqEGXenTkg89XncdYlu4e7WMZXBgA2KaT7AktbcDDSc07n7m4pfTizr
+ qSuyoK4H8biD6BJGbYZvihGi4=
+Received: from nzzhao-ThinkCentre-M760t.mioffice.cn (unknown [])
+ by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id
+ _____wD3V9G0U8xq9Kp6BA--.43892S2; 
+ Mon, 12 Oct 2026 11:27:48 +0800 (CST)
+To: Barry Song <baohua@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 12 Oct 2026 11:27:47 +0800
+Message-ID: <20261012032747.1039225-1-zhaonanzhe@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAGsJ_4y-9mmwjjb3UAb4=meONcn_SjYVgDuQJJ5QbdA-3Y=XeQ@mail.gmail.com>
+References: <CAGsJ_4y-9mmwjjb3UAb4=meONcn_SjYVgDuQJJ5QbdA-3Y=XeQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20261009161224.4163796-1-zhaonanzhe@xiaomi.com>
- <20261009161224.4163796-5-zhaonanzhe@xiaomi.com>
-Content-Language: en-US
-In-Reply-To: <20261009161224.4163796-5-zhaonanzhe@xiaomi.com>
-X-Headers-End: 1xG6N5-0003mJ-Df
-Subject: Re: [f2fs-dev] [PATCH v3 04/17] f2fs: support atomic file large
- folios buffered write
+X-CM-TRANSID: _____wD3V9G0U8xq9Kp6BA--.43892S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+ VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RKa0mUUUUU
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBohTPn2rMU7S3rQAA39
+X-Headers-End: 1xG6hv-00048i-2M
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: remove mappedtodisk flag usage in
+ mmap write path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,51 +86,19 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Daeho Jeong <daehojeong@google.com>, Dev Jain <Dev.Jain@arm.com>,
- linux-kernel@vger.kernel.org, David Hildenbrand <David.Hildenbrand@arm.com>,
- Bo Zhang <zhangbo56@xiaomi.com>, Kalesh Singh <kaleshsingh@google.com>,
- Nanzhe Zhao <nzzhao@126.com>, Pengfei Li <lipengfei28@xiaomi.com>,
- Ryan Roberts <Ryan.Roberts@arm.com>
+From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 10/10/26 00:12, Nanzhe Zhao wrote:
-> +	/* If index is beyond the end of file, reserve a new block in COW inode */
-> +	if ((index << PAGE_SHIFT) >= i_size_read(inode))
+Hi Barry,
 
-Can you please check all "xxx << PAGE_SHIFT" statements in patchset to see if there
-is overflow issue?
+Thanks for the review. I have sent the patch v3 with the reworded commit message:
 
-> +	if (f2fs_folio_may_unlock_balance_fs(folio, mapping, need_balance)) {
->   		folio_unlock(folio);
-> -		f2fs_balance_fs(sbi, true);
-> -		folio_lock(folio);
-> -		if (folio->mapping != mapping) {
-> -			/* The folio got truncated from under us */
-> -			folio_unlock(folio);
-> -			folio_put(folio);
-> -			goto repeat;
-> -		}
-> +		folio_put(folio);
+https://lore.kernel.org/linux-f2fs-devel/20261012030315.978375-1-zhaonanzhe@xiaomi.com/
 
-Then we can call f2fs_folio_put(, true) to clean up the codes?
-
->   	if (folio_test_large(folio)) {
-> -		err = prepare_large_folio_write_begin(inode,
-> +		if (f2fs_is_atomic_file(inode))
-> +			err = prepare_large_folio_atomic_write_begin(inode,
-> +					mapping, folio, pos, len);
-> +		else
-> +			err = prepare_large_folio_write_begin(inode,
->   					folio, pos, blen);
-
-Same question as it in 03/17, can we relocate?
-
-Thanks,
 
 
 _______________________________________________
