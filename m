@@ -4,95 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AA8D1CA9EC5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 15:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D77FBCA9ED0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 18:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-Id:MIME-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=sowIul4Oml/ddul1SQWfp8+TGy9f4q+dmS0WdOaT1is=; b=Y31lPe1ya5MTOCvAPxj333st02
-	pSBBOPZIbVuBio+Ck3lgUXX7MoHDpnWLZ/P1IfRpjbRosmymP7OqWIK8PTScPq2qY17QmVW5sUjNj
-	x9zCQvNL4XUkFexAwnc5Itd1EZ/sAcbGBm6PULh/eKsVA532kTNwhGpBRP5u7ZmgJvpU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=mfk74nzrVZgkQ4pcz6ftzGJz0K2uQz2dEZIPuoB4h2k=; b=RtiSjVGg/7JVBIov17Zhq34rH4
+	i1rzdXmP/wy2kJKrqYyIJgVUSlGzk6HX/DPwbG6QBvA1aON72V9kvnFvjaVdOmjnkZKWNTPMPXcyC
+	w+F8cnjduXX3v/TUVZcPZCrq+UIT+Gz4fd+YBg3TrNRquwbkzY4mTVToRTBHL3wIDCvk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGIEV-0002XW-OV;
-	Mon, 12 Oct 2026 15:46:35 +0000
+	id 1xGKgE-0008G7-J0;
+	Mon, 12 Oct 2026 18:23:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1xGIEM-0002XK-2z
+ (envelope-from <daeho43@gmail.com>) id 1xGKfl-0008FS-5R
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Oct 2026 15:46:26 +0000
+ Mon, 12 Oct 2026 18:22:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Message-Id:Content-Transfer-Encoding:
- Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=etgzfBpuaaj+cySZG8Ntkb7v7DpcXVXb4LYAEZaIZto=; b=Y3U+9KLd8yL5MQst4GwFOQcs/t
- B6B3xVwFnjnK4KtTwvXblvB2ngZ9rqDinru4G9aQHi9XNc/czu2DHuw37wqENG01RznCw6X9DvwiX
- Ah1h/ziukXphQMVRQiBoDf0oSaIc/pAUZxZMsOw37LfJUUuoCujEP33EQeZBJ6EOQd1w=;
+ bh=gbZDE8rwgwP6vxNIiACurdFD3ae7zMp/sZ7U8r6EHqw=; b=OK1whHXBl9u7Lqkwivj22NKPA6
+ PExJC62wJC4oYK7J36CwYcnsQ9dF6PTLosI6VR5CPuPrcoYuMdvZynRYjosEZYN6UVL7ozYGF6hBH
+ BEpknJYDTYULcSenMqQFDK/JE1zx9pPFKmb1VJTLfgBiT7XigeAULvbvdfdEj89fMI+U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:
- Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=etgzfBpuaaj+cySZG8Ntkb7v7DpcXVXb4LYAEZaIZto=; b=Y
- LifbpGdLwsVMheeRieQz29+k/LnGb6olE16XuQQG6GAEn2pCatiKxi5jBctcrEfM+hvTlO9uswR0Q
- SJP93fivw0faEgacaDrT0lp9ZUtBH9CtRMFApNhiEP3NH/QCFcX21QblAjxp6tyQhG/e8dfFbHbuZ
- AjSNpz87eT9O/ELI=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ List-Owner:List-Archive; bh=gbZDE8rwgwP6vxNIiACurdFD3ae7zMp/sZ7U8r6EHqw=; b=E
+ lpwKKFJHNXy4JngVDKflZUVsJPLgUW11PSnAwNnuVY+bgkFAN6XSa4Kz5QthnhYP9HoUoB6hn3dCk
+ yBsLqt1zRif9l7kiTQyz7flrVeW8Hu3xvhVR8JN0dk1BtkjfVfn31Xy4eTfT+wRhiGl7o7mWa7Ajr
+ 27Hi239tOgv9uig8=;
+Received: from mail-pg1-f178.google.com ([209.85.215.178])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGIEK-0008Ix-Lu for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Oct 2026 15:46:26 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 593AE41897
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xGKfh-0004Ns-BW for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Oct 2026 18:22:50 +0000
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-cc4aa0246b7so901237a12.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 12 Oct 2026 15:46:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C09011F0089B;
- Mon, 12 Oct 2026 15:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791819979;
- bh=etgzfBpuaaj+cySZG8Ntkb7v7DpcXVXb4LYAEZaIZto=;
- h=From:Date:Subject:To:Cc;
- b=BpoZHBQ38wo3x0mhzk0kwn6g36OoW8AMGYsKUwPoVGDRdoc/zfu7oprOZBXGrE9xk
- thlmDeJC5JAEhRYhEHvBV4xkZzV23ZtYuj+BKDaKADj5P/8UycDZrGdxIW3FV5FxUE
- UneXk42MOqmSdWOcz8cYH2mey+pG5EIfw3LJ1a1KKme91VhdB0Wl5I8Lwe+T8PFGfb
- wa7VK7pvFOlDbaT4iuxtaIT3oun4z71XISttdcqlZ+MSHp0DFJQFxn+FBMdyzaRjHS
- QguwdT2kEyk2gYS5Yhw/E7pJCSxNFzEPJAnMDhfwlMPqgKegywJFDH9V82Ejqn22vc
- 9mZN9B2Dm8ddg==
-Date: Mon, 12 Oct 2026 11:46:10 -0400
+ Mon, 12 Oct 2026 11:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1791829364; x=1792434164; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=gbZDE8rwgwP6vxNIiACurdFD3ae7zMp/sZ7U8r6EHqw=;
+ b=sq8TV1SJ3WDQQggnwFfe2BYLsqOxI8MeVFS5fC99KqVHF4MKQzSU8xASAmU1gTuh3s
+ 0urueYbXUQXLWYJJonfdWk5WscbmV6nVpYcV6eAod/GnQ03aGve+2h532xh7cPQqI3Cu
+ Fipms8EQAM3xsndfc9DlFCWGsf6WZQ6w4vOx7HlQKsoWDbffZLiqGAuYbZSlfMT4o2xC
+ 2OkMYyAJFcZhPNBNrMAg+VukENXuNcuDKqp/PPMJ/VIwaUhwkb6jH2UqggXuTHtQ0CQm
+ KtH/ypWMc4kyAwcIrIE/2QsW0+o+LuqoJyaFv1XI193hecQhzhLSCco5jDOohCQc+rVh
+ W5/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791829364; x=1792434164;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=gbZDE8rwgwP6vxNIiACurdFD3ae7zMp/sZ7U8r6EHqw=;
+ b=kmuN9opzpbRRnk0JJ3Faw8m5pe5sb22W9xT8D02+7YK0BY6CnDr5fFnjMmLzbmUorW
+ meXvTXqJwL6efyIN+f6t/MLNOx+qYXnU1qJ452LQwlLGYpewzjPKYWGkxFzvMne3oGdb
+ mLA9ZQr3PEUWjMWRAp3AYuLGSqaWwhXg3Nm1U6YZKd+PEMxflRKG0RqJO+oIU3xA8yS/
+ f67LiRhyiOq4ygKCpHj6EaTROU1K9w14Uqa0SAW9XW88cZoBVTqA7YWnfAY2qS3zpLVM
+ AmBpDWeKrmcJqAkBuIErZGnzPI70Wbt1dYH/vAWfghNTr6Ybjr+44MYb0HMEs5d60vFK
+ 2lLA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwWSyb7B5vGPTOOInizTSBBbyNXHVX6Lfa3oBHKpaf/44GTpsdPC1t4Uqm92P3x6P8+DWTeEq0bS7M3CRnTKGb6@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYL/9/C/b9XTywTfVzQWCGVfYMcttVP+W7QPNHrr76lToOKsbUBT
+ XFmqRufvyakKKYDDR+mYUM9g4GWQB6lrALF8Byw98VOnMOacnisPCOYb79Isbw==
+X-Gm-Gg: AYBFou1RMxdRrx8pZ01zOmcWH2Hdsg0r14jjuZ3YprrSZFLx7XjbprmokO+xlcDaKyr
+ nTePAhRfEvT82LlHWtRqi0dPtj7GySUDo2d8c9CHy98GBcbgwvoScKENq//JZ3KQGtl5fs5LT1k
+ TM4CluGKS9/r25s0/Ouso3n7Cnzeeb+tsTYq05efaXU2shnUUBOoGMaCDvR2TtWOj/iWWiPtleF
+ 8DwXwcNadtr0/pB3stAQGnpkxgKx0fNPeIHxt4flAr/XigVBV6Cm3lv0F7iz9EWH7r+Y0EpBOAT
+ Je3iZA/6u1Z1iNJyMV93Bx/cnFkUAIbfQ6Fj2etssru7eZIC3nUP0vNvjWFAT0t+LkNShuDZcRA
+ drP4QvqrEf/3letia2Vd3xVuG9P/cntpzxICBpfxR9tVmSwqblxW0mOAQ2bL2wfJrQ5bq7Vr8Th
+ IEKFjCoR63RQyfLLETNy+cUq1IT1EJIbGpkijLZkwfcsGQBKkR0Voox3AW5I87BXkQsmRKRtjHq
+ wexzsvEtaK1GwJpFP6BxeJj3Hj6/l4tFg8SX6dM3LhNXsi0VZjumJ0C1HjTlbA326pbh49wi49e
+ FJ2EKof5iyHo8N1kVp68ocSsNA==
+X-Received: by 2002:a17:903:476f:b0:2e7:94fb:262 with SMTP id
+ d9443c01a7336-2e842ce2a76mr76278985ad.43.1791829363505; 
+ Mon, 12 Oct 2026 11:22:43 -0700 (PDT)
+Received: from f2fs-test.c.googlers.com.com
+ (225.134.16.34.bc.googleusercontent.com. [34.16.134.225])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e841a009a7sm46451645ad.11.2026.10.12.11.22.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 12 Oct 2026 11:22:41 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Mon, 12 Oct 2026 18:22:33 +0000
+Message-ID: <20261012182233.2685282-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.56.0.385.gd3acb90ef8-goog
 MIME-Version: 1.0
-Message-Id: <20261012-mgtime-f2fs-v1-1-a934ef646c44@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDC0NT3dz0kszcVN00o7Ri3cREk0Qjg5REw2TDJCWgjoKi1LTMCrBp0bG
- 1tQCxYb6JXQAAAA==
-X-Change-ID: 20260815-mgtime-f2fs-aa4a20da1c1b
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2320; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=/pmaFO0/r973GUxNK0BC9x/YwBobKQEpEqwEyNX/hFQ=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBqzQDKQP+W13Upb7oA1KbdCiEVR3HC6BiuiTeWH
- NgRNDXgupOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCas0AygAKCRAADmhBGVaC
- FUrCD/9mwE8gB6f33Dy6XBwn5SIS4s0tpENweEU4JT8G65ZuB57NNC6O0T5nAfyr1Cg0EmuuKjV
- h/Yb4yixHrDpCKYuMQ4uVhvwloRZx+vkj64qAV8s2eMWHDjJkF8UEmni1GordMh966wlajTm1vf
- +LH5z3KnXx9lC0yQlpHbrgnx/8tEQStYfWsk2cOR5B9GN7hXS54f2kpChoDsWnVVo4st3kICPor
- KXym54AMayJ3gO7Egmi2vLvRcjhkpJ3IW5FRgI2k6DGgBgWB7OLt/zee5h/lR8GWtOd3vBoeUTI
- VQLRAzSewNAgUtaXaI9Bsa17RQ5eqXC3aJsxFuUypfqoUAOvOnS/YWvw/i9I5RePyFXTpi6uXj3
- z1DK4FzTXstDwzxXEu1iLS6KvlEVP1BvEvipkiClIUra4KkMjXXQfEYA4E5fyRSo4/kubhOsnYX
- araUa8XZAruPDypwE8BvcIQuS7qaIPHQbGqrx4UTRtfMbkBJ1Gt4cTdPCf6WVKq3rxczmJxme58
- 8WnLOAs/u7aYd9GYPNz4j1KW1ZSOJoeJMZB1NsqpBU3St6MfKF7XzSlhAOVm7KM9b9ScaDw89+L
- goWJNcFDkkaGqUZ+F/B04B7uqf7ZF3dsI4aYvMqEHRcnqDBVIfCpHaQbuewcABDWi24iv2YZ1tG
- ifyBShBLq1gl3FQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1xGIEK-0008Ix-Lu
-Subject: [f2fs-dev] [PATCH] f2fs: opt in to multigrain timestamps
+X-Headers-End: 1xGKfh-0004Ns-BW
+Subject: [f2fs-dev] [PATCH] f2fs: return -EIO for a lost inode block after
+ cp_error
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,84 +120,62 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jeff Layton via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Set FS_MGTIME on f2fs_fs_type.
+From: Daeho Jeong <daehojeong@google.com>
 
-f2fs meets the multigrain requirements:
-- ctime updates use inode_set_ctime_current()
-- f2fs_getattr() calls generic_fillattr()
-- f2fs_setattr() calls setattr_copy()
-- s_time_gran is 1ns
+After cp_error, dirty node caches are dropped without being written.
+If such an inode was never written, its NAT entry is still NEW_ADDR,
+and reading its inode block returns -ENOENT.
 
-Exception: with CONFIG_F2FS_FS_POSIX_ACL, f2fs_setattr() uses a local
-__setattr_copy() that sets timestamps directly, bypassing
-setattr_copy_mgtime(). Make it call setattr_copy() with ATTR_MODE
-cleared, then do the f2fs mode/ACL handling as before. ACL builds now
-also honor ATTR_CTIME_SET via inode_set_ctime_deleg(), as non-ACL
-builds already do.
+f2fs_get_dnode_of_data() passes that -ENOENT up, and callers take it
+as a hole. Since the inode block is missing, the next offset can only
+advance one block, so fiemap walks block by block up to maxbytes,
+about 2^30 blocks, while holding the inode lock. It took hours in a
+power-off recovery test after shutdown and blocked unlink and umount
+on the file.
 
-Assisted-by: LLM
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Return -EIO instead of -ENOENT when the inode block itself is missing
+after cp_error or shutdown. A missing direct or indirect node is still
+reported as -ENOENT.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/file.c  | 14 +++++---------
- fs/f2fs/super.c |  2 +-
- 2 files changed, 6 insertions(+), 10 deletions(-)
+ fs/f2fs/node.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index edc352569e87..71211244f42f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1100,17 +1100,13 @@ static void __setattr_copy(struct mnt_idmap *idmap,
- 			   struct inode *inode, const struct iattr *attr)
- {
- 	unsigned int ia_valid = attr->ia_valid;
-+	struct iattr sattr = *attr;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index be14dfa31e5..55008f18afd 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -832,8 +832,20 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
  
--	i_uid_update(idmap, attr, inode);
--	i_gid_update(idmap, attr, inode);
--	if (ia_valid & ATTR_ATIME)
--		inode_set_atime_to_ts(inode, attr->ia_atime);
--	if (ia_valid & ATTR_MTIME)
--		inode_set_mtime_to_ts(inode, attr->ia_mtime);
--	if (ia_valid & ATTR_CTIME)
--		inode_set_ctime_to_ts(inode, attr->ia_ctime);
-+	sattr.ia_valid &= ~ATTR_MODE;
-+
-+	setattr_copy(idmap, inode, &sattr);
- 	if (ia_valid & ATTR_MODE) {
--		umode_t mode = attr->ia_mode;
-+		umode_t mode = sattr.ia_mode;
- 
- 		if (!in_group_or_capable(idmap, inode, i_gid_into_vfsgid(idmap, inode)))
- 			mode &= ~S_ISGID;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1314b6ccced9..535666bfa50c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -5699,7 +5699,7 @@ static struct file_system_type f2fs_fs_type = {
- 	.name		= "f2fs",
- 	.init_fs_context = f2fs_init_fs_context,
- 	.kill_sb	= kill_f2fs_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- MODULE_ALIAS_FS("f2fs");
- 
-
----
-base-commit: d5b6dc381db93ff2d1888f7d99c06e0bd85f4083
-change-id: 20260815-mgtime-f2fs-aa4a20da1c1b
-
-Best regards,
+ 	if (!dn->inode_entry) {
+ 		nentry[0] = f2fs_get_inode_cache(sbi, nids[0]);
+-		if (IS_ERR(nentry[0]))
+-			return PTR_ERR(nentry[0]);
++		if (IS_ERR(nentry[0])) {
++			err = PTR_ERR(nentry[0]);
++			/*
++			 * cp_error drops dirty node caches, so the inode block
++			 * of an inode that was never written reads as NEW_ADDR
++			 * and returns -ENOENT. It is not a hole; the inode is
++			 * gone. Callers treat -ENOENT as a hole and keep
++			 * looking block by block (e.g. fiemap up to maxbytes).
++			 */
++			if (err == -ENOENT && (f2fs_cp_error(sbi) ||
++					is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN)))
++				err = -EIO;
++			return err;
++		}
+ 	} else {
+ 		nentry[0] = dn->inode_entry;
+ 	}
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.56.0.385.gd3acb90ef8-goog
 
 
 
