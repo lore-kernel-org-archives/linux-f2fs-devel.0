@@ -4,75 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4F5DFCA9ED0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 09:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CC99BCA9ED1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2026 09:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=gXV6GS7lcH9UUqtspl471R12x1R93KTnwgkfY/bRjUU=; b=QIGGAlKbJFUyOtNjqkyCvzNJ1Y
-	qyHH2tXmVwltYtYTMpDzTOwkkJ/3+YAQFBqHdNKtVPgn3SIlq7krF6BWeR5QfqwXi9y/9MMxJJRhF
-	yWQRMb0hwL1Sy3FhrXr4wCDDiQyh3W9LRDjcvFFuFwBAup5svdBklGqqdt1561sWCaDE=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=DeJVHyikW/x2UvGiUOcca/bwxgeohZxcCR5EyObukms=; b=E9/PIslLAgB5IrWmVyvSdJgfmf
+	6lDzfnVMdlpXadL+l/91ihCyuhuYQiIFfiUfPZSbl8g5DySfK76Euv/D8zewlYoyx4MbEydFvD47s
+	qDyN/q9QXEGHCLvMJtIUDi5teHIJZ5F3fCFe8tg91P15NL+iKh1yCvzokeGRgayX8e3k=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGCAU-0000kk-Dm;
-	Mon, 12 Oct 2026 09:18:03 +0000
+	id 1xGCHi-0001Ot-2D;
+	Mon, 12 Oct 2026 09:25:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xGCAS-0000kU-ML
+ (envelope-from <chao@kernel.org>) id 1xGCHT-0001NN-E7
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Oct 2026 09:18:01 +0000
+ Mon, 12 Oct 2026 09:25:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gT3Ud09meFB3kUMvE/7JMtDXtX7QL+6/HzUw8GPVB4E=; b=WNtw4KlLzKlNl8TR0Ft6LfjcfT
- WDdzi+lJ29XYRTCgSIzZhjQnH4oZw1MvCYs1os1ZRnxYyVuhwEsLNwIuiMYMr+1l4yKjBYlfRRYq9
- h/wMFEpTUg2MhJYlfio0s5YI2O0HIbFnRriNmh4PWOnh9NVZ4k5hFFvEfrGVm4Jy8oDU=;
+ bh=0PKUd2tYPRTuC5yA1fFc//1j3Cjcv14nzwJE45Zv7sM=; b=WsngekrnnmVdL442xyyjV8xDPl
+ 2ALuIUmiTK+4MWeP4ipX/+mr+ypU7GYDYwE+m9fV312jYJgFTf4tnABN6ZuQkz7r0H48QNZXZ5CcV
+ I2TOR6/WIOqKAJLJEIfcidEqmd7JxHgfnSj8pMbW7aZhzXt9NwdM5yCbHKk68bHYkXaY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=gT3Ud09meFB3kUMvE/7JMtDXtX7QL+6/HzUw8GPVB4E=; b=O
- jbRAZISAc1zUT/oFB6OCAIPyDeqvy803D/D0wcuHqf1rMBmP2z4YGq/331DUbF+kekrhnS0hNX+Es
- mguyPJv8w0fH8CTJEE33Mov+CnCHFC5CGb/8kRBDIhd7CfYk/dkz+EzbaDA9PqdKVMAdQ3IMC5Dlx
- dkfxlJ1IjlDGImFE=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=0PKUd2tYPRTuC5yA1fFc//1j3Cjcv14nzwJE45Zv7sM=; b=b24EiKInSO9s2NMYBMZTGZ3EWm
+ kRMaQ5vdRybCOpW5uOrNqsFCExHd4tOz64BYiB7xAEKp8T2EyWy4iXA+znOkzTViPM0JHEY1wq6ab
+ QiDB61kjye1/M9fLvth4ZPftNhuyFEqnkxs6YQh2fzfshP+d0Gfy8oLZuYYrVONoRNjQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGCAR-0005Qi-Vj for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Oct 2026 09:18:01 +0000
+ id 1xGCHR-0003a0-9J for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Oct 2026 09:25:15 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 75EC140BB9;
- Mon, 12 Oct 2026 09:17:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 375981F0089B;
- Mon, 12 Oct 2026 09:17:53 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id DF0C240209;
+ Mon, 12 Oct 2026 09:25:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350C31F0089B;
+ Mon, 12 Oct 2026 09:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791796674;
- bh=gT3Ud09meFB3kUMvE/7JMtDXtX7QL+6/HzUw8GPVB4E=;
- h=From:To:Cc:Subject:Date;
- b=hhhCQ2TPs8MTRrcJ/1lYhMWmGe1uMXQXINoT40yqbjNjNP/U0WOYUXSaluI/+hhUs
- 4e4HwhVmN2OssJnkJZ2B5nPJPn61k4O4r6ywS9i+Svcv/wKbbOoSeGp4IAfkC6A/2o
- SSGT/yzNzCYJGWP4Ond0rAzgoB06rXuTVs8gBPVfhGk2OdIOxmRexr5cRYP1peDd+F
- Qwgc1YaHyIPc/9gd0WNqr+UnDB/k7HgE1jsydUv2el6A3uOdpXEjObPmR05PskEhj5
- SYol90j3GSox1YuHOU25jUmlrNJ0MYtLdyd/bjmmwAEobuDWvVWP+8p4veNUB32D0F
- 5IAtYa4LZGXUg==
-To: jaegeuk@kernel.org
-Date: Mon, 12 Oct 2026 09:17:37 +0000
-Message-ID: <20261012091737.308136-1-chao@kernel.org>
-X-Mailer: git-send-email 2.56.0.385.gd3acb90ef8-goog
+ s=k20260515; t=1791797107;
+ bh=0PKUd2tYPRTuC5yA1fFc//1j3Cjcv14nzwJE45Zv7sM=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=FyiS94XEshUNU+NDRYiayutlJ5/K4I53pGGTAFoseU7K1NZNLqozVRp7cXZhGTjqm
+ RJkzGG+/bJs4l7SH+UGNGyojbH9PH+vGr0O+OeH00FZwmQrOevGlavMYcoeCKH7+yD
+ hJLSU74qhLV3tawIQ9XhHbENPkj2XtJ7fGgbPKncAn4jipqKDBiWW6NL+Z4bCzSqgV
+ EBn69wMfX/x8mLZ4MgbEDYnCmMKBjhpDF/uJu+RXmFjV9SKbvyAsUqEk7y1jr2f+L/
+ I4mmxLgZHQyNq7luH3B3PEMHtFWYmd1ygzUYTVy0t0guPTvJJyqBWOJq0hm/YObEeK
+ Vu2KQiJlnfgKQ==
+Message-ID: <6cb0ccd5-bd2e-49e9-9f87-83b4302d110b@kernel.org>
+Date: Mon, 12 Oct 2026 17:25:03 +0800
 MIME-Version: 1.0
-X-Headers-End: 1xGCAR-0005Qi-Vj
-Subject: [f2fs-dev] [PATCH v3 3/5] f2fs: cache: wake up f2fs_writeback when
- exceeding threshold
+User-Agent: Mozilla Thunderbird
+To: Daeho Jeong <daeho43@gmail.com>
+References: <20261007193131.1785199-1-daeho43@gmail.com>
+ <dabc2517-6915-4df6-b638-9a7ec14efe70@kernel.org>
+ <CACOAw_wrHCPq=fxo4Zbpi4tmtDrYkWYdjvM3q7ySh2AxkaHqVg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CACOAw_wrHCPq=fxo4Zbpi4tmtDrYkWYdjvM3q7ySh2AxkaHqVg@mail.gmail.com>
+X-Headers-End: 1xGCHR-0003a0-9J
+Subject: Re: [f2fs-dev] [PATCH] f2fs: cache: wake up the writeback thread
+ while checkpoint is disabled
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,445 +91,192 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
- Wenjie Qi <qiwenjie@xiaomi.com>, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao@kernel.org>
-
-This patch introduces cache_wb_dirty_threshold and cache_wb_total_threshold
-sysfs nodes under /sys/fs/f2fs/<disk>/, and wakes up the f2fs_writeback
-kthread when dirty meta/node caches exceed cache_wb_dirty_threshold and
-total cached entries exceed cache_wb_total_threshold; a zero threshold
-disables the corresponding check. By default, cache_wb_dirty_threshold is
-8192 and cache_wb_total_threshold is 0.
-
-If both thresholds are zero, f2fs_writeback only runs periodically, unless
-checkpoint is disabled, as nothing else will flush dirty caches then.
-
-f2fs_writeback won't be woken up unless there are enough dirty caches for
-f2fs_write_{meta,node}_caches() to gather. And if thresholds are exceeded
-but one round fails to write any caches, e.g. due to cp_error, freezing,
-frozen fs, or lock contention, threshold based wakeup is throttled until
-a later round makes progress, in order to avoid busy-looping. To detect
-progress, introduce a new parameter for f2fs_write_{meta,node}_caches()
-and f2fs_writeback_node_caches() to return the number of caches submitted
-for writeback.
-
-Thanks Daeho and Wenjie for help and suggestion on this patch.
-
-Suggested-by: Daeho Jeong <daehojeong@google.com>
-Suggested-by: Wenjie Qi <qiwenjie@xiaomi.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v3:
-- fix to throttle cache writeback in f2fs_writeback
-- fix to handle chckpoint disable case correctly
- Documentation/ABI/testing/sysfs-fs-f2fs |  21 ++++
- fs/f2fs/cache.c                         | 124 ++++++++++++++++++++++--
- fs/f2fs/cache.h                         |   6 ++
- fs/f2fs/checkpoint.c                    |  10 +-
- fs/f2fs/f2fs.h                          |   7 +-
- fs/f2fs/node.c                          |  11 ++-
- fs/f2fs/sysfs.c                         |   8 +-
- 7 files changed, 171 insertions(+), 16 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 5b196806b3bc..3d2e78a8bb7d 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -1027,3 +1027,24 @@ Contact:	"Chao Yu" <chao@kernel.org>
- Description:	This is a writable entry to control writeback interval of
- 		f2fs_writeback-x:y, the range is [100, 30000], by default the value
- 		is 5000, unit is ms.
-+
-+What:		/sys/fs/f2fs/<disk>/cache_wb_dirty_threshold
-+Date:		October 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This is a writable entry for metadata cache. f2fs_writeback-x:y
-+		will be woken up for writeback once the number of dirty meta and
-+		node caches reaches this value. 0 disables this check. By default
-+		the value is 8192, unit is cache entries.
-+
-+What:		/sys/fs/f2fs/<disk>/cache_wb_total_threshold
-+Date:		October 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This is a writable entry for metadata cache. f2fs_writeback-x:y
-+		will be woken up for writeback only if the total number of cached
-+		entries also reaches this value. 0 disables this check. By default
-+		the value is 0, unit is cache entries.
-+
-+		If both cache_wb_dirty_threshold and cache_wb_total_threshold are
-+		0, f2fs_writeback-x:y only runs every cache_wb_interval, unless
-+		checkpoint is disabled, in which case it will still be woken up
-+		once there are enough dirty caches to be gathered for writeback.
-diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-index f385fe928b5b..c53dc4629ac2 100644
---- a/fs/f2fs/cache.c
-+++ b/fs/f2fs/cache.c
-@@ -81,6 +81,7 @@ bool f2fs_mark_cache_dirty(struct f2fs_cached_block *entry)
- 		f2fs_cache_update_tag(entry, F2FS_CACHE_TAG_NONE,
- 						F2FS_CACHE_TAG_DIRTY);
- 		inc_cache_count(cache->sbi, type);
-+		f2fs_wake_up_cache_wb(cache->sbi);
- 		return true;
- 	}
- 
-@@ -681,6 +682,74 @@ unsigned long f2fs_shrink_node_cache(struct f2fs_sb_info *sbi,
- 	return f2fs_do_shrink_cache(NODE_CACHE(sbi), nr_to_scan);
- }
- 
-+static inline unsigned long f2fs_total_cached_entries(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long total = READ_ONCE(META_CACHE(sbi)->num_entries) +
-+			      READ_ONCE(NODE_CACHE(sbi)->num_entries);
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	if (test_opt(sbi, COMPRESS_CACHE))
-+		total += READ_ONCE(COMPRESS_CACHE(sbi)->num_entries);
-+#endif
-+	return total;
-+}
-+
-+static inline s64 f2fs_nr_dirty_caches(struct f2fs_sb_info *sbi)
-+{
-+	return get_nr_caches(sbi, F2FS_DIRTY_META) +
-+		get_nr_caches(sbi, F2FS_DIRTY_NODES);
-+}
-+
-+/*
-+ * f2fs_write_{meta,node}_caches() skip writeback until there are enough
-+ * dirty caches to gather, so don't wake up f2fs_writeback for nothing.
-+ */
-+static inline bool f2fs_cache_wb_collectable(struct f2fs_sb_info *sbi,
-+						s64 nr_dirty, int type)
-+{
-+	return nr_dirty && nr_dirty >= nr_caches_to_skip(sbi, type);
-+}
-+
-+static bool f2fs_cache_wb_exceeded(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+	unsigned int total_threshold, dirty_threshold;
-+	s64 nr_meta, nr_node;
-+
-+	total_threshold = READ_ONCE(cache_thread->cache_wb_total_threshold);
-+	dirty_threshold = READ_ONCE(cache_thread->cache_wb_dirty_threshold);
-+
-+	/*
-+	 * Both thresholds are disabled, rely on periodic writeback only,
-+	 * unless checkpoint is disabled, as nothing else will flush dirty
-+	 * caches then.
-+	 */
-+	if (!total_threshold && !dirty_threshold &&
-+	    !is_sbi_flag_set(sbi, SBI_CP_DISABLED))
-+		return false;
-+
-+	if (total_threshold &&
-+	    f2fs_total_cached_entries(sbi) < total_threshold)
-+		return false;
-+
-+	nr_meta = get_nr_caches(sbi, F2FS_DIRTY_META);
-+	nr_node = get_nr_caches(sbi, F2FS_DIRTY_NODES);
-+
-+	if (dirty_threshold && nr_meta + nr_node < dirty_threshold)
-+		return false;
-+
-+	return f2fs_cache_wb_collectable(sbi, nr_meta, META) ||
-+		f2fs_cache_wb_collectable(sbi, nr_node, NODE);
-+}
-+
-+static bool f2fs_should_wake_up_cache_wb(struct f2fs_sb_info *sbi)
-+{
-+	/* last round made no progress, wait for periodic writeback */
-+	if (READ_ONCE(sbi->cache_thread.cache_wb_throttled))
-+		return false;
-+
-+	return f2fs_cache_wb_exceeded(sbi);
-+}
-+
- static int f2fs_cache_writeback_kthread(void *data)
- {
- 	struct f2fs_sb_info *sbi = data;
-@@ -690,15 +759,27 @@ static int f2fs_cache_writeback_kthread(void *data)
- 	set_freezable();
- 
- 	while (!kthread_should_stop()) {
--		unsigned int interval = cache_thread->cache_wb_interval;
-+		unsigned int interval = READ_ONCE(cache_thread->cache_wb_interval);
-+		long nr_meta = 0, nr_node = 0;
-+		s64 nr_dirty;
- 
- 		wait_event_freezable_timeout(*wq,
--				kthread_should_stop(),
-+				kthread_should_stop() ||
-+				f2fs_should_wake_up_cache_wb(sbi),
- 				msecs_to_jiffies(interval));
- 
- 		if (kthread_should_stop())
- 			break;
- 
-+		/*
-+		 * If thresholds are exceeded, throttle threshold based wakeup
-+		 * until a round makes progress, otherwise we may busy-loop if
-+		 * this round can not write anything, e.g. on cp_error, freezing,
-+		 * frozen fs, or lock contention.
-+		 */
-+		WRITE_ONCE(cache_thread->cache_wb_throttled,
-+				f2fs_cache_wb_exceeded(sbi));
-+
- 		if (f2fs_readonly(sbi->sb))
- 			continue;
- 
-@@ -711,14 +792,41 @@ static int f2fs_cache_writeback_kthread(void *data)
- 		if (!sb_start_write_trylock(sbi->sb))
- 			continue;
- 
--		f2fs_write_meta_caches(sbi);
--		f2fs_write_node_caches(sbi);
-+		nr_dirty = f2fs_nr_dirty_caches(sbi);
-+
-+		f2fs_write_meta_caches(sbi, &nr_meta);
-+		f2fs_write_node_caches(sbi, &nr_node);
- 
- 		sb_end_write(sbi->sb);
-+
-+		/*
-+		 * Don't rely on the delta of dirty caches only, as caches may
-+		 * be dirtied concurrently; also count in caches cleaned by
-+		 * others, e.g. checkpoint triggered by f2fs_balance_fs_bg().
-+		 */
-+		if (nr_meta || nr_node || f2fs_nr_dirty_caches(sbi) < nr_dirty)
-+			WRITE_ONCE(cache_thread->cache_wb_throttled, false);
-+
-+		cond_resched();
- 	}
- 	return 0;
- }
- 
-+void f2fs_wake_up_cache_wb(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+
-+	/* pairs with smp_store_release() in f2fs_start_cache_wb_thread() */
-+	if (!smp_load_acquire(&cache_thread->cache_wb_task))
-+		return;
-+
-+	if (!f2fs_should_wake_up_cache_wb(sbi))
-+		return;
-+
-+	if (wq_has_sleeper(&cache_thread->cache_wb_wq))
-+		wake_up(&cache_thread->cache_wb_wq);
-+}
-+
- int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-@@ -731,6 +839,9 @@ int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- 
- 	init_waitqueue_head(&cache_thread->cache_wb_wq);
- 	cache_thread->cache_wb_interval = DEF_DIRTY_CACHE_TIMEOUT;
-+	cache_thread->cache_wb_dirty_threshold = DEF_CACHE_WB_DIRTY_THRESH;
-+	cache_thread->cache_wb_total_threshold = 0;
-+	cache_thread->cache_wb_throttled = false;
- 	snprintf(name, sizeof(name), "f2fs_writeback-%u:%u",
- 			MAJOR(dev), MINOR(dev));
- 
-@@ -738,7 +849,8 @@ int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- 	if (IS_ERR(task))
- 		return PTR_ERR(task);
- 
--	cache_thread->cache_wb_task = task;
-+	/* pairs with smp_load_acquire() in f2fs_wake_up_cache_wb() */
-+	smp_store_release(&cache_thread->cache_wb_task, task);
- 	return 0;
- }
- 
-@@ -750,5 +862,5 @@ void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi)
- 		return;
- 
- 	kthread_stop(cache_thread->cache_wb_task);
--	cache_thread->cache_wb_task = NULL;
-+	WRITE_ONCE(cache_thread->cache_wb_task, NULL);
- }
-diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
-index 3df3a562c46f..5408727dd321 100644
---- a/fs/f2fs/cache.h
-+++ b/fs/f2fs/cache.h
-@@ -234,13 +234,19 @@ unsigned long f2fs_shrink_node_cache(struct f2fs_sb_info *sbi,
- #define MIN_DIRTY_CACHE_TIMEOUT 100
- #define MAX_DIRTY_CACHE_TIMEOUT 30000
- 
-+#define DEF_CACHE_WB_DIRTY_THRESH	(8192)
-+
- struct f2fs_cache_kthread {
- 	struct task_struct *cache_wb_task;
- 	wait_queue_head_t cache_wb_wq;
- 	unsigned int cache_wb_interval;
-+	unsigned int cache_wb_dirty_threshold;
-+	unsigned int cache_wb_total_threshold;
-+	bool cache_wb_throttled;	/* last round made no progress */
- };
- 
- int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi);
- void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
-+void f2fs_wake_up_cache_wb(struct f2fs_sb_info *sbi);
- 
- #endif /* _LINUX_F2FS_CACHE_H */
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2e5e0ee5feb2..fd0a6c03987e 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -581,10 +581,11 @@ static bool __f2fs_write_meta_cache(struct f2fs_cached_block *entry,
- 	return false;
- }
- 
--void f2fs_write_meta_caches(struct f2fs_sb_info *sbi)
-+void f2fs_write_meta_caches(struct f2fs_sb_info *sbi, long *nr_written)
- {
- 	struct f2fs_lock_context lc;
- 	long nr_to_write = LONG_MAX;
-+	long nwritten;
- 
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
- 		return;
-@@ -599,8 +600,11 @@ void f2fs_write_meta_caches(struct f2fs_sb_info *sbi)
- 		return;
- 
- 	nr_to_write = adjust_flush_cache_number(sbi, META);
--	f2fs_sync_meta_caches(sbi, nr_to_write, false, FS_META_IO);
-+	nwritten = f2fs_sync_meta_caches(sbi, nr_to_write, false, FS_META_IO);
- 	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
-+
-+	if (nr_written)
-+		*nr_written = nwritten;
- }
- 
- long f2fs_sync_meta_caches(struct f2fs_sb_info *sbi, long nr_to_write,
-@@ -1553,7 +1557,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		f2fs_up_write(&sbi->node_write);
- 		atomic_inc(&sbi->wb_sync_req[NODE]);
- 		err = f2fs_writeback_node_caches(sbi, LONG_MAX,
--			true, false, FS_CP_NODE_IO);
-+			true, false, FS_CP_NODE_IO, NULL);
- 		atomic_dec(&sbi->wb_sync_req[NODE]);
- 		if (err) {
- 			f2fs_up_write(&sbi->node_change);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 089a62c054ea..362f06cb398d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4132,7 +4132,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
- int f2fs_truncate_xattr_node(struct inode *inode);
- int f2fs_wait_on_node_caches_writeback(struct f2fs_sb_info *sbi,
- 					unsigned int seq_id);
--int f2fs_write_node_caches(struct f2fs_sb_info *sbi);
-+int f2fs_write_node_caches(struct f2fs_sb_info *sbi, long *nr_written);
- int f2fs_remove_inode_cache(struct inode *inode);
- struct f2fs_cached_block *f2fs_new_inode_cache(struct inode *inode);
- struct f2fs_cached_block *f2fs_new_node_cache(struct dnode_of_data *dn, unsigned int ofs);
-@@ -4151,7 +4151,8 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi);
- int f2fs_fsync_node_caches(struct f2fs_sb_info *sbi, struct inode *inode,
- 					bool atomic, unsigned int *seq_id);
- int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
--			bool sync, bool do_balance, enum iostat_type io_type);
-+			bool sync, bool do_balance, enum iostat_type io_type,
-+			long *nr_written);
- int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
- bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
- void f2fs_alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
-@@ -4317,7 +4318,7 @@ int f2fs_ra_meta_caches(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 			int type, bool sync);
- void f2fs_ra_meta_caches_cond(struct f2fs_sb_info *sbi, pgoff_t index,
- 							unsigned int ra_blocks);
--void f2fs_write_meta_caches(struct f2fs_sb_info *sbi);
-+void f2fs_write_meta_caches(struct f2fs_sb_info *sbi, long *nr_written);
- long f2fs_sync_meta_caches(struct f2fs_sb_info *sbi, long nr_to_write,
- 				bool sync, enum iostat_type io_type);
- void f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7b2ff2c3dd03..1863e8f1c859 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2111,7 +2111,8 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
- }
- 
- int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
--			bool sync, bool do_balance, enum iostat_type io_type)
-+			bool sync, bool do_balance, enum iostat_type io_type,
-+			long *nr_written)
- {
- 	pgoff_t index;
- 	struct f2fs_cached_block *entries[F2FS_ONSTACK_CACHES];
-@@ -2231,6 +2232,9 @@ int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
- 
- 	trace_f2fs_write_caches(sbi, nr_to_write, nwritten, NODE);
- 
-+	if (nr_written)
-+		*nr_written = nwritten;
-+
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
- 	return ret;
-@@ -2271,7 +2275,7 @@ int f2fs_wait_on_node_caches_writeback(struct f2fs_sb_info *sbi,
- 	return f2fs_cp_error(sbi) ? -EIO : 0;
- }
- 
--int f2fs_write_node_caches(struct f2fs_sb_info *sbi)
-+int f2fs_write_node_caches(struct f2fs_sb_info *sbi, long *nr_written)
- {
- 	struct blk_plug plug;
- 	long nr_to_write = LONG_MAX;
-@@ -2296,7 +2300,8 @@ int f2fs_write_node_caches(struct f2fs_sb_info *sbi)
- 
- 	nr_to_write = adjust_flush_cache_number(sbi, NODE);
- 	blk_start_plug(&plug);
--	f2fs_writeback_node_caches(sbi, nr_to_write, false, true, FS_NODE_IO);
-+	f2fs_writeback_node_caches(sbi, nr_to_write, false, true, FS_NODE_IO,
-+								nr_written);
- 	blk_finish_plug(&plug);
- 	return 0;
- }
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index afce74744d4d..95f8dc0c4218 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1019,7 +1019,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 					a->struct_type == GC_THREAD);
- 	bool thread_entry = !strcmp(a->attr.name, "ckpt_thread_ioprio") ||
- 			!strcmp(a->attr.name, "critical_task_priority") ||
--			!strcmp(a->attr.name, "cache_wb_interval");
-+			!strcmp(a->attr.name, "cache_wb_interval") ||
-+			!strcmp(a->attr.name, "cache_wb_dirty_threshold") ||
-+			!strcmp(a->attr.name, "cache_wb_total_threshold");
- 
- 	if (gc_entry || thread_entry) {
- 		if (!down_read_trylock(&sbi->sb->s_umount))
-@@ -1363,6 +1365,8 @@ ATGC_INFO_RW_ATTR(atgc_age_threshold, age_threshold);
- 
- /* WB_THREAD ATTR */
- WB_THREAD_RW_ATTR(cache_wb_interval, cache_wb_interval);
-+WB_THREAD_RW_ATTR(cache_wb_dirty_threshold, cache_wb_dirty_threshold);
-+WB_THREAD_RW_ATTR(cache_wb_total_threshold, cache_wb_total_threshold);
- 
- F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(free_segments);
-@@ -1552,6 +1556,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(adjust_lock_priority),
- 	ATTR_LIST(critical_task_priority),
- 	ATTR_LIST(cache_wb_interval),
-+	ATTR_LIST(cache_wb_dirty_threshold),
-+	ATTR_LIST(cache_wb_total_threshold),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
--- 
-2.49.0
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMTAvMTEvMjYgMjM6MzQsIERhZWhvIEplb25nIHdyb3RlOgo+IE9uIFN1biwgT2N0IDExLCAy
+MDI2IGF0IDE6MjLigK9BTSBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+IHdyb3RlOgo+Pgo+PiBP
+biAxMC84LzI2IDAzOjMxLCBEYWVobyBKZW9uZyB3cm90ZToKPj4+IEZyb206IERhZWhvIEplb25n
+IDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4+Pgo+Pj4gRGlydHkgbm9kZSBhbmQgbWV0YSBjYWNo
+ZXMgYXJlIHdyaXR0ZW4gYmFjayBieSB0aGUgY2FjaGUgd3JpdGViYWNrCj4+PiB0aHJlYWQgYW5k
+IGJ5IGNoZWNrcG9pbnQuIFRoZSB0aHJlYWQgd2FrZXMgdXAgZXZlcnkgY2FjaGVfd2JfaW50ZXJ2
+YWwKPj4+ICg1IHNlY29uZHMgYnkgZGVmYXVsdCkgYW5kIHdyaXRlcyBhdCBtb3N0IDUxMiBub2Rl
+IGNhY2hlcyBhbmQgb25lCj4+PiBjb250aWd1b3VzIHJ1biBvZiBtZXRhIGNhY2hlcy4gQ2hlY2tw
+b2ludCwgd2hpY2ggZjJmc19iYWxhbmNlX2ZzX2JnKCkKPj4+IHRyaWdnZXJzIHdoZW4gdGhlcmUg
+YXJlIHRvbyBtYW55IGRpcnR5IGNhY2hlcywgd3JpdGVzIHRoZSByZXN0Lgo+Pj4KPj4+IFdoaWxl
+IGNoZWNrcG9pbnQgaXMgZGlzYWJsZWQsIGNoZWNrcG9pbnQgZG9lcyBub3QgcnVuOiBmMmZzX3N5
+bmNfZnMoKQo+Pj4gcmV0dXJucyBlYXJseSBhbmQgZjJmc19iYWxhbmNlX2ZzKCkgcmV0dXJucyBi
+ZWZvcmUgZG9pbmcgYW55dGhpbmcuIFNvCj4+PiBkaXJ0eSBub2RlIGNhY2hlcyBwaWxlIHVwIHdp
+dGhvdXQgYSBsaW1pdC4gVGhleSBhcmUga21hbGxvYydkLCBhbmQgdGhlCj4+PiBzaHJpbmtlciBz
+a2lwcyBkaXJ0eSBlbnRyaWVzLCBzbyB0aGlzIG1lbW9yeSBjYW5ub3QgYmUgcmVjbGFpbWVkLiBX
+aGVuCj4+PiBub2RlIGFuZCBtZXRhIGJsb2NrcyB3ZXJlIGluIHRoZSBwYWdlIGNhY2hlLCB0aGUg
+ZGlydHkgcGFnZXMgd2VyZQo+Pj4gY291bnRlZCBhcyBkaXJ0eSBwYWdlIGNhY2hlLCBhbmQgdGhl
+IGZsdXNoZXIgdGhyZWFkcyB3cm90ZSB0aGVtIGJhY2sgaW4KPj4+IHRoZSBiYWNrZ3JvdW5kLgo+
+Pj4KPj4+IEEgY2hlY2twb2ludD1kaXNhYmxlIHRlc3QgdGhhdCByZW1vdW50cyB0aGUgZmlsZXN5
+c3RlbSB3aXRoCj4+PiBjaGVja3BvaW50PWRpc2FibGUgYW5kIHJ1bnMgZnNzdHJlc3MgLXAgMzIg
+Zm9yIDMwMCBzZWNvbmRzIGxlZnQgYWJvdXQKPj4+IDE2MEsgZGlydHkgbm9kZSBjYWNoZXMgKDIu
+N0dCIG9mIGttYWxsb2MtMTZrKSB3aXRoIDE2S0IgYmxvY2tzIGFuZAo+Pj4gYWJvdXQgMjI2SyB3
+aXRoIDRLQiBibG9ja3MgaW4gUUVNVSwgYW5kIGRyb3BfY2FjaGVzIGZyZWVkIG5vbmUgb2YgdGhl
+bS4KPj4+Cj4+PiBXaGlsZSBjaGVja3BvaW50IGlzIGRpc2FibGVkLCB3YWtlIHVwIHRoZSB0aHJl
+YWQgZnJvbQo+Pj4gZjJmc19tYXJrX2NhY2hlX2RpcnR5KCkgb25jZSB0aGVyZSBhcmUgYXMgbWFu
+eSBkaXJ0eSBub2RlIG9yIG1ldGEKPj4+IGNhY2hlcyBhcyBmMmZzX3dyaXRlX25vZGVfY2FjaGVz
+KCkgYW5kIGYyZnNfd3JpdGVfbWV0YV9jYWNoZXMoKSBjb2xsZWN0Cj4+PiBiZWZvcmUgd3JpdGlu
+ZywgYW5kIGxldCB0aGUgdGhyZWFkIGdvIG9uIHdpdGhvdXQgd2FpdGluZyB3aGlsZSB0aGF0IGlz
+Cj4+PiBzdGlsbCB0cnVlIGFuZCBlYWNoIHJvdW5kIHdyaXRlcyBzb21lIG9mIHRoZW0uIEVhY2gg
+cm91bmQgd3JpdGVzIHRoZQo+Pj4gc2FtZSBudW1iZXIgb2YgY2FjaGVzIGFzIGJlZm9yZS4gU3Bs
+aXQgbnJfY2FjaGVzX3RvX2NvbGxlY3QoKSBvdXQgb2YKPj4+IG5yX2NhY2hlc190b19za2lwKCkg
+dG8gc2hhcmUgdGhlc2UgbnVtYmVycyB3aXRob3V0IHRoZSBkaXJ0eV9leGNlZWRlZAo+Pj4gY2hl
+Y2suCj4+Pgo+Pj4gV2l0aCB0aGlzLCB0aGUgc2FtZSB0ZXN0IGtlZXBzIGFib3V0IDRLIGRpcnR5
+IG5vZGUgY2FjaGVzIHdpdGggYm90aAo+Pj4gNEtCIGFuZCAxNktCIGJsb2Nrcy4gTm90aGluZyBj
+aGFuZ2VzIHdoaWxlIGNoZWNrcG9pbnQgaXMgZW5hYmxlZC4KPj4KPj4gSSd2ZSBzZW50IGEgcGF0
+Y2ggdG8gd2FrZSB1cCBmMmZzX3dyaXRlYmFjayB0byBmbHVzaCBkaXJ0eSBkYXRhIGFjY29yZGlu
+Zwo+PiB0byBjb25maWd1cmFibGUgc3lzZnMgdmFsdWUsIEkgZ3Vlc3MgaXQgY2FuIGZpeCB5b3Vy
+IGNoZWNrcG9pbnQgZGlzYWJsZQo+PiBjYXNlLCBwbGVhc2UgdGFrZSBhIGxvb2suCj4+Cj4+IFtQ
+QVRDSCAzLzVdIGYyZnM6IGNhY2hlOiB3YWtlIHVwIGYyZnNfd3JpdGViYWNrIHdoZW4gZXhjZWVk
+aW5nIHRocmVzaG9sZAo+Pgo+PiBUaGFua3MsCj4gCj4gSGkgQ2hhbywKPiAKPiBUaGFua3MsIEkg
+dGhpbmsgaXQgY292ZXJzIG15IGNhc2UuCgpIaSBEYWVobywKCj4gCj4gVHdvIHRoaW5ncyBpbiB2
+MjoKPiAKPiAxLiBUaGUgd2FpdCBjb25kaXRpb24gc3RheXMgdHJ1ZSB3aGVuIHRoZSB0aHJlYWQg
+Y2FuJ3QgcmVkdWNlIHRoZSBkaXJ0eQo+ICAgICBjb3VudCwgc28gaXQgbG9vcHMgd2l0aG91dCBz
+bGVlcGluZzogb24gZjJmc19jcF9lcnJvcigpLCByZWFkb25seSwKPiAgICAgZnJlZXppbmcoY3Vy
+cmVudCkgb3IgYSBmYWlsZWQgc2Jfc3RhcnRfd3JpdGVfdHJ5bG9jaygpIChkaXJ0eSBjYWNoZXMK
+PiAgICAgc3RheSBhZnRlciBzaHV0ZG93bi9mcmVlemUgd2l0aCBjaGVja3BvaW50PWRpc2FibGUs
+IGFuZCBkdXJpbmcKPiAgICAgc3VzcGVuZCB0aGUgdGhyZWFkIG1heSBuZXZlciBmcmVlemUpLCBv
+ciB3aGVuIHRoZSB0aHJlc2hvbGQgaXMgYmVsb3cKPiAgICAgbnJfY2FjaGVzX3RvX3NraXAoKSBz
+byB0aGUgd3JpdGUgZnVuY3Rpb25zIHdyaXRlIG5vdGhpbmcuIEhvdyBhYm91dAo+ICAgICBzbGVl
+cGluZyBmb3IgdGhlIGludGVydmFsIHdoZW4gYSByb3VuZCBkb2Vzbid0IHJlZHVjZSB0aGUgZGly
+dHkKPiAgICAgY291bnQ/CgpZZWFoLCBJIHNlZSwgSSBmaWd1cmVkIG91dCBhIHRocm90dGxlIGZp
+ZWxkIHRvIGF2b2lkIHVubmVjZXNzYXJ5IHdha2V1cCBpbiB2My4KCj4gCj4gMi4gV2l0aCBib3Ro
+IHRocmVzaG9sZHMgMCwgZGlydHkgY2FjaGVzIGdyb3cgYWdhaW4gdW5kZXIKPiAgICAgY2hlY2tw
+b2ludD1kaXNhYmxlLiBTaG91bGQgdGhhdCBjYXNlIHdha2UgdGhlIHRocmVhZCBhbnl3YXk/CgpG
+aXhlZCB0byBub3Qgd2FrZSB1cCBrdGhyZWFkIGZvciB0aGlzIGNhc2UgaW4gdjMuCgo+IAo+IEkn
+bSBmaW5lIHRvIGRyb3AgbXkgcGF0Y2ggaWYgeW91IHRha2UgdGhpcyBpbiB5b3VyIHNlcmllcy4K
+ClRoYW5rcyBhIGxvdCBmb3IgeW91ciByZXZpZXcsIEkgcHJlZmVyIHRvIGtlZXAgdGhlIG9uZSBp
+biBteSBzZXJpZXMsIEkgZmVlbAppdCB3aWxsIGJlIG1vcmUgZmxleGlibGUgdG8gY29udHJvbCB3
+cml0ZWJhY2sgdmlhIHRoZSBuZXcgc3lzZnMgbm9kZXMuCgo+IAo+IFRoYW5rcywKPiBEYWVobwo+
+IAo+Pgo+Pj4KPj4+IEZpeGVzOiA3YTFjZjJhNzZiNzEgKCJmMmZzOiBjYWNoZTogdXNlIG1ldGEg
+Y2FjaGUiKQo+Pj4gRml4ZXM6IDQ5M2I5ZGM4YjUyYyAoImYyZnM6IGNhY2hlOiB1c2Ugbm9kZSBj
+YWNoZSIpCj4+PiBTaWduZWQtb2ZmLWJ5OiBEYWVobyBKZW9uZyA8ZGFlaG9qZW9uZ0Bnb29nbGUu
+Y29tPgo+Pj4gLS0tCj4+PiAgICBmcy9mMmZzL2NhY2hlLmMgICB8IDU5ICsrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tCj4+PiAgICBmcy9mMmZzL2NhY2hlLmgg
+ICB8ICAxICsKPj4+ICAgIGZzL2YyZnMvc2VnbWVudC5oIHwgMTMgKysrKysrKy0tLS0KPj4+ICAg
+IDMgZmlsZXMgY2hhbmdlZCwgNjcgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPj4+Cj4+
+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9jYWNoZS5jIGIvZnMvZjJmcy9jYWNoZS5jCj4+PiBpbmRl
+eCAwNGI1NDA4Y2JjNS4uNmI2ZjQ5ZmFlMjUgMTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL2NhY2hl
+LmMKPj4+ICsrKyBiL2ZzL2YyZnMvY2FjaGUuYwo+Pj4gQEAgLTYxLDYgKzYxLDQyIEBAIHZvaWQg
+ZjJmc19jYWNoZV91cGRhdGVfdGFnKHN0cnVjdCBmMmZzX2NhY2hlZF9ibG9jayAqZW50cnksCj4+
+PiAgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmY2FjaGUtPnRyZWVfbG9jaywgZmxhZ3Mp
+Owo+Pj4gICAgfQo+Pj4KPj4+ICsvKgo+Pj4gKyAqIFdoaWxlIGNoZWNrcG9pbnQgaXMgZGlzYWJs
+ZWQsIGNoZWNrcG9pbnQgZG9lcyBub3Qgd3JpdGUgYmFjayBkaXJ0eSBub2RlIGFuZAo+Pj4gKyAq
+IG1ldGEgY2FjaGVzLCBhbmQgdGhlIHdyaXRlYmFjayB0aHJlYWQgaXMgdGhlIG9ubHkgb25lIHRo
+YXQgd3JpdGVzIHRoZW0uIFRlbGwKPj4+ICsgKiB3aGV0aGVyIHRoZXJlIGFyZSBhcyBtYW55IGRp
+cnR5IGNhY2hlcyBhcyBmMmZzX3dyaXRlX25vZGVfY2FjaGVzKCkgYW5kCj4+PiArICogZjJmc193
+cml0ZV9tZXRhX2NhY2hlcygpIGNvbGxlY3QgYmVmb3JlIHdyaXRpbmcsIHNvIHRoYXQgdGhlIHRo
+cmVhZCBzaG91bGQKPj4+ICsgKiB3cml0ZSB0aGVtIG5vdyBpbnN0ZWFkIG9mIGV2ZXJ5IGNhY2hl
+X3diX2ludGVydmFsLgo+Pj4gKyAqLwo+Pj4gK3N0YXRpYyBib29sIGYyZnNfY2FjaGVfd2JfbmVl
+ZGVkKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPj4+ICt7Cj4+PiArICAgICBpZiAobGlrZWx5
+KCFpc19zYmlfZmxhZ19zZXQoc2JpLCBTQklfQ1BfRElTQUJMRUQpKSkKPj4+ICsgICAgICAgICAg
+ICAgcmV0dXJuIGZhbHNlOwo+Pj4gKwo+Pj4gKyAgICAgcmV0dXJuIGdldF9ucl9jYWNoZXMoc2Jp
+LCBGMkZTX0RJUlRZX05PREVTKSA+PQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+bnJfY2FjaGVzX3RvX2NvbGxlY3Qoc2JpLCBOT0RFKSB8fAo+Pj4gKyAgICAgICAgICAgICBnZXRf
+bnJfY2FjaGVzKHNiaSwgRjJGU19ESVJUWV9NRVRBKSA+PQo+Pj4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgbnJfY2FjaGVzX3RvX2NvbGxlY3Qoc2JpLCBNRVRBKTsKPj4+ICt9Cj4+PiAr
+Cj4+PiArc3RhdGljIHZvaWQgZjJmc193YWtlX2NhY2hlX3diX3RocmVhZChzdHJ1Y3QgZjJmc19z
+Yl9pbmZvICpzYmkpCj4+PiArewo+Pj4gKyAgICAgc3RydWN0IGYyZnNfY2FjaGVfa3RocmVhZCAq
+Y2FjaGVfdGhyZWFkID0gJnNiaS0+Y2FjaGVfdGhyZWFkOwo+Pj4gKwo+Pj4gKyAgICAgaWYgKCFm
+MmZzX2NhY2hlX3diX25lZWRlZChzYmkpKQo+Pj4gKyAgICAgICAgICAgICByZXR1cm47Cj4+PiAr
+Cj4+PiArICAgICAvKiBwYWlycyB3aXRoIHNtcF9zdG9yZV9yZWxlYXNlKCkgaW4gZjJmc19zdGFy
+dF9jYWNoZV93Yl90aHJlYWQoKSAqLwo+Pj4gKyAgICAgaWYgKCFzbXBfbG9hZF9hY3F1aXJlKCZj
+YWNoZV90aHJlYWQtPmNhY2hlX3diX3Rhc2spKQo+Pj4gKyAgICAgICAgICAgICByZXR1cm47Cj4+
+PiArCj4+PiArICAgICBpZiAoUkVBRF9PTkNFKGNhY2hlX3RocmVhZC0+Y2FjaGVfd2JfdXJnZW50
+KSkKPj4+ICsgICAgICAgICAgICAgcmV0dXJuOwo+Pj4gKwo+Pj4gKyAgICAgV1JJVEVfT05DRShj
+YWNoZV90aHJlYWQtPmNhY2hlX3diX3VyZ2VudCwgdHJ1ZSk7Cj4+PiArICAgICB3YWtlX3VwKCZj
+YWNoZV90aHJlYWQtPmNhY2hlX3diX3dxKTsKPj4+ICt9Cj4+PiArCj4+PiAgICBib29sIGYyZnNf
+bWFya19jYWNoZV9kaXJ0eShzdHJ1Y3QgZjJmc19jYWNoZWRfYmxvY2sgKmVudHJ5KQo+Pj4gICAg
+ewo+Pj4gICAgICAgIHN0cnVjdCBmMmZzX2NhY2hlZF9ibG9ja19saXN0ICpjYWNoZSA9IGVudHJ5
+LT5jYWNoZTsKPj4+IEBAIC04MSw2ICsxMTcsNyBAQCBib29sIGYyZnNfbWFya19jYWNoZV9kaXJ0
+eShzdHJ1Y3QgZjJmc19jYWNoZWRfYmxvY2sgKmVudHJ5KQo+Pj4gICAgICAgICAgICAgICAgZjJm
+c19jYWNoZV91cGRhdGVfdGFnKGVudHJ5LCBGMkZTX0NBQ0hFX1RBR19OT05FLAo+Pj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBGMkZTX0NBQ0hFX1RBR19E
+SVJUWSk7Cj4+PiAgICAgICAgICAgICAgICBpbmNfY2FjaGVfY291bnQoY2FjaGUtPnNiaSwgdHlw
+ZSk7Cj4+PiArICAgICAgICAgICAgIGYyZnNfd2FrZV9jYWNoZV93Yl90aHJlYWQoY2FjaGUtPnNi
+aSk7Cj4+PiAgICAgICAgICAgICAgICByZXR1cm4gdHJ1ZTsKPj4+ICAgICAgICB9Cj4+Pgo+Pj4g
+QEAgLTY3OSwxMCArNzE2LDEzIEBAIHN0YXRpYyBpbnQgZjJmc19jYWNoZV93cml0ZWJhY2tfa3Ro
+cmVhZCh2b2lkICpkYXRhKQo+Pj4KPj4+ICAgICAgICB3aGlsZSAoIWt0aHJlYWRfc2hvdWxkX3N0
+b3AoKSkgewo+Pj4gICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IGludGVydmFsID0gY2FjaGVf
+dGhyZWFkLT5jYWNoZV93Yl9pbnRlcnZhbDsKPj4+ICsgICAgICAgICAgICAgczY0IG5yX2RpcnR5
+Owo+Pj4KPj4+ICAgICAgICAgICAgICAgIHdhaXRfZXZlbnRfZnJlZXphYmxlX3RpbWVvdXQoKndx
+LAo+Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAga3RocmVhZF9zaG91bGRfc3RvcCgp
+LAo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAga3RocmVhZF9zaG91bGRfc3RvcCgp
+IHx8Cj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSRUFEX09OQ0UoY2FjaGVfdGhy
+ZWFkLT5jYWNoZV93Yl91cmdlbnQpLAo+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IG1zZWNzX3RvX2ppZmZpZXMoaW50ZXJ2YWwpKTsKPj4+ICsgICAgICAgICAgICAgV1JJVEVfT05D
+RShjYWNoZV90aHJlYWQtPmNhY2hlX3diX3VyZ2VudCwgZmFsc2UpOwo+Pj4KPj4+ICAgICAgICAg
+ICAgICAgIGlmIChrdGhyZWFkX3Nob3VsZF9zdG9wKCkpCj4+PiAgICAgICAgICAgICAgICAgICAg
+ICAgIGJyZWFrOwo+Pj4gQEAgLTY5OSwxMCArNzM5LDIzIEBAIHN0YXRpYyBpbnQgZjJmc19jYWNo
+ZV93cml0ZWJhY2tfa3RocmVhZCh2b2lkICpkYXRhKQo+Pj4gICAgICAgICAgICAgICAgaWYgKCFz
+Yl9zdGFydF93cml0ZV90cnlsb2NrKHNiaS0+c2IpKQo+Pj4gICAgICAgICAgICAgICAgICAgICAg
+ICBjb250aW51ZTsKPj4+Cj4+PiArICAgICAgICAgICAgIG5yX2RpcnR5ID0gZ2V0X25yX2NhY2hl
+cyhzYmksIEYyRlNfRElSVFlfTk9ERVMpICsKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGdldF9ucl9jYWNoZXMoc2JpLCBGMkZTX0RJUlRZX01FVEEpOwo+Pj4gKwo+Pj4gICAgICAg
+ICAgICAgICAgZjJmc193cml0ZV9tZXRhX2NhY2hlcyhzYmkpOwo+Pj4gICAgICAgICAgICAgICAg
+ZjJmc193cml0ZV9ub2RlX2NhY2hlcyhzYmkpOwo+Pj4KPj4+ICAgICAgICAgICAgICAgIHNiX2Vu
+ZF93cml0ZShzYmktPnNiKTsKPj4+ICsKPj4+ICsgICAgICAgICAgICAgLyoKPj4+ICsgICAgICAg
+ICAgICAgICogRWFjaCByb3VuZCB3cml0ZXMgYSBsaW1pdGVkIG51bWJlciBvZiBjYWNoZXMuIEdv
+IG9uIHdpdGhvdXQKPj4+ICsgICAgICAgICAgICAgICogd2FpdGluZyB3aGlsZSB0aGVyZSBhcmUg
+c3RpbGwgbWFueSBkaXJ0eSBjYWNoZXMsIGFzIGxvbmcgYXMKPj4+ICsgICAgICAgICAgICAgICog
+dGhpcyByb3VuZCB3cm90ZSBzb21lIG9mIHRoZW0uCj4+PiArICAgICAgICAgICAgICAqLwo+Pj4g
+KyAgICAgICAgICAgICBpZiAoZjJmc19jYWNoZV93Yl9uZWVkZWQoc2JpKSAmJgo+Pj4gKyAgICAg
+ICAgICAgICAgICAgICAgIGdldF9ucl9jYWNoZXMoc2JpLCBGMkZTX0RJUlRZX05PREVTKSArCj4+
+PiArICAgICAgICAgICAgICAgICAgICAgZ2V0X25yX2NhY2hlcyhzYmksIEYyRlNfRElSVFlfTUVU
+QSkgPCBucl9kaXJ0eSkKPj4+ICsgICAgICAgICAgICAgICAgICAgICBXUklURV9PTkNFKGNhY2hl
+X3RocmVhZC0+Y2FjaGVfd2JfdXJnZW50LCB0cnVlKTsKPj4+ICAgICAgICB9Cj4+PiAgICAgICAg
+cmV0dXJuIDA7Cj4+PiAgICB9Cj4+PiBAQCAtNzE5LDYgKzc3Miw3IEBAIGludCBmMmZzX3N0YXJ0
+X2NhY2hlX3diX3RocmVhZChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+Pgo+Pj4gICAgICAg
+IGluaXRfd2FpdHF1ZXVlX2hlYWQoJmNhY2hlX3RocmVhZC0+Y2FjaGVfd2Jfd3EpOwo+Pj4gICAg
+ICAgIGNhY2hlX3RocmVhZC0+Y2FjaGVfd2JfaW50ZXJ2YWwgPSBERUZfRElSVFlfQ0FDSEVfVElN
+RU9VVDsKPj4+ICsgICAgIGNhY2hlX3RocmVhZC0+Y2FjaGVfd2JfdXJnZW50ID0gZmFsc2U7Cj4+
+PiAgICAgICAgc25wcmludGYobmFtZSwgc2l6ZW9mKG5hbWUpLCAiZjJmc193cml0ZWJhY2stJXU6
+JXUiLAo+Pj4gICAgICAgICAgICAgICAgICAgICAgICBNQUpPUihkZXYpLCBNSU5PUihkZXYpKTsK
+Pj4+Cj4+PiBAQCAtNzI2LDcgKzc4MCw4IEBAIGludCBmMmZzX3N0YXJ0X2NhY2hlX3diX3RocmVh
+ZChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+PiAgICAgICAgaWYgKElTX0VSUih0YXNrKSkK
+Pj4+ICAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKHRhc2spOwo+Pj4KPj4+IC0gICAgIGNh
+Y2hlX3RocmVhZC0+Y2FjaGVfd2JfdGFzayA9IHRhc2s7Cj4+PiArICAgICAvKiBwYWlycyB3aXRo
+IHNtcF9sb2FkX2FjcXVpcmUoKSBpbiBmMmZzX3dha2VfY2FjaGVfd2JfdGhyZWFkKCkgKi8KPj4+
+ICsgICAgIHNtcF9zdG9yZV9yZWxlYXNlKCZjYWNoZV90aHJlYWQtPmNhY2hlX3diX3Rhc2ssIHRh
+c2spOwo+Pj4gICAgICAgIHJldHVybiAwOwo+Pj4gICAgfQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9m
+cy9mMmZzL2NhY2hlLmggYi9mcy9mMmZzL2NhY2hlLmgKPj4+IGluZGV4IDZjNGRiOTEwZDc2Li4x
+ZDAyMTZkMjEyOCAxMDA2NDQKPj4+IC0tLSBhL2ZzL2YyZnMvY2FjaGUuaAo+Pj4gKysrIGIvZnMv
+ZjJmcy9jYWNoZS5oCj4+PiBAQCAtMjMyLDYgKzIzMiw3IEBAIHN0cnVjdCBmMmZzX2NhY2hlX2t0
+aHJlYWQgewo+Pj4gICAgICAgIHN0cnVjdCB0YXNrX3N0cnVjdCAqY2FjaGVfd2JfdGFzazsKPj4+
+ICAgICAgICB3YWl0X3F1ZXVlX2hlYWRfdCBjYWNoZV93Yl93cTsKPj4+ICAgICAgICB1bnNpZ25l
+ZCBpbnQgY2FjaGVfd2JfaW50ZXJ2YWw7Cj4+PiArICAgICBib29sIGNhY2hlX3diX3VyZ2VudDsg
+ICAgICAgICAgIC8qIHdyaXRlIGJhY2sgd2l0aG91dCB3YWl0aW5nICovCj4+PiAgICB9Owo+Pj4K
+Pj4+ICAgIGludCBmMmZzX3N0YXJ0X2NhY2hlX3diX3RocmVhZChzdHJ1Y3QgZjJmc19zYl9pbmZv
+ICpzYmkpOwo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5oIGIvZnMvZjJmcy9zZWdt
+ZW50LmgKPj4+IGluZGV4IDUyNjc2NGJhMzFhLi41ODgwNGU5Y2MyOSAxMDA2NDQKPj4+IC0tLSBh
+L2ZzL2YyZnMvc2VnbWVudC5oCj4+PiArKysgYi9mcy9mMmZzL3NlZ21lbnQuaAo+Pj4gQEAgLTk4
+MywxMSArOTgzLDggQEAgc3RhdGljIGlubGluZSBib29sIHNlY191c2FnZV9jaGVjayhzdHJ1Y3Qg
+ZjJmc19zYl9pbmZvICpzYmksIHVuc2lnbmVkIGludCBzZWNubykKPj4+ICAgICAqIDUxMiBibG9j
+a3MgKDJNQikgKiA4IGZvciBub2RlcywgYW5kCj4+PiAgICAgKiAyNTYgYmxvY2tzICogOCBmb3Ig
+bWV0YSBhcmUgc2V0Lgo+Pj4gICAgICovCj4+PiAtc3RhdGljIGlubGluZSBpbnQgbnJfY2FjaGVz
+X3RvX3NraXAoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgdHlwZSkKPj4+ICtzdGF0aWMg
+aW5saW5lIGludCBucl9jYWNoZXNfdG9fY29sbGVjdChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
+IGludCB0eXBlKQo+Pj4gICAgewo+Pj4gLSAgICAgaWYgKGJkaV93Yl9kaXJ0eV9leGNlZWRlZChz
+YmktPnNiLT5zX2JkaSkpCj4+PiAtICAgICAgICAgICAgIHJldHVybiAwOwo+Pj4gLQo+Pj4gICAg
+ICAgIGlmICh0eXBlID09IERBVEEpCj4+PiAgICAgICAgICAgICAgICByZXR1cm4gQkxLU19QRVJf
+U0VHKHNiaSk7Cj4+PiAgICAgICAgZWxzZSBpZiAodHlwZSA9PSBOT0RFKQo+Pj4gQEAgLTk5OCw2
+ICs5OTUsMTQgQEAgc3RhdGljIGlubGluZSBpbnQgbnJfY2FjaGVzX3RvX3NraXAoc3RydWN0IGYy
+ZnNfc2JfaW5mbyAqc2JpLCBpbnQgdHlwZSkKPj4+ICAgICAgICAgICAgICAgIHJldHVybiAwOwo+
+Pj4gICAgfQo+Pj4KPj4+ICtzdGF0aWMgaW5saW5lIGludCBucl9jYWNoZXNfdG9fc2tpcChzdHJ1
+Y3QgZjJmc19zYl9pbmZvICpzYmksIGludCB0eXBlKQo+Pj4gK3sKPj4+ICsgICAgIGlmIChiZGlf
+d2JfZGlydHlfZXhjZWVkZWQoc2JpLT5zYi0+c19iZGkpKQo+Pj4gKyAgICAgICAgICAgICByZXR1
+cm4gMDsKPj4+ICsKPj4+ICsgICAgIHJldHVybiBucl9jYWNoZXNfdG9fY29sbGVjdChzYmksIHR5
+cGUpOwo+Pj4gK30KPj4+ICsKPj4+ICAgIC8qCj4+PiAgICAgKiBXaGVuIHdyaXRpbmcgY2FjaGUg
+YXN5bmNocm9ub3VzbHksIGFsaWduIG5yX3RvX3dyaXRlIHRvIEJJT19NQVhfVkVDUy4KPj4+ICAg
+ICAqLwo+PgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNv
+dXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5m
+by9saW51eC1mMmZzLWRldmVsCg==
