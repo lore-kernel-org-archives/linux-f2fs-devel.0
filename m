@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BE600CC6B1D
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1987CC6B12
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,70 +12,70 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=A3Bn8nVlOLAqH8weWx+gZj40K7fkdEgk9+02A/aL2LI=; b=EMInusTqHoPZWcunTZPiFqiM0D
-	yF8/wA3d06aa0b2WjViyHp4S7mWz5ov/ILhGtAvS9kY+BHIh4pkDJwrGmqiEjGiuBgyKwyALFBXrd
-	TYok9BgeYdfGDRJgOROT774BYxYtqEK67rkdmIt/Pcd5E+8jeR+nxJhLuQzVpYmQwx54=;
+	bh=afnsI2UdAOYH1a3VfSJfR5Pxv3jYpTn/dv+J5leivQg=; b=NMKjCm4NCu3hHiu4eW3hDdoDtY
+	CRAH01XC9cnLqTohcQ7nMWIigA75VcSsDbupHpYM9gX9w+lf5vcStaOc8OmNAwBFZaNrbgX95FeoN
+	9rFh0a4Zi6DcEjj+vm5KSCu4bjuhwMg087mkXb6Uw0+OVYC6Qsk8QpgPNMhWan8641S0=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGl0z-0002BT-Vb;
-	Tue, 13 Oct 2026 22:30:34 +0000
+	id 1xGl10-0002Bg-Ca;
+	Tue, 13 Oct 2026 22:30:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl0i-0002Aq-Nk
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl0o-0002B2-Fz
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:17 +0000
+ Tue, 13 Oct 2026 22:30:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5WeS8w4Ji4g1xJ9NDbo6XBD3M/iITXPbtnMJ+1aCzZ8=; b=UlPq+RDGsjFceujEDb0Xzg5M1c
- S5+Qxi3Q0BT0s7UwSC2yVmAUumutgRCnxjFQRbJu2AAsIkv09Qj00wgaf5cKrjWL6t/Fc5A9L1f5u
- vegWEnLTyK923iEZs2wCJCoJ40MR7S910jta5Rj2RLtIRv1nxLaTzoYhUb6v7UesGV38=;
+ bh=EsH3ZBvKbRUSzhUyxaPt/C67sCyerjNV3qXB+t3cBCI=; b=b6Phi7yuoWAseMgjg8S6IvYKVc
+ FowByRjyDo+QU7TZcoStZQuaRuyLL7cbiPk6t7w0ZFG0sCWXJfUQMB8ZhmEjyFIFJo9zZ0l9FETll
+ oqN/EncnT5CRcrCvDRSdIlNxj0kKriiykYqPpeZI7tm4WcjkagSpZAt0GqSvRfs0sVeQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5WeS8w4Ji4g1xJ9NDbo6XBD3M/iITXPbtnMJ+1aCzZ8=; b=H4fTkfukOu/xRKkqNRC9HsgiMN
- tCLNo5JRid4GnNepz3TaDbxHvFH+UcGNz01HOFHDUjycCSUNGX2lx5HcSIh7ET5uVcw5g2FOCX3FS
- QtBFy7MMoh/XqR6tJLAR2buYBEdokivryNAAZlEYc2rPHgMqHQ5bm2SepwFmtPSxre08=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=EsH3ZBvKbRUSzhUyxaPt/C67sCyerjNV3qXB+t3cBCI=; b=jbriQKntaH3J5OUpMu9Rpvvu5f
+ j3aWLrTApBIpHgMhGd5nMyjUwZ/2PPGsaT7FM/3c5X7Gv2hAodLaCbhAZ5665fbI8f1tHqfS77IZD
+ T/l2uWXegNh2mS+3p17QobEXEqRN3f2yY9caT0kBl1BgNlZlTlJ5g6rjF3rRsB90tPM4=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGl0i-00064B-Oy for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:17 +0000
+ id 1xGl0n-0001d0-TU for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Oct 2026 22:30:23 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 16522601DB;
- Tue, 13 Oct 2026 22:30:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8F01F000FF;
- Tue, 13 Oct 2026 22:30:10 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 9DA2E43EA3;
+ Tue, 13 Oct 2026 22:30:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 820811F000FF;
+ Tue, 13 Oct 2026 22:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791930610;
- bh=5WeS8w4Ji4g1xJ9NDbo6XBD3M/iITXPbtnMJ+1aCzZ8=;
+ s=k20260515; t=1791930616;
+ bh=EsH3ZBvKbRUSzhUyxaPt/C67sCyerjNV3qXB+t3cBCI=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=Bv1QrvWA3Exuyznt1c1aUmzEyqKvRv8jMoJFf4I5aD9CDwnRc0Idbyf/IIdukGFqL
- ZJ9dyqVNTU1725x2ubumMobtc7e9Gw/AjXIE5BwDOEmrzjgpJRWpMqn35JdvDENCdr
- lm0LYrSW3nTlcK8rGq8szPW4K7Klc6+x98BnmrVuMhn7KbJCT3eNWPaOi0RDsW2aWQ
- XjmYc6JllobitMPp7LhheluMCeqZvsUDwrSHlCYCDDo7zmSbFkpg357OikRUjvXerO
- hxFnVeYxW90UfeU/kDxJmctwtSX6NNi3DK06xfErkrDCTbOIovmO/C+VVT3CDHU9os
- vjLITES0iH9ag==
+ b=FKO+5qAlgmiKTADGImIXvxYXa+vOBkIBR0tBPOFXajzDi/Rxpd4bOX9i7lreYnOf7
+ 2qDYzrvXIZRnrdmGM9RTPeOcbiFygBjCcS3GfoOJW0M8dHnDf0eoeqQT+mz6oV83h0
+ D4GpAN5SxlJTta84pudye+m3I+2I3ypkD4pLVsSeo1T+rTo3QFMH2YepVET6N6yNpI
+ /jog/v2gxscu3a5q9rcFX3Z725MnJoQuBFlrwHZGF20EAri7Q3GJqesXYA2Jf4YPhH
+ qU6JE6zZ23ONS5rvrhbp4zCXRisAxYl1+p/FEQOzxqXgx4lmathsxgREDZ9zSc1wyd
+ KDQD1I20vaVYQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- B44A239E4DBA; Tue, 13 Oct 2026 22:30:10 +0000 (UTC)
+ 774F539E4DBA; Tue, 13 Oct 2026 22:30:16 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <179193060952.1493834.8525794701490344819.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Oct 2026 22:30:09 +0000
-References: <20261010074912.114840-1-jsjlee1020@gmail.com>
-In-Reply-To: <20261010074912.114840-1-jsjlee1020@gmail.com>
-To: Seongjae Jeong <jsjlee1020@gmail.com>
-X-Headers-End: 1xGl0i-00064B-Oy
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix termination of
- f2fs_sync_meta_caches()
+Message-Id: <179193061512.1493834.4792720096460143824.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Oct 2026 22:30:15 +0000
+References: <20261005192114.1511660-1-daeho43@gmail.com>
+In-Reply-To: <20261005192114.1511660-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1xGl0n-0001d0-TU
+Subject: Re: [f2fs-dev] [PATCH] f2fs: cache: count the temporary pins apart
+ from the regular references
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,20 +101,23 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sat, 10 Oct 2026 07:49:12 +0000 you wrote:
-> When __f2fs_write_meta_cache() returns false in f2fs_sync_meta_caches(),
-> the function only exits the inner loop instead of the entire
-> while loop. This leads to an unnecessary lookup of the next batch.
+On Mon,  5 Oct 2026 19:21:13 +0000 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Also, when nwritten >= nr_to_write, only the inner loop terminates.
-> This allows the function to continue processing subsequent batches
-> after the writeback budget has been reached.
+> f2fs_unlock_cache() and f2fs_end_cache_writeback() take a temporary
+> reference on the entry around clear_and_wake_up_bit(), so that the entry
+> is not freed before wake_up_bit() returns. f2fs_destroy_cache() waits
+> for the LOCKED and WRITEBACK bits and then expects the refcount to be 1,
+> but the bit waits can return as soon as the bit is cleared, before the
+> I/O completion drops the temporary reference. When the completion runs
+> in process context and is preempted there (e.g. dm-flakey in
+> generic/311), umount hits:
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix termination of f2fs_sync_meta_caches()
-    https://git.kernel.org/jaegeuk/f2fs/c/a45c9a0055f5
+  - [f2fs-dev] f2fs: cache: count the temporary pins apart from the regular references
+    https://git.kernel.org/jaegeuk/f2fs/c/8596baf652f4
 
 You are awesome, thank you!
 -- 
