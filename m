@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0D7F2CC6B0F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8F9D0CC6B1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=2wrPI2C3hnOU6JY8pHaUZaVUtCuE5ClM2V2NFR8vDLU=; b=gb6o1dY4mkT/vVYyT2zJWad5y1
-	YhYlPUR75kOwBVVydNu3FoaGNJ96OUFP7537342PgXqAQQRM5nMnY1hfeKmICEyLamxf+dVaAABmk
-	K4IxIi/9wOV7wiktA7I7nysVmjs+Tev2L2UVxh1dnt9md+uETxfSUfmh2T6yfabFdrow=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=0u20zYbiKP/QwsGtLeCxmRQsTFjJubQ+J8pBw0v+xeY=; b=eL06Av8J+VOUJsSqh4TZ69odQh
+	HjuxgA+9p68nl7X8E/kd00Wwj3J4G0QvZ+jl1hwG0jT6eQyaUwSHbho9T/jsuhi+CGFgkJgfPw1tK
+	w80KbiFVioTMLrbFBw8V9VFquZEYVjA+JC1SEshCX5YHMG0oHkjS0seL8nOjQGyK1naM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGl1H-0007aN-Mq;
+	id 1xGl1K-00026P-E9;
 	Tue, 13 Oct 2026 22:30:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl1G-0007aD-D8
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl1J-00026F-LV
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:50 +0000
+ Tue, 13 Oct 2026 22:30:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gK5BiDEntrKD0+Dzj/T26h4UrOX6cmNMvMNJ/Y4XJ/U=; b=lMqkRSgLrn5WL35+kXYNkLTRY8
- p1jLfZBPU0AAa8dd386J+Oe4Czr+5Jc9RsCsGI8o3n7OmGrWQwneTtGzIDQAnGdRnICR1VCEscJ2D
- jY5v8uQOl0PviI7QmidQMHpAJUsAnDGi96rR4bbW1NXmd05FjDQLTflKH6Utqntp/QR4=;
+ bh=f1czPV9+k4BQL3W+Fs+3/RCZKEfLsAG7rN8tKFHt6wI=; b=XQ/JAUk8P2dlfno0Zj6PF4W9iV
+ 9Qix6ekXFTq9nRrPMmwEjpCWlkwmdNIpAzgj/OGfDx/qAK7eCEiH2+o0VEmFFVAZhTK1sdeaD7XPa
+ 77z0St0R/utzc/ufdkFljxn1xBR/z3P8Vw5G30fUiSkjIa25aoCytQuQ4zDCgRUKoxNw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gK5BiDEntrKD0+Dzj/T26h4UrOX6cmNMvMNJ/Y4XJ/U=; b=Tv1Nr9QcyYF81FiHK6FQquBLRT
- 8ymlWJSYCwHz2WADK4OWz8RGeojCxODMPvPEN74Q4+qomGPJAnKyef3ZYxblmHm5YSB+lctsPilIT
- rjJLYs8Ue9TuvNdwm9UuUxK2zuYzsboUYLtRaQbiM/RjE6S3t4aq3AET+ZQakhNMCvv8=;
+ bh=f1czPV9+k4BQL3W+Fs+3/RCZKEfLsAG7rN8tKFHt6wI=; b=K/zhsXguKbMeq/VZhL5rNjgC+i
+ GjSag4zfjzolMZjsDDhguj94IjNik/xQIXgCWKuUm0rspu101N1voRJoGo+BrKHWCEGgJimCeI8Sr
+ u0eqiUVHHgE3gBlcuQ4l3IHc96M3aeDIKkGGYZ7ta8AH6+Zug+l3dCaD0m1DghynESs4=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGl1B-0001e3-CC for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:50 +0000
+ id 1xGl1C-0001e6-Sg for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Oct 2026 22:30:51 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id CB2BE6022B;
- Tue, 13 Oct 2026 22:30:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818751F0089C;
- Tue, 13 Oct 2026 22:30:39 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 510136022C;
+ Tue, 13 Oct 2026 22:30:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084701F00898;
+ Tue, 13 Oct 2026 22:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791930639;
- bh=gK5BiDEntrKD0+Dzj/T26h4UrOX6cmNMvMNJ/Y4XJ/U=;
+ s=k20260515; t=1791930641;
+ bh=f1czPV9+k4BQL3W+Fs+3/RCZKEfLsAG7rN8tKFHt6wI=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=KYHqO+/dLQiNrBW0pAQsNxN2fCoI/LLOrf+wGTzkk6b0kDzNVaAwGvJOCaoGLTRXM
- VCfhYnIE6mUE4BeLIffje9RTnf3CYdJclPJfbfOX06Hgxh/h4NSKMbh8ieeJjrtaMc
- KjxEvopPb/bYA5sTH3ZcnD1YUxp3sDyldEUr3qSXuxiJXkxsFy0QdPjzkNA9SgJAp+
- W+isKQrFIWVH2Gc2VybDBqD8GnD/DBCb6hUQvpkFYMk0aqka9QLmY12euzg57NFdVf
- yP6YnSeOMtL9RHoOlyM2AWrKHsgwdo4fND/eVjNT2CU2VixPIajx7ymn20iHFx5rVM
- x1M7b92rAp7sQ==
+ b=EtY6kmjFl4N/vls9nr1d/gfmeNHK45rfyWH18WTIXQ+uzLlgJt03J47QWqz9Kcug4
+ GsTEzh8sQP3zMvPhkpi6xldzj4i2pvIXP/WLdjCyyMxbLaHPnT1NRmtT1NTGSL6ecP
+ vVVbqfSJsEW/EXtBR/80+7xrpAxu4iPmPwbjA+t/6ByqF+0lCRqVYMLLlEnYYFOCvF
+ Zv/KI6fs7qt4NG+4MfM4GFlQvhIAI5II+sTBRxWYOAS+f1TZdlZqwFJzhM1iYMr1C8
+ oRiq2yNK8KsSy5CcclSt4SDv9EaA+EDRZQkiokzXrRM9xw5HJsh7J+ptZmpnmydhLR
+ H4F83aLaDrJNw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7732739E4DBA; Tue, 13 Oct 2026 22:30:39 +0000 (UTC)
+ F141139E4DBA; Tue, 13 Oct 2026 22:30:40 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <179193063801.1493834.11114382446696553394.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Oct 2026 22:30:38 +0000
-References: <20261012091737.308136-1-chao@kernel.org>
-In-Reply-To: <20261012091737.308136-1-chao@kernel.org>
+Message-Id: <179193063951.1493834.17396004482002929582.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Oct 2026 22:30:39 +0000
+References: <20261001000450.3822520-1-chao@kernel.org>
+In-Reply-To: <20261001000450.3822520-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1xGl1B-0001e3-CC
-Subject: Re: [f2fs-dev] [PATCH v3 3/5] f2fs: cache: wake up f2fs_writeback
- when exceeding threshold
+X-Headers-End: 1xGl1C-0001e6-Sg
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to set sbi->log_blocksize in
+ advance
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,9 +90,9 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, qiwenjie@xiaomi.com,
- linux-f2fs-devel@lists.sourceforge.net, daehojeong@google.com,
- linux-kernel@vger.kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+dfcbc1741488709db4b2@syzkaller.appspotmail.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -102,21 +102,31 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 12 Oct 2026 09:17:37 +0000 you wrote:
+On Thu,  1 Oct 2026 00:04:50 +0000 you wrote:
 > From: Chao Yu <chao@kernel.org>
 > 
-> This patch introduces cache_wb_dirty_threshold and cache_wb_total_threshold
-> sysfs nodes under /sys/fs/f2fs/<disk>/, and wakes up the f2fs_writeback
-> kthread when dirty meta/node caches exceed cache_wb_dirty_threshold and
-> total cached entries exceed cache_wb_total_threshold; a zero threshold
-> disables the corresponding check. By default, cache_wb_dirty_threshold is
-> 8192 and cache_wb_total_threshold is 0.
+> syzbot reported a shift-out-of-bounds in __f2fs_commit_super():
+> 
+> UBSAN: shift-out-of-bounds in fs/f2fs/super.c:3950:27
+> shift exponent 4294967287 is too large for 64-bit type 'sector_t'
+> (aka 'unsigned long long')
+> CPU: 1 UID: 0 PID: 5622 Comm: syz-executor329 Not tainted
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+>  ubsan_epilogue+0xa/0x30 lib/ubsan.c:233
+>  __ubsan_handle_shift_out_of_bounds+0x36d/0x400 lib/ubsan.c:494
+>  __f2fs_commit_super+0x43e/0x4d0 fs/f2fs/super.c:3950
+>  sanity_check_area_boundary+0x7c5/0xe20 fs/f2fs/super.c:4040
+>  sanity_check_raw_super fs/f2fs/super.c:4215 [inline]
+>  read_raw_super_block fs/f2fs/super.c:4625 [inline]
+>  f2fs_fill_super+0x1920/0x7fa0 fs/f2fs/super.c:5160
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v3,3/5] f2fs: cache: wake up f2fs_writeback when exceeding threshold
-    https://git.kernel.org/jaegeuk/f2fs/c/eeadc4807c95
+  - [f2fs-dev] f2fs: fix to set sbi->log_blocksize in advance
+    https://git.kernel.org/jaegeuk/f2fs/c/63bb030f36b8
 
 You are awesome, thank you!
 -- 
