@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8F9D0CC6B1D
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 771B6CC6B15
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,18 +12,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0u20zYbiKP/QwsGtLeCxmRQsTFjJubQ+J8pBw0v+xeY=; b=eL06Av8J+VOUJsSqh4TZ69odQh
-	HjuxgA+9p68nl7X8E/kd00Wwj3J4G0QvZ+jl1hwG0jT6eQyaUwSHbho9T/jsuhi+CGFgkJgfPw1tK
-	w80KbiFVioTMLrbFBw8V9VFquZEYVjA+JC1SEshCX5YHMG0oHkjS0seL8nOjQGyK1naM=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=33GMx0o8ZQAW8pGR3dIwx1Cpv53qCHp84zGv7hjVMg4=; b=W0vvKYsNaSeVett2hH7HdE+k6W
+	21tfXnkwvTUg+A44Uez+kzuRqaKCtl18k6yk8KmfhbnjhwZGoh8o0dcy637syJ7ZUUPWdNb98XPt9
+	WaZcIe0UFj7t/ddT+9+JlYX3b6JDBrBuzpX+geyyPPFEdmZigKu2Ey542VhMZ5SBZ0kI=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGl1K-00026P-E9;
-	Tue, 13 Oct 2026 22:30:51 +0000
+	id 1xGl1H-0002Fq-LH;
+	Tue, 13 Oct 2026 22:30:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl1J-00026F-LV
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl1G-0002Fc-DD
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 13 Oct 2026 22:30:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,50 +32,51 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f1czPV9+k4BQL3W+Fs+3/RCZKEfLsAG7rN8tKFHt6wI=; b=XQ/JAUk8P2dlfno0Zj6PF4W9iV
- 9Qix6ekXFTq9nRrPMmwEjpCWlkwmdNIpAzgj/OGfDx/qAK7eCEiH2+o0VEmFFVAZhTK1sdeaD7XPa
- 77z0St0R/utzc/ufdkFljxn1xBR/z3P8Vw5G30fUiSkjIa25aoCytQuQ4zDCgRUKoxNw=;
+ bh=Np9xnuu6XiKVbwBFAPp4t+RIdjq2sSckN1p0VTuLUy4=; b=Kuyn0BGre8MSsTbDGAQ8EWPBi1
+ KkzKvIptftFfSJ1JOaK1Bet+dRtmgXh1JtVOSOc0uw3NoqgP7VHUTkc1/u8hGklqMXM86aRSa+URc
+ cV8v4msjQJMU0F3EbBmRV5AUZPmW5dAPHxhAzV8fmHCe2gEexN9A9maYV/vx9fQv/BwQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f1czPV9+k4BQL3W+Fs+3/RCZKEfLsAG7rN8tKFHt6wI=; b=K/zhsXguKbMeq/VZhL5rNjgC+i
- GjSag4zfjzolMZjsDDhguj94IjNik/xQIXgCWKuUm0rspu101N1voRJoGo+BrKHWCEGgJimCeI8Sr
- u0eqiUVHHgE3gBlcuQ4l3IHc96M3aeDIKkGGYZ7ta8AH6+Zug+l3dCaD0m1DghynESs4=;
+ bh=Np9xnuu6XiKVbwBFAPp4t+RIdjq2sSckN1p0VTuLUy4=; b=d+Yz1YW24FKWj/t0oi08jwZcSh
+ UEPnvyOoyEjdL072kYKB0DW9+oBnK4Lnynutz5QNczFuCI/LIRGmSawp6+ni7cN7qa1GytbmjBM8P
+ Lokv885P+9pfZk/zovSw+Syh6g8SEPHeCTJRCeGXCudRunvF3HlgAWAkrV4CKVW/QSuc=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGl1C-0001e6-Sg for linux-f2fs-devel@lists.sourceforge.net;
+ id 1xGl1E-0001eB-C3 for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 13 Oct 2026 22:30:51 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 510136022C;
- Tue, 13 Oct 2026 22:30:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084701F00898;
- Tue, 13 Oct 2026 22:30:41 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id CA927601DB
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 13 Oct 2026 22:30:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D7C1F00893;
+ Tue, 13 Oct 2026 22:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791930641;
- bh=f1czPV9+k4BQL3W+Fs+3/RCZKEfLsAG7rN8tKFHt6wI=;
+ s=k20260515; t=1791930642;
+ bh=Np9xnuu6XiKVbwBFAPp4t+RIdjq2sSckN1p0VTuLUy4=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=EtY6kmjFl4N/vls9nr1d/gfmeNHK45rfyWH18WTIXQ+uzLlgJt03J47QWqz9Kcug4
- GsTEzh8sQP3zMvPhkpi6xldzj4i2pvIXP/WLdjCyyMxbLaHPnT1NRmtT1NTGSL6ecP
- vVVbqfSJsEW/EXtBR/80+7xrpAxu4iPmPwbjA+t/6ByqF+0lCRqVYMLLlEnYYFOCvF
- Zv/KI6fs7qt4NG+4MfM4GFlQvhIAI5II+sTBRxWYOAS+f1TZdlZqwFJzhM1iYMr1C8
- oRiq2yNK8KsSy5CcclSt4SDv9EaA+EDRZQkiokzXrRM9xw5HJsh7J+ptZmpnmydhLR
- H4F83aLaDrJNw==
+ b=F0x98hh7uT1ubqr+v607DM8Rr1PmR7VGfeYXqxvRC7tV9dIbNtW2y1s6DQ1v4Op6J
+ 2p28tYI8elZQsW2Ljm+Phd49zJujU+tbOo1ESV4T+bb9z9FXfRqUET09v9yFFy0Le/
+ CJ5dBVK/mqbZRXqcnqHtVCQjrk2VEPxnh6fLzDlJI0P9fYMuQiGoHHTrNUBkAXiw0d
+ HdGe8PQ0E7SshVeBxC8piArbmjJH/bxZtxnI9torn8jt+IQmo5ZdHi5V33KTxVLbGI
+ FXRMI/3XAtm7mwtvsl1fKvxFs7owhgyNhTpVJ/dwxu5N4M20APnAr3knRiET6CuAPu
+ /qjU9/Vdvelgw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- F141139E4DBA; Tue, 13 Oct 2026 22:30:40 +0000 (UTC)
+ 773B639E4DBA; Tue, 13 Oct 2026 22:30:42 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <179193063951.1493834.17396004482002929582.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Oct 2026 22:30:39 +0000
-References: <20261001000450.3822520-1-chao@kernel.org>
-In-Reply-To: <20261001000450.3822520-1-chao@kernel.org>
+Message-Id: <179193064101.1493834.14246878856998575721.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Oct 2026 22:30:41 +0000
+References: <20261007101812.2348510-1-chao@kernel.org>
+In-Reply-To: <20261007101812.2348510-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1xGl1C-0001e6-Sg
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to set sbi->log_blocksize in
- advance
+X-Headers-End: 1xGl1E-0001eB-C3
+Subject: Re: [f2fs-dev] [PATCH] f2fs: zone: fix to avoid bio split on
+ sequential zone
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +91,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- syzbot+dfcbc1741488709db4b2@syzkaller.appspotmail.com,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -102,31 +102,31 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu,  1 Oct 2026 00:04:50 +0000 you wrote:
+On Wed,  7 Oct 2026 10:18:12 +0000 you wrote:
 > From: Chao Yu <chao@kernel.org>
 > 
-> syzbot reported a shift-out-of-bounds in __f2fs_commit_super():
-> 
-> UBSAN: shift-out-of-bounds in fs/f2fs/super.c:3950:27
-> shift exponent 4294967287 is too large for 64-bit type 'sector_t'
-> (aka 'unsigned long long')
-> CPU: 1 UID: 0 PID: 5622 Comm: syz-executor329 Not tainted
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
->  ubsan_epilogue+0xa/0x30 lib/ubsan.c:233
->  __ubsan_handle_shift_out_of_bounds+0x36d/0x400 lib/ubsan.c:494
->  __f2fs_commit_super+0x43e/0x4d0 fs/f2fs/super.c:3950
->  sanity_check_area_boundary+0x7c5/0xe20 fs/f2fs/super.c:4040
->  sanity_check_raw_super fs/f2fs/super.c:4215 [inline]
->  read_raw_super_block fs/f2fs/super.c:4625 [inline]
->  f2fs_fill_super+0x1920/0x7fa0 fs/f2fs/super.c:5160
+> In the block layer, bio_split_to_limits() splits a bio if it exceeds
+> any underlying queue limits:
+> 1. queue_max_sectors: Splits bios larger than the transfer limit. This
+>    limit is set by the device driver/DMA controller (max_hw_sectors) and
+>    device-mapper targets. When flushing dirty pages (governed by VFS
+>    writeback_chunk_size() and f2fs nr_pages_to_skip()), f2fs merges
+>    contiguous pages into bios up to 512KB (1024 sectors) or more without
+>    checking queue_max_sectors, which will be split if the device or DM
+>    target enforces a smaller limit.
+> 2. queue_max_segments: Splits bios exceeding scatter-gather segment
+>    limits. f2fs allocates bios with up to 256 pages, exceeding the
+>    128-segment limit of DM targets (dm-default-key/dm-crypt) if pages
+>    are discontiguous.
+> 3. chunk_sectors: Splits bios crossing chunk/zone boundaries. In f2fs,
+>    section_size strictly matches zone_size, and block allocation never
+>    spans across section boundaries, so bios never cross chunk_sectors.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to set sbi->log_blocksize in advance
-    https://git.kernel.org/jaegeuk/f2fs/c/63bb030f36b8
+  - [f2fs-dev] f2fs: zone: fix to avoid bio split on sequential zone
+    https://git.kernel.org/jaegeuk/f2fs/c/b9b036bd1e2c
 
 You are awesome, thank you!
 -- 
