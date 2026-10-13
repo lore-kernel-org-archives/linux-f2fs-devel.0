@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 078EECA9ED2
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 11:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32CB8CC6B0F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 11:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7NH/m+KsuPivHv35CFxag5iIUcziJiwsfbKzIqVHicU=; b=ajLT663n8ZLgIPpNk3hofKWpkL
-	qxVjw8ISzVzPma/HCFYN1N6kToxcFpkPvxijmA98h1qpDdqd5PuOor/j5ZORN0eAduJljUHdaxERN
-	kpEd7WT5sH+Wjs3r8ZWWYDNuU+OvJlI6bHD6PvlnlSedPKmK0X1T680TW/5X3cPJ/dI8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ewpXus53lNU9d63m+MH7Qm4kOHbFFOOffRq2XstGvQ4=; b=KW3u+w8yc6Y6EMOkZ3QgjZxAAl
+	TffH4pcn+xn8DWWMkFl+uiIfCgP0oO3vjw5vj5MbBI3087+NvS0k5b3IRkHkGC7VhoQ/wVpC5WH9C
+	OTqmuUd0kQsHFCAvFfBoEGOXDS5hRNiyXcOuJfRvTw/v4X/laAw0hKzmxVFo/SwBShbY=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGb8m-0000qM-6f;
-	Tue, 13 Oct 2026 11:57:56 +0000
+	id 1xGb8s-0002KU-Rs;
+	Tue, 13 Oct 2026 11:58:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao.sigma@gmail.com>) id 1xGb8k-0000pz-Jh
+ (envelope-from <nzzhao.sigma@gmail.com>) id 1xGb8r-0002K9-EK
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 11:57:55 +0000
+ Tue, 13 Oct 2026 11:58:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VMm5uZ7y0LHSAzCvhw/clyRGWUnnU0F0YFC56Cetspk=; b=fWygPtwZVZed1TV8XixiHM/fKR
- vUWqN7YeL+tCR8Nn0v5JgHCh600ZqxUFrSAdD2qUjthFURqGnWXHbeGagPlh8lrJaIWbXVxtkcNg0
- TEd0PO13U9JcD1I+ZcfjDinJulFZ7i17zMh+bZiJ+K09IZCCd2ttJylqBfvHLd5ukf4A=;
+ bh=cBYDeDJPiU7Woi24r+XJ0DdmQKbYBi2/3x/Ae90790s=; b=hGpIbGHoQZ3RtO2Ssd6YyIMgON
+ 9GpbgFwK7aNT8jwKV8qV2VaYDsBxOqqhEgrXaHWgs4Thlwcf+n/uvWvOp85bqwWEyQxUGa6/Zb/yi
+ Qbw4X7Lzl5qcw+C0m2pnQYXs3DqJsxPfIGm5hTYqxYRLgyUL2oJ2MfkSSTsUFj/y48QQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VMm5uZ7y0LHSAzCvhw/clyRGWUnnU0F0YFC56Cetspk=; b=YnR4OFiNvT6EwGM0e8+bgUAcng
- B0rBUmjTF2svOuRrIXB9Fh6pdGT1hTqB01+8St5u+lgoRM1Radv9WDJv3TpvLIqHjrzuxXGXBrFo6
- v7q7t/7WGcqnOKfGk/6nkeQJl66FMvO5qXf8aUv21ozvLV6W8AsezJb9yK94SYEyGLKM=;
-Received: from mail-pj2-f4.google.com ([74.125.227.132])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=cBYDeDJPiU7Woi24r+XJ0DdmQKbYBi2/3x/Ae90790s=; b=JL5cFy5ohuE8foHw6VeBSwsk2e
+ tR2ZPRlO8BmhR29kRfcdYKrB2J19bY1+DW606bHzBpBZMWdTHHUJOR89N/FKCeOSNQ68+1q8JpVHK
+ aNAulanX/vQbzqe6gUoxCatfQdrbsZFrVnJYKGL5DWQJmCV+qmg6CsHc4x2i9ROyCgrY=;
+Received: from mail-pj2-f10.google.com ([74.125.227.138])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xGb8k-0001WN-26 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 11:57:55 +0000
-Received: by mail-pj2-f4.google.com with SMTP id
- 98e67ed59e1d1-3a84a12aa97so684193a91.1
+ id 1xGb8o-0005TK-Lx for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Oct 2026 11:58:01 +0000
+Received: by mail-pj2-f10.google.com with SMTP id
+ 98e67ed59e1d1-3abe4fb64d2so1170048a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 13 Oct 2026 04:57:54 -0700 (PDT)
+ Tue, 13 Oct 2026 04:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791892668; x=1792497468; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1791892673; x=1792497473; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=VMm5uZ7y0LHSAzCvhw/clyRGWUnnU0F0YFC56Cetspk=;
- b=MWWYhHfUG6++CSxmUsi8gcBTok3uJEnKtGBAG+17S2oGDSqItjVgerGyh6Bs9zs5Q0
- PH5cJjuQ+UEfKACWB1Cc1lkmou8Rxsm/rfzP8o/yOGZ1c+M8Tdnq+ogWQ9DPtMBcAbv2
- HsyPciGd1JeVMvdyQSOI+Y6bNbu1X97Y0XMBmYqZ4uEtZV6sb0TVYupy1ppc9M04JdBv
- AVYgJM1cbch6RURgJ1yZlUyp+QdwVKX51xQgMG9hqE2tcQ8IHcktBtGbLJsncr2rXYmY
- DVYpXEUesBLOJGI7n4O7C1cJDs2x6Ln23ZF6qYu4KsG97unHF4VD3SfaQCTHBRpZTSDg
- INQQ==
+ bh=cBYDeDJPiU7Woi24r+XJ0DdmQKbYBi2/3x/Ae90790s=;
+ b=ESsirJ94BU2shEcOMnVIEU/DmcXMB0gLiRunKqwXannijQcyyWmBiEf0r2mvfWqeOI
+ gHiWZuiH0gkDZnlPmqzcH/IO0dYDJgoYI3gnixG7c9SUBeOtJf85dQzrxmH6eZ7KXw1C
+ 0ctL35RdBAihrUputxbYANA3KXyOYJCf5P2GBD2NxmVxYIvrupuI02mmFEWT08eklhSn
+ Z7MUiXrYXVML5816+bhk2Q3vu9cvXb9n3BWdW8weB2i3Lst5iELpiCGoCmxAW5cXfRlt
+ 8LjyOVkYvACFLMOIH48qj0U3NBYM4qfUGzdCAkW7sprPHMejwdTEYlJe/TRkohMcb/jG
+ iLhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791892668; x=1792497468;
+ d=1e100.net; s=20260707; t=1791892673; x=1792497473;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=VMm5uZ7y0LHSAzCvhw/clyRGWUnnU0F0YFC56Cetspk=;
- b=bzvdHH3ag5F2pyjl8bDM5Y9Yx89q1f9tMr1DB5qRcIQbrxEdI+MUDV8sfonWEBZ0Vm
- mnDYR8d/W7x8GvpI7Pm3v2LFdJaXio0/J6MNK45QlJadFRAr53uAvFgpLjOfVNBAb0hL
- F9PFubdBJK2Auh254Hlx8cgUbryDBQU7cr+CxhmFEju3jREdUc78FJRmGYhP9w3vXlOF
- ZMYReJnt8xIWY2aGYXSEgLy0aY0n6UZ2y0A5XISJ7ZaDBJhdiWlIaV1WNv3nWGNFt1Lz
- eMnbRknJZdy+scgJBWWISJU0+XHjfTtaWGT4hlQCi3gTH0+yWUi7yKKZ0XPQm1x9WEHN
- dtEA==
-X-Gm-Message-State: AFq9FYJiOa16OYKToAcLl9IjIi3YmxthWQZRxRM++fIxN0BCPirusvua
- T4x734faSKcq/gfgVWWmnUqst2M+Xd2byNLi7Cw8Ox9/hP4bzUZZHXK3elCmVk48
-X-Gm-Gg: AYBFou0F3mSEyMpTslJ2rfjH+BhBWlgED4OaokxMHNfVGt326v3aLbmAcH9zLU9AFPO
- UrJhQ5l3BNN69q3nJjqIZt0l+56oH9Z2cFSv0D80T9MT8P7mN+C/O4YbaaZwFMjrOgc0CGWmKAR
- x8Mea40qxdXHvVP1XWl7nDw0NoVaXHcA3p+KoOnKkYUFtbxWOJ/cDz+a0gg742mV3ghyovZTrMR
- LQ82pYCuz59ZpJzYk7JQRBYTWKsEZY2pTh35UNYoyAmAvKhqc6nadV/yRxK2mYApudOTXtoSQUk
- a0+/iyDBf18I0cmVrFkzZOQkjcJZ5j+Ww2mHYwJuaFk7IvL2FkGY2yBSRozHsnhiIBZRQvvR1Pu
- KMnPyIq+/KlM3WzCifKxZ43LCdFGSNCxgW44MBkM2OdyVkFyQ4OfMBIBF7EXozTiRox5obUOjF4
- COSV7UeSpD1nb2RLOlbQqjV9B3ywyCWleXyH71eDlb5LCkOBuH4/f6YAUSV+nQ0KxZj8Uln8C5a
- zQa97RhJmdPJJxh2Aqqh5o3w/fI85EmTEWg
-X-Received: by 2002:a17:90b:3912:b0:3a7:f64f:6473 with SMTP id
- 98e67ed59e1d1-3ab3ac6e6camr10026572a91.50.1791892668362; 
- Tue, 13 Oct 2026 04:57:48 -0700 (PDT)
+ bh=cBYDeDJPiU7Woi24r+XJ0DdmQKbYBi2/3x/Ae90790s=;
+ b=YldJE2Tep3dx5Edoskp28gowVUrQ/naSAPJBImWACCaYOlClGCoWJO9zqEbMYZq45C
+ V6Pxff5wn5mg0ab/w/Qwm/TP+nSZApYYrD+47P51W+v6JVbDR4cje2fG4h/r8meTiNYu
+ MmJK3zPTr1lprX5WGkI3SyZnxS32lq5ErOJIHSISfexybQz2PJ8heqyvVWLeTCeObNOr
+ Qw7zkVh+NeQEgk96zYiuOlVd75wruHPrYT1q0BRL9TcXTbl/DaSEpameIJNEPnKKg+xA
+ s7CEiVIZjFyAD2DLSHSaAwoJ/dKDiiBgwSCei4Cp+o5EpaUWg5g9KoXQtdzbegT0VIvR
+ pKhw==
+X-Gm-Message-State: AFq9FYJRV09EVtydYuG3+DG/q5sR2wZdYCZG70/B03AL5++ZEDjZMwMS
+ 7Qc4Gly/YuXbi906V0s+O7STfjo8DP1yDMIle2cyVm1fiQD+Cjwmp1MZe+15T6XiUyY=
+X-Gm-Gg: AYBFou0/PH19044JiCHL8sFbDQfXZa5Xv8c/pdEBXY7Wmx9Oj/VSTRj6oMJkdTCGrcx
+ hi1Daw5WHJ9jK5iqS2Dt6PAo4SVHJ27e7LIiDYFlzyaceyT6AFAuwA9qkIM/WOp4iQuYOIMLaC7
+ X8sFwblEAm63lAg1r1YmQzhG05lDvhK6sydWvaHQiwwprhLf/LOxg5bZIj33UFkPqxKbUI4isz1
+ jCXJiZyxGKlZdKhmrdAuecivCHUIdUSl48GKuhtJMFC1qHPqhUEheBcgyNM/g7MTxNQaFh4nafQ
+ /W+plh+63s87JE/3nQ+F3AwjZKAV2p7qCJnxV/GMPp8Zn3uDfUu4oKhLcl8bc0NYBMVx8OJHqXu
+ AOgTFgrM+E6WxUPJYKw9BpJ7GTwLKuJZ944lrlcr9c0zj77oYJtiBOGxHZXi7YjheVWQtJBEL5x
+ 4CZef/8agK7FxBmZ+kBDwdUFHx/4AtZjaoP6jKmKg5Gr+/3GGPhXZhaWjOi89aHKsECPMbiTQPd
+ i1szggfTPt/uFFvLBc3vtptBP9THHmf3oGatQ==
+X-Received: by 2002:a17:90b:5807:b0:3a4:9dd7:296f with SMTP id
+ 98e67ed59e1d1-3ab3a9dfda0mr9413758a91.40.1791892672923; 
+ Tue, 13 Oct 2026 04:57:52 -0700 (PDT)
 Received: from nzzhao-ThinkCentre-M760t.mioffice.cn ([43.224.245.179])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ab37139b59sm21248516a91.13.2026.10.13.04.57.42
+ 98e67ed59e1d1-3ab37139b59sm21248516a91.13.2026.10.13.04.57.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Oct 2026 04:57:47 -0700 (PDT)
+ Tue, 13 Oct 2026 04:57:52 -0700 (PDT)
 From: Nanzhe Zhao <nzzhao.sigma@gmail.com>
 To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <chao@kernel.org>
-Date: Tue, 13 Oct 2026 19:56:19 +0800
-Message-ID: <20261013115621.968742-17-nzzhao.sigma@gmail.com>
+Date: Tue, 13 Oct 2026 19:56:20 +0800
+Message-ID: <20261013115621.968742-18-nzzhao.sigma@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261013115621.968742-1-nzzhao.sigma@gmail.com>
 References: <20261013115621.968742-1-nzzhao.sigma@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1xGb8k-0001WN-26
-Subject: [f2fs-dev] [PATCH v4 16/18] f2fs: handle block cloning within the
- same large folio
+X-Headers-End: 1xGb8o-0005TK-Lx
+Subject: [f2fs-dev] [PATCH v4 17/18] f2fs: allow large folio support to
+ writeable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -131,105 +131,146 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
 
-With large folios, the source and destination block in __clone_blkaddrs()
-can belong to the same folio during same-inode operations such as
-collapse range and insert range.
-
-In that case, locking the source folio and then looking up the
-destination folio can try to lock the same folio again.  It also copies
-from and to offset 0, which is only correct for order-0 folios.
-
-Detect the same-inode, same-folio case before looking up the destination
-folio.  Then in this case,we reserve the destination block explicitly.
+Now we make all write path support large folios,
+so we open permission to let writeable file set
+large folio mapping.
 
 Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
 ---
- fs/f2fs/file.c | 61 +++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 53 insertions(+), 8 deletions(-)
+ fs/f2fs/data.c   |  2 +-
+ fs/f2fs/f2fs.h   | 17 +++++++++++++++++
+ fs/f2fs/file.c   | 16 ----------------
+ fs/f2fs/inline.c |  6 ++++++
+ fs/f2fs/inode.c  |  4 +---
+ fs/f2fs/namei.c  |  1 +
+ 6 files changed, 26 insertions(+), 20 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 48376cbcc..0e139b4ca 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3243,7 +3243,7 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+ 	int ret = 0;
+ 	bool folio_in_bio = false;
+ 
+-	if (!IS_IMMUTABLE(inode) || f2fs_compressed_file(inode)) {
++	if (f2fs_compressed_file(inode)) {
+ 		if (folio)
+ 			folio_unlock(folio);
+ 		return -EOPNOTSUPP;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a925d1a59..3a9b247cf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -5326,6 +5326,23 @@ static inline bool f2fs_quota_file(struct f2fs_sb_info *sbi, nid_t ino)
+ 	return false;
+ }
+ 
++static inline void f2fs_mapping_set_large_folio(struct inode *inode)
++{
++	if (!S_ISREG(inode->i_mode) ||
++	    f2fs_compressed_file(inode) ||
++	    f2fs_quota_file(F2FS_I_SB(inode), inode->i_ino))
++		return;
++
++	/*
++	 * Keep the folio order range at 0 as a transitional step; large
++	 * folios will be enabled once the whole write path is audited.
++	 */
++	if (IS_IMMUTABLE(inode))
++		mapping_set_folio_min_order(inode->i_mapping, 0);
++	else
++		mapping_set_folio_order_range(inode->i_mapping, 0, 0);
++}
++
+ static inline bool f2fs_block_unit_discard(struct f2fs_sb_info *sbi)
+ {
+ 	return F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_BLOCK;
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 69d1344a5..3c90cd365 100644
+index 3c90cd365..9cee36258 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1608,25 +1608,70 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
- 			f2fs_put_dnode(&dn);
- 		} else {
- 			struct folio *fsrc, *fdst;
-+			size_t src_off, dst_off;
-+			bool same_folio;
+@@ -164,17 +164,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	int err = 0;
+ 	vm_fault_t ret;
  
- 			fsrc = f2fs_get_lock_data_folio(src_inode,
- 							src + i, true);
- 			if (IS_ERR(fsrc))
- 				return PTR_ERR(fsrc);
--			fdst = f2fs_get_new_data_folio(dst_inode, NULL, dst + i,
--								true);
--			if (IS_ERR(fdst)) {
--				f2fs_folio_put(fsrc, true);
--				return PTR_ERR(fdst);
-+
-+			src_off = offset_in_folio(fsrc,
-+						(loff_t)(src + i) << PAGE_SHIFT);
-+
-+			/*
-+			 * For same-inode operations (collapse/insert), src and
-+			 * dst may fall within the same large folio. Detect this
-+			 * to avoid self-deadlock on folio lock.
-+			 */
-+			same_folio = src_inode == dst_inode &&
-+				     folio_contains(fsrc, dst + i);
-+			if (same_folio) {
-+				struct dnode_of_data dn;
-+
-+				/* Reserve block for dst before copying */
-+				set_new_dnode(&dn, dst_inode, NULL, NULL, 0);
-+				ret = f2fs_reserve_block(&dn, dst + i);
-+				if (ret) {
-+					f2fs_folio_put(fsrc, true);
-+					return ret;
-+				}
-+				fdst = fsrc;
-+			} else {
-+				fdst = f2fs_get_new_data_folio(dst_inode, NULL,
-+							      dst + i, true);
-+				if (IS_ERR(fdst)) {
-+					f2fs_folio_put(fsrc, true);
-+					return PTR_ERR(fdst);
-+				}
- 			}
+-	/*
+-	 * We only support large folio on the read case.
+-	 * Don't make any dirty pages.
+-	 */
+-	if (unlikely(IS_IMMUTABLE(inode)) ||
+-	    mapping_large_folio_support(inode->i_mapping)) {
+-		f2fs_err(sbi, "Not expected: immutable: %d large_folio: %d",
+-				IS_IMMUTABLE(inode),
+-				mapping_large_folio_support(inode->i_mapping));
+-		return VM_FAULT_SIGBUS;
+-	}
  
-+			dst_off = offset_in_folio(fdst,
-+					(loff_t)(dst + i) << PAGE_SHIFT);
- 			f2fs_folio_wait_writeback(fdst, true, true);
--
--			memcpy_folio(fdst, 0, fsrc, 0, PAGE_SIZE);
-+			memcpy_folio(fdst, dst_off, fsrc, src_off,
-+				    PAGE_SIZE);
-+			if (folio_test_large(fdst)) {
-+				if (!f2fs_ffs_find_or_alloc(fdst)) {
-+					f2fs_folio_put(fdst, true);
-+					if (!same_folio)
-+						f2fs_folio_put(fsrc, true);
-+					return -ENOMEM;
-+				}
-+				f2fs_ffs_mark_subrange_uptodate(fdst,
-+							dst_off, PAGE_SIZE);
-+				f2fs_ffs_mark_subrange_dirty(fdst, dst_off,
-+							    PAGE_SIZE);
-+			}
- 			folio_mark_dirty(fdst);
-+			if (same_folio && i_size_read(dst_inode) <
-+			    ((loff_t)(dst + i + 1) << PAGE_SHIFT))
-+				f2fs_i_size_write(dst_inode,
-+					((loff_t)(dst + i + 1) << PAGE_SHIFT));
- 			folio_set_f2fs_gcing(fdst);
- 			f2fs_folio_put(fdst, true);
--			f2fs_folio_put(fsrc, true);
-+			if (!same_folio)
-+				f2fs_folio_put(fsrc, true);
+ 	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
+ 		err = -EIO;
+@@ -729,9 +718,6 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ 	if (!f2fs_is_compress_backend_ready(inode))
+ 		return -EOPNOTSUPP;
  
- 			ret = f2fs_truncate_hole(src_inode,
- 						src + i, src + i + 1);
+-	if (mapping_large_folio_support(inode->i_mapping) &&
+-	    filp->f_mode & FMODE_WRITE)
+-		return -EOPNOTSUPP;
+ 
+ 	err = fsverity_file_open(inode, filp);
+ 	if (err)
+@@ -1204,8 +1190,6 @@ int f2fs_setattr(const struct mnt_idmap *idmap, struct dentry *dentry,
+ 		return -EPERM;
+ 
+ 	if ((attr->ia_valid & ATTR_SIZE)) {
+-		if (mapping_large_folio_support(inode->i_mapping))
+-			return -EOPNOTSUPP;
+ 		if (IS_DEVICE_ALIASING(inode))
+ 			return -EPERM;
+ 		if (!f2fs_is_compress_backend_ready(inode))
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 49905aa08..0dca6c3d5 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -239,6 +239,12 @@ int f2fs_convert_inline_inode(struct inode *inode)
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+ 
++	/*
++	 * Inline data is only supported in an order-0 index #0 folio; the
++	 * inline write and mmap fault paths never request a larger order.
++	 */
++	f2fs_bug_on(sbi, folio_test_large(folio));
++
+ 	f2fs_lock_op(sbi, &lc);
+ 
+ 	ientry = f2fs_get_inode_cache(sbi, inode->i_ino);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 9164a2b5d..f5a4dac98 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -599,9 +599,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_op = &f2fs_file_inode_operations;
+ 		inode->i_fop = &f2fs_file_operations;
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+-		if (IS_IMMUTABLE(inode) && !f2fs_compressed_file(inode) &&
+-		    !f2fs_quota_file(sbi, inode->i_ino))
+-			mapping_set_folio_min_order(inode->i_mapping, 0);
++		f2fs_mapping_set_large_folio(inode);
+ 	} else if (S_ISDIR(inode->i_mode)) {
+ 		inode->i_op = &f2fs_dir_inode_operations;
+ 		inode->i_fop = &f2fs_dir_operations;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index ce5d536d8..c0f2e6777 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -341,6 +341,7 @@ static struct inode *f2fs_new_inode(const struct mnt_idmap *idmap,
+ 	f2fs_set_inode_flags(inode);
+ 
+ 	f2fs_init_extent_tree(inode);
++	f2fs_mapping_set_large_folio(inode);
+ 
+ 	trace_f2fs_new_inode(inode, 0);
+ 	return inode;
 -- 
 2.43.0
 
