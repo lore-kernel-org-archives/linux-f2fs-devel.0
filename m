@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58D67CC6B0F
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93866CC6B15
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,71 +12,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=WNvVtLWJ8aAZ9v0iWAGFdZ7uIycceH/oFgM+/1WP2oI=; b=gzFzinzYtOZh7ILElvDnCWeWUL
-	zYyl+09ckRE2r1J7SB5dqQOhWGarFHylx4XPnCezlTAj/mswAvw4K5y/whHc1TyJ7l/vkl18yRdd3
-	+p6RL06YnVhnreLDGtgXuSon8QcML2nAwCq5B98QAzxxPVGnNO1ghjuXkkfyu1/NlFCk=;
+	bh=sDF61HZsQmM/p3/N23aRDdnyj+ZkKeYvt/kEMTJyPOs=; b=kQeCukSm9vvJ85rFFTtxSlHNz1
+	AiCxbt5SoAodPBmv5Cm/fjgBAByHU/gwnGUwB3kdLf2NVXk8D87U9YMSgLL8h3ZzfYBaoiZJvQUYG
+	5f5BpcwHU2WmtfOryTnBrpO02rxQKozRFlYu3GprZtUa49Lzn3lE4fBpJly1/7KVKyyc=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGl11-000231-D3;
+	id 1xGl11-00022s-1x;
 	Tue, 13 Oct 2026 22:30:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl0v-00022d-IG
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl0q-00022U-Qz
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:27 +0000
+ Tue, 13 Oct 2026 22:30:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z7koH2y0BTGH8zmggvnZ8uRcI1N0rUKHZJp7eUeYBVo=; b=ISjZcDn4HyXxRbqtPzBynSpxSM
- RlLgsECf+8+gLCpRzwStegottjw359qzzsLjcH+Dc3gZP/BGiqk4inN2ePk0FX9+LCMZqBcVCw8zD
- H18asdj+FlYJxO3KUXlEh20Fi/n6ZVip+O+T1w6ScjlPHh+Q+idSkGEdNVxof9QT2prY=;
+ bh=rj5wkGy6yTPAnHR68+j6OFWHSh6FtU7k2/bCjqeMRz8=; b=DrEEYnQRotkHl5RtLoxB7QmNQg
+ rDM9w+pWhdkCL+GDAoF2TMFD42PkubD1YcUPz6ELxh/odc9XSWLBdBtgB8gidWizyTPY1DiMBtdgg
+ 2lgg4aE2NfpitCfVGn41rCIqQ+zWOBcj6QORkFMlLR2TeSCw0CGJLeRjGR2Lt4zYdLtA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z7koH2y0BTGH8zmggvnZ8uRcI1N0rUKHZJp7eUeYBVo=; b=YV3vaJeaGugD7UiMOmrvkXKkQu
- J6tSgMTCwNha1lLD+K0jVdvbKi5fI2Z3ITCo8e2JRiGnSibAm49v1XYlTpTrQTwy/fOmSj1gxlBaA
- A0YxvJqCaH1IZKILwJSCEIIi56Z9hqLH8r7QdJmuJSCoZWKtKlt7DLGe/+y0PziBEU+k=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=rj5wkGy6yTPAnHR68+j6OFWHSh6FtU7k2/bCjqeMRz8=; b=Z25Z4C6UJJOqzhDHKXFuuYbK4S
+ +utsvMh4m93og5SNxMnIaLo+v5QcmE2cxh+428g1LJ5kcm9rstIh6/MSwRI0VLhxZdmsJnioQAUgR
+ 254WzD5nSmIaxf0cEx0m2bjx/AxudD2edTEHW51ijXJMw0IjFb4xfdMtp4JmTGah4zIs=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGl0s-00064V-EU for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:27 +0000
+ id 1xGl0m-0001cy-Vi for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Oct 2026 22:30:22 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 290EC4376A
+ by tor.source.kernel.org (Postfix) with ESMTP id 6B3DB60235
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 13 Oct 2026 22:30:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07D241F00893;
- Tue, 13 Oct 2026 22:30:21 +0000 (UTC)
+ Tue, 13 Oct 2026 22:30:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220CE1F00893;
+ Tue, 13 Oct 2026 22:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791930621;
- bh=Z7koH2y0BTGH8zmggvnZ8uRcI1N0rUKHZJp7eUeYBVo=;
+ s=k20260515; t=1791930615;
+ bh=rj5wkGy6yTPAnHR68+j6OFWHSh6FtU7k2/bCjqeMRz8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=Di+yxQHLzuhB2FlSKW1Qs30YUTePeMkcVUwDhVbngaMj8yMvjKoYDCKMzUQ3DFScH
- abibWO/XWKYvoDaY9aL0m8pikuBrclR5a4gVhUdQWssuuPxkcoK8vu8BIZs2xXg6fx
- Rnlxcepglv5Xx3CqFGAVROzBiK7ShPmnCAyR6YWbAYL5TlHGERXMUF4dB/y55n+a9Q
- ztSeMgOSs3ttlBI+njh9d3ipCU+vU+7zm/V/lmH53CEE/+gxl/XkH5HfoJxvCl6zmo
- cvx8Maxyw+LXuNTo2ceKW7OgjJgnLtI4zANAdZpqfJl4k/kGMTmcTtthSBfXpUq1KK
- Mb1qsgwIkYL8w==
+ b=kWXBrKjtvxhi6YY0IvpdN2nyb9wWIQjsnphueYp2DK3ZPiFt52kCoC92WSV1S1bA6
+ AzOnT0IBF9ADyvM7kbQpOG7Xm+MGZiWNdrBY9tKykPgwu4h4SZ2Y/uHOGnK3vxjTct
+ KC77zu+quIJrzFPsQQgycLynqqsRLzMSNr3Q0N6PuVwcaYyhGDRaCL3U9ZJFSfmGwx
+ NTyNuVY1Ya6ZKPHgX74F964bfbr+9N0etuMxRUgzwOWvc6ixT8Ci69yn/c2uBAaGin
+ 4RMMfLAVA2R45Qy3uDxhhlzyQ4ieOV+gQuCYFPn+q0R7T4G6EDeVush4aEfroF4s2B
+ UVZy/GagqbrwQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- F14D239E4DBA; Tue, 13 Oct 2026 22:30:20 +0000 (UTC)
+ 183F639E4DBA; Tue, 13 Oct 2026 22:30:15 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <179193061951.1493834.15484105620575468215.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Oct 2026 22:30:19 +0000
-References: <20261007101738.2348038-1-chao@kernel.org>
-In-Reply-To: <20261007101738.2348038-1-chao@kernel.org>
+Message-Id: <179193061376.1493834.1008667944485140463.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Oct 2026 22:30:13 +0000
+References: <20260930235435.3789910-1-chao@kernel.org>
+In-Reply-To: <20260930235435.3789910-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1xGl0s-00064V-EU
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: skip node_change lock for
- inline data writes"
+X-Headers-End: 1xGl0m-0001cy-Vi
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: cache: pin cached block in
+ f2fs_end_cache_writeback()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,22 +99,29 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed,  7 Oct 2026 10:17:38 +0000 you wrote:
+On Wed, 30 Sep 2026 23:54:34 +0000 you wrote:
 > From: Chao Yu <chao@kernel.org>
 > 
-> This reverts commit 66eec36c2421383e5b32e9c1740f656474c80df8.
+> Like page cache folios, writeback does not hold an active reference on
+> the cached block during I/O flight, relying instead on truncation or
+> shrinker callers to wait on F2FS_BLOCK_WRITEBACK before releasing the entry.
 > 
-> Fault injection + shutdown stress test reports inconsistent inline
-> data after "f2fs_io shutdown 2" (mode=lfs, nonzone, segs=1):
+> However, in f2fs_end_cache_writeback(), clear_and_wake_up_bit() executes
+> two distinct steps:
+> 1. clear_bit_unlock(F2FS_BLOCK_WRITEBACK, &entry->state): clears the bit.
+> 2. wake_up_bit(&entry->state, F2FS_BLOCK_WRITEBACK): hashes &entry->state
+>    to look up the waitqueue and wakes waiting tasks.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] Revert "f2fs: skip node_change lock for inline data writes"
-    https://git.kernel.org/jaegeuk/f2fs/c/5edbb590dbd7
+  - [f2fs-dev,1/2] f2fs: cache: pin cached block in f2fs_end_cache_writeback()
+    https://git.kernel.org/jaegeuk/f2fs/c/6e392158cf54
+  - [f2fs-dev,2/2] f2fs: cache: pin cached block in f2fs_unlock_cache()
+    https://git.kernel.org/jaegeuk/f2fs/c/61ba87b33e87
 
 You are awesome, thank you!
 -- 
