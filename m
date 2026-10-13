@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EBA7ECC6B12
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8C506CC6B1F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2026 22:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9AsrDeZdAfJdWffYsbwKEVBHiq1JYWf2IdUfODLKFPE=; b=mdu00EJxR4r0KaUed3eVLqtl/7
-	4Wr9AkepbF2UiGNyVeAziPXaHmvQwCAsdEQjzIBrpZnbdczWmLhbyisZjHgSBM2Pv7U5bFMH6uyZg
-	vr2OJflrwP2VdbqFCMsi3LXTRUgO+l/ldp8al3/zxtmlyVybbk4WiJXnNsIwJISARhyw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=zTR2Mr83w0JPhZWezuETj2ZVAJhV1SLWFnt9K+A8Wpg=; b=AsczUsh0/yyawxFZv3xaS/gejm
+	5z6LYRJm6fuX0t1GkS8QKVT9dSwTj4t4LHHi2y6eQjXkJjzEwzqzRhT7MreVzoE+vb1u8dTQNv6O6
+	orv4NEAxQ21GxR6kxB7Rst1HGaQi8msILX4l0TyMsBMv5DbFyBUL4k5X+Mtrin6ll8GM=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xGl15-0007Xi-JG;
-	Tue, 13 Oct 2026 22:30:39 +0000
+	id 1xGl14-0000bD-71;
+	Tue, 13 Oct 2026 22:30:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl13-0007XT-Ji
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xGl12-0000ag-8W
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:37 +0000
+ Tue, 13 Oct 2026 22:30:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=V6Fzv/xwZWojt+EWhgu275zfjc+Bzu1Q3i6IRSLhWJM=; b=NdDQcafyTDOUIl0++iFp4RcNfm
- aY+h/ULHYd1skA936/Oki2UAG7jNolmoqQHHDxHB1hKTm7lxG76tmlfwZa1ZNvNf9OsMgO6/IpvlH
- 0+67t5oB6ZerzxSTy2ntdDj237Xcvelyi8S7cyRRSqNrYKffZ/yG7iJVNf3XJigx0bQo=;
+ bh=X7/uKeE/+oIcs3CACNXtRNe+WMreIgFyM/jVJG64BJE=; b=jW8GBVMjHB1xpZEwl/+7bY7S4B
+ iN9tOkKnwx37WUkXA4cH3Mue1PdmyNc1aLoYQ+r7mN3LVNgPRrNvQTcc6lel6gFLM51FuTtKFalJP
+ 89479uJkWeZY7aijBm60nZP/rutoL4hPZmnpPQOu31ns+lc/a1UAOB1grWR+yKUffb9o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=V6Fzv/xwZWojt+EWhgu275zfjc+Bzu1Q3i6IRSLhWJM=; b=A5M4bFW5+p+BuxcGoS/keZ/VVC
- xYMiaMCtStKq34ATlxTfC+nuRg3woXGwQI2fCm+wOtPOsdsN4MjmqXxNrblJgF/UATfpuIIeqZgBW
- r2ZgOMGWYZ2F4Qt/Ke+wNCORON+V1V10j6IfIWVCuawUWQL76i2AgGt0CT7F5Gtjaq9o=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=X7/uKeE/+oIcs3CACNXtRNe+WMreIgFyM/jVJG64BJE=; b=DSlaw1fPRNcvIjPZjFxtqtFIzm
+ cdaPOs1enGNIMc0rfhhztIf4wKu6m7mYl2f3WyekwGbjD5y210gr+9y2Rd/UYHBPuECf+e7qe41CB
+ JIRMUEM9+cK7YJWy52mAm4DY+ga/pQacFVgi5jubGVuLi+N/sa+UI1gv+BHbUXSlNNng=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xGl11-00064y-Tq for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Oct 2026 22:30:37 +0000
+ id 1xGl10-0001da-Sa for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Oct 2026 22:30:36 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id A0A8B4376A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 13 Oct 2026 22:30:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840331F00898;
- Tue, 13 Oct 2026 22:30:30 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 4F5C26021D;
+ Tue, 13 Oct 2026 22:30:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B961F00893;
+ Tue, 13 Oct 2026 22:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1791930630;
- bh=V6Fzv/xwZWojt+EWhgu275zfjc+Bzu1Q3i6IRSLhWJM=;
+ s=k20260515; t=1791930629;
+ bh=X7/uKeE/+oIcs3CACNXtRNe+WMreIgFyM/jVJG64BJE=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=GwH8nB/EZWv7fu6hE4XEjf+LGHLVoEeoyGgGQ9VD5sdxkr2B3WSq+nfiN6fa0Oa8S
- SzjvvVM2etKBOWr+Z5HrKg/ILeSSPbIiqQfvJS+5mAvsU/BImICKiz5rNkCuBjD5hV
- n8M1u9NB/9dqVrP1VzbU36OtPg7usUno5DZvaUy90P83aNebWYIN2Vn9RocHEsnzrU
- AGpfs4kLEYuTdUR86Y5UirVK1uiHxcw8ZfL4U5NMwXXKD9hjOHaFBdmhTniNleIOqP
- VbMag2Pmz3/mBg9yu2jILD+Urc4b7dvNVeDTQWKIi5JtSpNCkcoUmMBtlnmYqWjZfu
- vq/nByaXFPrSA==
+ b=GG9k4t2y1gkxV6RA7JOUo/4OFI5IE45bPo19MxkCrzPH0kgCFs9G0Edka5XwWMIDy
+ MYJHniHeEBuOiDPlGNPv1JO9v3PYg1q8pHP6Dx5HHU+/URluL5jkLbg93a1ekzHfpt
+ A3nyiS8XM7Kk+ePD2yaKGoYjHn1xOs8wExFyQvtZgb9nHVy1H+L32bLaYh8NnuQ0fs
+ RII7T3GB50O2tkv24fYsJfirXpU8vyeOm1JqXBiRY4qdQpT1UQA0YE/jqOFFuub5E2
+ VfenPhPlnzFUSQ/Lzv9azmP69q+Q3SDnot25bKtaNwM2avuHktXwNgBM/aR37t8Ghn
+ HEPlDbrv73fnw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7727D39E4DBA; Tue, 13 Oct 2026 22:30:30 +0000 (UTC)
+ F14DD39E4DBA; Tue, 13 Oct 2026 22:30:28 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <179193062901.1493834.12835445891823777379.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Oct 2026 22:30:29 +0000
-References: <20261007114949.2428048-1-chao@kernel.org>
-In-Reply-To: <20261007114949.2428048-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1xGl11-00064y-Tq
-Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: cache: introduce metadata_cache
- sysfs node
+Message-Id: <179193062775.1493834.5789106553835125031.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Oct 2026 22:30:27 +0000
+References: <20261004170456.4104287-1-daeho43@gmail.com>
+In-Reply-To: <20261004170456.4104287-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1xGl10-0001da-Sa
+Subject: Re: [f2fs-dev] [PATCH] f2fs: convert inline quota files when
+ turning quota on
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,41 +90,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed,  7 Oct 2026 11:49:45 +0000 you wrote:
-> From: Chao Yu <chao@kernel.org>
+On Sun,  4 Oct 2026 17:04:56 +0000 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> This patch exposes a new sysfs node 'metadata_cache' under
-> /sys/fs/f2fs/features/ to indicate runtime support for the in-kernel
-> metadata cache infrastructure.
-> 
-> Userspace can check this feature entry to determine support before
-> configuring metadata cache knobs (e.g., cache_wb_interval) or parsing
-> per-cache memory statistics in debugfs.
+> With a block size larger than 4KB, the inline data area is large enough
+> to hold a freshly created quota file (quotacheck writes 6KB), so
+> aquota.user/aquota.group stay inline after quotaon. f2fs does not
+> expect quota files to be inline, and this causes two problems:
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/5] f2fs: cache: introduce metadata_cache sysfs node
-    https://git.kernel.org/jaegeuk/f2fs/c/e881f4730f75
-  - [f2fs-dev,2/5] f2fs: cache: shrink meta and node caches in f2fs_balance_fs_bg
-    https://git.kernel.org/jaegeuk/f2fs/c/7f35dce566fb
-  - [f2fs-dev,3/5] f2fs: cache: wake up f2fs_writeback when exceeding threshold
-    (no matching commit)
-  - [f2fs-dev,4/5] f2fs: cache: support asynchronous write_end_io
-    https://git.kernel.org/jaegeuk/f2fs/c/bd09975045fb
-  - [f2fs-dev,5/5] f2fs: introduce max_atc_write_bio_entry_cnt
-    https://git.kernel.org/jaegeuk/f2fs/c/f32744a8b83d
+  - [f2fs-dev] f2fs: convert inline quota files when turning quota on
+    https://git.kernel.org/jaegeuk/f2fs/c/a85e09bd6cc8
 
 You are awesome, thank you!
 -- 
