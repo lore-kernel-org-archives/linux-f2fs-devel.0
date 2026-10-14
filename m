@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1424CC6B27
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Oct 2026 16:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 74823CC6B1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Oct 2026 16:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9FvTxRxPUdSP1W2quXn8ocQUZQ/Fp2KZYiVVnliMcpc=; b=FaEApTpjiOLtvyc7Q1VxoDUG/t
-	CLIWPPCR0iikOVCcseNBMGmFsTDuOCaXmDf+oOtImbj2vIsd/TgozFcpZJSdGFJQ9Ojselw7nNqYb
-	3LOSS7vdk+h0MiFLUDNGQIG/Lvv0iAohoPn4jLAO4kbsreD2jb2xaS2/RD94oiDCf0z4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=hmBJc825zaBgKzF8jUnKcqrF7U8idqqcLMisZhgbNE0=; b=DJ/R5emuutj0AgGdS9tDbZUowc
+	A7MJ1Fdg5vdxXaQ8MNoJl4CBqKLo8yhodbSt7kWIwmVuPQgvCx0CsYdveI7ijIu40xupJw2SoqsUY
+	ThxCfnNR5m4yRbXleJBrdzskMN4p7RmVC8FeNT6I+3e12Hnr1YCaqgotsVB+fsnPi3Ew=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xH1hq-0004Fk-D8;
-	Wed, 14 Oct 2026 16:19:51 +0000
+	id 1xH1iW-00068c-Cp;
+	Wed, 14 Oct 2026 16:20:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao.sigma@gmail.com>) id 1xH1hp-0004Fe-6V
+ (envelope-from <nzzhao.sigma@gmail.com>) id 1xH1iV-00068V-J8
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 Oct 2026 16:19:50 +0000
+ Wed, 14 Oct 2026 16:20:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hfoYzyBJ37KsC4r5FyT7Zw2Tm3J8AyIuMZqnt5kRPdg=; b=lNzHEpa4o67pUsfW5EMHvAsI9B
- R+nSdqT0AAxqkerwcqxp/L9KI6WjFoPHlp907DEDQXuda7rFM/7Eqqjd2IKFHByqBxCxDzih7aLkf
- hNCEhwyrStKAV6xzV507gfATMG3u41gVM9pcuc5O1V/IRJgBGvfO+xpTilfU/V3PJdOM=;
+ bh=Th0kYuHndVjuWlzBJQ0Sw7/LnyhiWEjtr++H9h1t1iM=; b=k1WCC2Y3MM+AYUt7Z7kCE/3jtr
+ xulf9Fylwa4/FLDrGq9dcmEVqAEtDhTSC9W2fctf/v6TWqi0VU3iDHJcgyOovkS4+Upxb9tVo3+w1
+ qgvzntCbFM6jZ3TgU1OxeGjBkMcMFPoHkdrzRdDExvmOicboTmMidADUCv/gysPao0uo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,73 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hfoYzyBJ37KsC4r5FyT7Zw2Tm3J8AyIuMZqnt5kRPdg=; b=a5BPnFHvkvuMB3vqRXIkENgc0b
- cJFPMik2qGBablsi2exX+9Y8sXRcTYA1b7Pd0SHVYeGCmmiskGfgcF8WkgffUzOOP2VNWagGKRPdl
- tsK/JDppkfUn/js9AQDwZ2sbAXEXFpkXQ+bc6ys6p0bGvcpAyInIIKf+uN7Qgan7buyQ=;
-Received: from mail-pj2-f1.google.com ([74.125.227.129])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Th0kYuHndVjuWlzBJQ0Sw7/LnyhiWEjtr++H9h1t1iM=; b=iVEXGLfU5cVTTFPlsxD+2M17aA
+ vCG0T+tQbGCmTgF2kUZGyo/pBovasOx0/a0bSxewke5Dn/WxTsGpBmxbF8VJQFLXG1JGxhLbMXi+y
+ q2Rkk0Aeb9wYp48YJ/W5gzIlxhacOkQp2yy7A4u2zh/ZBLJXPV8+Mb+3VIOqfKgwgKY8=;
+Received: from mail-pj2-f2.google.com ([74.125.227.130])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xH1hm-0006eF-6H for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 Oct 2026 16:19:50 +0000
-Received: by mail-pj2-f1.google.com with SMTP id
- d9443c01a7336-2e85fb35300so6791225ad.0
+ id 1xH1iU-0003nO-Ss for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 14 Oct 2026 16:20:36 +0000
+Received: by mail-pj2-f2.google.com with SMTP id
+ d9443c01a7336-2e651c30dcbso14016715ad.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 14 Oct 2026 09:19:50 -0700 (PDT)
+ Wed, 14 Oct 2026 09:20:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791994784; x=1792599584; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1791994829; x=1792599629; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=hfoYzyBJ37KsC4r5FyT7Zw2Tm3J8AyIuMZqnt5kRPdg=;
- b=F1geV1/FZm7pstaWIWDtYypstlMRztwi+BiCjJNPeF+m+/PU03WFLkKH9oL8upO9Eh
- ZIBPpn443a07IYEmpc7/ikHOnrsmMMTN1rmiRQ5qP2SsJErxahYUu0nlKkWsFSraMx37
- amjDFrL+5TFGQz/BzcwBddjOuGfYi9BDac5+CUWiWPzKheuPuSRos6CrhdO2WQuvUhoP
- A9pQA6d99f8IyL5grw2KW9LCnw077wzLduTD9YAvSOitHmVr6UfxiqKYTyYKVMZS2XtV
- Quw4XiTZulAg7EByZGGZCTkkVBj8R/3QolhuU3vKT07aSqxQHti6WLFT5j/H4U4vzQCp
- onTw==
+ bh=Th0kYuHndVjuWlzBJQ0Sw7/LnyhiWEjtr++H9h1t1iM=;
+ b=RXeVGb6E2IwY1CoJ9jkj5lq701U1VtRugwm4mLSdG8TbHE132fkUEg5izBY2VL/dLP
+ TTyvG5TtlNqX8qzjIuzHema6MA1ZhE8KS8RtHt8PlUeGHCIsknPGmvlun55fllaAD9HD
+ yHwBTYlLt9tb7QyU5q/QtUEOlYnWVBYjwGxM2nYdEEqKC1bWG21KKdUda7zLS8hi4ElZ
+ RWCNzDgZxCuqCwkGaRNAyTtcen4fYr5I9hEdv3GKkozSy80BzRQIQnz/nORYksYGX2H1
+ 3AZFcGkhUfvxH7l91acoPSs1JurmotKMhBQWmiJlkNTzgIF0vVhFCu0jnWngxz8yf01Y
+ Gnaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791994784; x=1792599584;
+ d=1e100.net; s=20260707; t=1791994829; x=1792599629;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=hfoYzyBJ37KsC4r5FyT7Zw2Tm3J8AyIuMZqnt5kRPdg=;
- b=w2EOhzGpLcDGJGCHWrLtNly7uFHwTVs3RIyMVkFHqFiKqa4lTohA7mYwlCp0AL8hyD
- hrC/rE4iGBfo/L99al+mZ5LYvxRXmyTqk5eB4q8cPMpMMGSQsMY6kVr7UaFWOuJprq2z
- e4QQWCNkah6ybddbadfvzrYPlX+gCYe77krpySbzxEjAKjTudTxKNIS2v90DuVWWeZZV
- 8LkEVnBMwkCXqUubHzsSBCQsKxzlyqRh9icEX9uA8td8G1mACT9NqFCQ8HL7rsMjLOer
- kBehrOOpHitab+xhY83DltqVxC68Bbwhn0ttSlGguHj7C10jV9M/d6196HkBWOFv+1z2
- nMNg==
-X-Gm-Message-State: AFq9FYKYWjmLfF9AcV3um659W5e253L5mvBDU+sy6OTs/3A51gUvteni
- ogcsKdFCzHK69C+4sUBBk0LEyvkkViL/AR/zSDOujab18wDzCyqe/apesG8EyPaf8rA=
-X-Gm-Gg: AYBFou3bKjLpZywpoaTMo0Ijv3y27y3vkxin7bMo2k4DmUpSj19rOFrLTceHlOM4o5a
- ZnbsWIXqU9Qi6Ptn8Icv+dulo8YFquHDFWnALP5NrrqfLbGvUiSG3rjf48C9P6tFWOQah4yFkNh
- xxcYXeywyRkaI5f7L+FMxxT838FKC2pHDpja4cvE60zVy4zpnPEhnG2ZE+tjmva1sx5+0mjpaMD
- FzjNlgQm1P4rhjWvZWmVDvcNVS806TB7iWSr889qtLdNw8xX9Ser4l12dqpVagk87YzYEl9mGke
- YzKUiLutUNDb6hYyKv9gQmnkbUYDp7U7B8xLzUrAmePG+gnX8wMoBDTamk1l3aUWBhAulZngHJS
- x0XLPqF4GRQ63ndaebSwV4NUGJZ66K2WPuy2NQ3a588qQCbi+LxHc5sZpiXWRFHe/KU2u9jUSrz
- 8R/LewjNMNhYPlfgqf5qVjWJcOgR447p5ERCijizvhffdl9+NAPRCoa8sm2i0/Knv6/rSKcjUzq
- TLQSne40RxfNw+lXoE2LybfLPIIrv073Blr
-X-Received: by 2002:a17:90b:3a48:b0:3a0:2900:f55e with SMTP id
- 98e67ed59e1d1-3ab3ac697f1mr9042198a91.29.1791994784361; 
- Wed, 14 Oct 2026 09:19:44 -0700 (PDT)
+ bh=Th0kYuHndVjuWlzBJQ0Sw7/LnyhiWEjtr++H9h1t1iM=;
+ b=QBpQoBgBwNAsEdF4ZOSzl3OOjq3EPL3I+A/s3/pkOOHCnV4rqikM3MwcvuuQPNLf81
+ cVAZ7YDTJ4VeFJH9iglKq4Fc+xPT7++lJR26nUpYT6dAo5Xw/Ssi2K41Nzuibkw0yCk/
+ zlE/hqrAE7hVt7Swd92N7lCGvS9tTa4ToIFEYQ0qRiJhu33Hyv0icCMx1MqsAY5wsh9L
+ mEaYlphUbry6nXzm3JgHbmii0wir4+apYQBM2kpCJBOVS7Kq0qOlGWJX7LCtZ5AFkXTn
+ ral96kWyQqGciXMgfXdpfXiG4knQZULkXaQsrymNJamVedvm5twHRE9E5394vCKEkbAR
+ wO/Q==
+X-Gm-Message-State: AFq9FYKRmklp2r+edQUqp0E9JCUSl5LXKv9mVIfL+C0kDz0QkLik1hmF
+ hcMY+v1jnpTUmUFS2AVqWOjBRPO6AExmqNoCetfPrY3lszxNSRsceFVCxJXqG30x8T0=
+X-Gm-Gg: AYBFou3sM9VhFzpTbSrrl8rOdWFRZmf9jWabCIt8qqX8dOt35hMeJHWPuR4orjG8wf1
+ YdFj/C/ldQyhVBLnCMtw0BUVUtlGOHKL/hgDty1OWcAEMTZFnx4fJN3zVvg4bExTKJB61rJsfj6
+ 3IdztaLINZnXVc+mPtg36rkJOfaszAZM4i+DD9TpvhIjGJ+RYIoQ0ZzI06Spzj/qrFEEYuwRwT0
+ tW7xK3P6629DA3DRppMRibWzRKP3+u7qxixiGdnJVkxOJCpac9WHBidHsmByfIvoB8SMpyUDZg1
+ MYHu5AkliioyhXX0IlJU0c+P1G3cOGn0cj2XFPYcj5tLATJnMOFyU1XxDb4g3DTAfDgVmVd7ABZ
+ wpfoXUDoOUcc30/5g+AShY6OTBWy8I0s2ZbTlyQQY7/lCzyFqNk+77Uwgz04Jru+BvoNJsBsd87
+ up8cFwW548QLd4dsbfZZfnmcFl+ZQYvk4pXSX7pEF97dC4Vs4Acdl6+eOcgAiNnoCgoA5/jdPzW
+ 7WbZ4o08tTQddsNsjZ94TSIPP2mdkus2qfm
+X-Received: by 2002:a17:903:950:b0:2e8:3e5d:b2b7 with SMTP id
+ d9443c01a7336-2e842cd96d6mr148772405ad.40.1791994829050; 
+ Wed, 14 Oct 2026 09:20:29 -0700 (PDT)
 Received: from nzzhao-ThinkCentre-M760t.mioffice.cn ([43.224.245.179])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ac94794dd9sm87190a91.12.2026.10.14.09.19.42
+ d9443c01a7336-2e841a009a7sm73076765ad.11.2026.10.14.09.20.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Oct 2026 09:19:43 -0700 (PDT)
+ Wed, 14 Oct 2026 09:20:28 -0700 (PDT)
 From: Nanzhe Zhao <nzzhao.sigma@gmail.com>
 X-Google-Original-From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
 To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <chao@kernel.org>
-Date: Thu, 15 Oct 2026 00:18:35 +0800
-Message-ID: <20261014161940.3831508-1-zhaonanzhe@xiaomi.com>
+Date: Thu, 15 Oct 2026 00:19:44 +0800
+Message-ID: <20261014162025.3833314-1-zhaonanzhe@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261014064445.2835813-4-zhaonanzhe@xiaomi.com>
-References: <20261014064445.2835813-4-zhaonanzhe@xiaomi.com>
+In-Reply-To: <20261014064445.2835813-6-zhaonanzhe@xiaomi.com>
+References: <20261014064445.2835813-6-zhaonanzhe@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1xH1hm-0006eF-6H
-Subject: Re: [f2fs-dev] [PATCH v5 03/16] f2fs: support regular file buffered
- writes on large folios
+X-Headers-End: 1xH1iU-0003nO-Ss
+Subject: Re: [f2fs-dev] [PATCH v5 05/16] f2fs: support large folio writeback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,50 +125,77 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Sashiko says:
-> Kernel panic (NULL pointer dereference).  In prepare_large_folio_atomic_write_begin(),
-> f2fs_ffs_find_or_alloc() allocates folio->private.  Then it enters a subpage loop.  Inside
-> the loop, it calls f2fs_balance_fs_folio_locked(), which temporarily drops the folio lock.
-> If memory pressure triggers reclaim during this unlocked window, shrink_folio_list() can
-> lock the folio, call filemap_release_folio() -> f2fs_release_folio() -> ffs_detach_free(),
-> and free folio->private.  Because the caller still holds a reference to the folio, the
-> folio is not evicted and folio->mapping remains valid.  f2fs_balance_fs_folio_locked()
-> reacquires the lock, sees the mapping is valid, and returns false.  The loop then continues
-> to the next index without re-allocating or checking folio->private.  When
-> f2fs_submit_page_read_sync() is called, it blindly dereferences folio->private (which is
-> now NULL), causing a crash.
+> Does this mask checkpoint faults?  If a checkpoint error occurs (or via fault
+> injection), the outplace write path fails to submit but is treated as success, so dirty
+> data is silently dropped.  The VFS writeback loop omits the f2fs_cp_error() abort gate.
 
 Changes:
-@@ -4306,11 +4334,13 @@ static bool f2fs_balance_fs_folio_locked(struct folio *folio,
- 	struct inode *inode = folio->mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	unsigned int orig_order;
-+	bool had_ffs;
- 
- 	if (!node_changed || IS_NOQUOTA(inode) ||
- 			!has_not_enough_free_secs(sbi, 0, 0))
- 		return false;
- 
-+	had_ffs = f2fs_folio_has_ffs(folio);
- 	orig_order = folio_order(folio);
- 	folio_unlock(folio);
- 	f2fs_balance_fs(sbi, true);
-
-@@ -4328,6 +4358,10 @@ static bool f2fs_balance_fs_folio_locked(struct folio *folio,
- 	if (folio_order(folio) != orig_order)
- 		return true;
- 
-+	/* large folio was released */
-+	if (had_ffs && !f2fs_folio_has_ffs(folio))
-+		return true;
+@@ -4226,6 +4252,33 @@ static int f2fs_write_cache_folios(struct address_space *mapping,
+ 			err = -EBUSY;
+ 			goto retry_out;
+ 		}
 +
- 	return false;
- }
- 
++		/*
++		 * If cp_error is set, all subpages of this folio are not written
++		 * back unless the filesystem is mounted with errors=remount-ro.
++		 */
++		if (unlikely(f2fs_cp_error(sbi))) {
++			mapping_set_error(folio->mapping, -EIO);
++			if (F2FS_OPTION(sbi).errors == MOUNT_ERRORS_READONLY)
++				folio_redirty_for_writepage(wbc, folio);
++			else
++				f2fs_ffs_clear_subrange_dirty_and_test(folio, 0,
++								folio_size(folio));
++			goto retry_out;
++		}
++
++		/*
++		 * Writing back one large folio performs multiple block allocations, so
++		 * best-effort balance the filesystem before writing it back.
++		 */
++		if (!F2FS_I(inode)->wb_task && has_not_enough_free_secs(sbi, 0, 0)) {
++			folio_redirty_for_writepage(wbc, folio);
++			retry = true;
++			folio_unlock(folio);
++			f2fs_balance_fs(sbi, true);
++			folio_lock(folio);
++			goto retry;
++		}
+ retry:
+ 		pos = folio_pos(folio);
+ 		end_pos = pos + folio_size(folio);
 
-v4 only revalidated mapping and order after unlocking.  v5 samples `had_ffs` before
-unlocking and returns true if the ffs was lost, so the caller retries and re-allocates it.
-`had_ffs` is needed because the non-atomic caller allocates the ffs after its balance loop,
-so a plain `if(folio_test_large(folio) && !f2fs_folio_has_ffs(folio)` check would loop on -EAGAIN.
+v4's large-folio writeback path lacked the `cp_error` gate present in `f2fs_write_single_data_page()`. 
+v5 adds this gate to report `-EIO`, keeping dirty subranges under `errors=remount-ro` or 
+dropping all of the folio's subpage dirty state otherwise ,keeping consistent to f2fs_write_single_data_page
+
+v4 omitted `f2fs_balance_fs()` during multi-block large-folio writebacks. 
+v5 adds a best-effort `f2fs_balance_fs()` before each folio, dropping the lock only when free sections are short 
+just like `f2fs_balance_fs_folio_locked()` does. 
+
+Sashiko says:
+> Does this error handling catch all failure cases?  When f2fs_do_write_data_page()
+> delegates to f2fs_outplace_write_data(), that function has a void return type and handles
+> allocation failures internally without propagating an error code.
+
+Changes:
+@@ -3697,8 +3721,10 @@ static int f2fs_write_folio_dirty_range(struct folio *folio, int *submitted,
+ 		/*
+ 		 * The outplace write path failed to submit this block.
+ 		 */
+-		if (!fio.submitted)
++		if (!fio.submitted) {
++			err = -EIO;
+ 			goto block_done;
++		}
+ 		if (submitted)
+ 			(*submitted)++;
+ 		submitted_blk = true;
+
+v4 treated failed `f2fs_outplace_write_data()` submissions (`fio.submitted == 0`) as success 
+and cleared dirty state. 
+v5 converts this to `-EIO` during writeback to re-dirty the folio.
+
 
 Sashiko: https://sashiko.dev/#/patchset/20261013115621.968742-1-nzzhao.sigma%40gmail.com
 
