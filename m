@@ -4,77 +4,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 145DFCC6B2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Oct 2026 08:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AB2F9CC6B34
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Oct 2026 08:49:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:Message-ID:MIME-Version:References:In-Reply-To:To:From:Date:Sender:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ZftCPohhv+UHRfhL4cVRBSl8mjKWp3nB9rXu6BbvSJ8=; b=QlllauAYBCjo+9D/nEWTlBWp01
-	49xEXMFSXQNJ0nXaU5LwPl/d9RNpsZg2MTVWvRtlxbq7slxq0VuaOfwONNnQomDoeJxOYIz5FTeCr
-	Osnhw5cKeoHHZ0DRD6A0t/gqQ5OSh9rhcFDytvkHI2uL88oq7pob5N2VJgg2+YrXWsLw=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=sI+mh2LI1okGb65ufz8fafuJtsTRmll/tNp/zjyCl/A=; b=X2vmp1eO0qPvlVPmK0ePqcQLy9
+	oMPufWEH1XGRyavqXuOsZUJsawIC/mYZf+1Hvhn4HZx33cuJqRZRiJ0TS0fMn8ytGyz5WEuI6SSlt
+	kUeObqyXYizlzMxVKCC59A7QKdS5S8o7jzdfjUbU2tqDTeUwYWRbcW9+CWKHwmKEgfN4=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xHH1k-0000zK-Gb;
-	Thu, 15 Oct 2026 08:41:26 +0000
+	id 1xHH9X-00016A-Uv;
+	Thu, 15 Oct 2026 08:49:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1xHH1c-0000vl-3w
+ (envelope-from <qwjhust@gmail.com>) id 1xHH9W-000163-GG
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 15 Oct 2026 08:41:17 +0000
+ Thu, 15 Oct 2026 08:49:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-ID:MIME-Version:Content-Type:
- Content-Transfer-Encoding:References:In-Reply-To:Subject:Cc:To:From:Date:
- Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
- Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
- List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tdx46b4X8KT3uTDDgG01jx+zdIGIeM8B1mK4TlJVn4M=; b=bAQU+zsB9qztHXd6oIeI+sh8RV
- CRABbT8lTtxb1OZMP2gydn3l8NuAfQ8Ko/CbkExP8q3vj62RVQy13WKE7bqi83zYXHmw6gWpnx1CR
- RSaqGEv7p6BlUMEHU4gZFcZrOVMuLPoO2o4IkNsLTKU5SMWPHSfTt8JbBAUZP5EsKUjg=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=YOjf6rFSyqsJTThezuuoSLramjes3+jmyhplUceJ4is=; b=TyKtfJXLfZ9oMki39AMGIcwKmz
+ yTOcOjMcChg3EFA4QklBBxwB/0BMe8Ovr9XUGrzku2ZuEz5Qs+pRXReNX3mXwEM2CRxxK4FUR1VMa
+ EQwujOODyd+HRaxWVNPS2mtZf6G2s6z7nDI8Jm5OLDt+7SKDhiFrkk6Rc6DD66JErI6g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References
- :In-Reply-To:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tdx46b4X8KT3uTDDgG01jx+zdIGIeM8B1mK4TlJVn4M=; b=KNvmKnl5XQzwPZ9oN3zlHBwrLR
- Iw7tIgxvv5jvg2OS8f1F3UBR3QMiiwQKbmocJGB5T2z6ejpwKgc4a7Z8drQ+yAmRhPAdl6QlIZOgH
- Keevfx/TllfGQcR/mPSLco8cyenXfN0YqjrQsgpXE2tuiUk+sd7q1/sTm1WGsRXJ33/Q=;
-Received: from m16.mail.126.com ([117.135.210.8])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xHH1U-0002iM-QC for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 15 Oct 2026 08:41:17 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
- Message-ID; bh=tdx46b4X8KT3uTDDgG01jx+zdIGIeM8B1mK4TlJVn4M=; b=V
- kseKGKnLBlcUzmjT94+Vscvtw3AEeOqO4xjrkw/ntV5BUROnMj2/E1XcmZ2yoe8n
- +4ejJR5F1WuH0X4vjdACyDazdiYEja6oMS/my8ev44mMRsju+PiWs+LfMiPzStqK
- 5Z21S/Y6i6x8/z4bUT1MRhuF+0Uc0RJ53g2grkwmVA=
-Date: Thu, 15 Oct 2026 16:40:29 +0800 (CST)
-From: "Nanzhe Zhao" <nzzhao@126.com>
-To: "Jaegeuk Kim" <jaegeuk@kernel.org>
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 126com
-In-Reply-To: <atA24UMtAqkmz_R8@google.com>
-References: <20261014064445.2835813-1-zhaonanzhe@xiaomi.com>
- <atAO6ykqwGgZq77y@google.com> <atA24UMtAqkmz_R8@google.com>
-X-NTES-SC: AL_Qu2SAPyevE4p7yabYukdmEoVj+o8Xsaxs/8g2YJSc80Ooxvs5zIGU2d5Anvw/ei9Fi6BrjG2fgRi+th/Y6NKX1hlfeCqN0fUPJQN0mktSg==
+ bh=YOjf6rFSyqsJTThezuuoSLramjes3+jmyhplUceJ4is=; b=jEjg1veZqgmotUfe6x/3gp56hD
+ rrjMiIhfkCRwRwX5D0d7RrneSL5Q3kEoMkXnXWSYN05BQ/YtWs4DC1Frox20tR3Yqe+n8D82FMIFe
+ W0ow/vv1PcC/j1sDzDccXHfA0FmApk9g6zKQ5F2GjUB/uwBHj+mZr9uZl8a3EP1F/o8A=;
+Received: from mail-dy1-f182.google.com ([74.125.82.182])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1xHH9U-0000zV-Er for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 15 Oct 2026 08:49:31 +0000
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-30b6dad2382so11723179eec.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 15 Oct 2026 01:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1792054163; x=1792658963; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=YOjf6rFSyqsJTThezuuoSLramjes3+jmyhplUceJ4is=;
+ b=mhlkdVNACifnoVN9HZdbiukz/oi0DBpPqigyc/O5A34zHemQRj/bnT7xjo3enyvvlA
+ RIUAKiCYKBE6AvFa1m8aNIhzsI79nDhTAHIHQuNuYb5VkKdd3h4+uGYW30WC5CNikLLt
+ B0GVF8hdKugnkxO2ypjlGdwZI+9QxO+fORpoQFPiYyk/mU9/CXvSdr4sFmKV+sTO7rDt
+ Jft5/xdO7VziHr0O67wDkb8+GwbVDsdsGko1IfO6GDFtbfCsC/sCA8PDZHAY43g8/ITu
+ eYRyHNZuAwUXxDf7ZHuGBktRut4HXYpIwSZVFPHSSN0aC5a0Q9JWPPh0fU4gn8epsAcg
+ sN6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792054163; x=1792658963;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=YOjf6rFSyqsJTThezuuoSLramjes3+jmyhplUceJ4is=;
+ b=RpIOYMyxw2E7ttaSILLpj5d5NV+xjgxUAPoMRkK6P9JDev6uFc1YFmdFZtmtVuyXzM
+ IcASM/3kqmxHopHyyxs9vpXdnsN427XCulRwX9hi41wU/Fgclc2vC2le/shXU3+rihHA
+ e9Snt602z9WrucXn2ldSqNEF8bicoUJme5Uvizmbc0Mz6cT+iHmgJRebk3hZY2P5Riht
+ iIMKrId8JhqhKGvRhXjJlS8wKrGnpUpSdS1L4tNXNptzhI6Gmch3r/trY3Wd8AXy/6vx
+ CEbf7+eiZERC9+0WQI3NXimsc3xPcMOMQjphAJWANgnFgzBDRowh78niDxiy/XpmLETO
+ kUEw==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwkIn6u9j9ncCTPHPT7Ak4aUaOMtTvNb/r9yPXFtKhQoFm6NWWJeM21BI6eh4OD8LqqjV/UUQHUeGj63F1yZh3J@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYIdWXXnpIGVG7lpp3oTNKLlOGyPWoDTVtTZF1b8zgkuVTCpcWML
+ zmF/TrMaosSHxfhm6YIod8gorPdrfWe7hOjNfjPAQwbdCmXKBQs2SPQm
+X-Gm-Gg: AYBFou13Fp0t+ehXeHKcFTjsbPyvEYSJ94EJuaAw6W4YRmrgs1nzxHA4me5S+1JF4Z7
+ gR/RtLggJv1ksObjVs6fAqURK1f+fprdN387ksGzVua0iOZY+V8N/3Y3KtezCgVAqdDaUzEvU8J
+ cM3xs3t3x3XpMtj3NVwebKxbCqeUpCnK12ij0UMvNMtr+zUBdi59hUmJNNY2Y5F8worbgxPUPuq
+ HZwbZnGGL01EQgOc+5ynAGAlg2x5K+CLIL1ngzF+rc4OWDAqyyiATJFr6eVG6hPYM0nS67hwgXz
+ QDdWjNIYKMnS+RIYyaiCcebWVoXR8pX4Ih7gFaUePAHFyBsKgH8yer7mXT6SZnZVhmbdJ8sK+QQ
+ VVkfnfQz9eLbFha0n5Ei5kSrOzTaKLRHieRvuMwsKlTKdwfTnZ4ktd/BYcYaV7D0LtBrjuLnEC/
+ 1QIKAbtL+wMnfhvCR2KFilCx9vmn+fA2H19o5bpIU6HHpLp5wTc8j+kN7pORa+vKJwaUqujo7NF
+ Xy+ChE5pU1lExZk0RM82owZat9A20J7z68=
+X-Received: by 2002:a05:701b:2309:b0:153:7a27:b89 with SMTP id
+ a92af1059eb24-16a5ed4008cmr29637644c88.21.1792054162846; 
+ Thu, 15 Oct 2026 01:49:22 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-169a1becf08sm58191135c88.5.2026.10.15.01.49.19
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 15 Oct 2026 01:49:21 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: Daeho Jeong <daeho43@gmail.com>
+Date: Thu, 15 Oct 2026 16:49:15 +0800
+Message-ID: <20261015084915.3364591-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CACOAw_xV4J8r6exS3ZdTA1aY_bjQ+PFL5LVn4ymLanxqHGqLGQ@mail.gmail.com>
+References: <20260829060524.2656620-1-qiwenjie@xiaomi.com>
+ <20260829060524.2656620-3-qiwenjie@xiaomi.com>
+ <CACOAw_xV4J8r6exS3ZdTA1aY_bjQ+PFL5LVn4ymLanxqHGqLGQ@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <1d90a289.6797.1a13eb852cb.Coremail.nzzhao@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: cykvCgC3_299kdBqXiVQAA--.25521W
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsB1SImrQkX3B3wAA3V
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-Headers-End: 1xHH1U-0002iM-QC
-Subject: Re: [f2fs-dev] [PATCH v5 00/16] f2fs: support & optimize large
- folios for writable files
+X-Headers-End: 1xHH9U-0000zV-Er
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: refresh pinned allocation
+ boundary after resize
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,74 +123,35 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Nanzhe Zhao <nzzhao.sigma@gmail.com>, Barry Song <baohua@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Juan Yescas <jyescas@google.com>,
- Daeho Jeong <daehojeong@google.com>, Pengfei Li <lipengfei28@xiaomi.com>,
- Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <David.Hildenbrand@arm.com>, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <Ryan.Roberts@arm.com>,
- Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
+Cc: Daeho Jeong <daehojeong@google.com>, qwjhust@gmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ qiwenjie@xiaomi.com, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Qiuyang Sun <sunqiuyang@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-CkhpIEphZWd1azoKQXQgMjAyNi0xMC0xNSAxMDoxMzo1MywgIkphZWdldWsgS2ltIiA8amFlZ2V1
-a0BrZXJuZWwub3JnPiB3cm90ZToKPk9rLCB0aGlzIGNvbWVzIHdoZW4gYXBwbHlpbmcgImYyZnM6
-IGNhcnJ5IHN1YnBhZ2Ugb2Zmc2V0IGFuZCBjb3VudCBpbiB3cml0ZSBJTyIuCj4KPk9uIDEwLzE0
-LCBKYWVnZXVrIEtpbSB2aWEgTGludXgtZjJmcy1kZXZlbCB3cm90ZToKPj4gSGkgTmFuemhlLAo+
-PiAKPj4gQ291bGQgeW91IHBsZWFzZSBjaGVjayBJTyBzdWJtaXNzaW9uIHBhdGggZm9yIFpvbmVk
-IGJsb2NrIGRldmljZT8KPj4gSSBoaXQgdGhpcy4KPj4gCj4+IFsgICA5My4xMDAyMjVdIHNkIDA6
-MDowOjQ6IFJldHJ5aW5nIHVuYWxpZ25lZCB3cml0ZSBmb3Igem9uZSAyNjM5OyBvZmZzZXQgMjU5
-NDQzMzEyOyB6b25lIG9mZnNldCAxOTA1NjsgSS9PIHNjaGVkdWxlciAobm9uZSk7IHJxIDAwMDAw
-MDAwNjUzYjZhNzAgey5vcD1XUkkKPj4gWyAgIDkzLjEwMDQyMF0gc2QgMDowOjA6NDogUmV0cnlp
-bmcgdW5hbGlnbmVkIHdyaXRlIGZvciB6b25lIDI2Mzk7IG9mZnNldCAyNTk0NDMzMTI7IHpvbmUg
-b2Zmc2V0IDE5MDU2OyBJL08gc2NoZWR1bGVyIChub25lKTsgcnEgMDAwMDAwMDA2NTNiNmE3MCB7
-Lm9wPVdSSQo+PiBbICAgOTMuMTAwNTUxXSBzZCAwOjA6MDo0OiBSZXRyeWluZyB1bmFsaWduZWQg
-d3JpdGUgZm9yIHpvbmUgMjYzOTsgb2Zmc2V0IDI1OTQ0MzMxMjsgem9uZSBvZmZzZXQgMTkwNTY7
-IEkvTyBzY2hlZHVsZXIgKG5vbmUpOyBycSAwMDAwMDAwMDY1M2I2YTcwIHsub3A9V1JJCj4+IFsg
-ICA5My4xMDA5NDhdIHNkIDA6MDowOjQ6IFJldHJ5aW5nIHVuYWxpZ25lZCB3cml0ZSBmb3Igem9u
-ZSAyNjM5OyBvZmZzZXQgMjU5NDQzMzEyOyB6b25lIG9mZnNldCAxOTA1NjsgSS9PIHNjaGVkdWxl
-ciAobm9uZSk7IHJxIDAwMDAwMDAwNjUzYjZhNzAgey5vcD1XUkkKPj4gWyAgIDkzLjEwMTQzMl0g
-c2QgMDowOjA6NDogUmV0cnlpbmcgdW5hbGlnbmVkIHdyaXRlIGZvciB6b25lIDI2Mzk7IG9mZnNl
-dCAyNTk0NDMzMTI7IHpvbmUgb2Zmc2V0IDE5MDU2OyBJL08gc2NoZWR1bGVyIChub25lKTsgcnEg
-MDAwMDAwMDA2NTNiNmE3MCB7Lm9wPVdSSQo+PiBbICAgOTMuMTAxNzYyXSBzZCAwOjA6MDo0OiBS
-ZXRyeWluZyB1bmFsaWduZWQgd3JpdGUgZm9yIHpvbmUgMjYzOTsgb2Zmc2V0IDI1OTQ0MzMxMjsg
-em9uZSBvZmZzZXQgMTkwNTY7IEkvTyBzY2hlZHVsZXIgKG5vbmUpOyBycSAwMDAwMDAwMDY1M2I2
-YTcwIHsub3A9V1JJCj4+IFsgICA5My4xMDE5MDddIHNkIDA6MDowOjQ6IFJldHJ5aW5nIHVuYWxp
-Z25lZCB3cml0ZSBmb3Igem9uZSAyNjM5OyBvZmZzZXQgMjU5NDQzMzEyOyB6b25lIG9mZnNldCAx
-OTA1NjsgSS9PIHNjaGVkdWxlciAobm9uZSk7IHJxIDAwMDAwMDAwNjUzYjZhNzAgey5vcD1XUkkK
-Pj4gWyAgIDkzLjEwMjU2NF0gc2QgMDowOjA6NDogUmV0cnlpbmcgdW5hbGlnbmVkIHdyaXRlIGZv
-ciB6b25lIDI2Mzk7IG9mZnNldCAyNTk0NDMzMTI7IHpvbmUgb2Zmc2V0IDE5MDU2OyBJL08gc2No
-ZWR1bGVyIChub25lKTsgcnEgMDAwMDAwMDA2NTNiNmE3MCB7Lm9wPVdSSQo+PiBbICAgOTMuMTAz
-MDU0XSBzZCAwOjA6MDo0OiBSZXRyeWluZyB1bmFsaWduZWQgd3JpdGUgZm9yIHpvbmUgMjYzOTsg
-b2Zmc2V0IDI1OTQ0MzMxMjsgem9uZSBvZmZzZXQgMTkwNTY7IEkvTyBzY2hlZHVsZXIgKG5vbmUp
-OyBycSAwMDAwMDAwMDY1M2I2YTcwIHsub3A9V1JJCj4+IFsgICA5My4xMDM0NDddIHNkIDA6MDow
-OjQ6IFJldHJ5aW5nIHVuYWxpZ25lZCB3cml0ZSBmb3Igem9uZSAyNjM5OyBvZmZzZXQgMjU5NDQz
-MzEyOyB6b25lIG9mZnNldCAxOTA1NjsgSS9PIHNjaGVkdWxlciAobm9uZSk7IHJxIDAwMDAwMDAw
-NjUzYjZhNzAgey5vcD1XUkkKPj4gWyAgIDkzLjEwMzY2N10gc2QgMDowOjA6NDogUmV0cnlpbmcg
-dW5hbGlnbmVkIHdyaXRlIGZvciB6b25lIDI2Mzk7IG9mZnNldCAyNTk0NDMzMTI7IHpvbmUgb2Zm
-c2V0IDE5MDU2OyBJL08gc2NoZWR1bGVyIChub25lKTsgcnEgMDAwMDAwMDA2NTNiNmE3MCB7Lm9w
-PVdSSQo+PiBbICAgOTMuMTA0Mjk0XSBzZCAwOjA6MDo0OiBSZXRyeWluZyB1bmFsaWduZWQgd3Jp
-dGUgZm9yIHpvbmUgMjYzOTsgb2Zmc2V0IDI1OTQ0MzMxMjsgem9uZSBvZmZzZXQgMTkwNTY7IEkv
-TyBzY2hlZHVsZXIgKG5vbmUpOyBycSAwMDAwMDAwMDY1M2I2YTcwIHsub3A9V1JJCj4+IFsgICA5
-My4xMDQzNzNdIHNkIDA6MDowOjQ6IFJldHJ5aW5nIHVuYWxpZ25lZCB3cml0ZSBmb3Igem9uZSAy
-NjM5OyBvZmZzZXQgMjU5NDQzMzEyOyB6b25lIG9mZnNldCAxOTA1NjsgSS9PIHNjaGVkdWxlciAo
-bm9uZSk7IHJxIDAwMDAwMDAwNjUzYjZhNzAgey5vcD1XUkkKPj4gWyAgIDkzLjEwNDQ0OV0gc2Qg
-MDowOjA6NDogUmV0cnlpbmcgdW5hbGlnbmVkIHdyaXRlIGZvciB6b25lIDI2Mzk7IG9mZnNldCAy
-NTk0NDMzMTI7IHpvbmUgb2Zmc2V0IDE5MDU2OyBJL08gc2NoZWR1bGVyIChub25lKTsgcnEgMDAw
-MDAwMDA2NTNiNmE3MCB7Lm9wPVdSSQo+PiBbICAgOTMuMTA1MjIwXSBzZCAwOjA6MDo0OiBSZXRy
-eWluZyB1bmFsaWduZWQgd3JpdGUgZm9yIHpvbmUgMjYzOTsgb2Zmc2V0IDI1OTQ0MzMxMjsgem9u
-ZSBvZmZzZXQgMTkwNTY7IEkvTyBzY2hlZHVsZXIgKG5vbmUpOyBycSAwMDAwMDAwMDY1M2I2YTcw
-IHsub3A9V1JJCj4+IFsgICA5My4xMDUyNTNdIHNkIDA6MDowOjQ6IFJldHJ5aW5nIHVuYWxpZ25l
-ZCB3cml0ZSBmb3Igem9uZSAyNjM5OyBvZmZzZXQgMjU5NDQzMzEyOyB6b25lIG9mZnNldCAxOTA1
-NjsgSS9PIHNjaGVkdWxlciAobm9uZSk7IHJxIDAwMDAwMDAwNjUzYjZhNzAgey5vcD1XUkkKPj4g
-WyAgIDkzLjEwNTUzMl0gc2QgMDowOjA6NDogUmV0cnlpbmcgdW5hbGlnbmVkIHdyaXRlIGZvciB6
-b25lIDI2Mzk7IG9mZnNldCAyNTk0NDMzMTI7IHpvbmUgb2Zmc2V0IDE5MDU2OyBJL08gc2NoZWR1
-bGVyIChub25lKTsgcnEgMDAwMDAwMDA2NTNiNmE3MCB7Lm9wPVdSSQoKQ291bGQgeW91IHRlbGwg
-bWUgd2hpY2ggbGluZSBvZiBjb2RlIHByaW50cyB0aGlzIGxvZ6O/IEkndmUgZm91bmQgYSBiaXQg
-ZGlmZmljdWx0IHRvIGZpbmQgaW4gbXkgZjJmcyBkZXYtdGVzdCBrZXJuZWwgdHJlZSBhbmQgcGl4
-ZWwgYW5kcm9pZCBtYWlubGluZSBrZXJuZWwgdHJlZS4uCgpUaGFua3MsCk5hbnpoZQoKCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
-dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
-dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
-dmVsCg==
+Hi Daeho,
+
+> Could you update the patch to adjust resizable_tail_secno accordingly?
+
+I've sent v3 [1]. It now subtracts the removed sections from
+resizable_tail_secno, clamping it to zero, before recalculating the pinned
+allocation boundary. This keeps the boundary unchanged when shrinking
+within the reservation and limits it to the new main area otherwise,
+while retaining the zoned-device limit.
+
+The old tail-based rejection checks are removed. The current tail value
+is saved after freezing the filesystem and restored before rolling back
+the geometry if the final checkpoint fails.
+
+[1] https://lore.kernel.org/linux-f2fs-devel/cover.1792050467.git.qiwenjie@xiaomi.com/T/#u
+
+Best regards,
+Wenjie
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
