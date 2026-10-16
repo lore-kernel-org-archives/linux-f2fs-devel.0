@@ -4,109 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 975B7CC6B38
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Oct 2026 05:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70C89CC6B38
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Oct 2026 05:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Hm9b328HbSHsl5czrjJb9eUtACsO/NMlarqUkJLWBok=; b=NUspdWC+BZBEW6584anT46XNDr
-	QA3K401boVhf0IlSOYWofHT5DPTcar2KStATO2/bqF01KYSClUoXp2o/IyX5vS7vBriDaN9N19RbF
-	nFWkl0NcqRmG6eumUVJx/g+tg44Mjm1mmyB5PxG0RNOn9ADwCG/WuPE2VbjDUurH5JQA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=jxByfuCGfd/BC7viQqlnxSiGLMPDOhr1mkhK1UCkK3w=; b=YybaNegmuA0C23q5HHkz93m12p
+	ZqTwrASSvg96F529W0grBUKT7T5F9FXwRIXty+nEh/kX8MqQnW01UAM5OgrIJosTsMd7ZL7SsBW3N
+	6SCnH0tTGCtMxa+xT0Df5RXVIdKZ0DlAA/mlL9ftMdn3nfnh6DiWkZUrVNOIb+D+AlKk=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xHajr-0000nE-Tr;
-	Fri, 16 Oct 2026 05:44:20 +0000
+	id 1xHajx-000185-JW;
+	Fri, 16 Oct 2026 05:44:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1xHajq-0000n1-Ql
+ (envelope-from <qwjhust@gmail.com>) id 1xHajv-00017y-JZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Oct 2026 05:44:19 +0000
+ Fri, 16 Oct 2026 05:44:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OK8gQ1ufxTYQRu20UVmbLfwGO0s2WmJNokT26nu2ksg=; b=Yn1sgkDytaW61vmzuCOZqC5ZN+
- +nKT6lefrKhGkUND5bHuyGVNzlidc1YGwqnpFx6WMAvp7AgKdZXtRqZPG8uqIWRHnKGDJM3kVR5jQ
- TrjBqFs0W0NWVFwCbWRwqbSo186OldP+uR1UsiSHj2LsNvfHpoJB0PUDWoCFLhEy5jqk=;
+ bh=X/HZc3zEH3FMgTce9H4OKnvH8oJPDGjZDpCmpbazH/g=; b=Rj2UTHJ42UlfUVo+CvZi+VVwaV
+ XQjIQfQV18v9w7y65ptmQ+8+QvOHr5rLnC6NnpSp3UHuQeBeu1H1yxKrMnybY9WjiYAyiDPce2pF2
+ FRW6Oo+EVRgfIy7OZgRsrnWyuTlyGnSuhFnhcP4O6mwBGVRnaYcll+T63hL7yAvS7v7M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=OK8gQ1ufxTYQRu20UVmbLfwGO0s2WmJNokT26nu2ksg=; b=L
- sgLsrV0D5HM3ZRvktujduuOYyMoAudHd/Cqixm/8a/WXC221I6Q5YJnvCr//INuj72/lFsyST3y9z
- kKbbJ2FmBYLB6FPKRtvoCP1F9aPCzMIFLjCMyDgBLcbt+6xxpPZxvAr2MB0sPVRuxArMenrSwtEaX
- pZS0JW5ugmPx3Ymc=;
-Received: from mail-dl1-f43.google.com ([74.125.82.43])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=X/HZc3zEH3FMgTce9H4OKnvH8oJPDGjZDpCmpbazH/g=; b=dfY1bcjYxaAJh5HS1xKRkcOjbW
+ Rs1+IOUaTrTuPQLQP8WS9LmFYy1+Y9W/Ox1Lvrdnhg94eMzgLquWwAk/uY4qycZ5IVTbSsjvYcdrf
+ Bw50GsdkGiBDeJt4ZFPz4wVNM8uxOsNqX/Wqrq3bV5okUGLVpWEwXEQlFakDfPvrEzqs=;
+Received: from mail-dy1-f172.google.com ([74.125.82.172])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xHajr-0002aU-6g for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Oct 2026 05:44:19 +0000
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-16079d54c17so262542c88.0
+ id 1xHaju-0003VU-Of for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 16 Oct 2026 05:44:24 +0000
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-3514b90bb89so5098408eec.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 15 Oct 2026 22:44:19 -0700 (PDT)
+ Thu, 15 Oct 2026 22:44:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792129453; x=1792734253; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=OK8gQ1ufxTYQRu20UVmbLfwGO0s2WmJNokT26nu2ksg=;
- b=ehkQJWvoF1aSWycHs/Pmax/sD4/RhJNJ1w4HgNFFSZEZyj9kQKph+APJl7VE7vK7Dk
- ukKIoV16dgeqgtqkoJSGWqHzWeMjTlLDGwrtHz0tIv5G3LIf0QU+OckVZsVtKzaOLWMX
- MzZ5nb2ELqoAi+5dgM9fT3L+e2W2kt6j/M0XUQRen5YD4QnVGtEUs1nPgRCUEKlboODZ
- fYTxz6VathbH0j/KxW6AVErRgkJu/0IIt+mXgK24/NfX/w5G9g9YIr3KcATwnPooGpFS
- WfezMPGrCdPFpvaQw3iSY8O8gVZkCcoi+1dVQjoYSCVBjy1PJot56npreVO+PhVhfuZe
- ZuGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792129453; x=1792734253;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1792129457; x=1792734257; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=OK8gQ1ufxTYQRu20UVmbLfwGO0s2WmJNokT26nu2ksg=;
- b=nWk/mAf1eFdHP5Z6944nz7r++wW6AM2j9H4aufB7LR2R6soEJxe/SxapkSozYUY8ZI
- NM6pkXnoa1gRYdb1XKRWOoOp8T243s2MnNnpPbZiI1//avL+7rzZs3fB1WCHGZYGlQgO
- Njwet42OJyvy4/498hgnEvgypVhetvO7ZQtrRjcMiD4mhP3g0z5owsRJdshdP08R7ZDl
- 4lR92sNBG8cUS/dSRGRzcO8wm7it2pQAWlPbYllmakiBGewuxMPpAI68uZrpcN59mhOc
- FIQN/Kgkxr25i1nVZopCnGyAY9h/IYUPKE4wN3LbkparmHLGqjMLFDrAG1Eq1ynNv21x
- 6wMg==
+ bh=X/HZc3zEH3FMgTce9H4OKnvH8oJPDGjZDpCmpbazH/g=;
+ b=Fgxt0UCteRb9sgPDoDMXVKDrcRpPGIW6/fcC4EEvTtI1BCty8lGBOnzYosEPw/a28S
+ m0FVcaslsU9LUVAof1K2dbL6slVk+08L0zSn0EOtu+8E+3iZaXaahOzpcGk02iO9yhiv
+ wOB8MDTpHWGjTlRRPJujPCd+ZClm2no+gPCdYnsfLpPeIShwmxtdctZtb8CZY4b1jcg5
+ nNG2rqSt302LqwUz1VVLJQhEVv1YapzIOR/RpK2XIhqi7ifKiohgTdQo9zjygafGofVy
+ mQoDlV/H7HGcPJ8nxhBKylAuGNAc2IzasmQak9jufU3Bkfi1GUHh4idqJPkMk1yIL53w
+ sdVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792129457; x=1792734257;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=X/HZc3zEH3FMgTce9H4OKnvH8oJPDGjZDpCmpbazH/g=;
+ b=jMs1qbh6zYIVK0IavZ6cswG3QA2NLeYPJHUkTNNv8ps2lgouO6Ka4zg+eC9vh6CbPW
+ 4aDOKsNixmt4ZVIdaWZUvveS2At5yGpb3UFCkB98ztCNEZwYi9atcbzFmEn38u1TkPiG
+ wDdC5zVdS9XQCy8EgUEyNhSitZpzzXsrGXEsshvi5f0OqP3/MUlnyhn/vbyLJyo/8652
+ gWGXEWo42C93gAxwppmaxawp/VKiqJk9Ona4N/Z3lnkH1K9n8QC9Zmx4YWqpVPzYQ0pQ
+ aKuC8p8NspUQdSVQnCyvdUOWf81ZxO1pNRzv7Dz/IA4slw1lLJqyWwEod3FHj3NsJGNN
+ +wog==
 X-Forwarded-Encrypted: i=1;
- AKwUvBx2Qq0LnMomfHC/hytxmnXWB11/C+ALp8JN4UoB3G7THGIN3BcAaU9pUmRk9km58lhFXN8r6fka52P3D2ME9PXm@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYJuxeEa4oofr5cSWbcoei/4ketDvAWYe0FUHZVTOgiKSbKn7qJ/
- jSnhHLI6HEEtVr/QTBY7qZKwTS5+35EIvY4UVdsL0+g1q0O6/17adc9/
-X-Gm-Gg: AYBFou093iqa7rbWro0xWI5bh1PUgCuTZJggIw2z3bVgcfq0V9eK+iYMiCOyb0vFxiE
- YolwVFjcS9xdvrOa0/USMuWfGmIEZZzOTVOOyBIlLij0pezDdoRggiI90qpDRc71cxwAGJxKmUx
- HBYbnDBEIceAc5cmyGbR+dTZn2gKaKI98CQHg0l6ltch/fXBaxY4mNDz+nt0he+5N02Y7vwRCbp
- 6GOzJOrFJSnLis49vCGiw45zBmXnDzJXkhqKeLD5H9PvSZtn5VH9bh7DwtVEQm6tWw3WuOMmgiH
- 4sLNAx+6aYFJmFBGT4MC8dN/WL8ynTS/JiiCuYOkALi+Ossknr7KuuLzdToMTuuXb/wjoBGQDur
- PG2Z8YL3MocPtfAWp80N2R6hCzlTCYJA56myoPeFbBE218g8E8G51oSq/SYyqjKfA+NafUJB4Cs
- T4HCy1DDB1xbHuDXGQVbPo4JZ0rTxRhWP15I8YdJOmXb7NZzZGaKhbOcyLVp8d732mjknc5NtTV
- EqS1nNSHGRzDUju8tZugv6jTo5t1fXiX6U=
-X-Received: by 2002:a05:701b:4544:10b0:144:c12b:dfc6 with SMTP id
- a92af1059eb24-16a60ce7b43mr28097347c88.44.1792129453455; 
- Thu, 15 Oct 2026 22:44:13 -0700 (PDT)
+ AKwUvBzJkv0ku2AfsWlRcUZYWw7w+D2Seb20sdW+Edy/9cMX3gDwBCpxfmBbGhBRULyBc6+gOl5q8MoKlk3/yprhW7Xd@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYKoQa/I1tGLcSZljK3Zlv5RBGcEVCuK8akjJqlbnmxKy264mCru
+ MLfv8z9/8KfqSiw68KvyXTG7ey+TB3J/2T6o8lEzGEpdE15fA+XjyWAZ
+X-Gm-Gg: AYBFou2c4eN3dI07E2rX6XHh+2e8DBI+p7kExIreQI6YErQ5oUhQf/M2a61W1hUGLxW
+ fBgxZtIKJDzLOd8WE2nKBa1kEuMmySvcyWEVhWgy7+fVCI3n7GbRX9+bPhBm1C4GJbmqHgzsl5n
+ TEe4tgbDbZ5yEJdqLadnIAeBwUsx/CCb0ZC4EK5iGVcupaJnJH80D5UpTrcolUeb4jCmMNKjTou
+ 5IyNEZEu/eUr4jYIBR3NK9AI4rcMOljZB6TnwcKmUTRZSVWTY7XW4O0N9OWubfr17/wAGWuVjDC
+ wFZtzaSeL72POIeOmMXEztjaEz5eYziqFEOcbTqpnPjfJlIvl4LPrXrkeCF+Um3VDa7pASohHP/
+ QBp4fAMYUp+MPfUsPN6X28TwdnA9nA9hX8LW7sHCuLlnTI8nhhE3Isxj2WX5GYqDGN+Fr4hrXiG
+ OOSdmJAIZxxCsmHmw92kshdRCMJBCxZqWAuwfCBbceN2e6Ykf6Z0x596ZeKq2RBmo+Gdb3CmQXE
+ WuX959Y4fG8ashL/GCzqJuttKUd9kbTK3A=
+X-Received: by 2002:a05:701b:2412:b0:137:fa50:a242 with SMTP id
+ a92af1059eb24-16a586a3183mr26627294c88.1.1792129456966; 
+ Thu, 15 Oct 2026 22:44:16 -0700 (PDT)
 Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1831919fdfesm2642428c88.7.2026.10.15.22.44.10
+ a92af1059eb24-1831919fdfesm2642428c88.7.2026.10.15.22.44.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Oct 2026 22:44:12 -0700 (PDT)
+ Thu, 15 Oct 2026 22:44:16 -0700 (PDT)
 From: Wenjie Qi <qwjhust@gmail.com>
 X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Fri, 16 Oct 2026 13:44:04 +0800
-Message-ID: <cover.1792116883.git.qiwenjie@xiaomi.com>
+Date: Fri, 16 Oct 2026 13:44:05 +0800
+Message-ID: <7884c62cae6e4b1ad516a9ac351c2604e57d5cc5.1792116883.git.qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1792116883.git.qiwenjie@xiaomi.com>
+References: <cover.1792116883.git.qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1xHajr-0002aU-6g
-Subject: [f2fs-dev] [PATCH v4 0/2] f2fs: fix online resize state
+X-Headers-End: 1xHaju-0003VU-Of
+Subject: [f2fs-dev] [PATCH v4 1/2] f2fs: flush SIT journal during filesystem
+ resize
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,48 +129,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Online shrink changes both persistent SIT state and the geometry used
-by pinned allocation. This series keeps those states consistent during
-range evacuation and after the geometry changes.
+During a filesystem resize, SBI_IS_RESIZEFS prevents new SIT entries
+from being added to the journal and forces existing entries to the SIT
+area. However, f2fs_flush_sit_entries() returns early when there are no
+new dirty sentries, leaving existing journal entries behind.
 
-Patch 1 drains the SIT journal during resize even when there are no
-new dirty sentries. It is unchanged and retains Daeho's Reviewed-by.
+After the main area shrinks, a later checkpoint can access a journal
+entry whose segment number is outside the new geometry and trigger
+f2fs_bug_on().
 
-Patch 2 consumes the tail reservation, refreshes the pinned boundary,
-and restores both on final checkpoint rollback. It also limits pinned
-allocation by the temporarily reduced MAIN_SECS() during evacuation.
+Only take the zero-dirty fast path when entries may be written back to
+the journal. This lets resize drain existing entries through
+remove_sits_in_journal() even when there are no new dirty sentries.
 
-Changes in v4 (since v3):
-- Bound pinned section allocation by the current MAIN_SECS().
+Fixes: 04f0b2eaa3b3 ("f2fs: ioctl for removing a range from F2FS")
+Reviewed-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+---
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v3 (since v2):
-- Rebase onto f2fs/dev.
-- Reduce resizable_tail_secno by the removed sections, down to zero.
-- Save the current tail after freeze and restore it on rollback.
-- Document that online shrink consumes the reservation.
-- Retain Daeho's review for patch 1; request a new review for patch 2.
-
-Changes in v2 (since v1):
-- Simplify tail validation and improve rejection diagnostics.
-- Validate before taking the mount write reference and recheck
-  after freeze for concurrent remounts.
-
-v1:
-- Initial SIT-journal and pinned-boundary fixes.
-
-Wenjie Qi (2):
-  f2fs: flush SIT journal during filesystem resize
-  f2fs: refresh pinned allocation boundary after resize
-
- Documentation/filesystems/f2fs.rst |  3 ++-
- fs/f2fs/gc.c                       |  6 +++++-
- fs/f2fs/segment.c                  |  4 ++--
- fs/f2fs/segment.h                  | 11 +++++++++++
- fs/f2fs/super.c                    | 15 ++-------------
- 5 files changed, 22 insertions(+), 17 deletions(-)
-
-
-base-commit: e455328a66a5f4827d4ba96acfe50dbbb0e13b8d
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 25785b7626bb9..bf8d07fcce331 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4893,7 +4893,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	down_write(&sit_i->sentry_lock);
+ 
+-	if (!sit_i->dirty_sentries)
++	if (!sit_i->dirty_sentries && to_journal)
+ 		goto out;
+ 
+ 	/*
 -- 
 2.43.0
 
