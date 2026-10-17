@@ -4,75 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4D18CCA490
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Oct 2026 02:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22C81CCA46C
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Oct 2026 02:04:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=t9LCThEM95XREQc7bXzjQbKQWcb8nXTLZ/oxnn9GfOA=; b=Oxal3KX2gFBDrbz4P7i0cAVaDs
-	biKzzBsMrz498mtSUhSGl1dUlp5mRujCb1wR81wiFjHJKLLozWyXNIMYHdY84xNVWeGe0u7rbF38u
-	CTpbN4wj9xpteCU2d89CXamCfB0qUGsPTIXrwr/EEcVcde56se1ZJoeo6//v+7XGJjh4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=RkTiBqAOn1CcjUozWx14TidBkokfqA/k8N+kgpxt9KA=; b=RI6wKzkwkIQlXJlCuEyUK83E3F
+	boLWSlLX7BaqnwD7kx41+wilGKObF9MAXJkZx/E5gfmDIu/6z2yFkLBJ/OCYCLslfE6nxGl15MQ84
+	SS/pGxF8WpaaU7S9+oaeiCyiHPUV7e1eNKpjyE6JHYyjFnaiFmByYmam4VVszxKpzapQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xHtiz-0000SW-15;
-	Sat, 17 Oct 2026 02:00:41 +0000
+	id 1xHtmR-0000Zg-4v;
+	Sat, 17 Oct 2026 02:04:15 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xHtiy-0000SQ-8F
+ (envelope-from <chao@kernel.org>) id 1xHtmQ-0000ZT-03
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 17 Oct 2026 02:00:40 +0000
+ Sat, 17 Oct 2026 02:04:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eECXxyH/Ryxs6QdWBpf3tfZ6BP+n43LeDrvXxsbbMbQ=; b=CkTHbLtmSMfQwapWeS79Yj8ybU
- 7j68HRJ931gHJJUkNffc37qvH0zSwTPpe1jwqNewCScmaPKBb95bEjH67X9ug4uDbPhAgjX4QqZWQ
- 4/plbgSE+9LxVzNFPdeqnAPSHqNDgCv0/sRmfM3fWva7r4BMR3+qglE3LldEhgwcXhYE=;
+ bh=qIfzl9+QXGyHxNn9noq+ro3ckc6FSDaXOAYGm2ZzYik=; b=D5SKdZTIwcv+sLesb/ekGDNLrL
+ 6uNdlcSBc2idawS2eMFM94DrZ4PFfkQDj0soS6SfbPtmYODvQWwgyHSFvkFURyob1MiHy0wAIk87Q
+ 51ad7A+16Qu/stEayFUV32VO7ctCSLArQKYiBWl802Qu/WTniKSjMq0YhPKDw6P50GWQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=eECXxyH/Ryxs6QdWBpf3tfZ6BP+n43LeDrvXxsbbMbQ=; b=f
- G2JOWkBSBD9ZfRa9q2Q7Fhov4Dr9XimC+2MPwpmuSNUoYSfNhcE7R8ONqYs1KHi+rBWsrKwyvsBAp
- Y0psqIGD0NG6Tru4n2DkqcxwpUYYrX6wLYeut03yiIbw+6WyLaycVXaY+mCUP553WgzCAYEBbbLcc
- ewH4wfUvkcXPi224=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=qIfzl9+QXGyHxNn9noq+ro3ckc6FSDaXOAYGm2ZzYik=; b=d
+ 4YnzDcNmcjFBIMU4HQHedAIpc/+PindEP+Jkd2ZroT36294drlpE2mH8oe9hNm7kzerfz7olpv+L0
+ WvqBaYQ8ZguoMnqoy+VGzHWXJhcnnUDZgbz2oLNxernNBgQP/k1UdKjftDmHTCwB0unac1oRacVC5
+ joKr2yaymw9cobXI=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xHtiw-0005bk-6a for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 17 Oct 2026 02:00:40 +0000
+ id 1xHtmQ-0005bZ-2n for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 17 Oct 2026 02:04:14 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 3369760238;
- Sat, 17 Oct 2026 02:00:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5B91F000C4;
- Sat, 17 Oct 2026 02:00:30 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id B7034434DC
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 17 Oct 2026 02:04:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28B71F000C4;
+ Sat, 17 Oct 2026 02:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792202431;
- bh=eECXxyH/Ryxs6QdWBpf3tfZ6BP+n43LeDrvXxsbbMbQ=;
+ s=k20260515; t=1792202648;
+ bh=qIfzl9+QXGyHxNn9noq+ro3ckc6FSDaXOAYGm2ZzYik=;
  h=From:To:Cc:Subject:Date;
- b=mam6StNcNeFpE5Xzk2AfB0gf8b7NUiqe8C+XLmIvMJof0hu6daDsXgb1Euy0LWKgx
- PFxZqidtXOo/h7bmGwKeMOrm6cbM0r9HExxtEl/snlNzEAt2qOktrTynX8oax5SBNh
- afObARSWiU5xl7ZZtgos7kTQVTHTxwVWKImGmzjN3mvGHhzgWPHMYrllFcLsDsUbW2
- UIMR5A6T+3AJKPl/gsyqWjgA47IhgpShlWRHriIYDegXkmC4GxI63/XRHuolkhNl84
- dyR7HN7dP9Wh5AX6oS/rBQUOHs1QQLgnh7mVFZmBpFdW+JEepRCalwtJP/VQe+BCUe
- xZ1G5QmC+xb4g==
+ b=M/QhGHF+aSMVtmJMxXsNf0QCeNWKFhLYRIDQs90crrEDJXZCEvcwajlPj7OI8I8L+
+ W2l/1tQNeraVP/yXtcBQx+/S/TqQCxuoFpEvs5CUyzT79/oHPt8A4bruogfyeSJwQ0
+ g+4NPwotant0IsnhP1abmCtTInjP22Bt/Q7LawTK9nTXA2ismg0DU/QI33oN1ns7Qh
+ lxW82125OEYZQ2loY238IpZNDxIzoG2KBdi0VaK8bBLEkhD6nsvVlsnOTQdyrxXdnR
+ lnJ8HV8/qXMtBh5BYbdtzwdj14RxMK4Fh89HxSv/EbSbe7P6t3mHjliddok8ejh5I8
+ SMl0H4KE7HNRQ==
 To: jaegeuk@kernel.org
-Date: Sat, 17 Oct 2026 02:00:22 +0000
-Message-ID: <20261017020022.301122-1-chao@kernel.org>
+Date: Sat, 17 Oct 2026 02:03:57 +0000
+Message-ID: <20261017020358.305503-1-chao@kernel.org>
 X-Mailer: git-send-email 2.56.0.176.g3575e65682-goog
 MIME-Version: 1.0
-X-Headers-End: 1xHtiw-0005bk-6a
-Subject: [f2fs-dev] [PATCH v4 3/5] f2fs: cache: wake up f2fs_writeback when
- exceeding threshold
+X-Headers-End: 1xHtmQ-0005bZ-2n
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: introduce max_write_bio_{folio,
+ entry}_cnt module parameters
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,465 +87,204 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
- Wenjie Qi <qiwenjie@xiaomi.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <chao@kernel.org>
 
-This patch introduces cache_wb_dirty_threshold and cache_wb_total_threshold
-sysfs nodes under /sys/fs/f2fs/<disk>/, and wakes up the f2fs_writeback
-kthread when dirty meta/node caches exceed cache_wb_dirty_threshold and
-total cached entries exceed cache_wb_total_threshold; a zero threshold
-disables the corresponding check. By default, cache_wb_dirty_threshold is
-8192 and cache_wb_total_threshold is 0.
+Commit 3de6b8094115 ("f2fs: Run f2fs_write_end_io() asynchronously")
+introduced max_atc_write_bio_size to offload write bio completion to a
+workqueue when f2fs_write_end_io() is called in atomic context.
 
-If both thresholds are zero, f2fs_writeback only runs periodically, unless
-checkpoint is disabled, as nothing else will flush dirty caches then.
+However, relying on bio->bi_iter.bi_size as the threshold has two main
+issues:
 
-f2fs_writeback won't be woken up unless there are enough dirty caches for
-f2fs_write_{meta,node}_caches() to gather. And if thresholds are exceeded
-but one round fails to write any caches, e.g. due to cp_error, freezing,
-frozen fs, or lock contention, threshold based wakeup is throttled until
-a later round makes progress, in order to avoid busy-looping. To detect
-progress, introduce a new parameter for f2fs_write_{meta,node}_caches()
-and f2fs_writeback_node_caches() to return the number of caches submitted
-for writeback.
+1. bio->bi_iter.bi_size is not reliable at bio completion time, as its
+   value depends on the underlying storage stack:
+   - On a direct blk-mq path (e.g. SCSI or UFS), blk_update_request()
+     consumes the bio iterator via bio_advance() before calling
+     bio_endio(), so bi_size is already 0 when f2fs_write_end_io() is
+     called, and the threshold check is never triggered:
+     scsi_end_request() / blk_mq_end_request()
+      -> blk_update_request()
+        -> bio_advance()          /* bio->bi_iter.bi_size becomes 0 */
+        -> bio_endio()
+          -> f2fs_write_end_io()  /* sees bi_size == 0 */
+   - On a device-mapper / zoned device path (e.g. dm-linear / dm-crypt),
+     DM allocates a clone bio and sets clone->bi_iter.bi_size, while the
+     original bio's bi_size remains intact when completed:
+     dm_submit_bio()
+      -> dm_split_and_process_bio()
+        -> __split_and_process_bio()
+          -> alloc_tio()          /* sets clone->bi_iter.bi_size */
+          -> __map_bio()
+            -> dm_submit_bio_remap()
+              -> submit_bio_noacct(clone)
+     blk_update_request()         /* advances clone->bi_iter.bi_size to 0 */
+      -> bio_endio(clone)
+        -> clone_endio()
+          -> dm_io_dec_pending()
+            -> dm_io_complete()
+              -> __dm_io_complete()
+                -> bio_endio(orig_bio)
+                  -> f2fs_zone_write_end_io()
+                    -> f2fs_write_end_io() /* orig_bio->bi_iter.bi_size intact */
 
-Thanks Daeho and Wenjie for help and suggestion on this patch.
+2. With large folios or multi-page bvecs, bi_size (and bi_vcnt) does not
+   reflect the actual completion latency:
+   - In f2fs_write_end_bio() and f2fs_cache_write_end_bio(), execution
+     time is dominated by the completion loop (bio_for_each_folio_all()
+     for pagecache folios, or while(entry) for cached metadata blocks).
+     The CPU latency in atomic context scales with the number of entries
+     in the bio, not its byte size.
+   - For large folios, a large bio (e.g. 1MB comprised of a few large
+     folios) only iterates a few times in the loop. Throttling by
+     bi_size unnecessarily offloads such low-latency bios to the
+     workqueue, adding context-switch overhead.
+   - Relying on bio->bi_vcnt is also insufficient because the block
+     layer (bvec_try_merge_page()) merges physically contiguous
+     pages/folios into the same bio_vec segment, so a bio with
+     bi_vcnt == 1 can still contain multiple entries.
 
-Suggested-by: Daeho Jeong <daehojeong@google.com>
-Suggested-by: Wenjie Qi <qiwenjie@xiaomi.com>
+Furthermore:
+- The limit is used to bound the CPU latency of f2fs_write_end_io() in
+  atomic context, which is a property of the platform (CPU and storage
+  completion path) rather than of each f2fs instance, so a global knob
+  set once at boot fits better than a per-superblock sysfs entry.
+- Pagecache folios and cached metadata blocks are completed in different
+  loops with different per-entry costs, i.e. f2fs_write_end_bio() and
+  f2fs_cache_write_end_bio(), so it's better to tune them separately
+  rather than sharing a single threshold.
+
+To address this, track the exact number of entries (folios or cached
+blocks) queued to a write bio via entry_cnt in struct f2fs_bio, and
+introduce two module parameters:
+
+- max_write_bio_folio_cnt: for write bios of pagecache folios, which
+  are completed in f2fs_write_end_bio().
+- max_write_bio_entry_cnt: for write bios of cached metadata blocks,
+  which are completed in f2fs_cache_write_end_bio().
+
+Both parameters are read-only at runtime, they can be set via
+f2fs.max_write_bio_{folio,entry}_cnt=<n> in the kernel command line, or
+via modprobe, and apply to all f2fs instances. The default value is
+UINT_MAX, which means this functionality is disabled by default.
+
 Signed-off-by: Chao Yu <chao@kernel.org>
-Reviewed-by: Wenjie Qi <qiwenjie@xiaomi.com>
 ---
-v4:
-- introduce f2fs_init_cache_wb_info() to init wq and parameter only once
-  to avoid race case:
-  1. remount can reinit wq which may be used by others.
-  2. lost parameter value after remount
- Documentation/ABI/testing/sysfs-fs-f2fs |  21 ++++
- fs/f2fs/cache.c                         | 133 ++++++++++++++++++++++--
- fs/f2fs/cache.h                         |   7 ++
- fs/f2fs/checkpoint.c                    |  10 +-
- fs/f2fs/f2fs.h                          |   7 +-
- fs/f2fs/node.c                          |  11 +-
- fs/f2fs/super.c                         |   1 +
- fs/f2fs/sysfs.c                         |   8 +-
- 8 files changed, 180 insertions(+), 18 deletions(-)
+ fs/f2fs/data.c | 28 +++++++++++++++++++++++++++-
+ fs/f2fs/f2fs.h |  1 +
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 5b196806b3bc..3d2e78a8bb7d 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -1027,3 +1027,24 @@ Contact:	"Chao Yu" <chao@kernel.org>
- Description:	This is a writable entry to control writeback interval of
- 		f2fs_writeback-x:y, the range is [100, 30000], by default the value
- 		is 5000, unit is ms.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 1b0395b45fb7..3caadb30496a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -36,6 +36,16 @@ static struct kmem_cache *ffs_entry_slab;
+ static mempool_t *bio_post_read_ctx_pool;
+ static struct bio_set f2fs_bioset;
+ 
++static unsigned int max_write_bio_folio_cnt = UINT_MAX;
++module_param(max_write_bio_folio_cnt, uint, 0444);
++MODULE_PARM_DESC(max_write_bio_folio_cnt,
++		"Maximum number of folios in a write bio completed in atomic context");
 +
-+What:		/sys/fs/f2fs/<disk>/cache_wb_dirty_threshold
-+Date:		October 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This is a writable entry for metadata cache. f2fs_writeback-x:y
-+		will be woken up for writeback once the number of dirty meta and
-+		node caches reaches this value. 0 disables this check. By default
-+		the value is 8192, unit is cache entries.
++static unsigned int max_write_bio_entry_cnt = UINT_MAX;
++module_param(max_write_bio_entry_cnt, uint, 0444);
++MODULE_PARM_DESC(max_write_bio_entry_cnt,
++		"Maximum number of cache entries in a write bio completed in atomic context");
 +
-+What:		/sys/fs/f2fs/<disk>/cache_wb_total_threshold
-+Date:		October 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This is a writable entry for metadata cache. f2fs_writeback-x:y
-+		will be woken up for writeback only if the total number of cached
-+		entries also reaches this value. 0 disables this check. By default
-+		the value is 0, unit is cache entries.
+ struct f2fs_folio_state {
+ 	spinlock_t		state_lock;
+ 	unsigned int		read_pages_pending;
+@@ -390,6 +400,12 @@ static void f2fs_write_end_io_work(struct work_struct *work)
+ 	f2fs_write_end_bio(bio);
+ }
+ 
++static unsigned int f2fs_max_write_bio_cnt(struct bio *bio)
++{
++	return f2fs_is_cache_bio(bio) ? max_write_bio_entry_cnt :
++					max_write_bio_folio_cnt;
++}
 +
-+		If both cache_wb_dirty_threshold and cache_wb_total_threshold are
-+		0, f2fs_writeback-x:y only runs every cache_wb_interval, unless
-+		checkpoint is disabled, in which case it will still be woken up
-+		once there are enough dirty caches to be gathered for writeback.
-diff --git a/fs/f2fs/cache.c b/fs/f2fs/cache.c
-index f385fe928b5b..d2303e5caa1a 100644
---- a/fs/f2fs/cache.c
-+++ b/fs/f2fs/cache.c
-@@ -81,6 +81,7 @@ bool f2fs_mark_cache_dirty(struct f2fs_cached_block *entry)
- 		f2fs_cache_update_tag(entry, F2FS_CACHE_TAG_NONE,
- 						F2FS_CACHE_TAG_DIRTY);
- 		inc_cache_count(cache->sbi, type);
-+		f2fs_wake_up_cache_wb(cache->sbi);
- 		return true;
+ static void f2fs_write_end_io(struct bio *bio)
+ {
+ 	struct f2fs_sb_info *sbi;
+@@ -398,7 +414,8 @@ static void f2fs_write_end_io(struct bio *bio)
+ 
+ 	sbi = bio->bi_private;
+ 
+-	if (in_atomic() && bio->bi_iter.bi_size > sbi->max_atc_write_bio_size) {
++	if (in_atomic() && (bio->bi_iter.bi_size > sbi->max_atc_write_bio_size ||
++		F2FS_BIO(bio)->entry_cnt > f2fs_max_write_bio_cnt(bio))) {
+ 		struct work_struct *w;
+ 
+ 		w = &container_of(bio, struct f2fs_bio, bio)->work;
+@@ -555,6 +572,7 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
+ 						fio->type, fio->temp);
+ 		bio->bi_write_stream = f2fs_io_type_to_write_stream(bdev, fio->type,
+ 								    fio->temp);
++		F2FS_BIO(bio)->entry_cnt = 0;
+ 	}
+ 	iostat_alloc_and_bind_ctx(sbi, bio, NULL);
+ 
+@@ -867,6 +885,9 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 			fio_folio->index, fio, GFP_NOIO);
+ 	bio_add_folio_nofail(bio, data_folio, folio_size(data_folio), 0);
+ 
++	if (!is_read_io(fio->op))
++		F2FS_BIO(bio)->entry_cnt++;
++
+ 	if (fio->io_wbc && !is_read_io(fio->op))
+ 		wbc_account_cgroup_owner(fio->io_wbc, fio_folio, PAGE_SIZE);
+ 
+@@ -937,6 +958,7 @@ static void add_bio_entry(struct f2fs_sb_info *sbi, struct bio *bio,
+ 	bio_get(bio);
+ 
+ 	bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
++	F2FS_BIO(bio)->entry_cnt++;
+ 
+ 	f2fs_down_write(&io->bio_list_lock);
+ 	list_add_tail(&be->list, &io->bio_list);
+@@ -977,6 +999,7 @@ static int add_ipu_page(struct f2fs_io_info *fio, struct bio **bio,
+ 					fio_folio->mapping->host,
+ 					fio_folio->index, fio) &&
+ 			    bio_add_folio(*bio, folio, folio_size(folio), 0)) {
++				F2FS_BIO(*bio)->entry_cnt++;
+ 				ret = 0;
+ 				break;
+ 			}
+@@ -1234,6 +1257,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		goto alloc_new;
  	}
  
-@@ -681,6 +682,74 @@ unsigned long f2fs_shrink_node_cache(struct f2fs_sb_info *sbi,
- 	return f2fs_do_shrink_cache(NODE_CACHE(sbi), nr_to_scan);
- }
- 
-+static inline unsigned long f2fs_total_cached_entries(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long total = READ_ONCE(META_CACHE(sbi)->num_entries) +
-+			      READ_ONCE(NODE_CACHE(sbi)->num_entries);
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	if (test_opt(sbi, COMPRESS_CACHE))
-+		total += READ_ONCE(COMPRESS_CACHE(sbi)->num_entries);
-+#endif
-+	return total;
-+}
++	F2FS_BIO(io->bio)->entry_cnt++;
 +
-+static inline s64 f2fs_nr_dirty_caches(struct f2fs_sb_info *sbi)
-+{
-+	return get_nr_caches(sbi, F2FS_DIRTY_META) +
-+		get_nr_caches(sbi, F2FS_DIRTY_NODES);
-+}
-+
-+/*
-+ * f2fs_write_{meta,node}_caches() skip writeback until there are enough
-+ * dirty caches to gather, so don't wake up f2fs_writeback for nothing.
-+ */
-+static inline bool f2fs_cache_wb_collectable(struct f2fs_sb_info *sbi,
-+					     s64 nr_dirty, int type)
-+{
-+	return nr_dirty && nr_dirty >= nr_caches_to_skip(sbi, type);
-+}
-+
-+static bool f2fs_cache_wb_exceeded(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+	unsigned int total_threshold, dirty_threshold;
-+	s64 nr_meta, nr_node;
-+
-+	total_threshold = READ_ONCE(cache_thread->cache_wb_total_threshold);
-+	dirty_threshold = READ_ONCE(cache_thread->cache_wb_dirty_threshold);
-+
-+	/*
-+	 * Both thresholds are disabled, rely on periodic writeback only,
-+	 * unless checkpoint is disabled, as nothing else will flush dirty
-+	 * caches then.
-+	 */
-+	if (!total_threshold && !dirty_threshold &&
-+	    !is_sbi_flag_set(sbi, SBI_CP_DISABLED))
-+		return false;
-+
-+	if (total_threshold &&
-+	    f2fs_total_cached_entries(sbi) < total_threshold)
-+		return false;
-+
-+	nr_meta = get_nr_caches(sbi, F2FS_DIRTY_META);
-+	nr_node = get_nr_caches(sbi, F2FS_DIRTY_NODES);
-+
-+	if (dirty_threshold && nr_meta + nr_node < dirty_threshold)
-+		return false;
-+
-+	return f2fs_cache_wb_collectable(sbi, nr_meta, META) ||
-+		f2fs_cache_wb_collectable(sbi, nr_node, NODE);
-+}
-+
-+static bool f2fs_should_wake_up_cache_wb(struct f2fs_sb_info *sbi)
-+{
-+	/* last round made no progress, wait for periodic writeback */
-+	if (READ_ONCE(sbi->cache_thread.cache_wb_throttled))
-+		return false;
-+
-+	return f2fs_cache_wb_exceeded(sbi);
-+}
-+
- static int f2fs_cache_writeback_kthread(void *data)
- {
- 	struct f2fs_sb_info *sbi = data;
-@@ -690,15 +759,27 @@ static int f2fs_cache_writeback_kthread(void *data)
- 	set_freezable();
- 
- 	while (!kthread_should_stop()) {
--		unsigned int interval = cache_thread->cache_wb_interval;
-+		unsigned int interval = READ_ONCE(cache_thread->cache_wb_interval);
-+		long nr_meta = 0, nr_node = 0;
-+		s64 nr_dirty;
- 
- 		wait_event_freezable_timeout(*wq,
--				kthread_should_stop(),
-+				kthread_should_stop() ||
-+				f2fs_should_wake_up_cache_wb(sbi),
- 				msecs_to_jiffies(interval));
- 
- 		if (kthread_should_stop())
- 			break;
- 
-+		/*
-+		 * If thresholds are exceeded, throttle threshold based wakeup
-+		 * until a round makes progress, otherwise we may busy-loop if
-+		 * this round can not write anything, e.g. on cp_error, freezing,
-+		 * frozen fs, or lock contention.
-+		 */
-+		WRITE_ONCE(cache_thread->cache_wb_throttled,
-+			   f2fs_cache_wb_exceeded(sbi));
-+
- 		if (f2fs_readonly(sbi->sb))
- 			continue;
- 
-@@ -711,14 +792,51 @@ static int f2fs_cache_writeback_kthread(void *data)
- 		if (!sb_start_write_trylock(sbi->sb))
- 			continue;
- 
--		f2fs_write_meta_caches(sbi);
--		f2fs_write_node_caches(sbi);
-+		nr_dirty = f2fs_nr_dirty_caches(sbi);
-+
-+		f2fs_write_meta_caches(sbi, &nr_meta);
-+		f2fs_write_node_caches(sbi, &nr_node);
- 
- 		sb_end_write(sbi->sb);
-+
-+		/*
-+		 * Don't rely on the delta of dirty caches only, as caches may
-+		 * be dirtied concurrently; also count in caches cleaned by
-+		 * others, e.g. checkpoint triggered by f2fs_balance_fs_bg().
-+		 */
-+		if (nr_meta || nr_node || f2fs_nr_dirty_caches(sbi) < nr_dirty)
-+			WRITE_ONCE(cache_thread->cache_wb_throttled, false);
-+
-+		cond_resched();
+ 	if (fio->io_wbc)
+ 		wbc_account_cgroup_owner(fio->io_wbc, fio->folio,
+ 				folio_size(fio->folio));
+@@ -1340,6 +1365,7 @@ void f2fs_submit_cache_write(struct f2fs_io_info *fio)
  	}
- 	return 0;
- }
  
-+void f2fs_wake_up_cache_wb(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+
-+	if (!READ_ONCE(cache_thread->cache_wb_task))
-+		return;
-+
-+	if (!f2fs_should_wake_up_cache_wb(sbi))
-+		return;
-+
-+	if (wq_has_sleeper(&cache_thread->cache_wb_wq))
-+		wake_up(&cache_thread->cache_wb_wq);
-+}
-+
-+void f2fs_init_cache_wb_info(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-+
-+	init_waitqueue_head(&cache_thread->cache_wb_wq);
-+	cache_thread->cache_wb_interval = DEF_DIRTY_CACHE_TIMEOUT;
-+	cache_thread->cache_wb_dirty_threshold = DEF_CACHE_WB_DIRTY_THRESH;
-+	cache_thread->cache_wb_total_threshold = 0;
-+	cache_thread->cache_wb_throttled = false;
-+}
-+
- int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_cache_kthread *cache_thread = &sbi->cache_thread;
-@@ -729,8 +847,7 @@ int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- 	if (cache_thread->cache_wb_task)
- 		return 0;
+ 	f2fs_bio_add_cache(fio, io->bio);
++	F2FS_BIO(io->bio)->entry_cnt++;
  
--	init_waitqueue_head(&cache_thread->cache_wb_wq);
--	cache_thread->cache_wb_interval = DEF_DIRTY_CACHE_TIMEOUT;
-+	WRITE_ONCE(cache_thread->cache_wb_throttled, false);
- 	snprintf(name, sizeof(name), "f2fs_writeback-%u:%u",
- 			MAJOR(dev), MINOR(dev));
+ 	io->last_block_in_bio = fio->new_blkaddr;
  
-@@ -738,7 +855,7 @@ int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi)
- 	if (IS_ERR(task))
- 		return PTR_ERR(task);
- 
--	cache_thread->cache_wb_task = task;
-+	WRITE_ONCE(cache_thread->cache_wb_task, task);
- 	return 0;
- }
- 
-@@ -750,5 +867,5 @@ void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi)
- 		return;
- 
- 	kthread_stop(cache_thread->cache_wb_task);
--	cache_thread->cache_wb_task = NULL;
-+	WRITE_ONCE(cache_thread->cache_wb_task, NULL);
- }
-diff --git a/fs/f2fs/cache.h b/fs/f2fs/cache.h
-index 3df3a562c46f..cd017c1b188f 100644
---- a/fs/f2fs/cache.h
-+++ b/fs/f2fs/cache.h
-@@ -234,13 +234,20 @@ unsigned long f2fs_shrink_node_cache(struct f2fs_sb_info *sbi,
- #define MIN_DIRTY_CACHE_TIMEOUT 100
- #define MAX_DIRTY_CACHE_TIMEOUT 30000
- 
-+#define DEF_CACHE_WB_DIRTY_THRESH	(8192)
-+
- struct f2fs_cache_kthread {
- 	struct task_struct *cache_wb_task;
- 	wait_queue_head_t cache_wb_wq;
- 	unsigned int cache_wb_interval;
-+	unsigned int cache_wb_dirty_threshold;
-+	unsigned int cache_wb_total_threshold;
-+	bool cache_wb_throttled;	/* last round made no progress */
- };
- 
-+void f2fs_init_cache_wb_info(struct f2fs_sb_info *sbi);
- int f2fs_start_cache_wb_thread(struct f2fs_sb_info *sbi);
- void f2fs_stop_cache_wb_thread(struct f2fs_sb_info *sbi);
-+void f2fs_wake_up_cache_wb(struct f2fs_sb_info *sbi);
- 
- #endif /* _LINUX_F2FS_CACHE_H */
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2e5e0ee5feb2..fd0a6c03987e 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -581,10 +581,11 @@ static bool __f2fs_write_meta_cache(struct f2fs_cached_block *entry,
- 	return false;
- }
- 
--void f2fs_write_meta_caches(struct f2fs_sb_info *sbi)
-+void f2fs_write_meta_caches(struct f2fs_sb_info *sbi, long *nr_written)
- {
- 	struct f2fs_lock_context lc;
- 	long nr_to_write = LONG_MAX;
-+	long nwritten;
- 
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
- 		return;
-@@ -599,8 +600,11 @@ void f2fs_write_meta_caches(struct f2fs_sb_info *sbi)
- 		return;
- 
- 	nr_to_write = adjust_flush_cache_number(sbi, META);
--	f2fs_sync_meta_caches(sbi, nr_to_write, false, FS_META_IO);
-+	nwritten = f2fs_sync_meta_caches(sbi, nr_to_write, false, FS_META_IO);
- 	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
-+
-+	if (nr_written)
-+		*nr_written = nwritten;
- }
- 
- long f2fs_sync_meta_caches(struct f2fs_sb_info *sbi, long nr_to_write,
-@@ -1553,7 +1557,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		f2fs_up_write(&sbi->node_write);
- 		atomic_inc(&sbi->wb_sync_req[NODE]);
- 		err = f2fs_writeback_node_caches(sbi, LONG_MAX,
--			true, false, FS_CP_NODE_IO);
-+			true, false, FS_CP_NODE_IO, NULL);
- 		atomic_dec(&sbi->wb_sync_req[NODE]);
- 		if (err) {
- 			f2fs_up_write(&sbi->node_change);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 089a62c054ea..362f06cb398d 100644
+index 362f06cb398d..4333d88cf076 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -4132,7 +4132,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
- int f2fs_truncate_xattr_node(struct inode *inode);
- int f2fs_wait_on_node_caches_writeback(struct f2fs_sb_info *sbi,
- 					unsigned int seq_id);
--int f2fs_write_node_caches(struct f2fs_sb_info *sbi);
-+int f2fs_write_node_caches(struct f2fs_sb_info *sbi, long *nr_written);
- int f2fs_remove_inode_cache(struct inode *inode);
- struct f2fs_cached_block *f2fs_new_inode_cache(struct inode *inode);
- struct f2fs_cached_block *f2fs_new_node_cache(struct dnode_of_data *dn, unsigned int ofs);
-@@ -4151,7 +4151,8 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi);
- int f2fs_fsync_node_caches(struct f2fs_sb_info *sbi, struct inode *inode,
- 					bool atomic, unsigned int *seq_id);
- int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
--			bool sync, bool do_balance, enum iostat_type io_type);
-+			bool sync, bool do_balance, enum iostat_type io_type,
-+			long *nr_written);
- int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
- bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
- void f2fs_alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
-@@ -4317,7 +4318,7 @@ int f2fs_ra_meta_caches(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 			int type, bool sync);
- void f2fs_ra_meta_caches_cond(struct f2fs_sb_info *sbi, pgoff_t index,
- 							unsigned int ra_blocks);
--void f2fs_write_meta_caches(struct f2fs_sb_info *sbi);
-+void f2fs_write_meta_caches(struct f2fs_sb_info *sbi, long *nr_written);
- long f2fs_sync_meta_caches(struct f2fs_sb_info *sbi, long nr_to_write,
- 				bool sync, enum iostat_type io_type);
- void f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7b2ff2c3dd03..bc7ae9c67137 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2111,7 +2111,8 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
- }
- 
- int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
--			bool sync, bool do_balance, enum iostat_type io_type)
-+			bool sync, bool do_balance, enum iostat_type io_type,
-+			long *nr_written)
- {
- 	pgoff_t index;
- 	struct f2fs_cached_block *entries[F2FS_ONSTACK_CACHES];
-@@ -2231,6 +2232,9 @@ int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
- 
- 	trace_f2fs_write_caches(sbi, nr_to_write, nwritten, NODE);
- 
-+	if (nr_written)
-+		*nr_written = nwritten;
-+
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
- 	return ret;
-@@ -2271,7 +2275,7 @@ int f2fs_wait_on_node_caches_writeback(struct f2fs_sb_info *sbi,
- 	return f2fs_cp_error(sbi) ? -EIO : 0;
- }
- 
--int f2fs_write_node_caches(struct f2fs_sb_info *sbi)
-+int f2fs_write_node_caches(struct f2fs_sb_info *sbi, long *nr_written)
- {
- 	struct blk_plug plug;
- 	long nr_to_write = LONG_MAX;
-@@ -2296,7 +2300,8 @@ int f2fs_write_node_caches(struct f2fs_sb_info *sbi)
- 
- 	nr_to_write = adjust_flush_cache_number(sbi, NODE);
- 	blk_start_plug(&plug);
--	f2fs_writeback_node_caches(sbi, nr_to_write, false, true, FS_NODE_IO);
-+	f2fs_writeback_node_caches(sbi, nr_to_write, false, true, FS_NODE_IO,
-+				   nr_written);
- 	blk_finish_plug(&plug);
- 	return 0;
- }
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0e468a06c7f7..1664928fedca 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -5277,6 +5277,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	f2fs_init_cache(sbi, META_CACHE(sbi), F2FS_META_CACHE);
- 	f2fs_init_cache(sbi, NODE_CACHE(sbi), F2FS_NODE_CACHE);
- 	f2fs_init_cache(sbi, COMPRESS_CACHE(sbi), F2FS_COMPRESS_CACHE);
-+	f2fs_init_cache_wb_info(sbi);
- 
- 	err = f2fs_get_valid_checkpoint(sbi);
- 	if (err) {
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index afce74744d4d..95f8dc0c4218 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1019,7 +1019,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 					a->struct_type == GC_THREAD);
- 	bool thread_entry = !strcmp(a->attr.name, "ckpt_thread_ioprio") ||
- 			!strcmp(a->attr.name, "critical_task_priority") ||
--			!strcmp(a->attr.name, "cache_wb_interval");
-+			!strcmp(a->attr.name, "cache_wb_interval") ||
-+			!strcmp(a->attr.name, "cache_wb_dirty_threshold") ||
-+			!strcmp(a->attr.name, "cache_wb_total_threshold");
- 
- 	if (gc_entry || thread_entry) {
- 		if (!down_read_trylock(&sbi->sb->s_umount))
-@@ -1363,6 +1365,8 @@ ATGC_INFO_RW_ATTR(atgc_age_threshold, age_threshold);
- 
- /* WB_THREAD ATTR */
- WB_THREAD_RW_ATTR(cache_wb_interval, cache_wb_interval);
-+WB_THREAD_RW_ATTR(cache_wb_dirty_threshold, cache_wb_dirty_threshold);
-+WB_THREAD_RW_ATTR(cache_wb_total_threshold, cache_wb_total_threshold);
- 
- F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(free_segments);
-@@ -1552,6 +1556,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(adjust_lock_priority),
- 	ATTR_LIST(critical_task_priority),
- 	ATTR_LIST(cache_wb_interval),
-+	ATTR_LIST(cache_wb_dirty_threshold),
-+	ATTR_LIST(cache_wb_total_threshold),
- 	NULL,
+@@ -1778,6 +1778,7 @@ struct f2fs_gc_kthread {
+ struct f2fs_bio {
+ 	struct work_struct work;
+ 	struct f2fs_cached_block *entry;
++	unsigned int entry_cnt;
+ 	struct bio bio;
  };
- ATTRIBUTE_GROUPS(f2fs);
+ 
 -- 
 2.49.0
 
