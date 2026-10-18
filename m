@@ -4,79 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2FA0CCCF2C1
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Oct 2026 10:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B8B9ECCF2C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 18 Oct 2026 15:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:Message-ID:MIME-Version:References:In-Reply-To:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=u+mJwGTEvD8FfFJB5WtQ6tTPhmKe0+NbgLjliz5eKXY=; b=m8D1P+/sFe3hCpYfkmeoHRFCu8
-	OZLtgKToqCOGg+mAOqct7lei8m4JIRCEUX3wPqSmwFNi2Tj6QFlm1ONuCyBKkoFyVw1FU6FJkb3m0
-	EaEZVC9QBOTOKAyLCUkzpE7otSSgkJVsqi8AKoxEd6/yIOgoFBMMysHTRGoiVXMFfdcE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:To:Date:Sender:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=S8xzOyhxmSJuslsAhLkcogB7J0wX8/7Nai70hT/N9wY=; b=NDnrqQEqXNPoNdz2Qdc8eJbQkl
+	l2WvCJbtCn4vaPnouGcm8Za6Kuh72N/bHf1Cem9mKxUtRO8Q48/jsxK2WzCgcfEO7b+grs9cVzalP
+	Am6oSKSpBM6xn0ZI7jhbDPh4zSWBh1hYr63RddcMcDPxfgePwk1oMU2XNFWRskISkvaA=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xI1EG-0005Rr-3f;
-	Sat, 17 Oct 2026 10:01:25 +0000
+	id 1xISTm-00034a-Sl;
+	Sun, 18 Oct 2026 15:07:19 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1xI1EF-0005Rj-2K
+ (envelope-from <geldot@protonmail.com>) id 1xISTl-00034U-QD
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 17 Oct 2026 10:01:24 +0000
+ Sun, 18 Oct 2026 15:07:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-ID:MIME-Version:Content-Type:
- Content-Transfer-Encoding:References:In-Reply-To:Subject:Cc:To:From:Date:
- Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
- Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
- List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YbawAVaqfEsj2FEViDCMZVjK5TKuFAvjwsulFA3xoQ0=; b=g2HH5Einc7DU5TvMr/GYeiyurD
- E6mJW7Aujqpk7KWpdl15MvUCKyRBIoS64WirullJIa2q8yVHkgHnVPEhzMO+RPARQwPlrHBEqErJf
- 8igv34XhZ2oOUON3pbG6sEqG+bMlnkJ8McyN1Y7d6JJjfDapJ5sI91TqNWMwT1xtKF8w=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-ID:Subject:From:To:Date:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=/cJA3RKeqv0jFyGu2hsEX9aFji5apbKtg7bIPWM3ksc=; b=lgonMA7kl4kzaaqoV7+MBZWa1o
+ UEHn+EibGwCFJoJya2TGGH6X2EOMnO/b38z2F8VcWv4h0g2XqK+zaUiH150Bwe93ekJufcaJUBli9
+ keIjEm9UlA6tp8wCevxaGLxpdvsStWxbqSznVT8lEKOdcwElvw/KecqwfoV62yOg0Z4g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References
- :In-Reply-To:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=YbawAVaqfEsj2FEViDCMZVjK5TKuFAvjwsulFA3xoQ0=; b=cLu0fI67guT5aOEhEohDtPn+gC
- 64pO7jJdXO/9WLdMQMf8cL0nDEe+DLvUrSkIj2ZhO45XfVJYffpE6bKQyZ1PtnZdlrbu9pUm4+kbF
- caly5zah5kjCmq2g37SECSOeaKenJrhBpTPeOqx0vT1ywPNzfS5JWFTGYgWNgkAMWrIM=;
-Received: from m16.mail.126.com ([117.135.210.9])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Subject:
+ From:To:Date:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=/cJA3RKeqv0jFyGu2hsEX9aFji5apbKtg7bIPWM3ksc=; b=B
+ LDZvWhD5dzD46Nldh9jMbaK+eYiRinUSO23aE3sxkez9QiDv2InhdB3EId4q1xjXdZv2CIfNT09vC
+ cfygLQqd8hmgkchlibEcasRD0JPXxvjygJjkCt0tJ+K9qEuVX54hGzRB6YXi1F2mtN/KUYh84Htx7
+ 0P9WIS2DehK4ybnE=;
+Received: from mail-24424.protonmail.ch ([109.224.244.24])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xI1EB-0006Up-MN for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 17 Oct 2026 10:01:24 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
- Message-ID; bh=YbawAVaqfEsj2FEViDCMZVjK5TKuFAvjwsulFA3xoQ0=; b=h
- zWDSTaaL7Cmk3RjO85542uQkwpa3SrBx1rbDwQGFGXvCfnWr9i1iTw79WtMW52w/
- xF8F8et0Wn/i35GUgHO8NELAsvINR9ft7hxlH4q8LwncSDzFvCTusCq/XNGMo8gx
- pSidfkU9z7/uqIJXPE6NlBE4sjh5H87i3IdtdqC9jw=
-Date: Sat, 17 Oct 2026 18:00:47 +0800 (CST)
-From: "Nanzhe Zhao" <nzzhao@126.com>
-To: "Jaegeuk Kim" <jaegeuk@kernel.org>
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 126com
-In-Reply-To: <atFFXafuVyyimmUk@google.com>
-References: <20261014064445.2835813-1-zhaonanzhe@xiaomi.com>
- <atAO6ykqwGgZq77y@google.com> <atA24UMtAqkmz_R8@google.com>
- <63e416aa.2fb2.1a13d9f3491.Coremail.nzzhao@126.com>
- <atD9Csw1-lj5_SR_@google.com> <atFFXafuVyyimmUk@google.com>
-X-NTES-SC: AL_Qu2SAP6Yvkov4SGaY+kdmEoVj+o8Xsaxs/8g2YJSc8gOtgfUwzsQWHZeElbTwO69ABq9sQGSYCZS08NTWLJTHKNy3WMTlzx+bywRu/+17A==
+ id 1xISTl-00010p-Ql for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 18 Oct 2026 15:07:18 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+ s=protonmail3; t=1792336030; x=1792595230;
+ bh=/cJA3RKeqv0jFyGu2hsEX9aFji5apbKtg7bIPWM3ksc=;
+ h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+ Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+ b=oPsNMMR6tOXCsdXo1aFL1n4c0l31V2uYSuASQouhC++rGHUXNLCzkCvo63VAxRYCW
+ qVek36BpxMnM43ZDVCx9NyxmCSTIuXjIGeKiFd+K3ygeHXwN3Pu5aLxtVc7QiS7tl9
+ RH/p7xa0j+AXcDlN/sReWvSs6pb1AhkzvnZtUrIJWhqBsOy34/pZoqZuXPWuZsM9q6
+ oMVFsh/dyFPOxP7rjdNCk9jr7RXKABkbfcFQOnEchoLtp7OeJHypCB7gL9QGXbV4w/
+ 5UZidJwBvExpS5RfAQj/cVVHunrWesLZVMhLlMOSYp4wJmi8Zdn4f8DeOjGJjYKJxc
+ a/kHE+m+7GdZw==
+Date: Sun, 18 Oct 2026 15:07:08 +0000
+To: "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Message-ID: <ebaZk7tbA9RElsM8ZlLlcgO-4okvuAioo-uh-w5S3rhYxqkBNRPyhTwd9U2vudXRC1RbRB0jG2Elk8sLinp-5IRsy9b1A14go_Ejo0o5Qeg=@protonmail.com>
+Feedback-ID: 219410145:user:proton
+X-Pm-Message-ID: a145499102decd397514dc99c688c85283ec6121
 MIME-Version: 1.0
-Message-ID: <15373a26.1e3d.1a1494e8d1a.Coremail.nzzhao@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: cSkvCgD3V6tPR9NqOWVRAA--.41986W
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsQ90RGrTR0+9fgAA38
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-Headers-End: 1xI1EB-0006Up-MN
-Subject: Re: [f2fs-dev] [PATCH v5 00/16] f2fs: support & optimize large
- folios for writable files
+X-Headers-End: 1xISTl-00010p-Ql
+Subject: [f2fs-dev] [PATCH] f2fs_io: add missing include
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,42 +81,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Nanzhe Zhao <nzzhao.sigma@gmail.com>, Barry Song <baohua@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Juan Yescas <jyescas@google.com>,
- Daeho Jeong <daehojeong@google.com>, Pengfei Li <lipengfei28@xiaomi.com>,
- Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <David.Hildenbrand@arm.com>, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <Ryan.Roberts@arm.com>,
- Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Gary Dotzler via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Gary Dotzler <geldot@protonmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-CgoKSGkgSmFlZ3VrLArCoMKgCsKgIEkgYW0gdHJ5aW5nIHRvIHJlcHJvZHVjZSB0aGUgZmFpbHVy
-ZSBpbiB5b3VyIGxvZzogc2QgMDowOjA6NDogUmV0cnlpbmcgdW5hbGlnbmVkIHdyaXRlIGZvciB6
-b25lIDI2Mzkg4oaSIGNyaXRpY2FsIHRhcmdldCBlcnJvciDihpIgc2RlOgrCoCB6b25lIDI2Mzk6
-IEFib3J0aW5nIHBsdWdnZWQgQklPcyDihpIgZjJmc19zdG9wX2NoZWNrcG9pbnQgKGtlcm5lbCA2
-LjEyLjgxLWFuZHJvaWQxNi02KSBhbmQgZ290IHR3byB0d28gcXVlc3Rpb25zLgrCoMKgCsKgIDEu
-IEtlcm5lbCBiYXNlbGluZS4gQ291bGQgeW91IGNvbmZpcm0gdGhhdCB0aGUga2VybmVsIHlvdSB0
-ZXN0ZWQgaGFzIEJhcnQgVmFuIEFzc2NoZSdzIHpvbmVkIHdyaXRlIHBpcGVsaW5pbmcsIGkuZS4g
-bXVsdGlwbGUgaW4tZmxpZ2h0CsKgIHNlcXVlbnRpYWwgd3JpdGVzIHBlciB6b25lLCB3aXRoIHRo
-ZSBvcmRlciBrZXB0IGJ5IEJMS19GRUFUX09SREVSRURfSFdRIGFuZCB0aGUgcGVyLXpvbmUgZnJv
-bV9jcHUgaW4gYmxvY2svYmxrLXpvbmVkLmM/IEFuZCB0aGF0IGl0CsKgIGRvZXMgbm90IGluY2x1
-ZGUgdGhlc2UgdGhyZWUgZm9sbG93LXVwIGZpeGVzOgrCoMKgCsKgIC0gIkFORFJPSUQ6IGJsb2Nr
-OiBQcmVzZXJ2ZSB0aGUgc3VibWlzc2lvbiBvcmRlciBvZiB6b25lZCB3cml0ZXMiCsKgIC0gIkFO
-RFJPSUQ6IGJsb2NrOiBQcmVzZXJ2ZSB0aGUgb3JkZXIgb2Ygem9uZWQgUkVRX0ZVQSB3cml0ZXMi
-CsKgIC0gIkFORFJPSUQ6IGJsb2NrOiBSZXN0b3JlIHRoZSB3cml0ZSBwb2ludGVyIG9mZnNldCBj
-aGVjayIKwqDCoArCoCBJbiBBT1NQIHRoZXkgYXJlIDA1MGRlNTcwZiwgYzYxNmY3YzFhLCBkNTA2
-MDFkMGYgb24gYW5kcm9pZDE2LTYuMTIsIGFuZCA2MDY4ZWQ5ZjAsIGQ3ODZmODYwOSwgZjA4NDMw
-ZjgwIG9uIGFuZHJvaWQxNy02LjE4LiBUaGUKwqAgc2ltcGxlc3QgY2hlY2sgaXMgd2hldGhlciBS
-RVFfWk9ORV9TRVJJQUxJWkVEIGFuZCB3b3JrX2J1c3koJnp3cGx1Zy0+YmlvX3dvcmspIGFwcGVh
-ciBpbiB5b3VyIGJsb2NrL2Jsay16b25lZC5jLiBUaGUgb3V0cHV0IG9mIGdpdCBsb2cKwqAgLS1v
-bmVsaW5lIC0tIGJsb2NrL2Jsay16b25lZC5jIHdvdWxkIGFsc28gZG8uCsKgwqAKwqAgMi4gVGVz
-dCB3b3JrbG9hZC4gSWYgdGhhdCBpcyB0aGUgY2FzZSwgY291bGQgeW91IHNoYXJlIHRoZSB0ZXN0
-IHdvcmtsb2FkIHRoYXQgdHJpZ2dlcnMgaXQ/wqAgU28gZmFyIEkgaGF2ZSBub3QgYmVlbiBhYmxl
-IHRvIHJlcHJvZHVjZSBpdCB1c2luZyBudWxsX2JsayB0byBzaW11bGF0ZcKgCnpvbmUgZGV2aWNl
-cyB3aXRoIHFlbXUgYW5kIGFuZHJvaWQxNy02LjE4IGdraSBrZXJuZWwuIEFueSBzdWdnZXN0aW9u
-cyB3b3VsZCBiZSBtdWNoIGFwcHJlY2lhdGVkLgpUaGFua3MsCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
-CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
-cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+This fixes the build with musl as used by OpenWrt, where falloc.h is not
+included implicitly by other system headers headers.
+
+Signed-off-by: Gary Dotzler <geldot@protonmail.com>
+---
+ tools/f2fs_io/f2fs_io.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 8b18c3a..8f96d55 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -21,6 +21,7 @@
+ #include <getopt.h>
+ #include <inttypes.h>
+ #include <limits.h>
++#include <linux/falloc.h>
+ #include <linux/fs.h>
+ #include <signal.h>
+ #include <stdarg.h>
+-- 
+2.56.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
