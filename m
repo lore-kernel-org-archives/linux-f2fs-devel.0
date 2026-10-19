@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1F86CCF2D5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 11:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77021CCF2D3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 11:09:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=o5mkJlb/qIqTZFAZwPEOOo72lKGhL0R850q14rVyjp4=; b=HbM7z33dsCnInDFv/wbwic8FS+
-	Dg84TKbGyRY43+vB2DaP9SGLs72pPLe7MHJ828IH5q/9Il3iWDT3q7Ce17JA+rBF/7kQSBOF9SGJL
-	ZfEZcU2lEGphQnR5uFXlUzvvIcYSIhgbdAvn3Y3iek2i0YzNSXfwnK93/SeGEveiXOK4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=a+5+pgG+Cf6sIiVTuCvEZSsfuG4wTD3F5atxqqfsmXY=; b=D5Cqs5TtzbS4acO7zIefYks7a9
+	TwRELwgzOFTzT5hT3jQSoiy0zKQaCS9Fli/YaaYFVSM5IZejzBhUV7lbx2c8tOnWFgc5uYHnFPqgH
+	4sh38PFL07yetjoSbCbAHMzwWNwj++qwNxcaf8EJiBl/9cvII7MGIBKKez6QSFaMMUgE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xIlBd-0005ii-Nv;
-	Mon, 19 Oct 2026 11:05:47 +0000
+	id 1xIlFI-0003e5-OF;
+	Mon, 19 Oct 2026 11:09:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xIlBc-0005ia-3x
+ (envelope-from <chao@kernel.org>) id 1xIlFH-0003dw-Rz
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 11:05:45 +0000
+ Mon, 19 Oct 2026 11:09:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k4q66emTtkmRiUAUpJo6ZluKPMmUw0EN7H7khyWm514=; b=HLqUwW9+NXwEHgHQpdSX4sUn4q
- YYdR+TNHIpYQ42EqfMArXBDFigKXpqB/cL7CuS9S/upHt9t8X2+baxVNPbTMQGxN4gJNGD3h3GzQR
- 4ufiXrjh80grlB08kWU/bO+YY+CygtnNJZE9HMYBCIUDPWHdSdVg2l6CNP5Nq85if0FE=;
+ bh=/HHsrhMZL6uF7oMdrWjCL4GY6W29/wq0pzaKjLWhw5Q=; b=bjEpiDBLVAufl2W9XWtvDOVaSD
+ AWVnmlCyxliJov4fmsqmrZOyO6p1uBfuCGWf6WwMOswji0FO+ENEqNOV6Rv82U6RHeuL4+5fdmNmK
+ 5BcogeQ9oMztk03yp4G5JcTQQ0YJd2rZXRQzmwxjwpIRCSdfdnS6w2YfS/hTNUQUZK90=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=k4q66emTtkmRiUAUpJo6ZluKPMmUw0EN7H7khyWm514=; b=WZkWBEY4K14Adalz+YVHJGQF+H
- 2TC56lZrlLCHe7W7rxAH8SbdOc6N8YYu3rgQjzzLqUgNjxCfd+pcVeaibVc2A0FgF4nYsLyEbOgqu
- 3vZQDk6EDpPhfahehLg8GsvWnBtaOcHC82LN5HfyIoiohabfNGIMjK70+56iuznrxfvw=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=/HHsrhMZL6uF7oMdrWjCL4GY6W29/wq0pzaKjLWhw5Q=; b=bJ43aHLT95yS71waN1vgcTNRcs
+ e6koKhdspV7A/exGvM2/yqgYoSHVSPVAI1YWFwYUK8p2IcEStBM2POlADyF0I/jcwzQ7cL9Z6//Ls
+ 1NY4X7U09EcPFHuC0+3Z5Jp0K32HObVXI6cizsG+BVcGkwDU1vpeGen5hKbJj8cX2pnA=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xIlBZ-0004nk-50 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 11:05:45 +0000
+ id 1xIlFH-0007sB-8M for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 11:09:36 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 73092600CB;
- Mon, 19 Oct 2026 11:05:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6191F000C4;
- Mon, 19 Oct 2026 11:05:37 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7E98944530;
+ Mon, 19 Oct 2026 11:09:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998981F000C4;
+ Mon, 19 Oct 2026 11:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792407939;
- bh=k4q66emTtkmRiUAUpJo6ZluKPMmUw0EN7H7khyWm514=;
+ s=k20260515; t=1792408169;
+ bh=/HHsrhMZL6uF7oMdrWjCL4GY6W29/wq0pzaKjLWhw5Q=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=IrzIY10V8O0NDas70qmNAussg089+Vj/D4jG4Ml9sqcpB8uRB8Q5FPus5LxwJcPa1
- RxtLalxqarvEj6Mb5HtMt67X0SVL3ZFMpzA5l1wBCyJ+FA6Bu0KWVFJwLC6mrizm3x
- EPOrsto//l/AthadeaKhbKh0spe0Q28/m7+mksRo5VgWl1TYKASRnAg7VIA11o9GAU
- 4Dgskp4vNQzSHRe1wrRSXyRRwjybrpRi6upQ35ku9ADkS/YD9daXsKJKLLiVj1CAsr
- TvZ+6M9OmqNOHAgBtvufnsxDRVXoKxp1JKgAVNKuFn8tFmmPmvG7O401hv/WOc4P5p
- cTrutJ9fVXKHA==
-Message-ID: <b52ee3f7-e849-4444-b870-7f9ec87f8541@kernel.org>
-Date: Mon, 19 Oct 2026 19:05:36 +0800
+ b=HLO4yck0sfA1Dc2Axu9Qpd+8qknBvutqF+8W81beeHiIgS7sZoI4o/S4MqCQ6oBvT
+ we8+Xop+9IE7HnyeePgzmdXeK+9kJYZEdpQfOlX66FYfV/sL/ExV1mGlEXS1uJ6kw/
+ hn5x58AI9hhnOeKPtHz+NlLdFJDvoFkpYqaL/2XsLTKcKZ8WDmgXoE/swn5YeifWUP
+ /A7akVF+wbGAJ7GA0xcZgI2SgKpJclInnxl1zn/eHjBmEo2ZroSR5IJnxEg+j1LN6V
+ k8ksyqoFygDGUze75YA1yx0zxNtObZ/rQI2o1BLzfzTfhepRJN34Y+WFFj5f9SAw7O
+ KrzyfXsLyaaVQ==
+Message-ID: <d1236f9a-b5ec-434d-9293-54cf9f6364ef@kernel.org>
+Date: Mon, 19 Oct 2026 19:09:27 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <cover.1792116883.git.qiwenjie@xiaomi.com>
- <226abf7d629d7345f450753a42e924b436c99ec0.1792116883.git.qiwenjie@xiaomi.com>
+To: Seongjae Jeong <jsjlee1020@gmail.com>, jaegeuk@kernel.org
+References: <20261014112629.59861-1-jsjlee1020@gmail.com>
 Content-Language: en-US
-In-Reply-To: <226abf7d629d7345f450753a42e924b436c99ec0.1792116883.git.qiwenjie@xiaomi.com>
-X-Headers-End: 1xIlBZ-0004nk-50
-Subject: Re: [f2fs-dev] [PATCH v4 2/2] f2fs: refresh pinned allocation
- boundary after resize
+In-Reply-To: <20261014112629.59861-1-jsjlee1020@gmail.com>
+X-Headers-End: 1xIlFH-0007sB-8M
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix submit accounting for IPU writeback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,36 +88,29 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: daehojeong@google.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com,
- sunqiuyang@huawei.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+On 10/14/26 19:26, Seongjae Jeong wrote:
+> f2fs_write_cache_pages() uses the submitted count, which is set to
+> fio.submitted in f2fs_write_single_data_page(), to update nwritten
+> and decrement wbc->nr_to_write.
+> 
+> In the OPU path, f2fs_submit_page_write() sets fio->submitted to 1.
+> However, in the IPU path, fio->submitted is never set and remains zero.
+> As a result, successful IPU writes are not accounted for.
+> This can cause asynchronous writeback to continue beyond its budget.
+> 
+> Set fio->submitted in f2fs_inplace_write_data() after a page is
+> successfully merged into a bio or submitted, so that successful
+> IPU writes are included in the writeback accounting.
+> 
 
+Missing Fixes and Cc stable line?
 
-On 10/16/26 13:44, Wenjie Qi wrote:
-> Online shrink updates MAIN_SECS() but leaves resizable_tail_secno and
-> pinned_area_max_secno unchanged. The pinned allocation limit can exceed
-> the new main area when shrinking beyond the reserved tail.
-> 
-> Consume the reserved tail by the number of removed sections, clamping
-> it to zero, before refreshing the shared pinned allocation boundary.
-> This preserves the boundary while shrinking within the reservation and
-> limits it to the new main area otherwise, retaining the zoned limit.
-> 
-> Save the old tail count and restore it before rolling back the geometry
-> if the final checkpoint fails.
-> 
-> Also bound pinned section allocation by the current MAIN_SECS(). Range
-> evacuation temporarily reduces it before moving cursegs, while the
-> cached pinned boundary still describes the old geometry. Otherwise, a
-> pinned curseg can be reallocated into the range being removed.
-> 
-> Fixes: c966d29e01bb ("f2fs: support resizable tail section and unify pinned allocation")
-> Suggested-by: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+> Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
