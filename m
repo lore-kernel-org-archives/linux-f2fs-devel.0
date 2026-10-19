@@ -4,72 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0C2E0CCF2C9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 18 Oct 2026 16:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85DD1CCF2D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 09:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:To:Date:Sender:Cc:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=SMn+7nIPUGyjLlUnVIimO/fT2YXsJNEGe6Xnxnl2O0E=; b=hQD16TUyvxfFh8hV5m1B6dVCxL
-	eWa6U+I0shTuLo9NYEPVnjLs4qCsWbMvF7F8/720husKro3HJCjbLju/ht+NHl1z5xXwAVGXJIxyb
-	wdhxB6V8pGLxRlEDh9tq1/8/YtnGpvUffb3ZAxCbplMoEn8wS1FJ0HYVTMR2A6jvmdkE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=YN2KV5TTxFJD8zwbaG52j/55LF0PRIcFoGGHnCZxP9Q=; b=H0BBb2vFdPw3kRGqY+r5bMnb2y
+	7RDIUtdrmoeJyuBj+Fbx4y/QSeVp+KSHJS3XDmyHLTYV2wPMs5Stb6qz8TW7SMUZVkpA1L5iisM5Z
+	AZJ0JSwoBvFPAoKkB+gU0J0LiPUoHWlbbUYVGX0TlTK4zDxuJ1YvDcKPj0q2/o5ZCevo=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xIU6U-0004P4-3J;
-	Sun, 18 Oct 2026 16:51:19 +0000
+	id 1xIjEh-0001mh-MW;
+	Mon, 19 Oct 2026 09:00:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <geldot@protonmail.com>) id 1xIU6T-0004Oy-8q
+ (envelope-from <chao@kernel.org>) id 1xIjEd-0001mK-7k
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 18 Oct 2026 16:51:18 +0000
+ Mon, 19 Oct 2026 09:00:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Subject:From:To:Date:Sender:Reply-To:Cc:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cg0n3P77ZaWIUHaWWUaJx8j/RK7RqVdBtwo5+Ug/0gc=; b=fMkaXz4x2FzBMOP4JNR714vHLz
- 4exDGWAUMDJ7xZ2FHUjHmvpFp/hWTGF5A0zgBp0x6PDwvKS8K6O+YlWHx75wcLtjUVgS3xQIsv+WK
- eoApbn9wJ8kr6xeWkEyveAJi+oLdZgkSvZj+rOszNItYdYOZULedJm0Ebw3Ciwr9A5Zc=;
+ bh=1YlIEAgP2+fxmetkRzFsykbdiTOnFRgm7xmecjSZ33g=; b=RCCCs94U/Fqqj6thuCcRgD5w7s
+ Tjkxph5t6WmxK7yfRoq22s3fhS5gxUEU+ZSMMWv4wz/JnNLR32IrQcyqmRyIkO/GXuCfF0/EPj/E+
+ YXI6luqIrXAq79/YTeA6afByyfnZlt8coK9cEFmfQKcHafcO+3xgDEnD4QlWJ0065xhk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Subject:
- From:To:Date:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=cg0n3P77ZaWIUHaWWUaJx8j/RK7RqVdBtwo5+Ug/0gc=; b=V
- OgDtuWJiCxc6mFfhxx3zb+xcoT7K0mKaZ+8RYeRwZuu9fZbx41S1meZQrzf1K8+UJwtYNpKEDfcvH
- SmuQtaJzhoTffWvgh74fn17c3z1mJ1h+m1mX9jhNJKfafd57Y25CfMhpGfmLI4ScyzIkgcGyNCfSW
- C9xygvNfX/xLJmCA=;
-Received: from mail-24428.protonmail.ch ([109.224.244.28])
+ List-Owner:List-Archive; bh=1YlIEAgP2+fxmetkRzFsykbdiTOnFRgm7xmecjSZ33g=; b=e
+ oZXShngcj01YNbASqsHeMOjGsQD1OpLnTAZx/N8rQoku4UA33B4CiMvs4spTdNwlgJXf7DP/Kb32B
+ ULkTpXb3Y509IXImwFhzRUWQR9GzWaFsLCS6xETGlV2v5ppuuPp8Y0JhqfsE9moZvEJwclU/f2thq
+ hU17CIxB8V+Dv07s=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xIU6Q-0003Hg-6H for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 18 Oct 2026 16:51:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
- s=protonmail3; t=1792342271; x=1792601471;
- bh=cg0n3P77ZaWIUHaWWUaJx8j/RK7RqVdBtwo5+Ug/0gc=;
- h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
- Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
- b=R5PYyDoVXrIfiZi1F7LW55Awm3Z7Wyarlz86cyseDBlTpyPQ0us4TgTRnd9PHyiD5
- ipczqahvAybVdeB4O3OEfIrD4+KdgIC3HH+QR2TUd0GIb67OH2sH9HMjZkeaMtQ2bp
- uTe+jHldb0YZIkQ2meoe+IurjZAeexTXpNuT33vkWwd+sfRxJwoi4bqzANWkL//yvc
- B1WmrijinCNEp98aVDWa33Rj+DqG+wDZSmhKnT74RXp/3T52186ls5CWmg1NJp5PnG
- CDbqDKfKmDZGzXMgOcCwkZR2oVrFWV/5+a/ZxMhgLIVYNW/L22mJRyDWJxZ2ufY4R6
- TbkCqYV/TUzdg==
-Date: Sun, 18 Oct 2026 16:51:05 +0000
-To: "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
-Message-ID: <7ePQxiIqVsZ48lBREK1jGvNluYxkWGYQMnDo4d2DSQzmP1UkP8F2xR3E3oINcM0hV4Q8tXC33GyMjSRwzF43N2IheOyPI_N0GYC0bYmGAb0=@protonmail.com>
-Feedback-ID: 219410145:user:proton
-X-Pm-Message-ID: a06719363642e36eb56ba2cfcbde36905f5fe6ba
+ id 1xIjEd-0005Af-F6 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 09:00:47 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 134F44052A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 19 Oct 2026 09:00:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CF81F000C4;
+ Mon, 19 Oct 2026 09:00:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1792400442;
+ bh=1YlIEAgP2+fxmetkRzFsykbdiTOnFRgm7xmecjSZ33g=;
+ h=From:To:Cc:Subject:Date;
+ b=QSAE5DHrAsDSWfHNRyHs6d2Opjn6DDB3aMaS5U3eymAUQIaUIK2rgORqyQk1vCYbv
+ R9XTNmsKggZ7dvRu8yjPkE6VGJ9X1W9cqa20LGlMOuE2zYfvzvdEeoboHL2syVWZSj
+ x0Vdrx3mTNLOq8RY5FT54odmt2IvWrDEqKHo92xXEBL8RnPFGakJ+ybTSIh58tKlQp
+ jj8WjL93NX4AYh0rFhnJ3WQ/3q+hf4kyPG6iJIkuTmgwjwgJtKklaMtR9gHNEWcRyM
+ UFNjPthKjYxWOPsVd5d0ZSb6QZBZ44nM6aa7uv6tsiU/eiWJZO8wp7SRiur5SOChlx
+ CYu/fBOu6ofrQ==
+To: jaegeuk@kernel.org
+Date: Mon, 19 Oct 2026 09:00:32 +0000
+Message-ID: <20261019090032.1170825-1-chao@kernel.org>
+X-Mailer: git-send-email 2.56.0.176.g3575e65682-goog
 MIME-Version: 1.0
-X-Headers-End: 1xIU6Q-0003Hg-6H
-Subject: [f2fs-dev] [PATCH] f2fs-tools: avoid ABI mismatch in build variants
+X-Headers-End: 1xIjEd-0005Af-F6
+Subject: [f2fs-dev] [PATCH] f2fs: zone: fix to don't fail to grab GC target
+ block on zoned device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,87 +85,89 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Gary Dotzler via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Gary Dotzler <geldot@protonmail.com>
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-libf2fs, fsck.f2fs, and other library consumers can be built with
-different selinux settings.
+From: Chao Yu <chao@kernel.org>
 
-Make the f2fs_configuration struct layout and ABI independent of feature
-detection to avoid memory corruption when the consumer is built with
-different options than the shared library.
+With out-of-memory fault injection (inject_type=0x0080800f) on a zoned
+device, f2fs stopped checkpoint during GC:
 
-A compatible selinux_opt fallback is supplied to retain source
-compatibility. The only known user of these fields is the sload.f2fs
-subcommand of fsck.f2fs.
+ F2FS-fs (dm-0): inject kmalloc in f2fs_kmalloc of move_data_block+0xc0b/0x12b0
+ Workqueue: dm-1_zwplugs blk_zone_wplug_bio_work
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0x4d/0x70
+  f2fs_stop_checkpoint+0x1df/0x5d0
+  f2fs_write_end_bio+0xdbb/0x1320
+  blk_zone_wplug_bio_work+0x2aa/0x7d0
+  process_one_work+0x5c6/0xde0
+  worker_thread+0x403/0xb70
+  kthread+0x235/0x2e0
+  ret_from_fork+0x2f/0x70
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+ F2FS-fs (dm-0): Stopped filesystem due to reason: 3
 
-Also add a compile-time assertion to guard against future regressions.
+In move_data_block(), the target block is grabbed from the meta cache
+after f2fs_allocate_data_block() has allocated newaddr. If grabbing it
+fails w/ -ENOMEM, recover_block calls f2fs_do_replace_block() to restore
+the old block address and curseg's next_blkoff, which already points
+past newaddr, so newaddr is never written. That leaves a hole in a
+sequential zone: the next write to the zone is not at the write pointer,
+the zone write plug fails it, and f2fs_write_end_bio() stops checkpoint
+w/ STOP_CP_REASON_WRITE_FAIL.
 
-Signed-off-by: Gary Dotzler <geldot@protonmail.com>
+move_data_block() allocates newaddr before grabbing its meta page and
+goes to recover_block if the grab fails since commit 4356e48e6437
+("f2fs crypto: fix incorrect positioning for GCing encrypted data page"),
+the meta cache only replaced the meta page w/ a meta cache entry. That
+is harmless on a regular device, but it leaves the hole since f2fs
+supports host-managed SMR (now zoned block) devices, which only accept
+writes at the write pointer of a sequential zone.
+
+If newaddr is in a sequential zone, grab the target block w/
+F2FS_CACHE_NOFAIL, so nothing can fail between allocating newaddr and
+writing it. In a conventional zone or on a regular device, skipping
+newaddr is harmless, so keep the error handling for them.
+
+Cc: stable@kernel.org
+Fixes: 52763a4b7a21 ("f2fs: detect host-managed SMR by feature flag")
+Fixes: d1b959c87702 ("f2fs: Check zoned block feature for host-managed zoned block devices")
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- include/f2fs_fs.h | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ fs/f2fs/gc.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 4225ffe..ccdeccd 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -75,9 +75,26 @@ enum rw_hint {
- };
- #endif
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 926e6976bc22..b6d7ed299f14 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1453,8 +1453,16 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 		goto up_out;
+ 	}
  
-+#ifndef static_assert
-+#define static_assert _Static_assert
-+#endif
-+
-+struct f2fs_selinux_opt {
-+	int type;
-+	const char *value;
-+};
-+
- #ifdef HAVE_LIBSELINUX
- #include <selinux/selinux.h>
- #include <selinux/label.h>
-+
-+static_assert(sizeof(struct f2fs_selinux_opt) == sizeof(struct selinux_opt) &&
-+		offsetof(struct f2fs_selinux_opt, value) == offsetof(struct selinux_opt, value),
-+		"struct selinux_opt ABI mismatch");
-+
-+typedef struct selinux_opt f2fs_selinux_opt_t;
-+#else
-+typedef struct f2fs_selinux_opt f2fs_selinux_opt_t;
- #endif
- 
- #ifdef UNUSED
-@@ -91,10 +108,6 @@ enum rw_hint {
- # define UNUSED(x) x
- #endif
- 
--#ifndef static_assert
--#define static_assert _Static_assert
--#endif
--
- #ifdef HAVE_SYS_MOUNT_H
- #include <sys/mount.h>
- #endif
-@@ -1625,10 +1638,8 @@ struct f2fs_configuration {
- 	char *mount_point;
- 	char *target_out_dir;
- 	char *fs_config_file;
--#ifdef HAVE_LIBSELINUX
--	struct selinux_opt seopt_file[8];
-+	f2fs_selinux_opt_t seopt_file[8];
- 	int nr_opt;
--#endif
- 
- 	/* dump parameters */
- 	int preserve_perms;
++	/*
++	 * If newaddr is in a sequential zone, it must be written once it is
++	 * allocated, otherwise it leaves a hole in the zone, and the following
++	 * write to the zone will fail as an unaligned write, so don't fail
++	 * here.
++	 */
+ 	tentry = f2fs_grab_cache(META_CACHE(fio.sbi), newaddr,
+-					F2FS_CACHE_LOCK_CREATE);
++			F2FS_CACHE_LOCK_CREATE |
++			(f2fs_is_sequential_zone_area(fio.sbi, newaddr) ?
++			 F2FS_CACHE_NOFAIL : 0));
+ 	if (IS_ERR(tentry)) {
+ 		err = PTR_ERR(tentry);
+ 		f2fs_put_cache(sentry, true);
 -- 
-2.56.0
+2.49.0
 
 
 
