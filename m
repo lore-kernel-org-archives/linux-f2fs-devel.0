@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FB11CCF2D6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 09:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1F86CCF2D5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 11:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=6HJ7N0S7ll7vL0eFEvpjMU5YUakxZEWARKoz1o5RXxM=; b=d9kqFhoeXLJpE5YkojOEIda3l6
-	tNWgwbpiXq0e/zVK53VUU91kvSLmK3v74g/DzmqAz+TDZpc1hMkBTrcmJ70g25km0Vjb82Zp5K/Wk
-	fpnc08kpe5molOlEngnNjsSN0UtU0Ve13QQRYLEGNX83KH9l/NgOzcvEWv5G4YRx1r3M=;
+	bh=o5mkJlb/qIqTZFAZwPEOOo72lKGhL0R850q14rVyjp4=; b=HbM7z33dsCnInDFv/wbwic8FS+
+	Dg84TKbGyRY43+vB2DaP9SGLs72pPLe7MHJ828IH5q/9Il3iWDT3q7Ce17JA+rBF/7kQSBOF9SGJL
+	ZfEZcU2lEGphQnR5uFXlUzvvIcYSIhgbdAvn3Y3iek2i0YzNSXfwnK93/SeGEveiXOK4=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xIk7Y-0006Qh-Ga;
-	Mon, 19 Oct 2026 09:57:30 +0000
+	id 1xIlBd-0005ii-Nv;
+	Mon, 19 Oct 2026 11:05:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1xIk7X-0006Pd-CA
+ (envelope-from <chao@kernel.org>) id 1xIlBc-0005ia-3x
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 09:57:28 +0000
+ Mon, 19 Oct 2026 11:05:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WDSRk5kUjz5pRjBwSkrM+9YyUqVFCpvlTWwJQI2J3jk=; b=CKbNSaVgxUWT61epCjgebCDIqd
- IKu53eiqVAoJBFcgHTk2n2JgreBJg0e8ehoxuFASywsm9oFofrGA0qUh+7IvW/HzeX1kgvJRQzOrB
- eE4aA2vxI9cT7wztDroL9oUSA488AWF97agFt6EL+GGqVyU8ESykDP9eXTzi3LNLywsI=;
+ bh=k4q66emTtkmRiUAUpJo6ZluKPMmUw0EN7H7khyWm514=; b=HLqUwW9+NXwEHgHQpdSX4sUn4q
+ YYdR+TNHIpYQ42EqfMArXBDFigKXpqB/cL7CuS9S/upHt9t8X2+baxVNPbTMQGxN4gJNGD3h3GzQR
+ 4ufiXrjh80grlB08kWU/bO+YY+CygtnNJZE9HMYBCIUDPWHdSdVg2l6CNP5Nq85if0FE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WDSRk5kUjz5pRjBwSkrM+9YyUqVFCpvlTWwJQI2J3jk=; b=ji4uqkpdIODCHjPJvjGADB3HqQ
- oIHaA2YJfvYQrWy2VrYRHu03fziqqbjYAU7SMGzOs0IGnWy8Duu/PYHm+/ks5QLF8RTPCNcH44OR6
- 7AlQ6TtsS9aIrTNyPJYW7kU6Ndu2Cst/HjjFzuNY8U3+15XdisRX8DwGFxi174ink2q4=;
+ bh=k4q66emTtkmRiUAUpJo6ZluKPMmUw0EN7H7khyWm514=; b=WZkWBEY4K14Adalz+YVHJGQF+H
+ 2TC56lZrlLCHe7W7rxAH8SbdOc6N8YYu3rgQjzzLqUgNjxCfd+pcVeaibVc2A0FgF4nYsLyEbOgqu
+ 3vZQDk6EDpPhfahehLg8GsvWnBtaOcHC82LN5HfyIoiohabfNGIMjK70+56iuznrxfvw=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xIk7T-0003SW-8B for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 09:57:28 +0000
+ id 1xIlBZ-0004nk-50 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 11:05:45 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 9A96C600CB;
- Mon, 19 Oct 2026 09:57:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 002241F000C4;
- Mon, 19 Oct 2026 09:57:19 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 73092600CB;
+ Mon, 19 Oct 2026 11:05:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6191F000C4;
+ Mon, 19 Oct 2026 11:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792403841;
- bh=WDSRk5kUjz5pRjBwSkrM+9YyUqVFCpvlTWwJQI2J3jk=;
+ s=k20260515; t=1792407939;
+ bh=k4q66emTtkmRiUAUpJo6ZluKPMmUw0EN7H7khyWm514=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=EslnrHiL7blGfMEwu9R+A4VS7imoLLHHSCBpyDo1py3mmGGP3ZzNc4l5q6K/UiPqg
- Gpd1V6QoQDhyzRC8XwbiFGaJWQT1sVqNSiCkP6ERa/T3DHYSfEH0Au0dty6xlPPe49
- pAx2GLo2spdBltZdhmksmONEFf68fZC9B/28KKX9keYFQU/leMUF3huMqg5quEK05+
- W03PWHUjpzVbg6b04BJiQuMxBUvP3K2WNGfn0Uw8TWQrDhowYj+CgS8oWQM8hU412m
- 1JaI+kOypldeR/geb4P3TAlLVJrWCz4V05U+ZQR2ISMGjryqEWsmlXR4TWBFD/+dNa
- MXCuZgFaPiokw==
-Message-ID: <4118fc18-b95e-4acc-bf0d-f808ba4f4d37@kernel.org>
-Date: Mon, 19 Oct 2026 17:57:18 +0800
+ b=IrzIY10V8O0NDas70qmNAussg089+Vj/D4jG4Ml9sqcpB8uRB8Q5FPus5LxwJcPa1
+ RxtLalxqarvEj6Mb5HtMt67X0SVL3ZFMpzA5l1wBCyJ+FA6Bu0KWVFJwLC6mrizm3x
+ EPOrsto//l/AthadeaKhbKh0spe0Q28/m7+mksRo5VgWl1TYKASRnAg7VIA11o9GAU
+ 4Dgskp4vNQzSHRe1wrRSXyRRwjybrpRi6upQ35ku9ADkS/YD9daXsKJKLLiVj1CAsr
+ TvZ+6M9OmqNOHAgBtvufnsxDRVXoKxp1JKgAVNKuFn8tFmmPmvG7O401hv/WOc4P5p
+ cTrutJ9fVXKHA==
+Message-ID: <b52ee3f7-e849-4444-b870-7f9ec87f8541@kernel.org>
+Date: Mon, 19 Oct 2026 19:05:36 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
 References: <cover.1792116883.git.qiwenjie@xiaomi.com>
- <7884c62cae6e4b1ad516a9ac351c2604e57d5cc5.1792116883.git.qiwenjie@xiaomi.com>
+ <226abf7d629d7345f450753a42e924b436c99ec0.1792116883.git.qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <7884c62cae6e4b1ad516a9ac351c2604e57d5cc5.1792116883.git.qiwenjie@xiaomi.com>
-X-Headers-End: 1xIk7T-0003SW-8B
-Subject: Re: [f2fs-dev] [PATCH v4 1/2] f2fs: flush SIT journal during
- filesystem resize
+In-Reply-To: <226abf7d629d7345f450753a42e924b436c99ec0.1792116883.git.qiwenjie@xiaomi.com>
+X-Headers-End: 1xIlBZ-0004nk-50
+Subject: Re: [f2fs-dev] [PATCH v4 2/2] f2fs: refresh pinned allocation
+ boundary after resize
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,25 +97,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+
+
 On 10/16/26 13:44, Wenjie Qi wrote:
-> During a filesystem resize, SBI_IS_RESIZEFS prevents new SIT entries
-> from being added to the journal and forces existing entries to the SIT
-> area. However, f2fs_flush_sit_entries() returns early when there are no
-> new dirty sentries, leaving existing journal entries behind.
+> Online shrink updates MAIN_SECS() but leaves resizable_tail_secno and
+> pinned_area_max_secno unchanged. The pinned allocation limit can exceed
+> the new main area when shrinking beyond the reserved tail.
 > 
-> After the main area shrinks, a later checkpoint can access a journal
-> entry whose segment number is outside the new geometry and trigger
-> f2fs_bug_on().
+> Consume the reserved tail by the number of removed sections, clamping
+> it to zero, before refreshing the shared pinned allocation boundary.
+> This preserves the boundary while shrinking within the reservation and
+> limits it to the new main area otherwise, retaining the zoned limit.
 > 
-> Only take the zero-dirty fast path when entries may be written back to
-> the journal. This lets resize drain existing entries through
-> remove_sits_in_journal() even when there are no new dirty sentries.
+> Save the old tail count and restore it before rolling back the geometry
+> if the final checkpoint fails.
 > 
-
-Cc: stable@kernel.org
-
-> Fixes: 04f0b2eaa3b3 ("f2fs: ioctl for removing a range from F2FS")
-> Reviewed-by: Daeho Jeong <daehojeong@google.com>
+> Also bound pinned section allocation by the current MAIN_SECS(). Range
+> evacuation temporarily reduces it before moving cursegs, while the
+> cached pinned boundary still describes the old geometry. Otherwise, a
+> pinned curseg can be reallocated into the range being removed.
+> 
+> Fixes: c966d29e01bb ("f2fs: support resizable tail section and unify pinned allocation")
+> Suggested-by: Daeho Jeong <daehojeong@google.com>
 > Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 
