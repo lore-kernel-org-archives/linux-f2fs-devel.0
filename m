@@ -4,112 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2E0EACCF2E3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 13:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9821FCCF2D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 13:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=DaUZcUNIzxNFGcM7Sf67qj0nTzgU3WZ+0MiqLny+U7A=; b=bE78VDYVd1CrcmHS9pymjZf/60
-	Y5O/OoL1UB+09lTd8NCsQ1O99Yr0XDyJlMRgbAYx+Dxe6AnZaCf0T7GjCBylBrIPq/s3NSvewUgXl
-	8ovvjt2pIybp7LPsRTZnebwbJvx5zoAbsqmmYMCCcHKV6OIuSN8A0kh6lIOaqxZgchjQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=zfNHvJwhhub8HL97/LvtNska0y+o13Oi98Ebkj2GLig=; b=c639ggbEk6P6GoEsiMm7LUf/4G
+	X4xIRoy7pRGEss2upi/CnQ0V5Sd5kwIE1gl2X+AhJsRZ9rNGqk0XqagyNYfos1sxUsS6nQMa8Mg7Y
+	jITgD3tMGyawZK+7Z/52CveDyzJznWbk4PQGxLF2y0vnf73M0V1zog6vwRl8mzf6bIHE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xImzL-0005rD-Gu;
-	Mon, 19 Oct 2026 13:01:13 +0000
+	id 1xIn0z-0003cV-AX;
+	Mon, 19 Oct 2026 13:02:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kaixuanli0131@gmail.com>) id 1xImzJ-0005r7-Nk
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 13:01:11 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <39xTWagwKANYBHJMK2CGOKCA8GG8D6.4GE@flex--jprusakowski.bounces.google.com>)
+ id 1xIn0x-0003cF-U9 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 13:02:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uF0K/ISANlcRJVgbX3KWpFeOAEFaBPifEi/Tk1Z5Lrk=; b=OJaPLI9GddxT4chnake1UDDEhv
- 1LF0IAedKeORphUjEgc8ybQdWb1GlNtw3VY5EElvFWOYRnYvLbUpALZgdvt5p2lonJaKHzvltGFnu
- fggv7hn42QDlJsmYKp46F1fCXgKBbI8DGc88IiflULwYtsbg7ZRMHiJjYmCr6YzqX0wM=;
+ bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=; b=aaZOxdJK06DqABDkQqyQQ7/3ir
+ PrWCApHK5MTgKOJD2Lo+TunXUj2JxlZDR55nNAhRNWc+ZQ2AAyFGmoiUEYwIzE2HxpyKiffPN/L3d
+ fLncaZN7va5N/0jONLR+u5Q2sP8Q841TCmPnsLGuYsYOwE2xBLUxPr28OKl14UUpPfVY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=uF0K/ISANlcRJVgbX3KWpFeOAEFaBPifEi/Tk1Z5Lrk=; b=ENbdrzQWfz87f6A46zEiV1cFtB
- AiPvI9vmwxK6DAgNy/HMdwGd3E2l3o9yiHMAd1HC3GH4/RGPhrMk+nU5szm0FtuigvcItLVh9Y6ZU
- IhvrPIGmV81c2380aaAbut35uIEEs9/s4k/zeBcJwXnb7Y3MLdv2H7+yLfRuSkn4jQaQ=;
-Received: from mail-dy1-f175.google.com ([74.125.82.175])
+ h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=; b=Y
+ gi0oj7tv1bUawjae719Bq/aHI9H/Z+0kkcfEQ/OBmFshLYxN+juxiby/IRIovxhqqTChmNZCEFtWd
+ Gqeo502zsyG3E3mtBFPYNIGU90IRI5cYnWuN78vk5NWhfFDZ0Wjms2JwmLJrPGGtnAWexMmKzH9Qg
+ xTB6Hks7RB8AGelY=;
+Received: from mail-ej1-f72.google.com ([209.85.218.72])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xImzF-00026Y-S4 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 13:01:11 +0000
-Received: by mail-dy1-f175.google.com with SMTP id
- 5a478bee46e88-33bf40b0c8bso6056795eec.0
+ id 1xIn0w-0002Bm-5i for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 13:02:56 +0000
+Received: by mail-ej1-f72.google.com with SMTP id
+ a640c23a62f3a-c41b03cd1dcso175655966b.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 19 Oct 2026 06:01:09 -0700 (PDT)
+ Mon, 19 Oct 2026 06:02:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792414864; x=1793019664; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=uF0K/ISANlcRJVgbX3KWpFeOAEFaBPifEi/Tk1Z5Lrk=;
- b=sw9SVHza3BUgR2TmaJ0DGpOO3YLUq4fappBk9+sWShijXy8wB7lmsV3red7pT7uZWp
- yUZ+Fw+Hp8EtyMQXmUbOIBGkfz68LNKKZdp9CV4l4Js5wuNV5ZBL82NyQNxRmrg1vgam
- j1jG86Xo89/WXm6323S2AomlOPAZFhV3FxmyNL+FTbj5P4+J0NISApuAq1oKTiehGu6z
- olut4P/cWMfzE7heztGymglv6Zg1uOHMgrF6bLlD0b1mJX5p62QXyQYrRhQ8x4PItfK9
- 0BJOd0NiuNiWEDVTvBEeUP3W9Sv+hX+2+9/DaP3lDNH3MBcVEdFQuKsT7aPmANR4GRUk
- GgzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792414864; x=1793019664;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ d=google.com; s=20251104; t=1792414967; x=1793019767;
+ darn=lists.sourceforge.net; 
+ h=content-type:cc:to:from:subject:message-id:mime-version:date:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=uF0K/ISANlcRJVgbX3KWpFeOAEFaBPifEi/Tk1Z5Lrk=;
- b=Vvt81I+XAa+0OEahuwiQnTU2uUdyAO58sY9qY3EFyWhjaIuU63S6lZxfQFEmry2fjS
- yiONQKgwvkHg2tM1Zk+wkti6jIzHLvzUyaX9bmL5Qfz9vtdHdvNc1SD7RqDalbcEgC7a
- GuNTYKv0D6WisWNo0IVVNymB/RODpYfNDuEZvzjfErrnXVfI+3ChzXFX+hG1ulfTrNYn
- 7MgITAI0dPRoB4FH4bqbTqJQvqxCBpxaYFGcXF8l6Zwg66rTr2/xpWYzbapCa7Asaav0
- dSm2FoCtxNZ5KWdF4EOkNtWmdgegL7tTNNmaXdskPJg2fZVFQ2oZlp1UetJ/D80wgYf0
- Fl5w==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwWxZ9mUHVJzfDAdjHY1ys8IfHWRfaskW2KAphejbaThjkIlMjh7TuvYbem72RLwXfYOejGX2pi0gLa3Q6yrhng@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYI8rTUfhG6IeOdEbC+/HIsKmLUtpXm0UE5UjdEyTG8UXS2oBKky
- 0wv1z8i74SBnZFKexqGPTEcA1iHh5T7dXPdatqwLIkxzrESlVuV9naC0
-X-Gm-Gg: AYBFou2rDk3jmshAWXbF0wbdlSUJdfoX5FOeL2Ry1nxB3Sk+rsI06NNQnRGj3REcZQ/
- X3ueweDgu9KiT8VfxKAlUDIMuzD4VcwmSt3m+++PvRWEc4NRVcftRdDDNk8xyUG5DOIGOdnPmkJ
- aa4F2ijRlV/L5Q6vtUJahgURuNYP71RRx8C2sd6T8Tqse2Ce5Y134v9M5wZczzaWHFPWizLAoIP
- DaRRy33Mn/zsYO9x738Pn9vZzNNHRcpEOOkuttDfPPhBh+VpVKCM970GctSu23lpPwrP9/spxBM
- AUAJGUS4AV3QHjdWHh8sv53slgcXeddWNWfKN5Vy2/6Kh4k45rZCvYnELJrMmrOZAZKImWQISRj
- VxtsIgroVC8FxMCXArO7Lp94t92+pNRXOo5r+i2FdTfwaqeeBt4ilGXij4TSUm+ZZWElmrZvFcb
- rps8fuPIBXTytROu9DxhuBxmL6oALxI0ActKY0nmNF82NRMwuK5J4aCu84H4oXZe/k9jWCLmAlt
- iUVT/eNjoQguKkimu6uSoJJLUVZRFqL12k=
-X-Received: by 2002:a05:7300:ce16:b0:351:45a4:7dd8 with SMTP id
- 5a478bee46e88-361a2843701mr10814906eec.34.1792414863570; 
- Mon, 19 Oct 2026 06:01:03 -0700 (PDT)
-Received: from csl-conti-dell7859.ntu.edu.sg ([155.69.199.57])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-360813b684dsm32263303eec.10.2026.10.19.06.01.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Oct 2026 06:01:02 -0700 (PDT)
-From: Kaixuan Li <kaixuanli0131@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Mon, 19 Oct 2026 20:59:22 +0800
-Message-Id: <20261019125922.2568859-1-kaixuanli0131@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260919130925.1899994-1-kaixuanli0131@gmail.com>
-References: <20260919130925.1899994-1-kaixuanli0131@gmail.com>
-MIME-Version: 1.0
-X-Headers-End: 1xImzF-00026Y-S4
-Subject: [f2fs-dev] [PATCH v2] f2fs: bound the SIT/NAT bitmaps by the
- checkpoint pack
+ bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=;
+ b=NWd/pam4PX4pMNsC2GkvM/nLVQns+VHC7SslOAwsVj7KEHnE7TbVKc17Fqs22C/0ZW
+ waHiapnnlBChyUL28qBNLfgJMmkp/Jt0rAiM0T2nhaM1NcoCoxbNSQFMsK4GEkrVSU2a
+ yljcM5MMSiWdgvK9KJ7zYb4gIJ/vpjPv/CNXCfTF4WpcrgD/JeiPRbtwuajfDCDHASsp
+ FfROmwe9RXndT7mU1USPAImpmkyczXyQPkOE7SXcoVb3eOiwvpyvmrZAs19VlXjcFtM1
+ jzTxkPx7XwSX+sXo4u3EITEQwfzRpASLigohHd7A3GIM7IzhxWafbsvamE+gA794Ond9
+ agDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792414967; x=1793019767;
+ h=content-type:cc:to:from:subject:message-id:mime-version:date
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=;
+ b=GA14d02BrShRMFQvhS1a/Eg4oBABrvPFz18yXzYrs4asFwo/1lO8zAgndHT8BvolpU
+ /534LNrnTr1IP7ePCLkH07eCfo5a9CFC/Fb8jgYgVzMdWJqeTbdEGQVrLfvv2jb2wlXb
+ Q1Gbt8E6rPmpIHIObSFeLEMwarfzFgcVOKylrOcWQ9fELznxc/S7D46Nf3Won8YNTSq+
+ 2IQWpSzIIDpa7qmKZ14rXbqXSJ7GPlag1DUk7NFGfAk0Vw1prWJqIcPGktHMQx99QBhR
+ 1px+FicVFLWUoOxsMkhVD90ogmgS8ZA2eekgDbu0pobxoCLf6VG+tZGk4vJTBHGxsM7Y
+ VO9Q==
+X-Gm-Message-State: AFq9FYJhYHfnEO/I57TvEsB8emLbznMQzuK+2u2WIC2WnJwTVz1jLZHj
+ rEnOmI+6qPvvCig1okSVbW5S7WE2LywJP4q+GkIvTf1wToa/ELEsm1tlc7eOp1whJ86pFGS+g2e
+ KhF5qeIK422ldA5tzRPqYCFozdev/Tg==
+X-Received: from ejblu20.prod.google.com ([2002:a17:906:fad4:b0:c34:dd5f:126c])
+ (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:3d92:b0:c29:4490:50d6 with SMTP id
+ a640c23a62f3a-c41a08e6a7fmr555511566b.47.1792414967175; 
+ Mon, 19 Oct 2026 06:02:47 -0700 (PDT)
+Date: Mon, 19 Oct 2026 13:02:41 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.56.0.176.g3575e65682-goog
+Message-ID: <20261019130241.3751829-1-jprusakowski@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+X-Headers-End: 1xIn0w-0002Bm-5i
+Subject: [f2fs-dev] [PATCH] f2fs: fix stale extent cache in inode page after
+ truncation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,139 +105,124 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Kaixuan Li <kaixuanli0131@gmail.com>, stable@kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jan Prusakowski via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jan Prusakowski <jprusakowski@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-sit_ver_bitmap_bytesize and nat_ver_bitmap_bytesize are used as memcpy
-lengths into and out of sbi->ckpt, which is sized from cp_payload alone,
-and nothing compares either length against that allocation.
+During generic/475 (fsstress with dm-error), orphan inode recovery on
+remount can fail in sanity_check_extent_cache() with a stale on-disk
+extent (ri->i_ext) whose blocks have already been invalidated in the SIT
+bitmap:
 
-sanity_check_ckpt() has checked these two fields since c77ec61ca0a4, which
-added them after a crafted image overran build_sit_info(). That check ties
-each length to a segment count; it never compares either against the
-allocation, which is the half this adds.
+  F2FS-fs (dm-0): Inconsistent error blkaddr:212341, sit bitmap:0
+  F2FS-fs (dm-0): sanity_check_extent_cache: inode (ino=14f2) extent info
+                  [212341, 109, 1] is incorrect, run fsck to fix
 
-Mounting over-reads in build_sit_info() and build_node_manager(), and the
-first checkpoint writes the same lengths back through the same pointers,
-so the over-read's contents reach the on-disk checkpoint. An unmount is
-enough; the filesystem does not have to be used.
+This happens for two reasons:
 
-Bound both ends the way __bitmap_ptr() lays them out. The three branches
-differ, so a single sum of the two lengths would still admit a small
-overflow when cp_payload is non-zero.
+1. In f2fs_drop_inode(), when an unlinked inode has I_SYNC set by a
+   concurrent __writeback_single_inode(), f2fs_destroy_extent_node() only
+   frees the rbtree nodes while leaving et->largest intact and without
+   setting FI_NO_EXTENT. Concurrent writeback in f2fs_write_inode() ->
+   f2fs_update_inode_page() can race with f2fs_truncate() and write a
+   stale et->largest into ri->i_ext after blocks have been invalidated in
+   the SIT bitmap. Call f2fs_drop_extent_tree() instead so FI_NO_EXTENT
+   is set and et->largest.len is zeroed before truncation.
 
-Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
-Cc: stable@kernel.org
-Signed-off-by: Kaixuan Li <kaixuanli0131@gmail.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
+2. During truncation (including f2fs_evict_inode() -> f2fs_delete_inode()
+   -> f2fs_truncate() where I_FREEING is set and f2fs_pre_evict_inode()
+   has already destroyed the in-memory extent_tree),
+   f2fs_truncate_data_blocks_range() clears ri->i_addr[] directly in the
+   inode cached block (marking ientry dirty) and invalidates the blocks
+   in the SIT bitmap, but does not call f2fs_update_inode() to
+   synchronize ri->i_ext in ientry. Because igrab() returns NULL for an
+   I_FREEING inode, both f2fs_sync_inode_meta() and flush_dirty_inode()
+   skip the inode if a checkpoint or node writeback occurs before
+   f2fs_remove_inode_page() completes, persisting ientry with truncated
+   ri->i_addr[] and a stale ri->i_ext.
+
+Fix this by:
+- Calling f2fs_drop_extent_tree() instead of f2fs_destroy_extent_node()
+  in f2fs_drop_inode().
+- Updating the inode cached block via f2fs_update_inode() in
+  f2fs_truncate_data_blocks_range() when truncating blocks in the inode
+  cached block, as well as in f2fs_do_truncate_blocks() and
+  f2fs_truncate_inode_blocks() when FI_DIRTY_INODE is set.
+
+Fixes: 3e72f721390d ("f2fs: use extent_cache by default")
+Assisted-by: LLM
+Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
 ---
-v2: Fixes now points at 39a53e0ce0df; nothing bounded the two lengths
-    against the allocation before c77ec61ca0a4 either (Chao Yu). Cc
-    stable. Add Chao's Reviewed-by. No code change.
+ fs/f2fs/file.c  | 4 ++++
+ fs/f2fs/node.c  | 5 +++++
+ fs/f2fs/super.c | 2 +-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-v1: https://lore.kernel.org/linux-f2fs-devel/20260919130925.1899994-1-kaixuanli0131@gmail.com/
-
-Reproduced on v7.2.4 x86_64 with CONFIG_KASAN=y. Two crafted images from a
-plain mkfs.f2fs 512G volume, with segments taken off the SSA area so
-main_blkaddr does not move:
-
-	cp_payload 0, segment_count_sit 20 -> 220
-		sbi->ckpt 4096 bytes, SIT bitmap at +192 for 7040, NAT at
-		+7232 for 3200, ending 6336 past the allocation
-	cp_payload 2, segment_count_sit 20 -> 520
-		sbi->ckpt 12288 bytes, SIT bitmap at +4096 for 16640,
-		ending 8448 past
-
-	case                    kernel    result
-	crafted cp_payload=2    stock     mounts and unmounts
-	crafted cp_payload=0    stock     mounts and unmounts
-	pristine mkfs.f2fs      stock     mounts
-	crafted cp_payload=2    patched   rejected
-	crafted cp_payload=0    patched   rejected
-	pristine mkfs.f2fs      patched   mounts
-
-with the patched kernel naming the numbers:
-
-	Bitmaps do not fit the checkpoint pack: sit ends at 20736, nat at 3392, pack is 12288 bytes
-	Bitmaps do not fit the checkpoint pack: sit ends at 7232, nat at 10432, pack is 4096 bytes
-
-Setting sit_ver_bitmap_bytesize to 7040 while leaving segment_count_sit at
-20 gives "Wrong bitmap size: sit: 7040, nat:3200" and the mount fails, so
-the field is read and the only thing checked against it is the segment
-count.
-
-KASAN does not flag the copy: with cp_payload 0 the allocation requests
-exactly 4096, so there is no in-object redzone, and at 12288 it went
-unreported too. What the cp_payload 2 image does produce, on one of three
-runs with a freshly built image each time, is the corruption landing at
-unmount:
-
-	BUG: KASAN: slab-use-after-free in kthread_stop+0x23/0x390
-	Write of size 4 at addr ffff88800a329fa8 by task init/1
-	Call Trace:
-	 kasan_check_range+0x39/0x1c0
-	 kthread_stop+0x23/0x390
-	 f2fs_destroy_segment_manager+0x176/0x9b0
-	 f2fs_put_super+0x635/0x10e0
-	 generic_shutdown_super+0x13e/0x440
-	 kill_f2fs_super+0x24e/0x500
-
-Which neighbour it lands on varies.
-
-Mounting a crafted image is not a Linux kernel vulnerability
-(Documentation/process/threat-model.rst), and I am not reporting it as
-one.
----
- fs/f2fs/super.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 3b5ad281b518..b7a404d0efc6 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -796,6 +796,8 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 		f2fs_update_read_extent_cache_range(dn, fofs, 0, len);
+ 		f2fs_update_age_extent_cache_range(dn, fofs, len);
+ 		dec_valid_block_count(sbi, dn->inode, nr_free);
++		if (IS_INODE(sbi, dn->node_entry))
++			f2fs_update_inode(dn->inode, dn->node_entry);
+ 	}
+ 	dn->ofs_in_node = ofs;
+ 
+@@ -885,6 +887,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 		f2fs_update_time(sbi, REQ_TIME);
+ 
+ 		f2fs_drop_extent_tree(inode);
++		f2fs_update_inode(inode, ientry);
+ 
+ 		f2fs_put_cache(ientry, true);
+ 		goto out;
+@@ -892,6 +895,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 
+ 	if (f2fs_has_inline_data(inode)) {
+ 		f2fs_truncate_inline_inode(inode, ientry, from);
++		f2fs_update_inode(inode, ientry);
+ 		f2fs_put_cache(ientry, true);
+ 		truncate_page = true;
+ 		goto out;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 424e95ca5878..27ccc175c282 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1315,6 +1315,11 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
+ 		nofs += err;
+ 	}
+ fail:
++	if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
++		f2fs_lock_cache(entry);
++		f2fs_update_inode(inode, entry);
++		f2fs_unlock_cache(entry);
++	}
+ 	f2fs_put_cache(entry, false);
+ 	trace_f2fs_truncate_inode_blocks_exit(inode, err);
+ 	return err > 0 ? 0 : err;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 773b12ea29c0..acefc1378a6a 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -4180,8 +4180,9 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	block_t user_block_count, valid_user_blocks;
- 	block_t avail_node_count, valid_node_count;
- 	unsigned int nat_blocks, nat_bits_bytes, nat_bits_blocks;
- 	unsigned int sit_blk_cnt;
-+	unsigned long long ckpt_size, sit_end, nat_end;
- 	int i, j;
+@@ -1888,7 +1888,7 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			spin_unlock(&inode->i_lock);
  
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -4308,8 +4309,31 @@ skip_cross:
- 			 cp_pack_start_sum);
- 		return 1;
- 	}
+ 			/* should remain fi->extent_tree for writepage */
+-			f2fs_destroy_extent_node(inode);
++			f2fs_drop_extent_tree(inode);
  
-+	/*
-+	 * Nothing above ties the bitmap lengths to sbi->ckpt, which is
-+	 * (1 + cp_payload) blocks. Bound both ends the way __bitmap_ptr()
-+	 * lays them out.
-+	 */
-+	ckpt_size = (unsigned long long)(cp_payload + 1) * F2FS_BLKSIZE;
-+	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
-+		nat_end = CP_MIN_CHKSUM_OFFSET + sizeof(__le32) + nat_bitmap_size;
-+		sit_end = nat_end + sit_bitmap_size;
-+	} else if (cp_payload > 0) {
-+		nat_end = CP_MIN_CHKSUM_OFFSET + nat_bitmap_size;
-+		sit_end = F2FS_BLKSIZE + sit_bitmap_size;
-+	} else {
-+		sit_end = CP_MIN_CHKSUM_OFFSET + sit_bitmap_size;
-+		nat_end = sit_end + nat_bitmap_size;
-+	}
-+
-+	if (sit_end > ckpt_size || nat_end > ckpt_size) {
-+		f2fs_err(sbi, "Bitmaps do not fit the checkpoint pack: sit ends at %llu, nat at %llu, pack is %llu bytes",
-+			 sit_end, nat_end, ckpt_size);
-+		return 1;
-+	}
-+
- 	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG) &&
- 		le32_to_cpu(ckpt->checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
- 		f2fs_warn(sbi, "using deprecated layout of large_nat_bitmap, "
- 			  "please run fsck v1.13.0 or higher to repair, chksum_offset: %u, "
+ 			sb_start_intwrite(inode->i_sb);
+ 			f2fs_i_size_write(inode, 0);
+-- 
+2.56.0.176.g3575e65682-goog
+
 
 
 _______________________________________________
