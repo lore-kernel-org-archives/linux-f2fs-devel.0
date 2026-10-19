@@ -1,85 +1,85 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F8460774D1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 15:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0562960820D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 15:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=NKouWgSX;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=WKAFpG5a;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=gia/uxpN;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GkONaV4H
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=CVe2ZFIp;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=XxQ9gl6s;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=gWn3CqS5;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=adzmqr5S
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=yI+TugOy53KrvY/L7WOYp/RxE1J4J1RULz8vb5+c7hg=; b=NKouWgSXG7bGdTgtGBIVBXsN08
-	tQjxwge2wPc9J7P2KpNhmm2xa+VHfheE6Kn4F4YgNQjxQZy20AfQ0rt6lZCpYP82wKsX0jtxXGZUk
-	CUWW/qYkeaSfwFlNnGy7kUK9hwiru5Ji+05ad7dsGk7GmAC6ndGyCxSTZ22F8OksZeNw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=23QSXUcxpJ9I+8LmSsOwRmorYZECN3yWg5P2kYKcCQ4=; b=CVe2ZFIpR4TUWTgFHytR7vUSFV
+	zOdWUqajGS00ZQg/9027ePfwawAafXktXY6CqIRVFx9n8vvUK/JqyuC9XjQIyj2oifzvk2ux4xJpc
+	xgTLIogov2H89eRrxaxMTo0EP0UqbjUlDxs2bTvCxAsqq5wgyLSah4qud+//njPzeMKU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xIpTT-0005rT-74;
+	id 1xIpTW-0001J0-DR;
 	Mon, 19 Oct 2026 15:40:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xIpTH-0005qh-Vp
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1xIpTF-0001IZ-TR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 15:40:20 +0000
+ Mon, 19 Oct 2026 15:40:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ci68KtTSQTCl4pbfvwKLg1OkLhRNMIEHq1Jt8ehNTxo=; b=WKAFpG5a/WtDaCqHkawf2gorp9
- XSxQ6lkqPDKCeZVEUSLRyCDo6aj00JnyYX01Uz76FotocLvO+iUwTa2FUIp4Lzf5cVXN+AltGXkFp
- Rg/B64pWxx4d2CFx32L9DQ0Iz5dzDmVd4tp+OcdFR3qYoPgwlVRWEuefD0hbDVB+3GoY=;
+ bh=iZJHrYGA4vvk72TfCN2wk/iV+4PmycnQTPaBgYupmAA=; b=XxQ9gl6sHNMmo0WA3lUgIRbtew
+ 6KVceP87LxkNJRTR7o9NlT9JQelktHqBCyuz8XweXXfpYpS7Tiq5kByRPbt8GiqTROX57ZHhnjKp6
+ rDOV+02xJtsq1aYZ5oM5t7Z7CihPyNB1IhifG99TYqct3fEiSRHF9ZImUNWBNVLatn1s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ci68KtTSQTCl4pbfvwKLg1OkLhRNMIEHq1Jt8ehNTxo=; b=gia/uxpNDrO8R7lmZuZsodO/xn
- OqThoE49kawORgLyoONTKkHDH9wwaURUKubi0LyShLHIrY4igYFe+VuNUtbsM7E0unUlc6Y2ZSj6G
- ar56V855yqvjL5zx8aWW9GcNsFbmot5m0QlImlTvXgZKKiLKEvUeSCJObKCYYt6udSs8=;
+ bh=iZJHrYGA4vvk72TfCN2wk/iV+4PmycnQTPaBgYupmAA=; b=gWn3CqS5mqA/orSOUfJcUSWtaJ
+ /xoKkWhXKZuoUdXmPM2gHtjD+VrUSEw6bhXsgI2xSYr+f6GNu/0iMHP4LvHle1Z3U47lbWX4v137f
+ 2Vm4BR7ENojy6fTnsgDZn0Dzps7auHfEPpVAOMEcCMFWaQ8DbBJoH7L28Qv0rMy+GnaM=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1xIpTG-0003jX-D1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 15:40:19 +0000
+ id 1xIpTB-0003jS-VK for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 15:40:15 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id D071D60DB7;
- Mon, 19 Oct 2026 15:40:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8428C1F000CB;
- Mon, 19 Oct 2026 15:40:12 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 5056460D93;
+ Mon, 19 Oct 2026 15:40:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0674D1F000C4;
+ Mon, 19 Oct 2026 15:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792424412;
- bh=ci68KtTSQTCl4pbfvwKLg1OkLhRNMIEHq1Jt8ehNTxo=;
+ s=k20260515; t=1792424408;
+ bh=iZJHrYGA4vvk72TfCN2wk/iV+4PmycnQTPaBgYupmAA=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=GkONaV4HRj8e4w3XbHTPLKmyvsviiS7aCu3NNC0DfdaN7+IJMrsTQG6M3XnflUFVe
- ll1qY4GGT8sjT4DkcJDY6l6HSCz+C2BdNOw/TJ8c2VxXCNi9r2smBYZAkplUfbaPXc
- 7HEWWUC7R5hZm/CIe0qa88eyQDjaZ0ta30zyHnK6t9M4aTJF3TJxErSa20daSknFET
- S06VW3S+ZP1dBVhcOxqwI6RUupWtfpIZjlZSTT9BxPhAOKtViG/62nvNmY0wjsnD5w
- XOtJZussZOpV5HezZDeOdutJ7+4iFb/qX3Kgo/LpJNm4IJI00ZE5ICxRjyBLX1WPll
- EcKpeKpORF5eQ==
+ b=adzmqr5SCl8jrlV8Gr5UMACGuhiZR2Burf8qeoQ1FN+Vh9ByqsAT/VS+cpnVB/D4z
+ xSziBi0lxrRZh3LC4loOFAl3X7G2yQPNIhQMYxQgHWgn2gcFNDr8U5SKkrREety1L7
+ Ajh/NRgyR0mPQ0zVYS7M0fFwJrPdzY4e9xX5C9Q8ijP/tF3rLIzHgP4x8/eN3isY/2
+ 7j0U/tRt0PYA+U/IlBXdvfMtxGgcjeXOfPYEFEa+s9PBgVYoxj8KSUohxXuVr6Y35o
+ /2XlCuGNIUI+FM231su1k0shpe1xwhWACWk6aiUEJuR/RVT+OO38mxhyE/+TphMqcX
+ XpaIrSCVoKWYQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7741A3811A71; Mon, 19 Oct 2026 15:40:12 +0000 (UTC)
+ F15983811A71; Mon, 19 Oct 2026 15:40:07 +0000 (UTC)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-Id: <179242441102.2714099.12259742398143364059.git-patchwork-notify@kernel.org>
-Date: Mon, 19 Oct 2026 15:40:11 +0000
-References: <20261015161714.1586334-1-daeho43@gmail.com>
-In-Reply-To: <20261015161714.1586334-1-daeho43@gmail.com>
+Message-Id: <179242440678.2714099.1586605259418361333.git-patchwork-notify@kernel.org>
+Date: Mon, 19 Oct 2026 15:40:06 +0000
+References: <20260911143549.909867-1-daeho43@gmail.com>
+In-Reply-To: <20260911143549.909867-1-daeho43@gmail.com>
 To: Daeho Jeong <daeho43@gmail.com>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xIpTG-0003jX-D1
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't use truncate_inode_pages_final()
- on live inodes
+X-Spam-Score: -2.5 (--)
+X-Headers-End: 1xIpTB-0003jS-VK
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: use BIT_ULL for mount option
+ bitmasks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,7 +92,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
+Cc: lkp@intel.com, daehojeong@google.com, kernel-team@android.com,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -106,23 +106,24 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 15 Oct 2026 16:17:14 +0000 you wrote:
+On Fri, 11 Sep 2026 07:35:48 -0700 you wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> truncate_inode_pages_final() is meant to be called from ->evict_inode.
-> It sets AS_EXITING on the mapping, and nothing ever clears it, to tell
-> the VM that the inode is going away.
-> 
-> f2fs calls it in two places where the inode stays live:
+> Although f2fs_mount_info.opt and f2fs_fs_context.opt_mask are declared as
+> unsigned long long (64 bits), the option bit manipulation macros
+> (clear_opt, set_opt, test_opt) and context helpers (ctx_set_opt,
+> ctx_clear_opt, ctx_test_opt) use BIT(), which expands to (UL(1) << nr).
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: don't use truncate_inode_pages_final() on live inodes
-    https://git.kernel.org/jaegeuk/f2fs/c/256d5e27eda8
+  - [f2fs-dev,v2,1/2] f2fs: use BIT_ULL for mount option bitmasks
+    https://git.kernel.org/jaegeuk/f2fs/c/a5388dd98954
+  - [f2fs-dev,v2,2/2] f2fs: introduce reserve_shrink mount option for filesystem shrinkage
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
