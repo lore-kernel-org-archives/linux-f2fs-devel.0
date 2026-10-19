@@ -4,96 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9821FCCF2D6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 13:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3D82CCF2DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Oct 2026 13:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=zfNHvJwhhub8HL97/LvtNska0y+o13Oi98Ebkj2GLig=; b=c639ggbEk6P6GoEsiMm7LUf/4G
-	X4xIRoy7pRGEss2upi/CnQ0V5Sd5kwIE1gl2X+AhJsRZ9rNGqk0XqagyNYfos1sxUsS6nQMa8Mg7Y
-	jITgD3tMGyawZK+7Z/52CveDyzJznWbk4PQGxLF2y0vnf73M0V1zog6vwRl8mzf6bIHE=;
+	bh=x96GB8xpd5iekad42OwBczKZBxeJ8Ph7YIRsKlCE0Ls=; b=Sf6oAMq+zN4GNET3vMypTozNrx
+	WrhiRUSxuLR1V8pGVVYwCxUKVpo6pWKtR0lbWpTFVhkeBra4C15ZfhAV/pXTEafCLXYFiFq9boTbz
+	+Esb73eOr6MCLsloidG0rtzK0yZGGagAGspVV3PYcIhnSi0czLtvhmjyM7FvheVCro04=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xIn0z-0003cV-AX;
-	Mon, 19 Oct 2026 13:02:58 +0000
+	id 1xInFw-00058n-Lq;
+	Mon, 19 Oct 2026 13:18:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <39xTWagwKANYBHJMK2CGOKCA8GG8D6.4GE@flex--jprusakowski.bounces.google.com>)
- id 1xIn0x-0003cF-U9 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 13:02:56 +0000
+ <35hDWagwKAL0msuxvdnrzvnljrrjoh.frp@flex--jprusakowski.bounces.google.com>)
+ id 1xInFv-00058b-Jz for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 13:18:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
  Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=; b=aaZOxdJK06DqABDkQqyQQ7/3ir
- PrWCApHK5MTgKOJD2Lo+TunXUj2JxlZDR55nNAhRNWc+ZQ2AAyFGmoiUEYwIzE2HxpyKiffPN/L3d
- fLncaZN7va5N/0jONLR+u5Q2sP8Q841TCmPnsLGuYsYOwE2xBLUxPr28OKl14UUpPfVY=;
+ bh=NVJQb4s7J1RH25YiZPfBsDZyQ07ORbqyxm7vmxap9cY=; b=kHtASaMhtunYxHDSWdeFfbqh5N
+ awfTZQFvdzb/fKI7zX8Ieg3Qgg0b03RVEQhqM8wCqZ6tmP9omj+6a/uOH4yCyTuv2PawHPjzXKyXo
+ 1T8aifKq9PGk9eO5kfN9eZy088YcTxewhBjv443+qIspGH3f8oDfW37MFtcKdECG48wE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
  Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=; b=Y
- gi0oj7tv1bUawjae719Bq/aHI9H/Z+0kkcfEQ/OBmFshLYxN+juxiby/IRIovxhqqTChmNZCEFtWd
- Gqeo502zsyG3E3mtBFPYNIGU90IRI5cYnWuN78vk5NWhfFDZ0Wjms2JwmLJrPGGtnAWexMmKzH9Qg
- xTB6Hks7RB8AGelY=;
-Received: from mail-ej1-f72.google.com ([209.85.218.72])
+ List-Owner:List-Archive; bh=NVJQb4s7J1RH25YiZPfBsDZyQ07ORbqyxm7vmxap9cY=; b=E
+ nn/u9AZGR8hs74UGIs1cWslFlpre1CQgsqDfIXUwzsv6ypENyig3lJAdW2wyW2slanCygNRv90jpX
+ VUNXkxN1+lit/QeQ4lzg9riuXWoEGgQP3unS098F8daAzY0P2/2EySEUzgxbTc64woiL+U7a6OxDk
+ 6jR4r1F3nkKXjOl4=;
+Received: from mail-ed1-f72.google.com ([209.85.208.72])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1xIn0w-0002Bm-5i for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Oct 2026 13:02:56 +0000
-Received: by mail-ej1-f72.google.com with SMTP id
- a640c23a62f3a-c41b03cd1dcso175655966b.3
+ id 1xInFu-0002eN-O7 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Oct 2026 13:18:24 +0000
+Received: by mail-ed1-f72.google.com with SMTP id
+ 4fb4d7f45d1cf-6aff6a8ee69so2149406a12.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 19 Oct 2026 06:02:54 -0700 (PDT)
+ Mon, 19 Oct 2026 06:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1792414967; x=1793019767;
+ d=google.com; s=20251104; t=1792415896; x=1793020696;
  darn=lists.sourceforge.net; 
  h=content-type:cc:to:from:subject:message-id:mime-version:date:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=;
- b=NWd/pam4PX4pMNsC2GkvM/nLVQns+VHC7SslOAwsVj7KEHnE7TbVKc17Fqs22C/0ZW
- waHiapnnlBChyUL28qBNLfgJMmkp/Jt0rAiM0T2nhaM1NcoCoxbNSQFMsK4GEkrVSU2a
- yljcM5MMSiWdgvK9KJ7zYb4gIJ/vpjPv/CNXCfTF4WpcrgD/JeiPRbtwuajfDCDHASsp
- FfROmwe9RXndT7mU1USPAImpmkyczXyQPkOE7SXcoVb3eOiwvpyvmrZAs19VlXjcFtM1
- jzTxkPx7XwSX+sXo4u3EITEQwfzRpASLigohHd7A3GIM7IzhxWafbsvamE+gA794Ond9
- agDQ==
+ bh=NVJQb4s7J1RH25YiZPfBsDZyQ07ORbqyxm7vmxap9cY=;
+ b=UBy/SfKtR7SgKBxTXxdWoaS6mbmKxmprNjKXsd6Bg15APpsdsblsaU7ebGQyyVbssJ
+ lzf/xUm++MDqUaP74Eo2a3BIPK9YCeMPUbJBqt1bEalU+MTIJ6mHvr1r3fOdszZLYlIw
+ Pfnt5ldb1P57BTMcEbS/JgcVa/BjCjgredAHE41uYfXdN/NX55HnvvCnxMUvDcupMxGK
+ g2bZfEHfqKA/HA8KLOmw32QANACMVd5VXsOBk+lBcWsrLod6isYUfp9eV1is/7l3U4zh
+ mjbcmzyk0s/CleGFIKh7DKl1lZjF//fOqHoC82quStmc6EZLJXOni1Pd+NaEIstXHEPr
+ GFkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792414967; x=1793019767;
+ d=1e100.net; s=20260707; t=1792415896; x=1793020696;
  h=content-type:cc:to:from:subject:message-id:mime-version:date
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=tfewtHe0RF/RFkGE9CYlrvaqKRem/t1cV4TMGTUJaIU=;
- b=GA14d02BrShRMFQvhS1a/Eg4oBABrvPFz18yXzYrs4asFwo/1lO8zAgndHT8BvolpU
- /534LNrnTr1IP7ePCLkH07eCfo5a9CFC/Fb8jgYgVzMdWJqeTbdEGQVrLfvv2jb2wlXb
- Q1Gbt8E6rPmpIHIObSFeLEMwarfzFgcVOKylrOcWQ9fELznxc/S7D46Nf3Won8YNTSq+
- 2IQWpSzIIDpa7qmKZ14rXbqXSJ7GPlag1DUk7NFGfAk0Vw1prWJqIcPGktHMQx99QBhR
- 1px+FicVFLWUoOxsMkhVD90ogmgS8ZA2eekgDbu0pobxoCLf6VG+tZGk4vJTBHGxsM7Y
- VO9Q==
-X-Gm-Message-State: AFq9FYJhYHfnEO/I57TvEsB8emLbznMQzuK+2u2WIC2WnJwTVz1jLZHj
- rEnOmI+6qPvvCig1okSVbW5S7WE2LywJP4q+GkIvTf1wToa/ELEsm1tlc7eOp1whJ86pFGS+g2e
- KhF5qeIK422ldA5tzRPqYCFozdev/Tg==
-X-Received: from ejblu20.prod.google.com ([2002:a17:906:fad4:b0:c34:dd5f:126c])
+ bh=NVJQb4s7J1RH25YiZPfBsDZyQ07ORbqyxm7vmxap9cY=;
+ b=KphsLrEgEkIRqyc4ExNuGx4o1w91/V+ZO75vQW4Cc+WKRvsn5jlTM3oC4I1MkTtO0o
+ /MmEaL/Pegdsb+96qTPpylqtpVX5omIyDoiwev0EoroejRh2yhh2thmNX92UAKIeBlrj
+ bDfmc1FEMyMwzWNYtg3SbFPAGq3Q5r/nN47be8sVaiy5UK5VZH1UtkcX0mjpUkb1MMwf
+ BcYPS0pBhBRu4GNTIWT9JlHdp+Be/SCQ+XoNyiW4ZDCTRhdgXHi2auhj6dtBB5645t5w
+ swwTk7xgmmWWIF1M26pEWZneHRcLi9x58BCDwY5iQHSLtW6L85z8u1NGlL05CQknzN/e
+ 4P9A==
+X-Gm-Message-State: AFq9FYI7O78PTfh2XlYE1K2QIpehuSS6rZOKqfgiYSm4MK1EoKbhPO99
+ 2R/iBKCq/tsNMyFPbG/kPASrWcHdTSmMMofuCZGCyt72pAiF7B1Qylg/9CwYXTnqPxaCuVhM5Mq
+ Kol7aL6KtfTE0uOXiCvene5QrxvxBHw==
+X-Received: from ejbo18.prod.google.com ([2002:a17:906:3592:b0:c36:3d60:e17c])
  (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:3d92:b0:c29:4490:50d6 with SMTP id
- a640c23a62f3a-c41a08e6a7fmr555511566b.47.1792414967175; 
- Mon, 19 Oct 2026 06:02:47 -0700 (PDT)
-Date: Mon, 19 Oct 2026 13:02:41 +0000
+ 2002:a17:906:ba89:b0:c2e:4b90:3c55 with SMTP id
+ a640c23a62f3a-c41999706aemr474593466b.5.1792413926615; 
+ Mon, 19 Oct 2026 05:45:26 -0700 (PDT)
+Date: Mon, 19 Oct 2026 12:45:22 +0000
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.56.0.176.g3575e65682-goog
-Message-ID: <20261019130241.3751829-1-jprusakowski@google.com>
+Message-ID: <20261019124522.3702174-1-jprusakowski@google.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-X-Headers-End: 1xIn0w-0002Bm-5i
-Subject: [f2fs-dev] [PATCH] f2fs: fix stale extent cache in inode page after
- truncation
+X-Headers-End: 1xInFu-0002eN-O7
+Subject: [f2fs-dev] [PATCH] f2fs: zero post-EOF data regardless of
+ fsync_mode when extending file size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -113,113 +113,163 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-During generic/475 (fsstress with dm-error), orphan inode recovery on
-remount can fail in sanity_check_extent_cache() with a stale on-disk
-extent (ri->i_ext) whose blocks have already been invalidated in the SIT
-bitmap:
+Commit 5eced87b7d19 ("f2fs: fix to zero post-EOF data when extending
+file size") gated post-EOF page zeroing and writeback behind
+fsync_mode=strict. In the default fsync_mode=posix, extending a file
+across an unaligned EOF boundary via truncate(), fallocate(), or write()
+past EOF leaves stale on-disk data in [old_size, PAGE_ALIGN(old_size))
+unzeroed when the page is not cached or after crash recovery, exposing
+stale data and failing xfstest generic/794.
 
-  F2FS-fs (dm-0): Inconsistent error blkaddr:212341, sit bitmap:0
-  F2FS-fs (dm-0): sanity_check_extent_cache: inode (ino=14f2) extent info
-                  [212341, 109, 1] is incorrect, run fsck to fix
+Zero and write back the partial post-EOF page on file size extension
+regardless of fsync_mode, while avoiding unnecessary block allocations
+and synchronous writeback:
 
-This happens for two reasons:
+1. Use f2fs_get_lock_data_folio() instead of fill_zero() in
+   do_zero_post_eof_page() so that sparse holes (-ENOENT) are skipped
+   without allocating physical blocks, and avoid calling
+   f2fs_balance_fs() while f2fs_setattr() holds i_gc_rwsem[WRITE].
+2. Skip post-EOF disk zeroing for inline files (whose post-EOF bytes are
+   already zeroed in the inode page and upon inline conversion) and
+   compressed clusters.
+3. Only request synchronous writeback in f2fs_write_checks() when
+   iocb->ki_pos > i_size_read(inode) (when the write starts past EOF,
+   leaving an unwritten gap) and in f2fs_expand_inode_data() when
+   !(mode & FALLOC_FL_KEEP_SIZE), avoiding synchronous writeback on
+   normal sequential append writes.
 
-1. In f2fs_drop_inode(), when an unlinked inode has I_SYNC set by a
-   concurrent __writeback_single_inode(), f2fs_destroy_extent_node() only
-   frees the rbtree nodes while leaving et->largest intact and without
-   setting FI_NO_EXTENT. Concurrent writeback in f2fs_write_inode() ->
-   f2fs_update_inode_page() can race with f2fs_truncate() and write a
-   stale et->largest into ri->i_ext after blocks have been invalidated in
-   the SIT bitmap. Call f2fs_drop_extent_tree() instead so FI_NO_EXTENT
-   is set and et->largest.len is zeroed before truncation.
-
-2. During truncation (including f2fs_evict_inode() -> f2fs_delete_inode()
-   -> f2fs_truncate() where I_FREEING is set and f2fs_pre_evict_inode()
-   has already destroyed the in-memory extent_tree),
-   f2fs_truncate_data_blocks_range() clears ri->i_addr[] directly in the
-   inode cached block (marking ientry dirty) and invalidates the blocks
-   in the SIT bitmap, but does not call f2fs_update_inode() to
-   synchronize ri->i_ext in ientry. Because igrab() returns NULL for an
-   I_FREEING inode, both f2fs_sync_inode_meta() and flush_dirty_inode()
-   skip the inode if a checkpoint or node writeback occurs before
-   f2fs_remove_inode_page() completes, persisting ientry with truncated
-   ri->i_addr[] and a stale ri->i_ext.
-
-Fix this by:
-- Calling f2fs_drop_extent_tree() instead of f2fs_destroy_extent_node()
-  in f2fs_drop_inode().
-- Updating the inode cached block via f2fs_update_inode() in
-  f2fs_truncate_data_blocks_range() when truncating blocks in the inode
-  cached block, as well as in f2fs_do_truncate_blocks() and
-  f2fs_truncate_inode_blocks() when FI_DIRTY_INODE is set.
-
-Fixes: 3e72f721390d ("f2fs: use extent_cache by default")
+Fixes: 5eced87b7d19 ("f2fs: fix to zero post-EOF data when extending file size")
 Assisted-by: LLM
 Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
 ---
- fs/f2fs/file.c  | 4 ++++
- fs/f2fs/node.c  | 5 +++++
- fs/f2fs/super.c | 2 +-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ fs/f2fs/file.c | 74 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 38 insertions(+), 36 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3b5ad281b518..b7a404d0efc6 100644
+index 3b5ad281b518..d8fb72aa7a6d 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -796,6 +796,8 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		f2fs_update_read_extent_cache_range(dn, fofs, 0, len);
- 		f2fs_update_age_extent_cache_range(dn, fofs, len);
- 		dec_valid_block_count(sbi, dn->inode, nr_free);
-+		if (IS_INODE(sbi, dn->node_entry))
-+			f2fs_update_inode(dn->inode, dn->node_entry);
+@@ -36,36 +36,39 @@
+ #include <trace/events/f2fs.h>
+ #include <uapi/linux/f2fs.h>
+ 
+-static int fill_zero(struct inode *inode, pgoff_t index,
+-					loff_t start, loff_t len);
+-
+ static int do_zero_post_eof_page(struct inode *inode, loff_t new_size)
+ {
+ 	loff_t old_size = i_size_read(inode);
+-	unsigned int offset, len;
+-	pgoff_t index;
++	unsigned int offset = old_size & (PAGE_SIZE - 1);
++	pgoff_t index = old_size >> PAGE_SHIFT;
++	struct folio *folio;
++	unsigned int len;
+ 	int err;
+ 
+-	offset = old_size & (PAGE_SIZE - 1);
+-
+ 	if (!offset)
+ 		return 0;
+ 
+-	len = min_t(loff_t, PAGE_SIZE - offset, new_size - old_size);
+-	index = old_size >> PAGE_SHIFT;
++	if (f2fs_has_inline_data(inode))
++		return 0;
+ 
+-	if (f2fs_has_inline_data(inode)) {
+-		/* data post eof should be always zero */
+-		if (new_size <= MAX_INLINE_DATA(inode))
+-			return 0;
+-		err = f2fs_convert_inline_inode(inode);
+-		if (err)
++	if (f2fs_compressed_file(inode)) {
++		err = f2fs_is_compressed_cluster(inode, index);
++		if (err < 0)
+ 			return err;
++		if (err)
++			return 0;
  	}
- 	dn->ofs_in_node = ofs;
  
-@@ -885,6 +887,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 		f2fs_update_time(sbi, REQ_TIME);
+-	err = fill_zero(inode, index, offset, len);
+-	if (err)
+-		return err;
++	folio = f2fs_get_lock_data_folio(inode, index, true);
++	if (IS_ERR(folio))
++		return PTR_ERR(folio) == -ENOENT ? 0 : PTR_ERR(folio);
++
++	len = min_t(loff_t, PAGE_SIZE - offset, new_size - old_size);
++	f2fs_folio_wait_writeback(folio, true, true);
++	folio_zero_range(folio, offset, len);
++	folio_mark_dirty(folio);
++	f2fs_folio_put(folio, true);
++
+ 	return filemap_write_and_wait_range(inode->i_mapping,
+ 				old_size, old_size + len - 1);
+ }
+@@ -74,29 +77,26 @@ static int f2fs_zero_post_eof_page(struct inode *inode,
+ 					loff_t new_size, bool lock, bool writeback)
+ {
+ 	loff_t old_size = i_size_read(inode);
+-	bool strict =
+-		F2FS_OPTION(F2FS_I_SB(inode)).fsync_mode == FSYNC_MODE_STRICT;
  
- 		f2fs_drop_extent_tree(inode);
-+		f2fs_update_inode(inode, ientry);
+ 	if (old_size >= new_size)
+ 		return 0;
  
- 		f2fs_put_cache(ientry, true);
- 		goto out;
-@@ -892,6 +895,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 
- 	if (f2fs_has_inline_data(inode)) {
- 		f2fs_truncate_inline_inode(inode, ientry, from);
-+		f2fs_update_inode(inode, ientry);
- 		f2fs_put_cache(ientry, true);
- 		truncate_page = true;
- 		goto out;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 424e95ca5878..27ccc175c282 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1315,6 +1315,11 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
- 		nofs += err;
- 	}
- fail:
-+	if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
-+		f2fs_lock_cache(entry);
-+		f2fs_update_inode(inode, entry);
-+		f2fs_unlock_cache(entry);
+-	if (!strict && mapping_empty(inode->i_mapping))
+-		return 0;
+-
+-	if (lock)
+-		filemap_invalidate_lock(inode->i_mapping);
+-	/* zero or drop pages only in range of [old_size, new_size] */
+-	truncate_inode_pages_range(inode->i_mapping, old_size, new_size - 1);
+-	if (lock)
+-		filemap_invalidate_unlock(inode->i_mapping);
++	if (!mapping_empty(inode->i_mapping)) {
++		if (lock)
++			filemap_invalidate_lock(inode->i_mapping);
++		/* zero or drop pages only in range of [old_size, new_size] */
++		truncate_inode_pages_range(inode->i_mapping, old_size,
++							new_size - 1);
++		if (lock)
++			filemap_invalidate_unlock(inode->i_mapping);
 +	}
- 	f2fs_put_cache(entry, false);
- 	trace_f2fs_truncate_inode_blocks_exit(inode, err);
- 	return err > 0 ? 0 : err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 773b12ea29c0..acefc1378a6a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1888,7 +1888,7 @@ static int f2fs_drop_inode(struct inode *inode)
- 			spin_unlock(&inode->i_lock);
  
- 			/* should remain fi->extent_tree for writepage */
--			f2fs_destroy_extent_node(inode);
-+			f2fs_drop_extent_tree(inode);
+-	if (!writeback || !strict)
++	if (!writeback)
+ 		return 0;
+ 	/*
+-	 * In fsync_mode=strict, when we expand an unaligned EOF size, we
+-	 * should zero post EOF data and writeback the data immediately,
+-	 * so that it can avoid exposing stale data after metadata flush
+-	 * and POR.
++	 * When we expand an unaligned EOF size, we should zero post-EOF
++	 * data and writeback the data immediately, so that it can avoid
++	 * exposing stale data after metadata flush and POR.
+ 	 */
+ 	return do_zero_post_eof_page(inode, new_size);
+ }
+@@ -1984,7 +1984,8 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ 	if (err)
+ 		return err;
  
- 			sb_start_intwrite(inode->i_sb);
- 			f2fs_i_size_write(inode, 0);
+-	err = f2fs_zero_post_eof_page(inode, offset + len, true, true);
++	err = f2fs_zero_post_eof_page(inode, offset + len, true,
++					!(mode & FALLOC_FL_KEEP_SIZE));
+ 	if (err)
+ 		return err;
+ 
+@@ -5367,7 +5368,8 @@ static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 		return err;
+ 
+ 	err = f2fs_zero_post_eof_page(inode,
+-		iocb->ki_pos + iov_iter_count(from), true, true);
++		iocb->ki_pos + iov_iter_count(from), true,
++		iocb->ki_pos > i_size_read(inode));
+ 	if (err)
+ 		return err;
+ 	return count;
 -- 
 2.56.0.176.g3575e65682-goog
 
