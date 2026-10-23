@@ -1,96 +1,94 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A109B606A31F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Oct 2026 12:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4E8606A31E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Oct 2026 12:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=MWP+LXaO;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Ge2huUBQ;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=hGkU+lt4;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dBm9hVmb
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=bIRk/uP3;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=fGLmwA7d;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=U/JnzFn5;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NzJZDvRh
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:MIME-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
+	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=YVW5RTVSnNIlvXydaUdSbBiOymyQe6Q9hLOEY0+ql2M=; b=MWP+LXaOMEgsRuCrIPRZbN6auC
-	OztkrYa1cKktKCE7B9i6Qwd+eChB05H29yAcVHRleyeQDuA1TBu4eadURyVjsrxE2s4KQDAKyV7Vu
-	x8199ECNd0lph3+TcvPvcT6d176YczE6xluPJvfhA434bUNWf/07vOlnoBK1ibC209sk=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=hWZKTAQ2QvRof9mgI5kYX5UoeXfF1Wo97kF1FLKxdxw=; b=bIRk/uP3/uiyQ1QHXdUHhaiHbo
+	pyGf+YP1I6UH7MF9uDXUCpA6CboKFEjUGdysnNVdJoFNcJVp7asfhR1NiPZhqB2rkIz0MdmAMjF61
+	1zBIphDG539j3CoNKSmPeCQuAByw05cZbCPggUxvGlXm5prWnZiEd02GrY02T0UNtkBQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xKEeE-0000000051P-0qDl;
-	Fri, 23 Oct 2026 12:45:26 +0000
+	id 1xKEeF-000000002jW-2YTa;
+	Fri, 23 Oct 2026 12:45:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <brauner@kernel.org>) id 1xKEdt-00000000511-0Uoy
+ (envelope-from <brauner@kernel.org>) id 1xKEdw-000000002jE-2zg3
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Oct 2026 12:45:05 +0000
+ Fri, 23 Oct 2026 12:45:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
+ Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FwsiwRKiI1Uau+Y+PkzA6OeDUQSFcjgWcDHJQI69nMA=; b=Ge2huUBQ61+1PJ6o8B2vVAY9vO
- rKR2MgOPnruP6rqtMK/uTJ3cJMgjhVdObIJbtq5WaaA/V+bwiR6uOVS4fBY3LZcYLBeyrml78Ee0y
- 65dRQoFk8z1lo/QSWA5U9p9MfnW223qOBarPXiMkDHLCUKZTvlZ7QZ8JTsuK3bkluwTA=;
+ bh=rgdAURmlMgVTnL/fFQWHyNoovvjMeOUAESXzVFTzmXg=; b=fGLmwA7dCPVEbge/V3wHoXz6dk
+ 6CZ+iBGm6iRuZg5Q3tplA0YNJij8ms81+P3KsInrP+6wK/dTUPxH+3INRFhIpfGrzIwhotl3alKbo
+ WIBoyFKhPObn6ZHNKahrVSQEmV/+pbFflhiAHBwGK50G3wKeOkcBVPNot8+ryBZHohHw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date
- :Subject:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
+ Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FwsiwRKiI1Uau+Y+PkzA6OeDUQSFcjgWcDHJQI69nMA=; b=hGkU+lt456QKONek+gRkZ8bIc+
- Q1EpZhpV1MlNl16oToMJpSuE62KQ5UUZwJa2dhHLq4dHV2CwHHifwlBuA0PsHQI+5mXtnKV5BwPr1
- Px6N0bxCe2/YTVUpqDiXNjtAQ28TTXS4yNOMomI2fAg+1ZCDZRoCrcl4zdSkF1m0QxeI=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=rgdAURmlMgVTnL/fFQWHyNoovvjMeOUAESXzVFTzmXg=; b=U/JnzFn5m3s8jvADRxlGRKsTMd
+ GKCSC+i+1ANK4K/VaPd34Ifi2HDxNZcRzi/+DxlwagWBT9gLYEcPNhcUO6m0IKfg/awZ31dtk3FOm
+ B6bLpNM1vUOVw3lp+YwILU0JjRyium3uTSZxar+suHC1YHll+CvLKqMavRN8oTpee6kQ=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xKEdr-000000004AW-2ipH
+ id 1xKEdw-000000004Af-0zTq
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Oct 2026 12:45:05 +0000
+ Fri, 23 Oct 2026 12:45:08 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 3DE2040313;
- Fri, 23 Oct 2026 12:44:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A4A1F01825;
- Fri, 23 Oct 2026 12:44:56 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id A7F8460A53;
+ Fri, 23 Oct 2026 12:45:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D0A1F031E1;
+ Fri, 23 Oct 2026 12:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792759498;
- bh=FwsiwRKiI1Uau+Y+PkzA6OeDUQSFcjgWcDHJQI69nMA=;
- h=From:Subject:Date:To:Cc;
- b=dBm9hVmbTmxT/mZyPVXQ3yWu0AtZ0D4zG2iG/IMEfQ+Lqbh4iycAWhG3LDRbg4a/q
- alLa5vlpUAVvBLT0KAbuxsAPsfcN6RC7LHa3thjaQPdUFW2iSisZne5MS7u1b1X+LI
- j3DtDumnjEesTL5+RCebpZ6G56BLMnQQLhmVbYGsg7p8Whh7zKTeZLCoiMN+EWfy79
- FWPRrZrzmD9nMj1lOVkkVVVYyJwNqFFDgjxBHk0XxbOTBdKDwq8tNVmb45p0bNlUCu
- kIvZTfGESvh8cK8fpxj+LngmYEoqeP2SMP4p7iASKQyDH7qVz0jGlwDzmq7ZTgJO3f
- SOvJ8M1UKavug==
-Date: Fri, 23 Oct 2026 14:44:21 +0200
-Message-Id: <20261023-work-dcache-casefold-v1-0-1b0bd5c73a69@kernel.org>
+ s=k20260515; t=1792759502;
+ bh=rgdAURmlMgVTnL/fFQWHyNoovvjMeOUAESXzVFTzmXg=;
+ h=From:Date:Subject:References:In-Reply-To:To:Cc;
+ b=NzJZDvRhW++FYtXdKKWPF53butaI0sT8gd8vRr/FNZsnMriJJwgCoTxpRKEeZBSzh
+ qec871Xz377IDpLG3uDPN+AnEpyqEMxkFfbrcFRnvPyeuldmahqoppMG4D+go2WeSt
+ AIredcXrv+K5Bshr20/XEhukZ4dNPB+m9BExfxPR59cZtV2qsDqaWQALiJLqbtmeyA
+ nhxyuYb7pOYTwbq2wk4+ksh3ZjGT3Qp0DPQv466YRdJPhpiTvo/6CBVwRbzT2RQYu6
+ eNIF5vmJN922ITZsz8xsUUVOkM454G9CW3x3j8U/wvt31i6dbIqGMe2WA9s0idbuOn
+ yb+2kXSp2TnRg==
+Date: Fri, 23 Oct 2026 14:44:23 +0200
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMSw7CMAwFr1J5jaUkiCJxFcQicR0SPgmyy0eqe
- ncSWM7Tm1lAWTIrHIYFhF9Zcy0N7GYASr6cGfPUGJxxozVui+8qV5zIU2IkrxzrbcLoRmd2zDa
- EPTT1IRzz55c9nv6sz3BhmnurP0JTMYgvlPp09zqzwLp+AUZjeLaRAAAA
-X-Change-ID: 20261023-work-dcache-casefold-f26205ee1bb7
+Message-Id: <20261023-work-dcache-casefold-v1-2-1b0bd5c73a69@kernel.org>
+References: <20261023-work-dcache-casefold-v1-0-1b0bd5c73a69@kernel.org>
+In-Reply-To: <20261023-work-dcache-casefold-v1-0-1b0bd5c73a69@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2103; i=brauner@kernel.org;
- h=from:subject:message-id; bh=obwKYrdv+CuHpmSgJz0cQ4xOBXMWUIzAFLxt/IHP2aQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTdDjvGE+n59XDUZUseP4uX30vFowIbgl9nzFH+phswf
- /LFl5FKHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5o8Lwz3huybO/VRkqGR/l
- n921rmxZ3RM42//il4Jsz+2X89/IaDAybL/gwjf/wow902W8Fp4SqVjwPeBf8yTGCWdjFVvapl2
- cwwwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1755; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=f6kUNy44BjhD0KISho48b0YJIAWFq4F28VN5497hSx0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTdDjsmtez1EymBm2u2dTw8zvbPwWTtG0GJO1PdJWcG5
+ +sryvBO6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIigwjw3T/z58Sn1fu8eje
+ 7Lp8zbGYq5ufmXy4kqN3dpK8x1TLS2cZ/vudvjs1cPU1y4+bJ/XEzFzb4+0UJXyu+wy/edXznCp
+ 5CS4A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xKEdr-000000004AW-2ipH
-Subject: [f2fs-dev] [PATCH 0/2] dcache: don't leave negative dentries in
- casefolded directories
+X-Headers-End: 1xKEdw-000000004Af-0zTq
+Subject: [f2fs-dev] [PATCH 2/2] xfs: unhash a removed name in ascii-ci mode
+ instead of invalidating it
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,50 +114,49 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-ext4, f2fs and tmpfs keep negative dentries out of casefolded
-directories. A negative dentry remembers one spelling of the name and
-the next create() through it would write that spelling to disk.
-
-So their ->lookup() doesn't cache a miss and their ->unlink() and
-->rmdir() call d_invalidate() on the dentry so that d_delete() doesn't
-turn it into a negative dentry.
+xfs_vn_unlink() uses d_invalidate() on the dentry of a removed name on a
+case-insensitive filesystem, so that d_delete() doesn't leave a negative
+dentry behind. The next create() would otherwise reuse with the wrong
+spelling. But as the comment already states all it wants is the unhash.
 
 But d_invalidate() is the wrong primitive for that. It's for a name that
 went stale. It walks the subtree, prunes it and detaches every mount it
 finds, under namespace_sem, and here that runs from inside the
-filesystem's own directory operation. ext4_rmdir() does it with the
-journal handle still open and ext4_unlink() does it even when the
-unlink failed. All anyone wanted is the unhash.
+filesystem's own directory operation. There is nothing below a file or
+an empty directory to prune, and vfs_unlink() and vfs_rmdir() detach the
+mounts a few lines later as for every other filesystem.
 
-So d_delete() now unhashes the dentry when the parent is casefolded,
-next to the dentry-negative sysctl that does the same for every
-directory. ext4, f2fs and tmpfs drop their d_invalidate() calls.
-
-xfs's ascii-ci doesn't set S_CASEFOLD and can't so it d_drop()s instead.
-I did consider setting S_CASEFOLD on ascii-ci directories and didn't.
-overlayfs warns when a layer's casefold flag disagrees with the
-superblock having an encoding, and xfs has none.
-
-Nothing changes for userspace. A miss still isn't cached and a removed
-name still leaves no negative dentry behind. Verified with the same
-create, unlink, create, readdir and stat sequence in a plain and in a
-casefolded directory on tmpfs and on ext4, before and after.
+The previous patch moved ext4, f2fs and tmpfs over to d_delete()
+unhashing the dentry for them. ascii-ci doesn't set S_CASEFOLD, so the
+VFS can't tell these directories apart, and the feature is deprecated
+anyway. So just d_drop() the dentry. d_delete() finds it unhashed and
+turns it negative without hashing it, exactly as before.
 
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
-Christian Brauner (2):
-      dcache: don't leave negative dentries in casefolded directories
-      xfs: unhash a removed name in ascii-ci mode instead of invalidating it
+ fs/xfs/xfs_iops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- fs/dcache.c       |  8 +++++++-
- fs/ext4/namei.c   | 18 ------------------
- fs/f2fs/namei.c   |  9 ---------
- fs/xfs/xfs_iops.c |  4 ++--
- mm/shmem.c        |  7 -------
- 5 files changed, 9 insertions(+), 37 deletions(-)
----
-base-commit: 7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614
-change-id: 20261023-work-dcache-casefold-f26205ee1bb7
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index d307ec97fac8..bed8372e4bcb 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -416,10 +416,10 @@ xfs_vn_unlink(
+ 	/*
+ 	 * With unlink, the VFS makes the dentry "negative": no inode,
+ 	 * but still hashed. This is incompatible with case-insensitive
+-	 * mode, so invalidate (unhash) the dentry in CI-mode.
++	 * mode, so unhash the dentry in CI-mode.
+ 	 */
+ 	if (xfs_has_asciici(XFS_M(dir->i_sb)))
+-		d_invalidate(dentry);
++		d_drop(dentry);
+ 	return 0;
+ }
+ 
+
+-- 
+2.53.0
 
 
 
