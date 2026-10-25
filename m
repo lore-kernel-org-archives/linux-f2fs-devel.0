@@ -1,116 +1,118 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E8A606A31B
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Oct 2026 18:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FC7606A31B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Oct 2026 18:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=EkuuiS89;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Bfi1AOxr;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=XVjpn3Cw;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=N8iIuuP2
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=W0PwsBHW;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=YIRN65ih;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=V7hq/3Qg;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=UrlzhTxx
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=vVMbUPGzfm4F0KOi/q9RF7AOZ6zOLGvhLF+4buN9Bao=; b=EkuuiS89VfDgD3ySLcQaHK9/aU
-	n8mp3jJxsVbgkLHTWK3VHo7b9hFx1EbPM8rwl52JBGGO2Hi/SDAhuIyKYA+8GO3p3+S32crE3Tsap
-	ire7FKkPHu+nQOW4i+jygFmUnvyAdDyxz/Jjq6gGbJsTxlpUH10V13yDQl+JoL4iw0yI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=OZB8kNz1TwOsRQyzDNn25L/U0cG81Ds929uFL0NHjTM=; b=W0PwsBHWvP7Ljx7nlhhOlolEvb
+	OIrlZ291DtxYmpGPzcaskkdMHmwK7bcUwhMQc46zoAgoanFK0BeZKR5F+7MefdpCIrutvqzWIeMVY
+	kc1Aaao3+q3NeIW4cpfKZcwINL15ngASgql56RzuwsxOBIb3leebQbCJAyOEIv3VcIyc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xL2YA-000000003Vb-1ptl;
-	Sun, 25 Oct 2026 18:02:30 +0000
+	id 1xL2YD-000000005Z2-48YB;
+	Sun, 25 Oct 2026 18:02:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <teel4res@gmail.com>) id 1xL2Y8-000000003VU-2tmV
+ (envelope-from <teel4res@gmail.com>) id 1xL2YC-000000005Ym-10QS
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 25 Oct 2026 18:02:28 +0000
+ Sun, 25 Oct 2026 18:02:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=95rdhHdO0ki+AAo/8XpKJWa1xRVeRBmYXzxQNVzeBFU=; b=Bfi1AOxrWncv2DRgfFgIuFv3T2
- fCgb8kUyH2WpL83mPfGUXsMh7+TDGZn8fQiqHOeoeJPxp9JD8YoRNkF9hlAXcjni5/BF1Y6V/VfD2
- CW5Sp9w4+KW/Pwi7lKwZSvnVWoK3NHqBLBmxZRSJere3izYymZJkEm/3s0qxZCWjZjTs=;
+ bh=HG6p2VhYaveHd2iyf+ain0rK/+tVMy3ciGMFej9wyxE=; b=YIRN65ihZo/8M/OZvBWpn0bO9v
+ lDthMd3HlBNHuB30QgrqQ5XZsSEjQRjiuLXiXlYjmWdZhTCMzhXP4iaP6UVglxpL3jrDBjtSJAo5F
+ brXXWqiOEUDauOJCrLeesgOZl1b4XOxndQfjPtxHqVc24xghzhsOl4TUZ1//0nldJTLk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=95rdhHdO0ki+AAo/8XpKJWa1xRVeRBmYXzxQNVzeBFU=; b=XVjpn3CwG2txE7Rwvuw1CQTPdl
- xzqUbnrWYMDAXdZ4SfhAywzlzmZZ4CXTmD+LoXvoHfrTVF4GcAT+x66xTYEn0+L/iCgMYmC1jTjOy
- 3+9oFmb/nrSSlnYeBmCrPBK/Sr8Eyf/512fjf0P/y/gFYmeaxGro00wiosLaYig8yy0A=;
-Received: from mail-dl1-f44.google.com ([74.125.82.44])
+ bh=HG6p2VhYaveHd2iyf+ain0rK/+tVMy3ciGMFej9wyxE=; b=V7hq/3Qg9p4jFrGs3JP5Xu8z0+
+ XTT3MQ4dpmYYTMbtWuLQ8RQwGM5jTyOMUoVdDSmZJVVlwYi3qnPQj1Fe4KoWvY/3c25jrkBkxGvKM
+ bBmaIM5HmtJBaN3uPWMALWza5N+94e1b2XO0NtHlGH0dFGs6vRrZyI/dCezWbgICS6BE=;
+Received: from mail-dl1-f52.google.com ([74.125.82.52])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xL2Y7-000000001WF-0eUd
+ id 1xL2YB-000000001WK-3bql
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 25 Oct 2026 18:02:28 +0000
-Received: by mail-dl1-f44.google.com with SMTP id
- a92af1059eb24-1846bc43c28so2336136c88.0
+ Sun, 25 Oct 2026 18:02:32 +0000
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-185fd3a4ca3so1615871c88.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 25 Oct 2026 11:02:27 -0700 (PDT)
+ Sun, 25 Oct 2026 11:02:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792951341; x=1793556141; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=95rdhHdO0ki+AAo/8XpKJWa1xRVeRBmYXzxQNVzeBFU=;
- b=N8iIuuP2UgrRWp9pUrQrxKVVBaFGoSXBEg4fYR/F+DJpZQQzyfrgl7UjuyG9R0+d/E
- bpuL5Mo5w4PzBbbvNJNxYYNTCstX3V9dKOnEKyJ0bzPGBNN3BBRNqFz1DXEtJpWRC9Vw
- I9NSkwss11VWETc2Aj84A8qrAMRzf/sr//tco8U9wko0KYCU1qe0h6VacoiYLA71MqDc
- K5LiawtZ6rZ115qof6r/SvKmJz7ehkuxFNuOKFCb2NREnJOmZWuu7JFx6GwKR/ZG+/9A
- RnQRxoaP/67BLEOm4GAXD0AL8tozNq07oCMpRZKEEeEdfBfsqi5bFqcFqkfMOsmtjXvS
- ofgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792951341; x=1793556141;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1792951346; x=1793556146; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=95rdhHdO0ki+AAo/8XpKJWa1xRVeRBmYXzxQNVzeBFU=;
- b=rG4uAX1GaHJ+Urb9oYEaRmAH+lA2j4LygBR3X70IjSwHKhrlpQ89TWQ1lReLdDHrS3
- NS3cBrIb7I5gwIRGpOFs1dzK1VsnC2jf5UzBhhDO7yg4qo5wjci5vlv/FMMpjQGdcH71
- T9YeUQaWetEzcbxtLMabdAdHXTKUgx+XHxOHe2chMiz6jQxU85gRzwrUsX/jlwUPWHGy
- NyiHh84kHoHJZS+g9oM/xUEFLhUw4cxxSwbMI40OchF863UI/jG3jxsvDcm/5vFQC9+0
- 6eN1eYm0WXNod1kpqq2ZBKcjhS4ugYLnKJC6ws8riMoKB4hXNytE6gIWPr+STXQ+3+Mf
- BqIQ==
-X-Gm-Message-State: AFq9FYJTRErXfIRGCpAkJ6NMANGv1gwKAHFZDTxy3XjPuPTWvILb61E3
- u5si7aBE8ebQ5ggYchjrr17q7YyANTXKb7U03NTn4mJcbRT87oBBXzp6
-X-Gm-Gg: AYBFou2f+h3mwKOAEx+/dN9ltz4pc7afvwn6L6+/H60iZTeY/Aucn3PWZjHYBlT7ARG
- BIXZgHxsS7zjQmhzMeAxL9v7tkEQB22J7n9DLaFhAG0sjVVMwDH2VTgLcbkuM76kPCCYs41+4XX
- v+9gqauTh06yQOCjEuOXeMphJwKjw7eECcOIuG8H09UcZHU/Mcy17hVZ4Q0FPgo9J3MrXygCHib
- ZuL6k3Kyd3Epfo09hoLnPHczMFgh38nYBRv7kfpf75FAjbj2ERlsVdW76NdyRPkxtvWkygaNKO5
- SKU9n/pYpdzDC9Pjdcy4z8Xr75HamOwl5o42blQWjt4TGGQ8yaNYXl4nOm1SoWfR0qvOzrfRjHN
- ctQzIg4GplNa3umONawVz6W3Udu9h/bhc+3pvLtl6EV0tk1mKjGptzJJ4GbCKU2Zy3qQRYRD8qr
- r4WZWaOlwPcWFjyxRKWU/l33uA6D8Vh5DjiERF/0eoWTeAIkbCC+hLd6DVERA4WCm4DSurfxRb7
- BvbgU4b0NTjjywUs2E995sTkLArc8she47AZJUSgMaFYnedamsepoHJM++0xovoumFdq70jjaUA
- 7xt3msUVSgLvulp5cp+F
-X-Received: by 2002:a05:7022:3a85:b0:14f:8d59:edcc with SMTP id
- a92af1059eb24-1993505de94mr7777952c88.12.1792951341298; 
- Sun, 25 Oct 2026 11:02:21 -0700 (PDT)
+ bh=HG6p2VhYaveHd2iyf+ain0rK/+tVMy3ciGMFej9wyxE=;
+ b=UrlzhTxx4XByceB+fsh9EVq2EkzPzEuXUE3/gmRqjaAmuMxNS9y9K/UQx+cdgEzpYP
+ 1h594l8+VVEYFkXXG0WZSBCN1KELueTmHAlplRTFbBJVfrMAfBR2Nm+ouPhJIuW+SmBN
+ IK/IzYe0KyWBdDXrzTO/F1nI5sUt+kiUmGUSdOWPWqEEpgsrv68JD8AhgQf7+JzArR2J
+ E5CIHohd8VpTQ3uZp6BcTqvSJbg+Ixs1ozHFqtHPc8DVyQ8063qhdU5/z6MFLuA41jUD
+ ZfsvPg4A/RP5ps9+86wkflZQVwPKOpZsz+UOIzHssAmMMah0eWn2ywftZ2b+RO662y4t
+ 5ZbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792951346; x=1793556146;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=HG6p2VhYaveHd2iyf+ain0rK/+tVMy3ciGMFej9wyxE=;
+ b=QiUhzo/5LTzUL1BP4tvPoBm2NpWS4KrBgHE5qvsFLpicQbWEb2C84ZA/iJn50cGDCN
+ On66tK+vfYn7bk1KztFe6oU3tYJJmumrAQortHVyn5UT/uTU5Qyl2+88asCJy7nQX8Mj
+ wfr/ZK5Qhv5Bp2OsprHHkqDjR2C/IblZ2SAJAdb3c4krGmySkfo6ahg19XNCOL8MlBrR
+ a2nbPjfLupio4DFwBmI0bf5xlKLAv8XyRMOMcTBgk0CsyP34FtFjja1SzcGJn8Dq0PdO
+ WHbIoPdl1cXXlNi2JIovnP19TYaK9OMYk86Mnt1rfP8d5ZqkLbPKP5GbchgxF+NzN9sp
+ Mjkg==
+X-Gm-Message-State: AFq9FYJYMC0dFgcyq1mod+QV82uxTcIs0US3BS3X/7fNtORlazewBNqP
+ s6sVTeqVatw1+fo+MV7SidVRN6HnF6GMhIkZr9DICSzre4Tdmt6FHQom
+X-Gm-Gg: AYBFou1TWzJFWYGk3hIpVFB7bDF58OLjD8gwOjvK6SsNm66+Y+Li7eg/rx7TWYt/XA1
+ WVUZ+ook2jzNa6DPHP2iKVajRPmiQ1NdR55mUJ4OVo0uQO+wXGlVBFdfDtaHDUmdWuSWJE8uVwu
+ ScFYWzdNHjANYZ27Q2AagQrJXweKLiw0Mkd1qanBTMFTQ2PAuaJpCF9bhPR4IOWsPlhPGI1Xc31
+ 9yKDCkcG0pqI+33a9ReXMHCxMzJ1aNTlAvh75NY5veoSPZqDIMUFO4guqtgEt1PX/2qb8ZQDtEo
+ AARRigyyS2zXDDT3h/HDbQSGYNSdr0I38whEgOUkFZDkyfVwwjG6iz4dYKLiM96WrYb0iN89lyN
+ 9vovIUsRxbvyw1u+xdTG/DWmsexTbwVBL+W7ZV6rQrWiKeMi4Azjb8kVWYR23Jh2I/b32dfZtCj
+ KP5jICyf2NhKobdxfWh4b9qsxEXlPD5m8iHGQ9au8jxnvNpKxDq5blmHiLn6MZAR7nPC9PtkfZq
+ A/6GtsvpYwNKW0bvatMQb65Qyk2EpjT9JdwL8b+c2XsCvPaw6WOMPELLS6QKfdDSEIlTt+KMDs3
+ vs87DvRpimV10Ja0kDYgrpQ+y2NqENAfLR+dPToq
+X-Received: by 2002:a05:701b:42c9:10b0:185:4ad4:3d15 with SMTP id
+ a92af1059eb24-199290fe3f9mr6829045c88.1.1792951346125; 
+ Sun, 25 Oct 2026 11:02:26 -0700 (PDT)
 Received: from youngkk-vm.localdomain (67.216.200.102.16clouds.com.
  [67.216.200.102]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-198a2a5a515sm16099227c88.19.2026.10.25.11.02.12
+ a92af1059eb24-198a2a5a515sm16099227c88.19.2026.10.25.11.02.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 25 Oct 2026 11:02:13 -0700 (PDT)
+ Sun, 25 Oct 2026 11:02:25 -0700 (PDT)
 From: Cheng Yongkang <teel4res@gmail.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Sun, 25 Oct 2026 11:02:04 -0700
-Message-Id: <20261025180207.348498-1-teel4res@gmail.com>
+Date: Sun, 25 Oct 2026 11:02:06 -0700
+Message-Id: <20261025180207.348498-3-teel4res@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261025180207.348498-1-teel4res@gmail.com>
+References: <20261025180207.348498-1-teel4res@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xL2Y7-000000001WF-0eUd
-Subject: [f2fs-dev] [PATCH 0/3] f2fs: fix dentry recovery and MAIN_AREA
- validation
+X-Headers-End: 1xL2YB-000000001WK-3bql
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: reject MAIN_AREA boundary underflow
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,38 +126,61 @@ Cc: Cheng Yongkang <teel4res@gmail.com>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-This series fixes three independent issues found while validating crafted
-f2fs images:
+sanity_check_area_boundary() computes
 
-1. reject a non-directory i_pino during dentry recovery;
-2. reject MAIN_AREA boundary underflow in the alignment fix;
-3. refresh the superblock CRC after that alignment fix.
+	main_end_blkaddr - segment0_blkaddr
 
-Each patch is a single logical change and compiles on its own.  All three
-were validated in QEMU on the KASAN kernel: baseline trigger, patched
-no-trigger or clean rejection, and a normal filesystem mount/write/fsck
-regression.  The baseline source and build were restored and
-hash-verified after each run.
+as u64 when main_end_blkaddr < seg_end_blkaddr.  A crafted superblock
+can make main_end_blkaddr smaller than segment0_blkaddr, so the
+subtraction underflows and cpu_to_le32() truncates the result; the
+function persists a wrapped segment_count (0xfffffffd in the
+reproduced image) and the next mount rejects the filesystem.  The
+same path can also leave the error workqueue dereferencing freed
+superblock state:
 
-Cheng Yongkang (3):
-  f2fs: reject non-directory parent inode during dentry recovery
-  f2fs: reject MAIN_AREA boundary underflow
-  f2fs: refresh superblock CRC after MAIN_AREA alignment fix
+  BUG: KASAN: slab-use-after-free in f2fs_commit_super
 
- fs/f2fs/recovery.c |  7 +++++++
- fs/f2fs/super.c    | 13 +++++++++++++
- 2 files changed, 20 insertions(+)
+Reject the underflowing geometry before the subtraction.
 
---
+The underflow was reproduced 3/3 times; the patched kernel rejects
+it with "Wrong MAIN_AREA boundary", leaves segment_count unchanged,
+and does not trigger the KASAN report.
+
+Fixes: fd694733d523 ("f2fs: cover large section in sanity check of super")
+Assisted-by: LLM
+Signed-off-by: Cheng Yongkang <teel4res@gmail.com>
+---
+ fs/f2fs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ea2d218..b90831e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4004,6 +4004,12 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
+ 		return true;
+ 	}
+ 
++	if (main_end_blkaddr < segment0_blkaddr) {
++		f2fs_info(sbi, "Wrong MAIN_AREA boundary, start(%u) end(%llu)",
++			  main_blkaddr, main_end_blkaddr);
++		return true;
++	}
++
+ 	if (main_end_blkaddr > seg_end_blkaddr) {
+ 		f2fs_info(sbi, "Wrong MAIN_AREA boundary, start(%u) end(%llu) block(%u)",
+ 			  main_blkaddr, seg_end_blkaddr,
+-- 
 2.34.1
+
 
 
 _______________________________________________
