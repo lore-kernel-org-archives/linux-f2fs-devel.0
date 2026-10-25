@@ -1,87 +1,88 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7DE606A31A
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Oct 2026 19:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CCE606A320
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Oct 2026 12:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=gM3I6l7t;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=IeCzKxNC;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=X8l6ALf3;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NYz2U1JU
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=GaCwzMzK;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=DTo8UlC7;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=FxDLzO0K;
+	dkim=neutral header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=CgjBCxH1
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Unsubscribe-Post:List-Owner;
-	bh=xLtyEFOH6arYl9oTLnUBZLJHfACHDE2Oo3wRmdRQJm0=; b=gM3I6l7tyE9CsD2y+9lkjqbBVF
-	Eq2pdVmtYAMLxpOoIPSaSxekRK5gZC5iNwkgvETYRgMTNyWzEL3v60X0JQow0+Pk3yCigtPDjKYdF
-	9w4vxctgs8nFvfh5MaXIn9ooeJ4TqZlIX47CkxPoCq1SuqW2sHdyBdbAizl38WMj5LS0=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=EwMPt6MKwM8ky3XmIAQB8Sz/12OAAw4vlFWXpu/sr5s=; b=GaCwzMzK7iZYvsEJa+qxMDnpKX
+	w2h/Qsi2rqaSVCF5IrPv5W/RAKhJcaae5aztE3rMFVfs8xHF+WN5w/1/uq5je2b/olLGauB4jJxjT
+	ut9zScJzzvVL8JmHtaA6WdCl34N3+X5L24nD8CZTx+2XrnFtjFU1PDJ+OX+rtBf8cJUU=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xKhI2-000000008IJ-1Y0q;
-	Sat, 24 Oct 2026 19:20:26 +0000
+	id 1xKxXs-000000004v6-03T9;
+	Sun, 25 Oct 2026 12:41:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <ebiggers@kernel.org>) id 1xKhI1-000000008ID-2RdF
+ (envelope-from <yaojiale02@163.com>) id 1xKxXp-000000004ux-2ypf
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Oct 2026 19:20:25 +0000
+ Sun, 25 Oct 2026 12:41:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zupueEs92LLYhplKMYURHzUt9KCcFQQdwtlOs89HPOI=; b=IeCzKxNCEKPeDI+WjVOA1UqDid
- bgpi7nSMls+qQqoZILkktn/apmxavY4kABylfPKoYRoc4aU5DKf0Ic3tAsMfsOAdgsPL7e1gvW38y
- V7dv0cJe3668CbyACDDvoidOAHEQZcKE94V0Yonol03pxFvLxKOeMIOW/J1HvZ5dPq6U=;
+ bh=ZUrqx1rvvs6o+dee+0TNtCMY/5xlNRoKRO5LvvKhg7Y=; b=DTo8UlC7x06SIs2kPDvPXYikwK
+ TtX9U1Y7j6Y5jlRKoqOOoggpq8CEfnGJ7aeTwOewbAaub6fG0AGb5CtOcp1Lj3kY+A9Xmhe8Xkze7
+ AodnRkvgCDt3PtslPLbW6uzKdLaPFy0f1Z2GDrKOf9JrqVUwUjZim25Jsr8oy1zIr1WM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zupueEs92LLYhplKMYURHzUt9KCcFQQdwtlOs89HPOI=; b=X8l6ALf3mrMxeKOM4btInQtSGH
- xQ7TpelOPG4AYDCxXs6WziUx209busPJzNLKtNITTMox/utqPRa7NHLD6a0Dvv+JZAkKO3guphKGT
- 7wehkOeAMsNd04B5SnGeAFH3hX+XFrAGGWMgz/12CVFczpIjuiG2LYY7GUOxfgCZftiA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=ZUrqx1rvvs6o+dee+0TNtCMY/5xlNRoKRO5LvvKhg7Y=; b=FxDLzO0Ko+cBZBfPt1hMFzWfGl
+ ON+BGsRZfA1MUsbZTRxASq63J0JRmU0pkoJENxTjJXGJM36ze9qPoNfJiiMh9kdmNLs0yLIGCUues
+ mX+bjBK/BU/DCBbWVXsu0tw0pEKfM9vFOE6LZsE6RfPYsACeuJZdPE97ZSgv0wdtEdEI=;
+Received: from m16.mail.163.com ([117.135.210.2])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xKhI1-0000000017M-0mN1
+ id 1xKxXn-000000003au-3RM5
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Oct 2026 19:20:25 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id D3D1941FFD;
- Sat, 24 Oct 2026 19:20:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8894B1F01825;
- Sat, 24 Oct 2026 19:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792869619;
- bh=zupueEs92LLYhplKMYURHzUt9KCcFQQdwtlOs89HPOI=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=NYz2U1JUdsTsXpsZPMHyY+GfubyW4W5DiXoocXwqCA7aiJE8dNB8zaX3eNCMkxldb
- A5Y3ccC8BQj1aJhLQSJCmr+L5eOwFy+6N3fpV3GXuLvbce9Xy1hlbrtjX/WIRQeK/O
- 0dvx6ZI6szQz+Nrkwr90sD6Ii7OSkBcflLfRdKyHWV7/3o07xNavk9VlF7KxEYPjqO
- 9iCi2oVbbllbKEncXfI2ZzlQbpXE0dp3lP35W0nNoW47HtRmdX+YaGjZfVJyMRXFNl
- pDaWb+l4e03a/0mPb0KZm1U0rW7pU1DKNvvQIzYW0VXwNk+RaDK0OE03LZaqChuX9c
- PGiXyFaAIRTDQ==
-Date: Sat, 24 Oct 2026 12:20:17 -0700
-To: Christian Brauner <brauner@kernel.org>
-Message-ID: <20261024192017.GG2553@quark>
-References: <20261023-work-dcache-casefold-v1-0-1b0bd5c73a69@kernel.org>
- <20261023-work-dcache-casefold-v1-1-1b0bd5c73a69@kernel.org>
+ Sun, 25 Oct 2026 12:41:49 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ZU
+ rqx1rvvs6o+dee+0TNtCMY/5xlNRoKRO5LvvKhg7Y=; b=CgjBCxH1/Oc2JfWhDS
+ OQiL4Vxzt2QEj/wPgkFG6ex2R86k2uIkiMSHUCroN3mB+1wYgE4ah2i1rBjQOzOm
+ 6+SezCV1pMmuInJE/CwGhkp/RAqFQqytW6Y8gOd96VvTzU+USTWFcxIafIybCW6L
+ 4MyFYZpDx6kxlWFJq9jdt2esQ=
+Received: from pc.localdomain (unknown [])
+ by gzsmtp3 (Coremail) with SMTP id PigvCgDnvTzs+N1qxJALCA--.54355S4;
+ Sun, 25 Oct 2026 20:41:21 +0800 (CST)
+From: Jiale Yao <yaojiale02@163.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+ Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Date: Sun, 25 Oct 2026 20:41:11 +0800
+Message-Id: <20261025124115.3178287-3-yaojiale02@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261025124115.3178287-1-yaojiale02@163.com>
+References: <20261025124115.3178287-1-yaojiale02@163.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20261023-work-dcache-casefold-v1-1-1b0bd5c73a69@kernel.org>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xKhI1-0000000017M-0mN1
-Subject: Re: [f2fs-dev] [PATCH 1/2] dcache: don't leave negative dentries in
- casefolded directories
+X-CM-TRANSID: PigvCgDnvTzs+N1qxJALCA--.54355S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrWDGr4rXw1DZF13CF48JFb_yoW8CFykpF
+ 9xKa45ur97JrZrWrn7Ga1UZ34FgFykJrWfWryUX3WIvw1DGw4Yq3WIyF1a9F1rtFy7Jw42
+ gan09FyDW3yjyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joUDJUUUUU=
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbC8BGMxmrd+PEPUwAA3J
+X-Spam-Score: 0.1 (/)
+X-Headers-End: 1xKxXn-000000003au-3RM5
+Subject: [f2fs-dev] [PATCH 2/5] f2fs: drain in-flight DIO before buffered
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,32 +92,77 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Gabriel Krisman Bertazi <krisman@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: stable@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
-	SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, Oct 23, 2026 at 02:44:22PM +0200, Christian Brauner wrote:
-> +static __always_inline bool d_delete_drop(struct dentry *dentry)
-> +{
-> +	return dentry_negative_policy ||
-> +	       IS_CASEFOLDED(d_inode(dentry->d_parent));
-> +}
+An asynchronous iomap direct write can remain in flight after the inode
+lock is released. A buffered write can then dirty page cache before the
+direct write completes its post-I/O invalidation, causing the
+invalidation to fail and record -EIO in the mapping error sequence.
 
-Should this also check IS_ENABLED(CONFIG_UNICODE), so there will be no
-overhead when CONFIG_UNICODE=n?
+The pre-write checks can also zero post-EOF page cache while an earlier
+direct write is still active.
 
-- Eric
+Wait for in-flight DIO before post-EOF page-cache operations and before
+buffered writes. Return -EAGAIN for a NOWAIT write that would need the
+blocking post-EOF operation.
+
+Fixes: a1e09b03e6f5 ("f2fs: use iomap for direct I/O")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jiale Yao <yaojiale02@163.com>
+---
+ fs/f2fs/file.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 0c759cc99054..d3d0ebf2f6c3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5328,6 +5328,7 @@ static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
++	loff_t end_pos;
+ 	ssize_t count;
+ 	int err;
+ 
+@@ -5345,8 +5346,14 @@ static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	if (err)
+ 		return err;
+ 
+-	err = f2fs_zero_post_eof_page(inode,
+-		iocb->ki_pos + iov_iter_count(from), true, true);
++	end_pos = iocb->ki_pos + iov_iter_count(from);
++	if (end_pos > i_size_read(inode)) {
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			return -EAGAIN;
++		inode_dio_wait(inode);
++	}
++
++	err = f2fs_zero_post_eof_page(inode, end_pos, true, true);
+ 	if (err)
+ 		return err;
+ 	return count;
+@@ -5436,6 +5443,8 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
+ 	if (iocb->ki_flags & IOCB_NOWAIT)
+ 		return -EOPNOTSUPP;
+ 
++	inode_dio_wait(inode);
++
+ 	ret = generic_perform_write(iocb, from);
+ 
+ 	if (ret > 0) {
+-- 
+2.34.1
+
 
 
 _______________________________________________
