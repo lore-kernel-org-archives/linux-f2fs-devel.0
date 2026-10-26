@@ -1,119 +1,88 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2068F606A320
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 10:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D98606A31A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 12:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ixLrYDc+;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=gLh9d/kA;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=ixPsrFlO;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VZjJ+1rN
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=mSTmuoL5;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=HpWKcVbR;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=l8c3e2S3;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dc13FW0S
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=3UqC+casrK6a2kGiPu2694r12z4H45aqDCw4GhGFFZ0=; b=ixLrYDc+RdeZbO3xzJ8uCCiXzf
-	fZ4Ruy6+dI1nyM63scODjtR9rd1CYhNfnAA/Gz+GMHqtvaq6vGMssAewcpUn3lE8Appx0WQHjpksC
-	B1Ay9k6t0N2w3b6vim3sru0qUe6xcKaJd2DPQvbhG7LuWSyx3ULp+lSYsQKuc5Hzk4KU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
+	List-Owner; bh=t502/7xoij5RqHcZ/CqeozegEHq9sPiedfZbFawkazc=; b=mSTmuoL5SGIjZE
+	T6nGb8PbsbQHxPR6K2Ixyg0q7Ry+gwwISM/Zh6ONVkG7xiXbkZdE+zdv0HXRIANtjCysr/payG8CF
+	8tI+lKkbGXveHs7jFdSKBAGvKTrcgS+W/rBjt8qf0qH42Wnchf1w+CQAL1iLRBgvn73Uch0oi4eej
+	tM0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xLIIH-000000001Ny-3YPD;
-	Mon, 26 Oct 2026 10:51:09 +0000
+	id 1xLJfl-000000004lb-0YzO;
+	Mon, 26 Oct 2026 12:19:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <teel4res@gmail.com>) id 1xLIIG-000000001Nr-2CmQ
+ (envelope-from <chao@kernel.org>) id 1xLJfj-000000004lV-2mdQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Oct 2026 10:51:08 +0000
+ Mon, 26 Oct 2026 12:19:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yzSTm2Fji8eE3olX3VmRZngbwlC7i6ctxbW2rBhW5I4=; b=gLh9d/kAtZZEC08HxKb0bDc+Rs
- wpBfuzxYJrqChKb88R6NPXoxThXxfMMgD3tWyzvW0e7lYLRy0QzQHREgEc0Z2Sj4Q6CKjrp3latH1
- 5Uc7UT7KVNQuVCPzcmFXWqHsQIdtdRqC++yhZ01lmOarAJNjwESyw0IR4m9gfvPZKG/M=;
+ bh=jmfubRjx0StBG9YgoMo3hb8LfhkNqnrCuWVWiXH2MhM=; b=HpWKcVbR2qHMhbH2OZVy9tCq7t
+ 0IFm63Ie0oXASk7ROQvZxdXCOq5J20Lw+WZqq3AfQst4kkibEKfo7gooAp/dp+RK7am9/yp+zoGQF
+ GXg5DWqFU/6ZUyJYw0DGbDb2UFACFCMgDiHkE54/+yqpMrNxmp+umKzEHydXcF9mddAQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yzSTm2Fji8eE3olX3VmRZngbwlC7i6ctxbW2rBhW5I4=; b=ixPsrFlOQ8LQ4vVZcMZLSNCB5X
- YUqTbKjaSH6ovYhvH/X1t89nC52iGFLjNAEszr9LpY9iVONCInEdBivJpcw82mw+fUwDDNxpLHUks
- rHDYiWI+hs7LguQQz+MvBkxXj0eYQeaNDDl66pezc0gAfii06mGWJEB1jQH6F/89ekW4=;
-Received: from mail-dl1-f49.google.com ([74.125.82.49])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xLIIF-000000004W7-3TO9
+ bh=jmfubRjx0StBG9YgoMo3hb8LfhkNqnrCuWVWiXH2MhM=; b=l8c3e2S3x0rkTwlV8Rkc9QTusd
+ V7duINXOV2LV7Sa6BMF7xGU/lSVsvGrZ1R2k1zRbu/nKrPY1MmvcHJZjV2NbBi3GCG3SKfmHJLzsW
+ ihSgM6zus3KKCzhMhSYbCEpSBj4nEsbZ7VueAJWuPhDY/MjSJ28FftGKLurnzibjAifE=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
+ id 1xLJfh-000000000Ca-04Qh
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Oct 2026 10:51:08 +0000
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-15ea896ddc8so4857554c88.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Oct 2026 03:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1793011862; x=1793616662; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=yzSTm2Fji8eE3olX3VmRZngbwlC7i6ctxbW2rBhW5I4=;
- b=VZjJ+1rNc4ZJxWiKuaZXVdhYFloOA8QsaRYi9Ua2+ysjx6pTyE41HLzsdSkGTVodeR
- XNRDr+9/NfRELhO4fHAu5DfLNnoLZXq5gluKe81Vc8vG/54AwuRdbJtBdXN3ra/gLpq6
- VAOPjXAj733tbc555hc5XOSmY80xm8UI2ONhoBm7yUb70mSGzTwOlLlorf/pDFRlyK8T
- Zkpe03hn3fQGaOdwGgb6BmgNpNJG/CEK9kzMaxtN9ixHwjmWu8ABQNjMepOHXIjgvnbG
- MQxNhCUrpmIn889k6LRpD5Nrxa7YHKaSaVhUGD64aTJ1E5ygk2jdJ8xE+FtkPzMOvWGL
- LirQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793011862; x=1793616662;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=yzSTm2Fji8eE3olX3VmRZngbwlC7i6ctxbW2rBhW5I4=;
- b=Qq8yChzck+4+YgzxYGKZnje1zOu0T4R0uvYJVUnKDWgw7f/LvyMD02jD2wrioyT9AO
- 7dhhTRtT8TP4THN/93VDWULWloyZztWLUaD8WKEaheApocY1Q5H7EIQbeS/Qv4/riO5B
- YV2gW/+/upDx1pv8HCQFtnfSBE9hL9+l4UjZik5L6Iee7oVWmxl2TAoBlqBwRahmoBWQ
- kBvnmHi2TC3wege200s6ADB4L/ji6vZxYG5KLgOCKN4SBlNeDOuynDfxEqEqOv6XfptF
- F5/g34S98OQJ9XBkqiw5de70uCnol31w/44Eg+LM6EYB6qZ4uydI9B4R+ZZBQaO99BLp
- D0cA==
-X-Gm-Message-State: AFq9FYKJzZkeuDTFjczW/PaHTtVr+OmhL6aj3Frg7RGMwMjeuDqmQe4P
- bGotUgpTCuhZguxxeF9KaErq5mGI1yxC3FaZkPc9XNX1bAkHMYNjRZhI
-X-Gm-Gg: AYBFou0KgArCaqKJK6jEjrOPUlXpct8wzWpQ20EvQd/Su+XK+h8nnlKI4nJjuFV+Kch
- cMMDUiKHJLf+izsTFr4Hu+ZnDbKaZ/youxijbHBqGFz1qStWWyrjovysWIOi0fnSYB0a867LVLQ
- g1V5c+bn893XZxLirYe/ErHHXSMJ7A1MSc5iItPKppItMjgzlVwLvv+ykJ9KEjhrRHCb4ngWemS
- EWZKYmOSmgo2upSgvopHrsG5Pt0T7HG7zhgypTSN3iBVLdscukze5lchI+cQ0gtU0zefH5gL0Lv
- ShBNy5n/YN+6eDaWAjV1fd/TPQNEkPweLr7V7JE0qeBdv3zw4Lp4ieiBe7eNr7bCqHurOj8QumN
- E6PmyWVQ1rXeYdATDdwixbE0zMrEFleZJs54Ol/tfO5fOYDAGyFM1d26++ajCRzG+jk7Tp0jspw
- WywUmNqmn+vOBQhY/Pu3F0q6Vn31C4dmIOFt4FoECWPH1Mf2UQ8ImY2viHDm2ng1zCgutrJgLoz
- Rf1qWfJ1OpY816XXoo6Mc/0sTIIHjZTBSCZIJ+xgBQfSUtPnEtJGp00fsAtKiGiIrGfOoIRj7AO
- 6O1i0lsmhRw7PDMh+4yad73SAqyZu+iWKCNIpkeF
-X-Received: by 2002:a05:701b:208a:b0:13b:3132:6e99 with SMTP id
- a92af1059eb24-19934a96a8bmr9053500c88.20.1793011861911; 
- Mon, 26 Oct 2026 03:51:01 -0700 (PDT)
-Received: from youngkk-vm.localdomain (67.216.200.102.16clouds.com.
- [67.216.200.102]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-198a020df20sm27897863c88.6.2026.10.26.03.50.58
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Oct 2026 03:51:01 -0700 (PDT)
-From: Cheng Yongkang <teel4res@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Mon, 26 Oct 2026 03:50:41 -0700
-Message-Id: <20261026105042.1148554-4-teel4res@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261026105042.1148554-1-teel4res@gmail.com>
-References: <20261026105042.1148554-1-teel4res@gmail.com>
+ Mon, 26 Oct 2026 12:19:27 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 8EE804060A;
+ Mon, 26 Oct 2026 12:19:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A97A1F01825;
+ Mon, 26 Oct 2026 12:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1793017159;
+ bh=jmfubRjx0StBG9YgoMo3hb8LfhkNqnrCuWVWiXH2MhM=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=dc13FW0SgeFObaEW0vo+8GvDrcKrlQRDnd03L8XLsnoUBRtCXayQFHjUfDCrYSo40
+ rq1gjXSBxjeFMwQo8jF30X9KRzQo+R/ClEkghEEde961YWG6ByYim7/Ed0ctwELfPm
+ u++NL2wld5o82BvArOnaDoAVjW9i2WJgTond88sm20XSmT9St3Jdy4HSzECAgjmD33
+ NZSgC4Frlk1vivofuUOOoRyQu0Vz8/B7IsfnwhJ/bZ9njQARBScz7HVW08XNguetUC
+ 550L4uaaPs8qotQAeNvqHHDs9r0hySJ56T2pjouK+dRtxfeQLoMyheHqZdD2rj+MhL
+ PsPM3i5bc0tWQ==
+Message-ID: <786f87e0-2cf5-4ac1-aec6-0e79677fcb5e@kernel.org>
+Date: Mon, 26 Oct 2026 20:19:16 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Nanzhe Zhao <nzzhao.sigma@gmail.com>, Daeho Jeong <daehojeong@google.com>
+References: <6667c6de-af4b-42b1-8bd6-65c4232bf86e@kernel.org>
+ <20261026033422.780601-1-nzzhao.sigma@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20261026033422.780601-1-nzzhao.sigma@gmail.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xLIIF-000000004W7-3TO9
-Subject: [f2fs-dev] [PATCH v3 3/3] f2fs: refresh superblock CRC after
- MAIN_AREA alignment fix
+X-Headers-End: 1xLJfh-000000000Ca-04Qh
+Subject: Re: [f2fs-dev] [PATCH v6 00/15] f2fs: support & optimize large
+ folios for writable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,55 +92,404 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-sanity_check_area_boundary() fixes the on-disk segment_count through
-__f2fs_commit_super(..., false), which does not refresh the superblock
-checksum.  segment_count is covered by the checksum, so the next mount
-fails with -EFSCORRUPTED after the alignment fix.
+Hi Nanzhe,
 
-Recompute the CRC over the modified superblock before writing it.  Use the
-raw superblock's feature bit: sanity_check_area_boundary() runs from
-read_raw_super_block(), before sbi->raw_super is assigned.
+Thanks for the updates.
 
-Fixes: fd694733d523 ("f2fs: cover large section in sanity check of super")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Cheng Yongkang <teel4res@gmail.com>
----
- fs/f2fs/super.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 10/26/26 11:34, Nanzhe Zhao wrote:
+> Hi Chao,
+> 
+> Thanks for forwarding the local Sashiko review.  I went through every
+> comment.  Below I quote the review text and reply item by item.
+> 
+> == Patch 1: f2fs: extend folio state for large folio write path ==
+> 
+>> Should this check also exclude the PAGE_PRIVATE_NOT_POINTER bit?
+>> If a large folio has no ffs structure attached, but has an integer stored in
+>> folio->private with the PAGE_PRIVATE_NOT_POINTER bit set, this function will
+>> incorrectly return true.
+>>
+>> If f2fs_folio_has_ffs() returns true because an integer with the
+>> PAGE_PRIVATE_NOT_POINTER bit is stored in folio->private, does this code cast
+>> that raw integer into a struct f2fs_folio_state pointer?
+>> This would return an invalid out-of-bounds address for the private_flags
+>> field, leading to a crash when it gets dereferenced.
+>>
+>> Can this sequence trigger an invalid pointer dereference and a kernel panic?
+>> If PAGE_PRIVATE_SET_FUNC (e.g., folio_set_f2fs_gcing) is called on a large
+>> folio without an ffs structure:
+>> 1. folio->private is set to BIT(PAGE_PRIVATE_NOT_POINTER) (which is 1).
+>> 2. f2fs_folio_flags_addr() is called.
+>> 3. f2fs_folio_has_ffs() sees folio_test_large() and private != 0, returning
+>>    true.
+>> 4. f2fs_folio_flags_addr() casts the integer 1 to a struct f2fs_folio_state
+>>    pointer, returning a memory address based off this invalid pointer.
+>> 5. set_bit() attempts to write to this invalid unmapped memory address.
+> 
+> In the current implementation, every path that can carry a large folio also
+> allocates and keeps f2fs_folio_state; the private-flag layout is only used
+> for order-0 folios.  However, I did find one race window:
+> 
+>     f2fs_get_read_data_folio():
+>         if (f2fs_ffs_test_blk_uptodate(folio, index)) {
+>             folio_unlock(folio);
+>             return folio;
+>         }
+> 
+>     f2fs_get_lock_data_folio():
+>         folio = f2fs_get_read_data_folio(inode, index, 0, for_write, NULL);
+>         ...
+>         folio_lock(folio);
+>         if (unlikely(folio->mapping != mapping ||
+>                      !f2fs_ffs_test_blk_uptodate(folio, index))) {
+>             f2fs_folio_put(folio, true);
+>             return ERR_PTR(-EIO);
+>         }
+>         return folio;
+> 
+> A concurrent shrink can call ->release_folio() in the unlock window.  On a
+> clean large folio, f2fs_release_folio() detaches and frees the ffs:
+> 
+>     bool f2fs_release_folio(struct folio *folio, gfp_t wait)
+>     {
+>         if (folio_test_dirty(folio))
+>             return false;
+> 
+>         ffs_detach_free(folio);
+>         return true;
+>     }
+> 
+> __remove_mapping() then fails the folio_ref_freeze() check because the
+> caller still holds a reference, so the folio stays in the mapping but has
+> no ffs.  On relock, the fully uptodate folio hits the early check in
+> f2fs_ffs_test_blk_uptodate():
+> 
+>     if (folio_test_uptodate(folio))
+>         return true;
+> 
+> and is returned to GC.  GC later calls folio_set_f2fs_gcing() on a large
+> folio whose private is NULL.  This is the same root cause as the Patch 5
+> "large folio without ffs" comment; fixing this also fixes that one.
+> 
+> Expected diff:
+> 
+>     diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>     @@ struct folio *f2fs_get_lock_data_folio(struct inode *inode,
+>         /* wait for read completion */
+>         folio_lock(folio);
+>     -   if (unlikely(folio->mapping != mapping ||
+>     -                !f2fs_ffs_test_blk_uptodate(folio, index))) {
+>     +   if (unlikely(folio->mapping != mapping)) {
+>             f2fs_folio_put(folio, true);
+>             return ERR_PTR(-EIO);
+>         }
+>     +   if (folio_test_large(folio) && !f2fs_folio_has_ffs(folio)) {
+>     +       if (!f2fs_ffs_find_or_alloc(folio)) {
+>     +           f2fs_folio_put(folio, true);
+>     +           return ERR_PTR(-ENOMEM);
+>     +       }
+>     +   }
+>     +   if (unlikely(!f2fs_ffs_test_blk_uptodate(folio, index))) {
+>     +       f2fs_folio_put(folio, true);
+>     +       return ERR_PTR(-EIO);
+>     +   }
+>         return folio;
+> 
+> == Patch 3: f2fs: support regular file buffered writes on large folios ==
+> 
+>> Can this result in a spurious -EFSCORRUPTED error during a direct I/O
+>> fallback?
+>> In f2fs_preallocate_blocks(), FI_PREALLOCATED_ALL is set unconditionally
+>> when f2fs_map_blocks() returns 0.  However, for direct I/O, the allocation
+>> exits early on physically unmergeable extents, meaning map.m_len might be
+>> smaller than requested.
+>> ...
+>> Will reading the unallocated hole then yield a NULL_ADDR and trigger the
+>> -EFSCORRUPTED failure here?
+> 
+> False Positive. Our code path here is the buffered IO path, not the DIO case described.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b90831e..7dcf15e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4023,6 +4023,13 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
- 		raw_super->segment_count = cpu_to_le32((main_end_blkaddr -
- 				segment0_blkaddr) >> log_blocks_per_seg);
- 
-+		if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
-+			u32 crc;
-+
-+			crc = f2fs_crc32(raw_super, offsetof(struct f2fs_super_block, crc));
-+			raw_super->crc = cpu_to_le32(crc);
-+		}
-+
- 		if (f2fs_readonly(sb) || f2fs_hw_is_readonly(sbi)) {
- 			set_sbi_flag(sbi, SBI_NEED_SB_WRITE);
- 			res = "internally";
--- 
-2.34.1
+Agreed,
+
+Looks like a bug, maybe we can add f2fs_bug_on for such case?
+
+> 
+>> Does this miss updating the ffs dirty bitmap for large folios modified via
+>> external paths like get_user_pages?
+>> ...
+>> Should we be updating the ffs dirty bitmap here after a successful
+>> filemap_dirty_folio() for large folios?
+> 
+> A writable mapping goes through f2fs_vm_page_mkwrite(), which marks the
+> whole valid folio dirty before folio_mark_dirty():
+> 
+>     if (folio_test_large(folio))
+>         f2fs_ffs_mark_subrange_dirty(folio, 0, dirty_len);
+>     folio_mark_dirty(folio);
+> 
+> A GUP/DMA write needs a writable PTE, so it is covered by that
+> page_mkwrite.  I am not aware of a FOLL_WRITE path that bypasses
+> page_mkwrite.
+> 
+> == Patch 4: f2fs: support atomic file large folios buffered write ==
+> 
+>> Can returning -EAGAIN here cause atomic write counts to be double counted for
+>> prior subpages?
+>> ...
+>> Because cow_has_reserved_block defaults to false and the COW lookup was
+>> skipped, inc_atomic_write_cnt() will be incremented a second time for every
+>> subpage already processed before the abort.  Could this corrupt the atomic
+>> write statistics?
+
+I'm a bit confuse about what detailed number inc_atomic_write_cnt() tries to
+record, previously we need to call inc_atomic_write_cnt() only if node_changed
+is true, if it tries to record the first time write on cow inode, IIUC, please
+correct me if I understand incorrectly.
+
+To Daeho, could you please take a look and help to review the comments and
+below change?
+
+> 
+> This is valid.  For a large folio, the assumption behind this check does
+> not hold:
+> 
+>     if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
+>         goto reserve_block;
+> 
+> The retry can be caused by f2fs_balance_fs_folio_locked() dropping the
+> folio lock and a concurrent reclaim calling ->release_folio(), which frees
+> the ffs.  The retry is not necessarily caused by a truncate, so the block
+> at that index can still be NEW_ADDR.
+> 
+> The append branch itself is not new: the original 4K code skipped the COW
+> lookup in the same way, so a retry there can also double count.  The
+> large-folio path makes it much easier to hit because balance can retry on
+> ffs release or folio order change and restarts the whole folio.
+> 
+> The fix is to check the COW block only on retry.  The first attempt keeps
+> the original fast path (no COW lookup); once f2fs_write_begin() retries,
+> it passes check_reserved=true so an already reserved NEW_ADDR block is not
+> reserved and accounted again.  This does not depend on whether a truncate
+> path clears the block address.
+> 
+> Expected diff:
+> 
+>     diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>     @@ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
+>     -           struct inode *inode, pgoff_t index,
+>     -           block_t *blk_addr, bool *node_changed)
+>     +           struct inode *inode, pgoff_t index,
+>     +           block_t *blk_addr, bool *node_changed,
+>     +           bool check_reserved)
+>      {
+>          struct inode *cow_inode = F2FS_I(inode)->cow_inode;
+>          int err = 0;
+>          block_t ori_blk_addr = NULL_ADDR;
+>          bool cow_has_reserved_block = false;
+>     +    bool append = ((loff_t)index << PAGE_SHIFT) >= i_size_read(inode);
+> 
+>     -    if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
+>     +    if (append && !check_reserved)
+>              goto reserve_block;
+> 
+>          /* Look for the block in COW inode first */
+>          err = __find_data_block(cow_inode, index, blk_addr);
+>          ...
+>          if (*blk_addr == NEW_ADDR)
+>              cow_has_reserved_block = true;
+> 
+>     -    if (is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
+>     +    if (append || is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
+>              goto reserve_block;
+> 
+>     @@ static int prepare_large_folio_atomic_write_begin(struct inode *inode,
+>     -           unsigned int len)
+>     +           unsigned int len, bool retried)
+>      {
+>          ...
+>          err = prepare_atomic_write_begin(sbi, inode, index,
+>     -                                    &blkaddr, &node_changed);
+>     +                                    &blkaddr, &node_changed, retried);
+> 
+>     @@ static int f2fs_write_begin(const struct kiocb *iocb,
+>          bool need_balance = false;
+>     +    bool retried = false;
+>          block_t blkaddr = NULL_ADDR;
+> 
+>          ...
+>          if (err) {
+>              if (err == -EAGAIN) {
+>     +            retried = true;
+>                  f2fs_folio_put(folio, true);
+>                  goto repeat;
+>              }
+>              goto put_folio;
+>          }
+> 
+>          if (f2fs_balance_fs_folio_locked(folio, mapping, need_balance)) {
+>     +        retried = true;
+>              f2fs_folio_put(folio, true);
+>              goto repeat;
+>          }
+> 
+> == Patch 5: f2fs: support large folio writeback ==
+> 
+>> Does this prematurely end writeback for the entire large folio when it
+>> lacks FFS state?
+>> If a large folio is dirtied without an attached f2fs_folio_state (FFS), it
+>> bypasses the write_pages_pending reference counter during background
+>> writeback.
+>> When the first I/O block completes, f2fs_ffs_put_write_pending() will
+>> immediately call folio_end_writeback().
+>> ...
+>> A Time-Of-Check to Time-Of-Use (TOCTOU) race exists when retrieving a folio
+>> using f2fs_get_lock_data_folio().  It calls f2fs_get_read_data_folio(), which
+>> allocates FFS but then unlocks the folio if it is already up-to-date.  Before
+>> f2fs_get_lock_data_folio() re-acquires the lock, a concurrent memory reclaim
+>> can call f2fs_release_folio() on the clean folio, freeing its FFS state.
+> 
+> This is the same race as the one described for Patch 1.  Once
+> f2fs_get_lock_data_folio() rebuilds the ffs after relock, a large folio
+> cannot enter writeback without ffs, so this one is fixed by the Patch 1
+> change rather than by a separate put() workaround.
+> 
+>> Can this crash the kernel via f2fs_bug_on() due to a missing NULL_ADDR check?
+>> ...
+>> Without that check here, f2fs_outplace_write_data() will hit this assertion
+>> and panic the kernel:
+>>      f2fs_bug_on(sbi, dn->data_blkaddr == NULL_ADDR);
+> 
+> False Positive. This is covered by 11/15, which adds the subpage-aware truncated state:
+> 
+>     if (err == -ENOENT || fio.old_blkaddr == NULL_ADDR) {
+>         f2fs_clear_truncated_page_state(folio, i);
+>         err = 0;
+>         goto block_done;
+>     }
+> 
+>> Does this logic trap the worker in an infinite writeback loop on truncated or
+>> hole-punched large folios?
+>> ...
+> 
+> Same, covered by 11/15.
+> 
+> == Patch 8: f2fs: make GC migration large-folio aware ==
+> 
+>> Is there a regression here where f2fs_do_write_data_page() bypasses the
+>> newly added cleanup code on early errors, leaking the PG_f2fs_gcing flag on
+>> the folio?
+>> The removed cleanup relies on f2fs_do_write_data_page() performing it at the
+>> out label added above, but f2fs_do_write_data_page() can return directly
+>> without reaching that label.  For example, it might fail on lock acquisition:
+>>   /* Deadlock due to between page->lock and f2fs_lock_op */
+>>   if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi, &lc))
+>>       return -EAGAIN;
+>> Could the folio permanently retain the PG_f2fs_gcing flag since the
+>> caller-side cleanup was removed?
+> 
+> This one is also valid.  The early trylock failure returns directly and
+> bypasses the common out path.  Expected diff:
+> 
+>     diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>     @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+>         /* Deadlock due to between page->lock and f2fs_lock_op */
+>     -   if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi, &lc))
+>     -       return -EAGAIN;
+>     +   if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi, &lc)) {
+>     +       if (!f2fs_ffs_has_dirty_subpage(folio))
+>     +           folio_clear_f2fs_gcing(folio);
+>     +       return -EAGAIN;
+>     +   }
+> 
+> The Patch 1 race and this early-return path are the two issues I can fix
+> immediately; the Patch 4 atomic accounting and the Patch 14 mkwrite part
+> are also valid, but need more design work.
+> 
+> == Patch 12: f2fs: fix zeroing paths for large folios ==
+> 
+>> Does this code skip zeroing valid subpages of partially up-to-date large
+>> folios?
+>> ...
+>> Should this check be converted to f2fs_ffs_test_blk_uptodate(folio, index)
+>> to match the changes made in f2fs_get_new_data_folio()?
+> 
+> False Positive. cache_only is only passed for inline data: truncate_page is set only in
+> the f2fs_has_inline_data() branch of f2fs_do_truncate_blocks().  Inline
+> data is order-0, and f2fs_read_inline_data() marks the whole folio
+> uptodate, so the large-folio partially-uptodate case cannot reach the
+> cache_only branch.
+> 
+> == Patch 13: f2fs: handle block cloning within the same large folio ==
+> 
+>> Does returning -ENOMEM here leave the page cache corrupted?
+>> Before this check, memcpy_folio() has already copied the data into the
+>> destination folio.  If f2fs_ffs_find_or_alloc() fails and we return -ENOMEM,
+>> the page cache modification is not reverted.
+>> If the cloning operation is aborted, would userspace read the incorrectly
+>> modified page cache?  Could this corrupted data also be persisted to disk if
+>> the folio is later dirtied?
+>> Additionally, when same_folio is true, the block reserved earlier with
+>> f2fs_reserve_block() does not appear to be reverted on this error path.
+> 
+> f2fs_get_new_data_folio() already calls f2fs_ffs_find_or_alloc() before
+> returning the locked folio:
+> 
+>     if (folio_test_large(folio) && !f2fs_ffs_find_or_alloc(folio)) {
+>         f2fs_folio_put(folio, true);
+>         f2fs_put_cache(ientry, true);
+>         return ERR_PTR(-ENOMEM);
+>     }
+> 
+> False Positive. For same_folio, fdst is fsrc from f2fs_get_lock_data_folio(), which also
+> has the ffs.  The later f2fs_ffs_find_or_alloc(fdst) is redundant, and the
+> post-memcpy ENOMEM path is unreachable in the normal flow.
+> 
+> == Patch 14: f2fs: allow large folio support to writeable files ==
+> 
+>> Can this check be bypassed using FS_IOC_SETFLAGS?
+>> If a user creates a file, sets it immutable (chattr +i), and drops caches to
+>> force an inode reload, the mapping is configured with MAX_PAGECACHE_ORDER.
+>> The user can then clear the immutable flag (chattr -i).
+>> Since f2fs_setflags_common() clears S_IMMUTABLE but does not downgrade the VFS
+>> mapping limits, this now-mutable file can be opened for writing and populate
+>> the page cache with large folios.
+> 
+> Not important.  Our final
+> direction is to enable large folios for writable files as well.
+> 
+>> Does this cause O(N^2) complexity and massive stat inflation for large folios?
+>> ...
+>> For a 2MB large folio, sequentially writing to all 512 subpages will trigger
+>> this page fault handler 512 times.  Each invocation processes all 512 blocks
+>> and increments the IO stats by 2MB, resulting in 262,144 block iterations and
+>> a 1GB inflation to APP_MAPPED_IO.
+> 
+> 
+> As explained before, do_shared_fault()'s finish_fault() installs writable PTEs for 
+> the whole folio. So we should dirty the whole folio to avoid data loss.
+> 
+> I will send a v7 series with these fixes.
+
+Thanks, will take a look soon.
+
+Thanks,
+
+> 
+> Thanks,
+> Nanzhe
 
 
 
