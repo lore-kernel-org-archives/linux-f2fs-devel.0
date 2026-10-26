@@ -1,88 +1,151 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D98606A31A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 12:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7989606A31E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 12:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=mSTmuoL5;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=HpWKcVbR;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=l8c3e2S3;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dc13FW0S
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=I0939xtQ;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=hQaJrW60;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Tk0rOv/d;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=3bhhpT8v;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=Tq7HhWbN;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=k0jtjt69;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=bPIVkg8m
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=t502/7xoij5RqHcZ/CqeozegEHq9sPiedfZbFawkazc=; b=mSTmuoL5SGIjZE
-	T6nGb8PbsbQHxPR6K2Ixyg0q7Ry+gwwISM/Zh6ONVkG7xiXbkZdE+zdv0HXRIANtjCysr/payG8CF
-	8tI+lKkbGXveHs7jFdSKBAGvKTrcgS+W/rBjt8qf0qH42Wnchf1w+CQAL1iLRBgvn73Uch0oi4eej
-	tM0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=3K1CGBGaXSbboP8F9MVcivM6+d8eBNuw9Y0AvM4fOQE=; b=I0939xtQ0bp+AIvNFmI9A/8XUJ
+	FpjeQh02nzl8KyrS6bck/dKW4OW1w5cpnfXUdOOfXUz78GctVaEOqVMyzy0yT+9RcWZrGST7YCLgV
+	WPQ5E2cQDov0MOU9kU9s8kTwiFCL4EcE/LTtTSL9+IOQfuIPukJdzWKBhZ8jle07fLho=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xLJfl-000000004lb-0YzO;
-	Mon, 26 Oct 2026 12:19:29 +0000
+	id 1xLJgE-000000003bO-1paY;
+	Mon, 26 Oct 2026 12:19:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xLJfj-000000004lV-2mdQ
+ (envelope-from <jack@suse.cz>) id 1xLJgC-000000003bD-0JC1
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Oct 2026 12:19:27 +0000
+ Mon, 26 Oct 2026 12:19:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jmfubRjx0StBG9YgoMo3hb8LfhkNqnrCuWVWiXH2MhM=; b=HpWKcVbR2qHMhbH2OZVy9tCq7t
- 0IFm63Ie0oXASk7ROQvZxdXCOq5J20Lw+WZqq3AfQst4kkibEKfo7gooAp/dp+RK7am9/yp+zoGQF
- GXg5DWqFU/6ZUyJYw0DGbDb2UFACFCMgDiHkE54/+yqpMrNxmp+umKzEHydXcF9mddAQ=;
+ bh=y8x/Pha56IWNhOsrddTmq/pZ76SoL/4aPw0ZOZYdl3c=; b=hQaJrW60c0tLRzHVFd5CW8ksg2
+ FB4nATVfS1IWgoHrYxbbVZaliTGuhy9FuPLVTQsnTgOZAF7ZigP2vE8X5syG1D9twQOyFJ5L8DYg9
+ /8Gft92NvjwzBTtJ5QufkBHFtiiKbhaxj97HdN3qFXH2nunLxT9cUsaD5ZpOIkVX26CM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jmfubRjx0StBG9YgoMo3hb8LfhkNqnrCuWVWiXH2MhM=; b=l8c3e2S3x0rkTwlV8Rkc9QTusd
- V7duINXOV2LV7Sa6BMF7xGU/lSVsvGrZ1R2k1zRbu/nKrPY1MmvcHJZjV2NbBi3GCG3SKfmHJLzsW
- ihSgM6zus3KKCzhMhSYbCEpSBj4nEsbZ7VueAJWuPhDY/MjSJ28FftGKLurnzibjAifE=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=y8x/Pha56IWNhOsrddTmq/pZ76SoL/4aPw0ZOZYdl3c=; b=Tk0rOv/d/e2sL3oW8nbigjK2gJ
+ RGDDw7lGuVhUMTBwdcRrM+t3ifKEuU99XPnqweB7T4zdDwDfaEN9hFeTaf8xGE/pxfAbVo6Q21vDC
+ vMjSpvsnAazs89Cl2eHJXNjaBsBSA7g+9lRZ7nh3Clc131vJ2VIWWQiSIkaPILtiFxl4=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xLJfh-000000000Ca-04Qh
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xLJgB-000000000DA-0loI
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Oct 2026 12:19:27 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 8EE804060A;
- Mon, 26 Oct 2026 12:19:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A97A1F01825;
- Mon, 26 Oct 2026 12:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793017159;
- bh=jmfubRjx0StBG9YgoMo3hb8LfhkNqnrCuWVWiXH2MhM=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=dc13FW0SgeFObaEW0vo+8GvDrcKrlQRDnd03L8XLsnoUBRtCXayQFHjUfDCrYSo40
- rq1gjXSBxjeFMwQo8jF30X9KRzQo+R/ClEkghEEde961YWG6ByYim7/Ed0ctwELfPm
- u++NL2wld5o82BvArOnaDoAVjW9i2WJgTond88sm20XSmT9St3Jdy4HSzECAgjmD33
- NZSgC4Frlk1vivofuUOOoRyQu0Vz8/B7IsfnwhJ/bZ9njQARBScz7HVW08XNguetUC
- 550L4uaaPs8qotQAeNvqHHDs9r0hySJ56T2pjouK+dRtxfeQLoMyheHqZdD2rj+MhL
- PsPM3i5bc0tWQ==
-Message-ID: <786f87e0-2cf5-4ac1-aec6-0e79677fcb5e@kernel.org>
-Date: Mon, 26 Oct 2026 20:19:16 +0800
+ Mon, 26 Oct 2026 12:19:55 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 160202215D;
+ Mon, 26 Oct 2026 12:19:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1793017188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=y8x/Pha56IWNhOsrddTmq/pZ76SoL/4aPw0ZOZYdl3c=;
+ b=3bhhpT8vSA6RzPpR2M0OYTCv5uNJcRvd2cLFqMgCuexUesIC+kVNvW11FaRLersI934O5K
+ AR/aB1/Aj7T6B3dFxe8VIVcQsqvk8H5N+st3jUe0uDPkNbAExvygzqTCXB8T1swAeR4B2i
+ nR2Lqvm4JEAz9ex3d6i8eRtJ/c3s2UE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1793017188;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=y8x/Pha56IWNhOsrddTmq/pZ76SoL/4aPw0ZOZYdl3c=;
+ b=Tq7HhWbNXUocxl8i2ipjhqfbgTQK+50hH8+2sZ99+7ZqPbhTGy2DFLSQKRv6UMX2w4/NmP
+ 08T6x79lgxqV1YBw==
+Authentication-Results: smtp-out1.suse.de;
+ dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=k0jtjt69;
+ dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bPIVkg8m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1793017187; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=y8x/Pha56IWNhOsrddTmq/pZ76SoL/4aPw0ZOZYdl3c=;
+ b=k0jtjt69RyY0Epso4r6J3ByxlPDQEO8GPke/MJYjQRYH+QxzJeGq2fnjQjvDaviQ4ETskW
+ qTuRFLcVVMQ5gC4cq9lzKLvpa3917jSbz2Y33AfB6TMyoSN0KX9Tm5lLSoqTDsIUwJHQ2U
+ 9HmbCA+qtA7QDofwR9qtwYOgP4YzWWE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1793017187;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=y8x/Pha56IWNhOsrddTmq/pZ76SoL/4aPw0ZOZYdl3c=;
+ b=bPIVkg8muLNlGxPMpANSv4KISl504HLzAIuCVh4G01bsZL1v2codZrC+owpbNw6BWpM/TL
+ oxaDTge5kcZ/JNAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DF01513319;
+ Mon, 26 Oct 2026 12:19:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id GcfaLWJF32rkLQAAD6G6ig
+ (envelope-from <jack@suse.cz>); Mon, 26 Oct 2026 12:19:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id 6B803A1419; Mon, 26 Oct 2026 13:19:42 +0100 (CET)
+Date: Mon, 26 Oct 2026 13:19:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Message-ID: <wpzwcqxtvesslqd54ytn6iacckr23rsqy4ktu7pm5dipcmuc2z@bx4esdjjvaql>
+References: <20261023-work-dcache-casefold-v1-0-1b0bd5c73a69@kernel.org>
+ <20261023-work-dcache-casefold-v1-1-1b0bd5c73a69@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Nanzhe Zhao <nzzhao.sigma@gmail.com>, Daeho Jeong <daehojeong@google.com>
-References: <6667c6de-af4b-42b1-8bd6-65c4232bf86e@kernel.org>
- <20261026033422.780601-1-nzzhao.sigma@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20261026033422.780601-1-nzzhao.sigma@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20261023-work-dcache-casefold-v1-1-1b0bd5c73a69@kernel.org>
+X-Rspamd-Queue-Id: 160202215D
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-13.01 / 50.00]; SUSE_INTERNAL_BYPASS(-9.00)[];
+ BAYES_HAM(-3.00)[100.00%]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ MID_RHS_NOT_FQDN(0.50)[];
+ R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
+ MX_GOOD(-0.01)[];
+ RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]; 
+ RCVD_VIA_SMTP_AUTH(0.00)[];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+ MISSING_XM_UA(0.00)[]; ARC_NA(0.00)[]; MIME_TRACE(0.00)[0:+];
+ RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+ RCVD_COUNT_THREE(0.00)[3]; TO_DN_SOME(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; FROM_HAS_DN(0.00)[];
+ RCPT_COUNT_SEVEN(0.00)[8]; TO_MATCH_ENVRCPT_ALL(0.00)[];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ RCVD_TLS_LAST(0.00)[];
+ DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+ DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -13.01
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xLJfh-000000000Ca-04Qh
-Subject: Re: [f2fs-dev] [PATCH v6 00/15] f2fs: support & optimize large
- folios for writable files
+X-Headers-End: 1xLJgB-000000000DA-0loI
+Subject: Re: [f2fs-dev] [PATCH 1/2] dcache: don't leave negative dentries in
+ casefolded directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,405 +155,169 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi Nanzhe,
+On Fri 23-10-26 14:44:22, Christian Brauner wrote:
+> ext4, f2fs and tmpfs keep negative dentries out of casefolded
+> directories. A negative dentry remembers one spelling of the name and
+> the next create() through it would write that spelling to disk.
+> 
+> So their ->lookup() doesn't cache a miss and their ->unlink() and
+> ->rmdir() call d_invalidate() on the dentry so that d_delete() doesn't
+> turn it into a negative dentry.
+> 
+> But d_invalidate() is the wrong primitive for that. It's for a name that
+> went stale. It walks the subtree, prunes it and detaches every mount it
+> finds, under namespace_sem, and here that runs from inside the
+> filesystem's own directory operation. ext4_rmdir() does it with the
+> journal handle still open and ext4_unlink() does it even when the
+> unlink failed. All anyone wanted is the unhash.
+> 
+> So d_delete() now unhashes the dentry when the parent is casefolded,
+> next to the dentry-negative sysctl that does the same for every
+> directory. ext4, f2fs and tmpfs drop their d_invalidate() calls.
+> 
+> Nothing changes for a casefolded directory. A miss still isn't cached
+> and a removed name still doesn't leave a negative dentry behind. The
+> target of a rename over an existing name, which tmpfs also passes
+> through shmem_unlink(), doesn't turn negative either. vfs_rename()
+> detaches its mounts and d_move() unhashes it. A failed unlink or rmdir
+> now leaves the dentry hashed and its mounts in place, as in any other
+> directory.
+> 
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
-Thanks for the updates.
+Yeah, this matches my understanding as well. Feel free to add:
 
-On 10/26/26 11:34, Nanzhe Zhao wrote:
-> Hi Chao,
-> 
-> Thanks for forwarding the local Sashiko review.  I went through every
-> comment.  Below I quote the review text and reply item by item.
-> 
-> == Patch 1: f2fs: extend folio state for large folio write path ==
-> 
->> Should this check also exclude the PAGE_PRIVATE_NOT_POINTER bit?
->> If a large folio has no ffs structure attached, but has an integer stored in
->> folio->private with the PAGE_PRIVATE_NOT_POINTER bit set, this function will
->> incorrectly return true.
->>
->> If f2fs_folio_has_ffs() returns true because an integer with the
->> PAGE_PRIVATE_NOT_POINTER bit is stored in folio->private, does this code cast
->> that raw integer into a struct f2fs_folio_state pointer?
->> This would return an invalid out-of-bounds address for the private_flags
->> field, leading to a crash when it gets dereferenced.
->>
->> Can this sequence trigger an invalid pointer dereference and a kernel panic?
->> If PAGE_PRIVATE_SET_FUNC (e.g., folio_set_f2fs_gcing) is called on a large
->> folio without an ffs structure:
->> 1. folio->private is set to BIT(PAGE_PRIVATE_NOT_POINTER) (which is 1).
->> 2. f2fs_folio_flags_addr() is called.
->> 3. f2fs_folio_has_ffs() sees folio_test_large() and private != 0, returning
->>    true.
->> 4. f2fs_folio_flags_addr() casts the integer 1 to a struct f2fs_folio_state
->>    pointer, returning a memory address based off this invalid pointer.
->> 5. set_bit() attempts to write to this invalid unmapped memory address.
-> 
-> In the current implementation, every path that can carry a large folio also
-> allocates and keeps f2fs_folio_state; the private-flag layout is only used
-> for order-0 folios.  However, I did find one race window:
-> 
->     f2fs_get_read_data_folio():
->         if (f2fs_ffs_test_blk_uptodate(folio, index)) {
->             folio_unlock(folio);
->             return folio;
->         }
-> 
->     f2fs_get_lock_data_folio():
->         folio = f2fs_get_read_data_folio(inode, index, 0, for_write, NULL);
->         ...
->         folio_lock(folio);
->         if (unlikely(folio->mapping != mapping ||
->                      !f2fs_ffs_test_blk_uptodate(folio, index))) {
->             f2fs_folio_put(folio, true);
->             return ERR_PTR(-EIO);
->         }
->         return folio;
-> 
-> A concurrent shrink can call ->release_folio() in the unlock window.  On a
-> clean large folio, f2fs_release_folio() detaches and frees the ffs:
-> 
->     bool f2fs_release_folio(struct folio *folio, gfp_t wait)
->     {
->         if (folio_test_dirty(folio))
->             return false;
-> 
->         ffs_detach_free(folio);
->         return true;
->     }
-> 
-> __remove_mapping() then fails the folio_ref_freeze() check because the
-> caller still holds a reference, so the folio stays in the mapping but has
-> no ffs.  On relock, the fully uptodate folio hits the early check in
-> f2fs_ffs_test_blk_uptodate():
-> 
->     if (folio_test_uptodate(folio))
->         return true;
-> 
-> and is returned to GC.  GC later calls folio_set_f2fs_gcing() on a large
-> folio whose private is NULL.  This is the same root cause as the Patch 5
-> "large folio without ffs" comment; fixing this also fixes that one.
-> 
-> Expected diff:
-> 
->     diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->     @@ struct folio *f2fs_get_lock_data_folio(struct inode *inode,
->         /* wait for read completion */
->         folio_lock(folio);
->     -   if (unlikely(folio->mapping != mapping ||
->     -                !f2fs_ffs_test_blk_uptodate(folio, index))) {
->     +   if (unlikely(folio->mapping != mapping)) {
->             f2fs_folio_put(folio, true);
->             return ERR_PTR(-EIO);
->         }
->     +   if (folio_test_large(folio) && !f2fs_folio_has_ffs(folio)) {
->     +       if (!f2fs_ffs_find_or_alloc(folio)) {
->     +           f2fs_folio_put(folio, true);
->     +           return ERR_PTR(-ENOMEM);
->     +       }
->     +   }
->     +   if (unlikely(!f2fs_ffs_test_blk_uptodate(folio, index))) {
->     +       f2fs_folio_put(folio, true);
->     +       return ERR_PTR(-EIO);
->     +   }
->         return folio;
-> 
-> == Patch 3: f2fs: support regular file buffered writes on large folios ==
-> 
->> Can this result in a spurious -EFSCORRUPTED error during a direct I/O
->> fallback?
->> In f2fs_preallocate_blocks(), FI_PREALLOCATED_ALL is set unconditionally
->> when f2fs_map_blocks() returns 0.  However, for direct I/O, the allocation
->> exits early on physically unmergeable extents, meaning map.m_len might be
->> smaller than requested.
->> ...
->> Will reading the unallocated hole then yield a NULL_ADDR and trigger the
->> -EFSCORRUPTED failure here?
-> 
-> False Positive. Our code path here is the buffered IO path, not the DIO case described.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Agreed,
+								Honza
 
-Looks like a bug, maybe we can add f2fs_bug_on for such case?
-
+> ---
+>  fs/dcache.c     |  8 +++++++-
+>  fs/ext4/namei.c | 18 ------------------
+>  fs/f2fs/namei.c |  9 ---------
+>  mm/shmem.c      |  7 -------
+>  4 files changed, 7 insertions(+), 35 deletions(-)
 > 
->> Does this miss updating the ffs dirty bitmap for large folios modified via
->> external paths like get_user_pages?
->> ...
->> Should we be updating the ffs dirty bitmap here after a successful
->> filemap_dirty_folio() for large folios?
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index efd9332c8407..f5cbb2e24e53 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2746,6 +2746,12 @@ struct dentry *d_hash_and_lookup(struct dentry *dir, struct qstr *name)
+>  	return d_lookup(dir, name);
+>  }
+>  
+> +static __always_inline bool d_delete_drop(struct dentry *dentry)
+> +{
+> +	return dentry_negative_policy ||
+> +	       IS_CASEFOLDED(d_inode(dentry->d_parent));
+> +}
+> +
+>  /*
+>   * When a file is deleted, we have two options:
+>   * - turn this dentry into a negative dentry
+> @@ -2777,7 +2783,7 @@ void d_delete(struct dentry * dentry)
+>  	 * Are we the only user?
+>  	 */
+>  	if (dentry->d_lockref.count == 1) {
+> -		if (dentry_negative_policy)
+> +		if (d_delete_drop(dentry))
+>  			__d_drop(dentry);
+>  		dentry->d_flags &= ~DCACHE_CANT_MOUNT;
+>  		dentry_unlink_inode(dentry);
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index 6e0630a49e48..c4b1121471e6 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -3209,15 +3209,6 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
+>  	ext4_fc_track_unlink(handle, dentry);
+>  	retval = ext4_mark_inode_dirty(handle, dir);
+>  
+> -	/* VFS negative dentries are incompatible with Encoding and
+> -	 * Case-insensitiveness. Eventually we'll want avoid
+> -	 * invalidating the dentries here, alongside with returning the
+> -	 * negative dentries at ext4_lookup(), when it is better
+> -	 * supported by the VFS for the CI case.
+> -	 */
+> -	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> -		d_invalidate(dentry);
+> -
+>  end_rmdir:
+>  	brelse(bh);
+>  	if (handle)
+> @@ -3320,15 +3311,6 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
+>  
+>  	retval = __ext4_unlink(dir, &dentry->d_name, d_inode(dentry), dentry);
+>  
+> -	/* VFS negative dentries are incompatible with Encoding and
+> -	 * Case-insensitiveness. Eventually we'll want avoid
+> -	 * invalidating the dentries here, alongside with returning the
+> -	 * negative dentries at ext4_lookup(), when it is  better
+> -	 * supported by the VFS for the CI case.
+> -	 */
+> -	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> -		d_invalidate(dentry);
+> -
+>  out_trace:
+>  	trace_ext4_unlink_exit(dentry, retval);
+>  	return retval;
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 233c07fec171..30f6b8448eee 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -631,15 +631,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>  	if (err)
+>  		goto out;
+>  
+> -	/* VFS negative dentries are incompatible with Encoding and
+> -	 * Case-insensitiveness. Eventually we'll want avoid
+> -	 * invalidating the dentries here, alongside with returning the
+> -	 * negative dentries at f2fs_lookup(), when it is better
+> -	 * supported by the VFS for the CI case.
+> -	 */
+> -	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> -		d_invalidate(dentry);
+> -
+>  	if (IS_DIRSYNC(dir))
+>  		err = f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
+>  out:
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 0d891ade18b5..5a353ac32573 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3953,13 +3953,6 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+>  	inode_inc_iversion(dir);
+>  	simple_unlink(dir, dentry);
+>  
+> -	/*
+> -	 * For now, VFS can't deal with case-insensitive negative dentries, so
+> -	 * we invalidate them
+> -	 */
+> -	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> -		d_invalidate(dentry);
+> -
+>  	return 0;
+>  }
+>  
 > 
-> A writable mapping goes through f2fs_vm_page_mkwrite(), which marks the
-> whole valid folio dirty before folio_mark_dirty():
+> -- 
+> 2.53.0
 > 
->     if (folio_test_large(folio))
->         f2fs_ffs_mark_subrange_dirty(folio, 0, dirty_len);
->     folio_mark_dirty(folio);
-> 
-> A GUP/DMA write needs a writable PTE, so it is covered by that
-> page_mkwrite.  I am not aware of a FOLL_WRITE path that bypasses
-> page_mkwrite.
-> 
-> == Patch 4: f2fs: support atomic file large folios buffered write ==
-> 
->> Can returning -EAGAIN here cause atomic write counts to be double counted for
->> prior subpages?
->> ...
->> Because cow_has_reserved_block defaults to false and the COW lookup was
->> skipped, inc_atomic_write_cnt() will be incremented a second time for every
->> subpage already processed before the abort.  Could this corrupt the atomic
->> write statistics?
-
-I'm a bit confuse about what detailed number inc_atomic_write_cnt() tries to
-record, previously we need to call inc_atomic_write_cnt() only if node_changed
-is true, if it tries to record the first time write on cow inode, IIUC, please
-correct me if I understand incorrectly.
-
-To Daeho, could you please take a look and help to review the comments and
-below change?
-
-> 
-> This is valid.  For a large folio, the assumption behind this check does
-> not hold:
-> 
->     if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
->         goto reserve_block;
-> 
-> The retry can be caused by f2fs_balance_fs_folio_locked() dropping the
-> folio lock and a concurrent reclaim calling ->release_folio(), which frees
-> the ffs.  The retry is not necessarily caused by a truncate, so the block
-> at that index can still be NEW_ADDR.
-> 
-> The append branch itself is not new: the original 4K code skipped the COW
-> lookup in the same way, so a retry there can also double count.  The
-> large-folio path makes it much easier to hit because balance can retry on
-> ffs release or folio order change and restarts the whole folio.
-> 
-> The fix is to check the COW block only on retry.  The first attempt keeps
-> the original fast path (no COW lookup); once f2fs_write_begin() retries,
-> it passes check_reserved=true so an already reserved NEW_ADDR block is not
-> reserved and accounted again.  This does not depend on whether a truncate
-> path clears the block address.
-> 
-> Expected diff:
-> 
->     diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->     @@ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
->     -           struct inode *inode, pgoff_t index,
->     -           block_t *blk_addr, bool *node_changed)
->     +           struct inode *inode, pgoff_t index,
->     +           block_t *blk_addr, bool *node_changed,
->     +           bool check_reserved)
->      {
->          struct inode *cow_inode = F2FS_I(inode)->cow_inode;
->          int err = 0;
->          block_t ori_blk_addr = NULL_ADDR;
->          bool cow_has_reserved_block = false;
->     +    bool append = ((loff_t)index << PAGE_SHIFT) >= i_size_read(inode);
-> 
->     -    if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
->     +    if (append && !check_reserved)
->              goto reserve_block;
-> 
->          /* Look for the block in COW inode first */
->          err = __find_data_block(cow_inode, index, blk_addr);
->          ...
->          if (*blk_addr == NEW_ADDR)
->              cow_has_reserved_block = true;
-> 
->     -    if (is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
->     +    if (append || is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
->              goto reserve_block;
-> 
->     @@ static int prepare_large_folio_atomic_write_begin(struct inode *inode,
->     -           unsigned int len)
->     +           unsigned int len, bool retried)
->      {
->          ...
->          err = prepare_atomic_write_begin(sbi, inode, index,
->     -                                    &blkaddr, &node_changed);
->     +                                    &blkaddr, &node_changed, retried);
-> 
->     @@ static int f2fs_write_begin(const struct kiocb *iocb,
->          bool need_balance = false;
->     +    bool retried = false;
->          block_t blkaddr = NULL_ADDR;
-> 
->          ...
->          if (err) {
->              if (err == -EAGAIN) {
->     +            retried = true;
->                  f2fs_folio_put(folio, true);
->                  goto repeat;
->              }
->              goto put_folio;
->          }
-> 
->          if (f2fs_balance_fs_folio_locked(folio, mapping, need_balance)) {
->     +        retried = true;
->              f2fs_folio_put(folio, true);
->              goto repeat;
->          }
-> 
-> == Patch 5: f2fs: support large folio writeback ==
-> 
->> Does this prematurely end writeback for the entire large folio when it
->> lacks FFS state?
->> If a large folio is dirtied without an attached f2fs_folio_state (FFS), it
->> bypasses the write_pages_pending reference counter during background
->> writeback.
->> When the first I/O block completes, f2fs_ffs_put_write_pending() will
->> immediately call folio_end_writeback().
->> ...
->> A Time-Of-Check to Time-Of-Use (TOCTOU) race exists when retrieving a folio
->> using f2fs_get_lock_data_folio().  It calls f2fs_get_read_data_folio(), which
->> allocates FFS but then unlocks the folio if it is already up-to-date.  Before
->> f2fs_get_lock_data_folio() re-acquires the lock, a concurrent memory reclaim
->> can call f2fs_release_folio() on the clean folio, freeing its FFS state.
-> 
-> This is the same race as the one described for Patch 1.  Once
-> f2fs_get_lock_data_folio() rebuilds the ffs after relock, a large folio
-> cannot enter writeback without ffs, so this one is fixed by the Patch 1
-> change rather than by a separate put() workaround.
-> 
->> Can this crash the kernel via f2fs_bug_on() due to a missing NULL_ADDR check?
->> ...
->> Without that check here, f2fs_outplace_write_data() will hit this assertion
->> and panic the kernel:
->>      f2fs_bug_on(sbi, dn->data_blkaddr == NULL_ADDR);
-> 
-> False Positive. This is covered by 11/15, which adds the subpage-aware truncated state:
-> 
->     if (err == -ENOENT || fio.old_blkaddr == NULL_ADDR) {
->         f2fs_clear_truncated_page_state(folio, i);
->         err = 0;
->         goto block_done;
->     }
-> 
->> Does this logic trap the worker in an infinite writeback loop on truncated or
->> hole-punched large folios?
->> ...
-> 
-> Same, covered by 11/15.
-> 
-> == Patch 8: f2fs: make GC migration large-folio aware ==
-> 
->> Is there a regression here where f2fs_do_write_data_page() bypasses the
->> newly added cleanup code on early errors, leaking the PG_f2fs_gcing flag on
->> the folio?
->> The removed cleanup relies on f2fs_do_write_data_page() performing it at the
->> out label added above, but f2fs_do_write_data_page() can return directly
->> without reaching that label.  For example, it might fail on lock acquisition:
->>   /* Deadlock due to between page->lock and f2fs_lock_op */
->>   if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi, &lc))
->>       return -EAGAIN;
->> Could the folio permanently retain the PG_f2fs_gcing flag since the
->> caller-side cleanup was removed?
-> 
-> This one is also valid.  The early trylock failure returns directly and
-> bypasses the common out path.  Expected diff:
-> 
->     diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->     @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
->         /* Deadlock due to between page->lock and f2fs_lock_op */
->     -   if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi, &lc))
->     -       return -EAGAIN;
->     +   if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi, &lc)) {
->     +       if (!f2fs_ffs_has_dirty_subpage(folio))
->     +           folio_clear_f2fs_gcing(folio);
->     +       return -EAGAIN;
->     +   }
-> 
-> The Patch 1 race and this early-return path are the two issues I can fix
-> immediately; the Patch 4 atomic accounting and the Patch 14 mkwrite part
-> are also valid, but need more design work.
-> 
-> == Patch 12: f2fs: fix zeroing paths for large folios ==
-> 
->> Does this code skip zeroing valid subpages of partially up-to-date large
->> folios?
->> ...
->> Should this check be converted to f2fs_ffs_test_blk_uptodate(folio, index)
->> to match the changes made in f2fs_get_new_data_folio()?
-> 
-> False Positive. cache_only is only passed for inline data: truncate_page is set only in
-> the f2fs_has_inline_data() branch of f2fs_do_truncate_blocks().  Inline
-> data is order-0, and f2fs_read_inline_data() marks the whole folio
-> uptodate, so the large-folio partially-uptodate case cannot reach the
-> cache_only branch.
-> 
-> == Patch 13: f2fs: handle block cloning within the same large folio ==
-> 
->> Does returning -ENOMEM here leave the page cache corrupted?
->> Before this check, memcpy_folio() has already copied the data into the
->> destination folio.  If f2fs_ffs_find_or_alloc() fails and we return -ENOMEM,
->> the page cache modification is not reverted.
->> If the cloning operation is aborted, would userspace read the incorrectly
->> modified page cache?  Could this corrupted data also be persisted to disk if
->> the folio is later dirtied?
->> Additionally, when same_folio is true, the block reserved earlier with
->> f2fs_reserve_block() does not appear to be reverted on this error path.
-> 
-> f2fs_get_new_data_folio() already calls f2fs_ffs_find_or_alloc() before
-> returning the locked folio:
-> 
->     if (folio_test_large(folio) && !f2fs_ffs_find_or_alloc(folio)) {
->         f2fs_folio_put(folio, true);
->         f2fs_put_cache(ientry, true);
->         return ERR_PTR(-ENOMEM);
->     }
-> 
-> False Positive. For same_folio, fdst is fsrc from f2fs_get_lock_data_folio(), which also
-> has the ffs.  The later f2fs_ffs_find_or_alloc(fdst) is redundant, and the
-> post-memcpy ENOMEM path is unreachable in the normal flow.
-> 
-> == Patch 14: f2fs: allow large folio support to writeable files ==
-> 
->> Can this check be bypassed using FS_IOC_SETFLAGS?
->> If a user creates a file, sets it immutable (chattr +i), and drops caches to
->> force an inode reload, the mapping is configured with MAX_PAGECACHE_ORDER.
->> The user can then clear the immutable flag (chattr -i).
->> Since f2fs_setflags_common() clears S_IMMUTABLE but does not downgrade the VFS
->> mapping limits, this now-mutable file can be opened for writing and populate
->> the page cache with large folios.
-> 
-> Not important.  Our final
-> direction is to enable large folios for writable files as well.
-> 
->> Does this cause O(N^2) complexity and massive stat inflation for large folios?
->> ...
->> For a 2MB large folio, sequentially writing to all 512 subpages will trigger
->> this page fault handler 512 times.  Each invocation processes all 512 blocks
->> and increments the IO stats by 2MB, resulting in 262,144 block iterations and
->> a 1GB inflation to APP_MAPPED_IO.
-> 
-> 
-> As explained before, do_shared_fault()'s finish_fault() installs writable PTEs for 
-> the whole folio. So we should dirty the whole folio to avoid data loss.
-> 
-> I will send a v7 series with these fixes.
-
-Thanks, will take a look soon.
-
-Thanks,
-
-> 
-> Thanks,
-> Nanzhe
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
