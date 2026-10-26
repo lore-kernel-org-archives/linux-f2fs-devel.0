@@ -1,13 +1,13 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29803606A31A
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Oct 2026 20:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD8B606A32F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 00:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=l6U4kUvd;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=a48D/+KI;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=O2dLX7n6;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iSToPKTP
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ciFkngVG;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=G0Y8lwMR;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=X/z540ng;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ViDZsyXi
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
@@ -15,29 +15,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
 	List-Unsubscribe-Post:List-Owner;
-	bh=3e6iK9Rluiix12daFUlIYYbODLg9wCYVAu3Lqc3T8YY=; b=l6U4kUvdVNU1axOhQ8abvicJry
-	yyMDjnYRbTcts3XMcNj0fLY18YPj+MB1R8ctWEnfSvlE5oRuChd66SlvCIL8fuxq47GjNuIINh54N
-	mATSaegxJRxexhINBZauq1SkhNAlyGk2NRwrCkVkV5ONA29u2ivQmjjIGYvpgTbuqoUI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=LZ6JBEtsV8gC44dJJduKnKdda/16H/OUaErTXsLpXls=; b=ciFkngVGZGqw5oEAw0ze33yc7c
+	qf22KZ/2oCZFDM89IhD71bmTsHI3hUgJE2LzkvCswj5tgX7/2cODsoVtKtImXOhDeJh03kdYPLvFQ
+	9F+vdjvWG/pYJ7pD+tMPMuuv5gym8k4oX4Wy8T78udXpoIYE6Ch6cmvBasilU2a4BsEE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xL50c-000000008L7-3aMA;
-	Sun, 25 Oct 2026 20:40:02 +0000
+	id 1xL8VQ-000000003EH-2DN9;
+	Mon, 26 Oct 2026 00:24:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <ebiggers@kernel.org>) id 1xL50D-000000008Js-3boQ
+ (envelope-from <chao@kernel.org>) id 1xL8VP-000000003E7-0xrn
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 25 Oct 2026 20:39:37 +0000
+ Mon, 26 Oct 2026 00:24:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Dec6d23kzD9Q7ZmgTNaLfCaR3TzF+qKAdsnxeeBx+Qk=; b=a48D/+KImu9kiOJh+u3edAvXgS
- h9sgd1Wkff9cz81764hB2VrI5wjtiE9VSPMLebalHMS/iXrh1tLa2hCxeNQXe33KyXkYfeUnWv9DS
- lRHSFpOkoFdUz3TzIG1h5LCXsY7ufUqZdBv3Rmj9Ktre18KMcfeVKCQ4IMA3m2ebCrxg=;
+ bh=dqpn0VOvid0Ccj1QalYb9m3wlp9UzSVV8m4iQZQdUq4=; b=G0Y8lwMRnLj3i8r4mK5uGbGvwB
+ p5cAJFrLazYNEElLHbvss4uufCMIofSHb+iGE9bKerHog9hIkVyl5nx9F2J88151kvH3Y9UDZ9czY
+ s/8TSZUGzAW/QAp84YFJOg6exj/xLa64MszhTbRJGLy9sAfVFdthJrShffIm+iD9DxEo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
@@ -45,41 +45,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Dec6d23kzD9Q7ZmgTNaLfCaR3TzF+qKAdsnxeeBx+Qk=; b=O2dLX7n6JVoXFrXRz632F5IaTd
- 2mnkdI3uKnf/Q47E2S7hdwkqFoMvraZWH1sj8lF9avAvW+49N9fJqJtrgqqcXKrVYpszdzGPyjLbc
- jkZFGMWu6IMtH+PP+g8F+UCHmuG602n2e9HtVXshXOjK4YhLQlBs50gKRU204BmGv5/Q=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=dqpn0VOvid0Ccj1QalYb9m3wlp9UzSVV8m4iQZQdUq4=; b=X/z540ngzGlv7QvzzP8TUS9Ldx
+ GLq40R3U/WgzDG+TRGAaLgclnl+gW6rqBxClYnShON9tWlJ9HdsZledjLoySFaa9KVPH2Vc8GvSDB
+ FRFgxVtcmC38Fj0lIZHMmUlj4TxBTOtJFkD3tSBXiSaQxR/hSDyrF0uaxdKiRtsUZFB8=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xL50D-000000002Cr-0uTJ
+ id 1xL8VO-0000000063J-3MkD
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 25 Oct 2026 20:39:37 +0000
+ Mon, 26 Oct 2026 00:24:03 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 804BA600CB
+ by sea.source.kernel.org (Postfix) with ESMTP id 6747743F56
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 25 Oct 2026 20:39:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B87C1F01825;
- Sun, 25 Oct 2026 20:39:31 +0000 (UTC)
+ Mon, 26 Oct 2026 00:23:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E11E1F031E4;
+ Mon, 26 Oct 2026 00:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1792960771;
- bh=Dec6d23kzD9Q7ZmgTNaLfCaR3TzF+qKAdsnxeeBx+Qk=;
+ s=k20260515; t=1792974237;
+ bh=dqpn0VOvid0Ccj1QalYb9m3wlp9UzSVV8m4iQZQdUq4=;
  h=From:To:Cc:Subject:Date;
- b=iSToPKTPDNDUaXbuV1jJFmBiMVnkKX8KG92NdwNokA9KpYlv8kvLJ77rJ6Ff2OC64
- B0+5gSWk92sPlFZBNMujMaYXdWDiwpMpvYeR/rhkBovuTDLEuYKBaDRtLqLOhiVG95
- FU8E14i1657mzsPlsMkDu60KJ14dzl71px8W1BVWeoZfPmXvN63+yY3tpUJXTT+7r7
- 0yR6XyCr2XJhhFLjgcsHBaE8erCrbiA0QwC2PC5LKafNF06F7oTwno6syFiR73a9v+
- SYTSqta1GeWULcIY00+ImdRvrKdbcnk31RS4wXhWpnB4Tq1WKVG0mBZg59Nl2OjATA
- UwWDKnaZ/8TrA==
-To: fsverity@lists.linux.dev
-Date: Sun, 25 Oct 2026 13:38:31 -0700
-Message-ID: <20261025203831.120095-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.56.0
+ b=ViDZsyXiu9itni2pmBDvfVFt2UQgOqOn0q/0SlyWyPyIAU/YKzMGQL0VZtxCUTH0r
+ UtywuKmYkhq0PzMIfQcmWtnddwWL3t0xD1R+U6PqyJR0AFaWoBMjMajngAoucdjcl8
+ ggqo+1I9QiAdqQhZWnRxl1astjjopA3pWp2BK6dTo8G82hW/RnUmKKcGG/6lWeujXF
+ po+2oTSuANocL0h2e0SxQpZhZ/Z/hYuGYm6WNDPzPcDVMjh1lHytcPr7v7nY3LPLQT
+ 50zNORp8pwZuBj0upDXhaQdcSrl5I2B9L9266J+xno/hircS42lv/ODY+uDStCTvy1
+ dFSN08jL74PSQ==
+To: jaegeuk@kernel.org
+Date: Mon, 26 Oct 2026 08:23:49 +0800
+Message-ID: <20261026002350.1451587-1-chao@kernel.org>
+X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xL50D-000000002Cr-0uTJ
-Subject: [f2fs-dev] [PATCH] fsverity: Be more careful with return value of
- ->get_verity_descriptor()
+X-Headers-End: 1xL8VO-0000000063J-3MkD
+Subject: [f2fs-dev] [PATCH v2 1/2] f2fs: fix to fetch ino via ino_of_node()
+ under cache lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,11 +89,9 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
- stable@vger.kernel.org, linux-btrfs@vger.kernel.org,
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -104,102 +102,44 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-If fsverity_operations::get_verity_descriptor() returns that the verity
-descriptor has 0 size, then a zero-size buffer is allocated to hold it,
-and it's called again with bufsize=0.
+From: Chao Yu <chao@kernel.org>
 
-But bufsize=0 is a special case that says to return the actual size.  If
-in the meantime the filesystem has decided that the size is some
-actually valid size, it will return that size, and then
-validate_fsverity_descriptor() will read from ZERO_SIZE_PTR and crash.
+In f2fs_writeback_node_caches(), it's better to fetch ino via ino_of_node()
+under cache lock, otherwise, node cache content may become stale after cache
+is unlocked due to racing w/ truncation.
 
-Of course, for the filesystem to misbehave in that strange way, it
-generally would require direct writes to the block device.
+Commit 493b9dc8b52c ("f2fs: cache: use node cache") fixes similar issue in
+f2fs_flush_inline_data() introduced in commit 34c061ad85a2 ("f2fs: Avoid double
+lock for cp_rwsem during checkpoint").
 
-Regardless, fsverity_get_descriptor() might as well guard against it.
-Make it do so.  Specifically, validate that the first call to
-->get_verity_descriptor() returns at least the minimum descriptor size,
-and validate that the second call returns the same size as the first.
-
-Fixes: fd2d1acfcadf ("fs-verity: add the hook for file ->open()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+Cc: stable@kernel.org
+Fixes: 2049d4fcb057 ("f2fs: avoid multiple node page writes due to inline_data")
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/verity/open.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+v2:
+- no changes
+ fs/f2fs/node.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 6646290430380..78a65154b8957 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -270,12 +270,6 @@ static bool validate_fsverity_descriptor(struct inode *inode,
- 					 const struct fsverity_descriptor *desc,
- 					 size_t desc_size)
- {
--	if (desc_size < sizeof(*desc)) {
--		fsverity_err(inode, "Unrecognized descriptor size: %zu bytes",
--			     desc_size);
--		return false;
--	}
--
- 	if (desc->version != 1) {
- 		fsverity_err(inode, "Unrecognized descriptor version: %u",
- 			     desc->version);
-@@ -314,31 +308,37 @@ static bool validate_fsverity_descriptor(struct inode *inode,
- int fsverity_get_descriptor(struct inode *inode,
- 			    struct fsverity_descriptor **desc_ret)
- {
--	int res;
-+	int size, res;
- 	struct fsverity_descriptor *desc;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 424e95ca5878..44f94000d452 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2195,9 +2195,11 @@ int f2fs_writeback_node_caches(struct f2fs_sb_info *sbi, long nr_to_write,
  
--	res = inode->i_sb->s_vop->get_verity_descriptor(inode, NULL, 0);
--	if (res < 0) {
--		fsverity_err(inode,
--			     "Error %d getting verity descriptor size", res);
--		return res;
-+	size = inode->i_sb->s_vop->get_verity_descriptor(inode, NULL, 0);
-+	if (size < 0) {
-+		fsverity_err(inode, "Error %d getting verity descriptor size",
-+			     size);
-+		return size;
- 	}
--	if (res > FS_VERITY_MAX_DESCRIPTOR_SIZE) {
--		fsverity_err(inode, "Verity descriptor is too large (%d bytes)",
--			     res);
-+	if (size < sizeof(*desc) || size > FS_VERITY_MAX_DESCRIPTOR_SIZE) {
-+		fsverity_err(inode,
-+			     "Verity descriptor has invalid size (%d bytes)",
-+			     size);
- 		return -EMSGSIZE;
- 	}
--	desc = kmalloc(res, GFP_KERNEL);
-+	desc = kmalloc(size, GFP_KERNEL);
- 	if (!desc)
- 		return -ENOMEM;
--	res = inode->i_sb->s_vop->get_verity_descriptor(inode, desc, res);
-+	res = inode->i_sb->s_vop->get_verity_descriptor(inode, desc, size);
- 	if (res < 0) {
- 		fsverity_err(inode, "Error %d reading verity descriptor", res);
- 		kfree(desc);
- 		return res;
- 	}
--
--	if (!validate_fsverity_descriptor(inode, desc, res)) {
-+	if (res != size) {
-+		fsverity_err(inode, "Verity descriptor size changed (%d => %d)",
-+			     size, res);
-+		kfree(desc);
-+		return -EINVAL;
-+	}
-+	if (!validate_fsverity_descriptor(inode, desc, size)) {
- 		kfree(desc);
- 		return -EINVAL;
- 	}
-
-base-commit: 21a7f44fd0765fcc5194130b28767786eba1d1e7
+ 			/* flush inline_data */
+ 			if (f2fs_cache_test_inline(entry)) {
++				nid_t ino = ino_of_node(sbi, entry);
++
+ 				f2fs_cache_clear_inline(entry);
+ 				f2fs_unlock_cache(entry);
+-				flush_inline_data(sbi, ino_of_node(sbi, entry));
++				flush_inline_data(sbi, ino);
+ 				goto lock_node;
+ 			}
+ 
 -- 
-2.56.0
+2.49.0
 
 
 
