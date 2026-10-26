@@ -1,42 +1,42 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C901606A332
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 10:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D52606A31F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2026 10:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=JD7l1EWk;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=mYz0Ttrn;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=itLZjiir;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=KboRcv8r
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=iYlaJ0c2;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=E6bgLt1c;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=N6Rv1sPa;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=NaD+HooS
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=CRhlWNqez1Mx079COq6u04u/IoUlSS4+nWAMpbLptXE=; b=JD7l1EWkLucARgjsjPcaj81yOm
-	npg7khJqjAuftv5PGPU0/ewnzHWNNRiqTjJevf6xeKTllEYXADpCRxVaJTcdnl6AhG5mtfiRlY7Qd
-	E+OyJDYTZYPxQv3GZrfGOwGGFslGr6uPdcUXb/CTOAo18SY37xSpm2TYBw9lNcJpMxN4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=CqVRbbndMQGVLchnKU9zMW+xHvnlLDso9/tpsHC2dJM=; b=iYlaJ0c2+lxCZl9QqFXV1xcsv8
+	4+iVn9herjXjF5/UR8eLYJaF+hBoaManjuf/bDZtAW+Ot2PUCYF8dlziR3BNj+J6aY9ReJUEKj2D6
+	hi/pwQ5lF8whsLyKkvJZhVKGRy0M5cSJErlXAc5EpdIyq2sFB8TpBkQ3ruv6rodV2C7w=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xLIIC-000000006w8-0zwc;
-	Mon, 26 Oct 2026 10:51:04 +0000
+	id 1xLIIF-000000003Qh-0rzU;
+	Mon, 26 Oct 2026 10:51:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <teel4res@gmail.com>) id 1xLIIA-000000006vr-25pe
+ (envelope-from <teel4res@gmail.com>) id 1xLIIE-000000003QY-2jXN
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Oct 2026 10:51:02 +0000
+ Mon, 26 Oct 2026 10:51:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zpoGBsTQ1MMQtEr8iRtFOb/elu0nHODI5EyL2pzDfwY=; b=mYz0TtrnPd3Wpk7F0Ruf1gzzqw
- wqR3qAJPJUVN0NoAK/Z4N3TigdWULnQe9iiC3AQgtoSe3lVkX2kTrhKXMAblxdk+HFAqVZ2IZFJ3/
- ME8EIEjdr8JLcWsiGynq5AYuu3hhECSh4sCDOhw+a4dA2eiRPV9KjNM1t3GE4NWCYEi4=;
+ bh=io9R/T28rLxuixHyPNzGTDg5gzAwHn6Z3f+jZaKGnbg=; b=E6bgLt1cmKHXhKgDu6/xe89izy
+ PHZ5sNWOQpHHgTyFa1M8qKVHpExLuvIcb4SLE4em5V061zLeT39CbcuZ5m294jK8jQCy0LbfCjlp8
+ uqdzLFAEVgFA877NEinMRHZM8hrfpLmvBYzMO4JtMprYGXgizVqrJPiDJw/FkfiTWlEU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -44,76 +44,75 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zpoGBsTQ1MMQtEr8iRtFOb/elu0nHODI5EyL2pzDfwY=; b=itLZjiirL2uopFYZFkwc4Sngbq
- 718IuyS9HU5wO0DM4eJrAcUu23/Mc2R/SSlLzwNNKBffV0D0/oeejm9eQFo/4m4fY/wpPPyILv8Q+
- NI/mEtHwun/rWXxpDTi5W7Ta1EInF7MayyWDPczCbXeizsFsdaSP8aPXphAy7xEQQ57w=;
-Received: from mail-dl1-f42.google.com ([74.125.82.42])
+ bh=io9R/T28rLxuixHyPNzGTDg5gzAwHn6Z3f+jZaKGnbg=; b=N6Rv1sPaQTnmw2xzVlQe2I/u+u
+ xPgzddYraqf1nPC8GnRHSd4kXizGO0Xm5OpU63qglBS+71DQ/6cD4CV0QQmXaQQNUAxfRGz4KmOBP
+ Zf1WuaReCZuW+n241xJ/FXyY9KquYV05w7Qk/CLFeYZTFTHOB6RqAbjSHMgMj2yQkcbE=;
+Received: from mail-dl1-f52.google.com ([74.125.82.52])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xLII8-000000006Da-35m4
+ id 1xLIIC-000000006De-0ZQ0
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Oct 2026 10:51:02 +0000
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-14394530ec6so3440589c88.1
+ Mon, 26 Oct 2026 10:51:06 +0000
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-1846bc43c28so2805563c88.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Oct 2026 03:51:00 -0700 (PDT)
+ Mon, 26 Oct 2026 03:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1793011855; x=1793616655; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1793011858; x=1793616658; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=zpoGBsTQ1MMQtEr8iRtFOb/elu0nHODI5EyL2pzDfwY=;
- b=KboRcv8rmQopvDgF7tw3N+XRJoenhjoy/G9lllaCGhyv9eHco3s3yTzEvGuOZHJl1J
- S8uD04xof5VmoVwQGLVkD5OtvhrDCqUrv1bE4m5C8RNNuF1kCsJ35oYXOLB+gKRImgvh
- oPAY3o1agPImAeHyUrZDZjf0COBMSaU0JwSSsoTnf/m1FK30ylFY7oOKj9Py7Xn6vAG8
- zFmVeHA5GY3/GifV2CRQfqYvMx3jNn4xe+NZTUqnpUDkQG86RfY73JeGA1bRgT3oZwhS
- Nu/sh+2M4vkIDGiUR/PP3LUXO1lIkjb1s8iLplhrdxF9RidOWGD3Acbw/3tnPuif6irN
- kq7A==
+ bh=io9R/T28rLxuixHyPNzGTDg5gzAwHn6Z3f+jZaKGnbg=;
+ b=NaD+HooStiPQUDr90tG9E7IUJ4qWqoU6Za6M8JnRUDOllHIo6rZLYP97ov/V7WiqeE
+ QpSJOzGM9jjOOwiZMIqHqcJdV1QNBVS/EKaZfaVVifWlBqJnrv5GorEsghamIO6zxL+V
+ cNxCkdYEMyqk/4BWXdDGqYoizz0Tak8ZsxDdLYQ7U8Svip+B0BrgAzsROZrJsSmQ7qlK
+ wrCHmBH29HEdAPvdwySgQ5RuStsLspyctipfhBvD3xm1J6i6L2bqJgaoGCS1O4G5eCKa
+ RX7LYXXUpxQXlHoKNY8cokEE2rNDE/vORMn/B18ATfcIz64gTUsNqt+wDKrrK2fpYZ4W
+ WzeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793011855; x=1793616655;
+ d=1e100.net; s=20260707; t=1793011858; x=1793616658;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=zpoGBsTQ1MMQtEr8iRtFOb/elu0nHODI5EyL2pzDfwY=;
- b=OONdhAqg24MrxLcnn0nUKn/z7P3ogynK/g4e0SefqlcJXGTiRnmsMD6Uj5Eo3LFe3P
- D9E3MX6pPAqzxF/embnjm7gz5B3tc4kUOQ8xqPRlX1SAmMDeRIbXnxsbtdsW1BdDh4Je
- tywdeEfnFParrKSKj+1gn8hrr/AtX8QgkAIK+MXaXnXE3NSeXrK7/9YX0/GWYt+G8vUk
- PpGep5tvqNNNV0gg3Gel0CGxI31OpRRdETIJUcpd4YdKZ98+Us89LjLbaA8COgHcWp2O
- SKtgylw5oApoiDUH2VrfIlgQsMDeu2uOUIa/LpYU7LneNMWcd04pTRDKO7FvDWS+sCbG
- QW7g==
-X-Gm-Message-State: AFq9FYI+UHr67TpPu6GtcOmSJPrZz5TBHJOXy7yTd/CnoYSD1MBO5T2u
- Q1vbQOHKL+GO8FByIi/qQhhM6U2nE596TAV56ZCJo1bMekOViPDAdYVV
-X-Gm-Gg: AYBFou0nE3hi6rrrQ1EXSWWbu6hCDZHBUhRrBl6HJSf0eyUD5Py2xEVQi6AsOtwmyUG
- bLOnum41VfGX4ke4u8W7tLP63W3WZJ/vdMeResTxhWEyDL2mWdy9/e2ok3NFdMKGnQhTmwI4mca
- a16P3rp/KCZseGSBszaGlnDi8pJytVZgCoN7P14cxePA4F3gQXnDSyFqQZthFeRGjJGl6PEH/oY
- epvnx0IHqbsEQ5HHFyfqpP47u3rcoOmvY3MlJfnxoG42EFpFXdzjfDBvZI5v8ttIS9D+W318Bbg
- CSezkHh3kwjj7n86wr8JCyNIwzOs8NRcDI/Dmyx3UWH79bkcpEY0yCJcVgcKWcWFdYGYPYEyjAN
- irvdxkWh4sEjU2qfxfyr94QnQXxz2sL8fvxgW42bo38bmdq8EAvGGKdIy6+89FTJTFRWb13J8G+
- TKTTe18tOF9aQnacY/vbKbhB/rZndmxbngm5TKGwDcFt/3dcIR8t9Kn4UbAULwTrqO4snL5Oc9Z
- U0c1YgHDOaqC8zD0/WdtRXVTW9/PQDIRRUSBilNrEj04XyJ7kdyo7HklnuejAKqHKYAlkJmKY+D
- NJDZYhmDdGwuGRAeqpM=
-X-Received: by 2002:a05:701b:4586:10b0:196:4eeb:76e8 with SMTP id
- a92af1059eb24-1993562594bmr9140816c88.20.1793011854790; 
- Mon, 26 Oct 2026 03:50:54 -0700 (PDT)
+ bh=io9R/T28rLxuixHyPNzGTDg5gzAwHn6Z3f+jZaKGnbg=;
+ b=qujDltF50I8fuZVPXqZ2KZdXSfhL7ciODN627xBOQGc6Q/ORoV41JDoqVOaNp0+hKc
+ +nbwzpMWK6ALAh2/KcaOW7Z6aZUbCi/MMgamtb0AYXlSTf39XCVgQgjjvqcCzmHA++GK
+ KG9I36fdGne3Szs2oX/YUT3lGEt30tFj6O1UWoympgTqhSXLZkNfMjoH0eW9P1sLHefu
+ ULYacIiNvjPEzdHncdmGMq5/oqjT3qSIEEBnJ8MkNva4vOHpeBgkODyAwpU8e9GCQ502
+ j7kGdmtOjE+mgoZHL9HEO+M+dwHFdwReXX9qmSEiKPjztbVPnuik0ji4kJjEDAwwfraQ
+ qvDg==
+X-Gm-Message-State: AFq9FYKcIDf1czrHDSgUZ5MkIz6gEn0ps1h8vjaxhwd8HFtDJVL7T6ec
+ 7nDKTxauwvnREfnLLXciROQYEMoilhvOoPngvVD1og9q0HgiGaVbDHwi
+X-Gm-Gg: AYBFou1bERLF4aEAGxOgfjftGxUnXI0jdxxxXZ8kzAoVLnBnIcwMgU8yU6Fcv8AwGjo
+ yXJvtbHrdi9P9oYfrdZMf2wm2ab2p7Nw3Mol40tKCcsSA7htDC77U0sdOWyCQOwc9cN9WdkAgLi
+ 1oIF4gu3ViqJSzIM11zdf+uwEp6H6JF7ihktcJkYzVup5DCsBFoSqYVyCTNllzSCc7VGqW45y+W
+ neldmd5bKR7RIdE3so+dPNUYBkRw5OafVC/mK6J5u8rda51fOjUs5laV6k8PpYbhf1KpE9thtE+
+ r0B58ZQWwppR+iP5JE9o+aacMZM088ZXsy/d3Iq1eaIYK2sXV8HFPB3Pm+kCUZzpQ/ZDh03P3a0
+ QmrwyEaztk8JPh8KTfniUzcMmqNvE6ZFPOuyxMuGKzAbGCanWkmJ2/fHNFeEeCHyblpzXh/57KF
+ IesOgSr6c1oqWR79AIjXgYL4g9Y85QuKe/sN2+ZaSj3cBIdBQNrtDXkNDUZnhoRFD4wUwU71trv
+ ojd3IiwpOb5BnQjB1w09sn0Apf10c1xEX1hLl3G6RwRlVA9ieJhAegIj/v9gcK1zMl5aBuBV6y3
+ nDwgRniRXMXe01wACBk=
+X-Received: by 2002:a05:701b:428d:10b0:16a:f5cd:365 with SMTP id
+ a92af1059eb24-199292eea46mr9977300c88.5.1793011858226; 
+ Mon, 26 Oct 2026 03:50:58 -0700 (PDT)
 Received: from youngkk-vm.localdomain (67.216.200.102.16clouds.com.
  [67.216.200.102]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-198a020df20sm27897863c88.6.2026.10.26.03.50.52
+ a92af1059eb24-198a020df20sm27897863c88.6.2026.10.26.03.50.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Oct 2026 03:50:54 -0700 (PDT)
+ Mon, 26 Oct 2026 03:50:57 -0700 (PDT)
 From: Cheng Yongkang <teel4res@gmail.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 26 Oct 2026 03:50:39 -0700
-Message-Id: <20261026105042.1148554-2-teel4res@gmail.com>
+Date: Mon, 26 Oct 2026 03:50:40 -0700
+Message-Id: <20261026105042.1148554-3-teel4res@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261026105042.1148554-1-teel4res@gmail.com>
 References: <20261026105042.1148554-1-teel4res@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xLII8-000000006Da-35m4
-Subject: [f2fs-dev] [PATCH v3 1/3] f2fs: reject non-directory parent inode
- during dentry recovery
+X-Headers-End: 1xLIIC-000000006De-0ZQ0
+Subject: [f2fs-dev] [PATCH v3 2/3] f2fs: reject MAIN_AREA boundary underflow
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -135,44 +134,50 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-recover_dentry() takes i_pino from the on-disk inode and uses the
-resulting inode as the directory for __f2fs_find_entry() and
-f2fs_add_dentry().  A crafted image can set i_pino to a regular or
-special inode; the recovery code does not check S_ISDIR() and then
-writes a dentry into a non-directory inode, extending its i_size and
-changing its directory-only metadata.
+sanity_check_area_boundary() computes
 
-Reject the record with -EFSCORRUPTED and mark the filesystem for fsck:
+	main_end_blkaddr - segment0_blkaddr
 
-  F2FS-fs (loop0): recover_dentry: ino 4 is not a directory
-  F2FS-fs (loop0): Cannot recover all fsync data errno=-117
+as u64 when main_end_blkaddr < seg_end_blkaddr.  A crafted superblock
+can make main_end_blkaddr smaller than segment0_blkaddr, so the
+subtraction underflows and cpu_to_le32() truncates the result; the
+function persists a wrapped segment_count (0xfffffffd in the
+crafted image) and the next mount rejects the filesystem.  The
+same path can also leave the error workqueue dereferencing freed
+superblock state:
 
-Fixes: d624c96fb324 ("f2fs: add recovery routines for roll-forward")
+  BUG: KASAN: slab-use-after-free in f2fs_commit_super
+
+Reject the underflowing geometry before the subtraction.
+
+Fixes: fd694733d523 ("f2fs: cover large section in sanity check of super")
 Cc: stable@vger.kernel.org
 Assisted-by: LLM
 Signed-off-by: Cheng Yongkang <teel4res@gmail.com>
 ---
- fs/f2fs/recovery.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/f2fs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 54b524660..3e8054324 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -209,6 +209,13 @@ static int recover_dentry(struct inode *inode, struct f2fs_cached_block *entry,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ea2d218..b90831e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4004,6 +4004,12 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
+ 		return true;
  	}
  
- 	dir = fsync_entry->inode;
-+	if (!S_ISDIR(dir->i_mode)) {
-+		f2fs_err(F2FS_I_SB(inode),
-+			 "%s: ino %u is not a directory", __func__, pino);
-+		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-+		err = -EFSCORRUPTED;
-+		goto out;
++	if (main_end_blkaddr < segment0_blkaddr) {
++		f2fs_info(sbi, "Wrong MAIN_AREA boundary, start(%u) end(%llu)",
++			  main_blkaddr, main_end_blkaddr);
++		return true;
 +	}
- 	err = init_recovered_filename(dir, inode, raw_inode, &fname, &usr_fname);
- 	if (err)
- 		goto out;
++
+ 	if (main_end_blkaddr > seg_end_blkaddr) {
+ 		f2fs_info(sbi, "Wrong MAIN_AREA boundary, start(%u) end(%llu) block(%u)",
+ 			  main_blkaddr, seg_end_blkaddr,
+-- 
+2.34.1
+
 
 
 _______________________________________________
