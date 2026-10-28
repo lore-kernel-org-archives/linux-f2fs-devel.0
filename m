@@ -1,119 +1,86 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A7F606A32A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Oct 2026 15:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB00606A325
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Oct 2026 17:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=FB2wc2dX;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=d/CmEYIT;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=cxJFZRbJ;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KzZXIZje
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=j83pj3W8;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=DFiIRJut;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=R6Nxl4c6;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FVkMwS0i
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=svHE4eCtDabhEUehxVhJDqtpkiNHMi/bKtintvrnH1E=; b=FB2wc2dXHk7XJu9+upDayXctmY
-	nE6xU+vPOJYPLgcwabfT6dRwplFO8R5glj+adL9wGX2DFQRiGXPoOYeHZgTgNWtNtJ8jRaCa+ZjJ0
-	JMiPqajBmTj21dIvXuOx5nBZt4+uwQXa5QBYfQm7g3GcuhtQWpr2k69JQsxGcwRQxaIQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Unsubscribe-Post:List-Owner;
+	bh=O5BsICQ8XuvcIa45BvTUifqJrZ7myI3uVRADKFkJFDM=; b=j83pj3W8pLepqkuQogvoLLgIcB
+	U3ggH0/y3UChs9ZFMns4njM+uf5u4Mq/Y+JuUfZsjdX1j+lMKrBv4ZEb8TM3YLmKrynZq/mnxW6EE
+	AAPYK8QOQ1sRNVuHQ8Z2O2lYH5tkvrqdpEoElLyfFOx3L02swZ8f26r1yRbpjCIpZOw8=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xM5qY-0000000021H-0Ewj;
-	Wed, 28 Oct 2026 15:45:50 +0000
+	id 1xM7Y5-000000005HB-2sXx;
+	Wed, 28 Oct 2026 17:34:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <nzzhao.sigma@gmail.com>) id 1xM5qW-00000000215-3p1c
+ (envelope-from <jaegeuk@kernel.org>) id 1xM7Y4-000000005H5-1h76
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Oct 2026 15:45:48 +0000
+ Wed, 28 Oct 2026 17:34:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ng3YrPEQ5YUZCvhHT4uyTZrIVJh9v7VyK/y80on7mmI=; b=d/CmEYITC+paG1wGfmSs31nDai
- vsqLjPijozbDTdIlxavW7mVdhXYTRYJv+z67mbTbDHfgh+E4P/OWA2nlZV3SvENMrz1GAqkVS0BFs
- trn/fqE1m7OO7Q7DkDXjZ855wXC9yZRvyLjiecTdAeW0FIcGghAS6l6ryh8nfH0wX7tg=;
+ bh=Z8flGgLCDZXbO2V4x4lmH9yUfLyn0i0Q2d4UVX084Co=; b=DFiIRJutF9cffze4VdWXO22Z+i
+ O/EHBxmhMGqnzMu8fa18rN4QxczKuTeW/zf26f7BtUynrw4c7knEozjcRSswh+q9CalZqk9n/UPTS
+ NOfC8ica6uHLjXlAwl7wpjb9Av3Gegg2c9CZKwn6nz/5LyZhQVTc0QO5CnpUJIXVmiHY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ng3YrPEQ5YUZCvhHT4uyTZrIVJh9v7VyK/y80on7mmI=; b=cxJFZRbJa/8xaRhV6hYs6Zfzd2
- Jc+PbRPeRLyrQYMbRpPBs4LiVpR5sYvI29hCrFYRiu8usOfcfZPevPq5Vb+nCxJLAW7sRFrS0i7uZ
- UApGNzFEXDRTxtTILqOOPrznPBOXPvE7qzw4uij7wmHQjqGwidai8FqreZxOHVvgxhxo=;
-Received: from mail-pj2-f4.google.com ([74.125.227.132])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xM5qN-000000002PI-0A7x
+ bh=Z8flGgLCDZXbO2V4x4lmH9yUfLyn0i0Q2d4UVX084Co=; b=R6Nxl4c6SArQTgNBHkToFxkllw
+ uyHCe06dLBG4LndUqOZMNL82xAmCn7kix4zHUU1er1FC6a1CEZOzM96K9rTQM/0MhEg091Oo9ltJe
+ 68Rb0EYuf8HAViIkhJdHwLE6htOayfzc4AS3ufVp2Ee7bhlbzq4XsKQmFpRoPHeEbGhw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
+ id 1xM7Y2-0000000074M-3q8K
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Oct 2026 15:45:48 +0000
-Received: by mail-pj2-f4.google.com with SMTP id
- d9443c01a7336-2e96b8bfb43so3797025ad.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 28 Oct 2026 08:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1793202333; x=1793807133; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=ng3YrPEQ5YUZCvhHT4uyTZrIVJh9v7VyK/y80on7mmI=;
- b=KzZXIZjesp8+Lx3KiB3rWS18aDY8d9gevXveaaaVoWq0TZqnwf0QMTur9JPYq+puyP
- dW+2piWmLF4exz2xVC2uD7nnuXwpbHEjRcBL5uXk1hqajaD95tSN+HIDzdrWdIvSi+aj
- 73duedKmkhKKeZpdSuMWzh7P1wu2OINa6tn+Dl1YRhBXCrp0o69VWgIVy5FhjD9WIN8o
- cUXOHJSFse7lDpMF1z3r1q4bYk1GKCm6xDY58dkWrShOVCcMBao7hP/MWMUBOopAXj4G
- 1sBb3kMm4yf4g3dNiqCalkqTjYAa1Uj3dQA39byQ5/uc51OIQ7aShzFgG1kUktjRoPQ2
- iIng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793202333; x=1793807133;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ng3YrPEQ5YUZCvhHT4uyTZrIVJh9v7VyK/y80on7mmI=;
- b=eZ0k1H3Bcg3SLhoxrXa5dxXBnta9mtvo3v9RkH2TUzJrLlHy07qZh1S7WyTAgfbf10
- RScnXiv9+782PLcn5caVaFTN5M4h++KKfFpDi2eLbOzXR7phC2AG+hWzi+qgOUSrLK9g
- 5IPa60zS9x+CKAORCnM0wnjoX/1VdN9WZ0zi3r4YT6q+/p+t/4yr1Lv6kcFTxz2l6bcp
- 5Ef/easQzeyj8wPKpA4cRxD2jvWEhQQyb3reubGpgvv75KoUxJ0xqFMVbuMmO59q1iV5
- lVveBGfcXjS/BcC6l1gzlTjfEGwF+cfie8lykU2FlwRBWloINNjV7+9na2HokJQ/kZiI
- YuaA==
-X-Gm-Message-State: AFq9FYIP8Xs7q0NIZiCereDJKEPEzsh/UNPj1cQuDBQ7XDlej6xIo9i+
- P/gyJLtRT5a0ckxp9ZVhAB6rEvQpoZ3Zis4CS+yPA2J2RdDBf+BEMmgfDXE0pb9fYT4=
-X-Gm-Gg: AYBFou2NVV9ruijoXG+RWW8fke66p3F7/fB/BDd4wTjfI7Sdmg7x/XcrvY0Y7f8b2SZ
- Fy/pb8u7qB5C1Ja8vdtzibE/l44Brg0nm+yxiNh4WSJijtOXqYVWT+fo9j1oofZr4LhnqIeerpo
- /VqZIZQ08Ag8JaepOS3lZiHmYP++R2THuTOicGs2cc9hTNiC5f2KioHL9DVUQgsbnZq6CDpn8BD
- v78M8PuRVt+HV/MbgoBbsw+H0hRiseOXDvOHyT5z8WyORyodUSAVB+n/ir6dphDdskmo0G3WQgL
- WBSu/u/KGkPeyojcWUC/u+RI/dAbA5wGYAX8NzfKsq113s86QFuoMPsZcS9cduqByOYOB6nvA8t
- 78u+qOmHaYUUKkMRRwMlgqLTT7K0F29QPJZ+H3xX6tQxjtRjkPEqQ1GtEdi2Ej4+fsNzGM075Tx
- miqogA6ljlANSVW7a1qApsWJxAcPdY/SXeOn/iIOdJtcZJPVQY7Iik6kJRZ+nJNlkEoeTeV+U24
- r0BgDWa4TruJufbUGoiStp2l+Ni5ExdNjCLDr/5/6aC0468mymxaTVL+C9M8yzWdNrcKKX0YcUY
- SjuKTL/54GaYp0Rd0fWMPUiDRFLCqgXswnS6hkCbYYNaaYj6Wha2QfnF2qycZzxN9g0=
-X-Received: by 2002:a17:903:41d1:b0:2e9:3dd2:a8fe with SMTP id
- d9443c01a7336-2eb00338c6cmr25488805ad.21.1793202333166; 
- Wed, 28 Oct 2026 08:45:33 -0700 (PDT)
-Received: from nzzhao-ThinkCentre-M760t.mioffice.cn ([43.224.245.179])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2eae6be5105sm24111655ad.37.2026.10.28.08.45.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Oct 2026 08:45:32 -0700 (PDT)
-From: Nanzhe Zhao <nzzhao.sigma@gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>
-Date: Wed, 28 Oct 2026 23:44:06 +0800
-Message-ID: <20261028154407.1601430-16-nzzhao.sigma@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261028154407.1601430-1-nzzhao.sigma@gmail.com>
+ Wed, 28 Oct 2026 17:34:52 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 9710243BFC;
+ Wed, 28 Oct 2026 17:34:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E288B1F01825;
+ Wed, 28 Oct 2026 17:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1793208885;
+ bh=Z8flGgLCDZXbO2V4x4lmH9yUfLyn0i0Q2d4UVX084Co=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=FVkMwS0i9gFLnjZmbALjT4X5TtDyAro1eVMx+qWzl/LukXvRXHHz37drdsan6B6WL
+ kFDIDAt6LDChf8EXGQzoChXsJep1VYmeAkl7voyQm38178kRQAivV8zUbdhS2JBOyF
+ mtF/x+1zYCWcgu3nN5QgjFfOJG3Fy9cbg3YNhkTZKJNsl72+iQrCRQayeZmNeZPweC
+ JbUhtXKZsfxQmX5oA+bx6KFVM29fUrpIHLhs8MFnPki6y4dWav/ErWg1+vkgB/1QQt
+ 3sRUo4tPlnkTwZM+jt4ei6lAiaPSEHmSRFYrPiKls85hPFylUzDvJC9t8sEa95BtcZ
+ OmWxx3ULD/jMQ==
+Date: Wed, 28 Oct 2026 17:34:43 +0000
+To: Nanzhe Zhao <nzzhao.sigma@gmail.com>
+Message-ID: <auIyM-RmQE3rx1XL@google.com>
 References: <20261028154407.1601430-1-nzzhao.sigma@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20261028154407.1601430-1-nzzhao.sigma@gmail.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xM5qN-000000002PI-0A7x
-Subject: [f2fs-dev] [PATCH v8 15/15] f2fs: make compressed files compatible
- with large folio
+X-Headers-End: 1xM7Y2-0000000074M-3q8K
+Subject: Re: [f2fs-dev] [PATCH v8 00/15] f2fs: support & optimize large
+ folios for writable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,179 +90,181 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
- Dev Jain <Dev.Jain@arm.com>, David Hildenbrand <David.Hildenbrand@arm.com>,
- Pengfei Li <lipengfei28@xiaomi.com>, Bo Zhang <zhangbo56@xiaomi.com>,
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Barry Song <baohua@kernel.org>, Nanzhe Zhao <zhaonanzhe@xiaomi.com>,
+ Juan Yescas <jyescas@google.com>, Daeho Jeong <daehojeong@google.com>,
+ Dev Jain <Dev.Jain@arm.com>, linux-kernel@vger.kernel.org,
+ David Hildenbrand <David.Hildenbrand@arm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Bo Zhang <zhangbo56@xiaomi.com>,
  Kalesh Singh <kaleshsingh@google.com>, Nanzhe Zhao <nzzhao@126.com>,
- Nanzhe Zhao <zhaonanzhe@xiaomi.com>, Ryan Roberts <Ryan.Roberts@arm.com>
+ Pengfei Li <lipengfei28@xiaomi.com>, Ryan Roberts <Ryan.Roberts@arm.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Hi Nanzhe,
 
-The compression flag is the hint indicates that the inode can be
-compressed, when the inode is using large folio, we expected it keeps
-using the large folio read/write paths and its data stays uncompressed
-on disk until the inode is evicted and re-read
+I applied this series on top of the latest mainline having page private patches
+where I had to clean up some conflicts. Could you please check dev-test branch?
 
-Let f2fs_write_begin() skip the compression overwrite preparation for
-such inodes and remove the compressed-file gate in
-f2fs_read_data_large_folio() so the data is simply read/written as
-regular blocks.
+Thanks,
 
-For the same reason, reject F2FS_IOC_COMPRESS_FILE with -EOPNOTSUPP
-once the inode mapping is switched to large folios.
-
-Signed-off-by: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
----
- Documentation/filesystems/f2fs.rst | 10 ++++++++
- fs/f2fs/compress.c                 |  2 ++
- fs/f2fs/data.c                     |  9 ++-----
- fs/f2fs/file.c                     | 38 ++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 55798421f2c4..b79bb67ee78e 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -942,6 +942,16 @@ Compression implementation
-   reserved via ioctl(F2FS_IOC_RESERVE_COMPRESS_BLOCKS) or the file size is
-   truncated to zero.
- 
-+- Compression and large folios are not effective at the same time on a file:
-+  a compressed inode does not use large folios, while an inode which is
-+  using large folios keeps its data uncompressed on disk.  If the compression
-+  flag is set on an inode that is already using large folios, the flag works
-+  as a hint until the inode is evicted: the inode keeps using the large folio
-+  read/write paths, f2fs_write_begin() skips the compression overwrite
-+  preparation, and ioctl(F2FS_IOC_COMPRESS_FILE) fails with -EOPNOTSUPP.
-+  Once the inode is evicted and read back, it uses order-0 folios again and
-+  compression is applied as usual.
-+
- Compress metadata layout::
- 
- 				[Dnode Structure]
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 162bd8ef822a..721b01dd0d24 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -78,6 +78,8 @@ bool f2fs_is_compressed_page(struct folio *folio)
- 		return false;
- 	if (folio_test_f2fs_nonpointer(folio))
- 		return false;
-+	if (f2fs_folio_has_ffs(folio))
-+		return false;
- 
- 	f2fs_bug_on(F2FS_F_SB(folio),
- 		*((u32 *)folio->private) != F2FS_COMPRESSED_PAGE_MAGIC);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index cc3c9e51db9c..ab8f5b44d63a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3288,12 +3288,6 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 	int ret = 0;
- 	bool folio_in_bio = false;
- 
--	if (f2fs_compressed_file(inode)) {
--		if (folio)
--			folio_unlock(folio);
--		return -EOPNOTSUPP;
--	}
--
- 	map.m_seg_type = NO_CHECK_TYPE;
- 
- 	if (rac)
-@@ -5331,7 +5325,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
- 	}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
--	if (f2fs_compressed_file(inode)) {
-+	if (f2fs_compressed_file(inode) &&
-+	    !mapping_large_folio_support(inode->i_mapping)) {
- 		int ret;
- 		struct page *page;
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 15bea642e986..cb7a9d4227f4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4907,6 +4907,7 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
- 	struct address_space *mapping = inode->i_mapping;
- 	struct folio *folio;
- 	pgoff_t redirty_idx = page_idx;
-+	pgoff_t end_idx = page_idx + len;
- 	int page_len = 0, ret = 0;
- 
- 	filemap_invalidate_lock_shared(mapping);
-@@ -4924,6 +4925,9 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
- 	} while (page_len < len);
- 
- 	while (redirty_idx < page_idx) {
-+		pgoff_t next_idx;
-+		size_t off, dlen;
-+
- 		folio = filemap_lock_folio(mapping, redirty_idx);
- 
- 		/* It will never fail, when folio has pinned above */
-@@ -4931,6 +4935,33 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
- 
- 		f2fs_folio_wait_writeback(folio, true, true);
- 
-+		/*
-+		 * Only this cluster is rewritten, while a large folio can
-+		 * cover more than one cluster, so mark the intersection of
-+		 * the folio and [redirty_idx, end_idx).
-+		 */
-+		next_idx = min_t(pgoff_t, folio_next_index(folio), end_idx);
-+		off = offset_in_folio(folio, (loff_t)redirty_idx << PAGE_SHIFT);
-+		dlen = (size_t)(next_idx - redirty_idx) << PAGE_SHIFT;
-+
-+		if (folio_test_large(folio)) {
-+			/*
-+			 * A compressed inode can keep using large folios, in
-+			 * which case the compression flag only works as a hint
-+			 * until the inode is evicted.  Update the subpage dirty
-+			 * bitmap as well, otherwise f2fs_write_cache_folios()
-+			 * finds no dirty range and skips the whole folio.
-+			 */
-+			if (!f2fs_ffs_find_or_alloc(folio)) {
-+				ret = -ENOMEM;
-+				folio_unlock(folio);
-+				folio_put_refs(folio, 2);
-+				redirty_idx = folio_next_index(folio);
-+				continue;
-+			}
-+			f2fs_ffs_mark_subrange_dirty(folio, off, dlen);
-+		}
-+
- 		folio_mark_dirty(folio);
- 		folio_set_f2fs_gcing(folio);
- 		redirty_idx = folio_next_index(folio);
-@@ -5037,6 +5068,13 @@ static int f2fs_ioc_compress_file(struct file *filp)
- 	if (!(filp->f_mode & FMODE_WRITE))
- 		return -EBADF;
- 
-+	/*
-+	 * The mapping is already using large folios, where the data is kept
-+	 * uncompressed, so refuse to start compressing the file.
-+	 */
-+	if (mapping_large_folio_support(inode->i_mapping))
-+		return -EOPNOTSUPP;
-+
- 	f2fs_balance_fs(sbi, true);
- 
- 	ret = mnt_want_write_file(filp);
--- 
-2.43.0
-
+On 10/28, Nanzhe Zhao wrote:
+> From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+> 
+> This series supports large folios for most readable/writable files
+> in buffered I/O paths, including normal files, block-layer encrypted
+> files, and atomic files except for inline-data files, compressed files,
+> and quota files.
+> 
+> It also extends f2fs_folio_state to coexist with f2fs page-private
+> flags and to handle large folio write path and partial truncate of
+> large folios correctly.  A valid large folio always carries a
+> f2fs_folio_state at its folio->private in the current implementation.
+> 
+> Benchmark details can be found in the RFC v2 cover letter:
+> https://lore.kernel.org/r/20260622160830.324455-1-zhaonanzhe@xiaomi.com
+> 
+> Changes in v8:
+> - 01/15: add a sanity check in f2fs_folio_has_ffs(): if a large folio
+>   carries non-pointer private data (PAGE_PRIVATE_NOT_POINTER), report
+>   it with f2fs_bug_on() and return false instead of casting the value
+>   to a struct f2fs_folio_state pointer.
+> - 03/15: cache sbi before dropping read_pages_pending, so
+>   f2fs_finish_read_bio() no longer uses F2FS_F_SB(folio) after a sync
+>   reader has been woken up and may have released the folio.
+> - 05/15: clear the dirty bits of the whole folio on success, otherwise
+>   post-EOF subpages (e.g. fill_zero() with FALLOC_FL_KEEP_SIZE, or a
+>   block migration beyond EOF) keep the folio redirtied forever;
+>   - recheck cp_error after f2fs_balance_fs() or the trylock_op() backoff
+>     dropped the folio lock, and drop the folio instead of writing on a
+>     filesystem which can no longer checkpoint;
+>   - reset the per-folio submitted counter for each dirty range.
+> - 07/15: since the whole valid range below will be marked dirty, a large
+>   folio whose subpage was invalidated by a racing collapse/insert/punch
+>   hole is not usable; after folio_lock(), unlock it and return
+>   VM_FAULT_NOPAGE (-EFAULT) so the faulting access is retried instead
+>   of dirtying the stale subpages.
+> - 08/15: keep PAGE_PRIVATE_GCING on a failed GC write which redirties
+>   the folio, and clear it only when no dirty subpage is left; mark the
+>   target subpage dirty in f2fs_defragment_range() and
+>   f2fs_migrate_blocks(); and submit the cached bio before unlocking a
+>   large folio in move_data_page() to avoid an AB-BA deadlock with
+>   WB_SYNC_ALL.
+> - 15/15: make redirty_blocks() large-folio aware: allocate the
+>   f2fs_folio_state and mark the cluster range dirty.  This is mainly
+>   for the chattr +c (FS_IOC_SETFLAGS) case, where the compression flag
+>   is set on an inode that keeps using large folios until it is evicted;
+>   since F2FS_IOC_COMPRESS_FILE is already rejected for large-folio
+>   mappings, this hint state is only reachable through chattr +c.
+>   Without this, F2FS_IOC_DECOMPRESS_FILE and
+>   F2FS_IOC_RELEASE_COMPRESS_BLOCKS would find no dirty range and
+>   silently skip the rewrite.
+> 
+> Many thanks to Chao for the detailed v7 review; several of the fixes
+> above are folded in from his suggestions.
+> 
+> Changes in v7:
+> - 01/15: realloc the f2fs_folio_state in f2fs_get_lock_data_folio() if
+>   it was released while the folio was unlocked.
+> - 04/15: on an atomic buffered write repeat if folio was unlocked, check the 
+> COW block before reserving it again, so inc_atomic_write_cnt() is not called twice.
+> - 08/15: clear PAGE_PRIVATE_GCING if large folio has no dirty sub pages
+>  when f2fs_trylock_op() fails before any write is submitted in f2fs_do_write_data_page().
+> 
+> No other functional changes.
+> 
+> Changes in v6:
+> - Rebased onto the f2fs dev branch (fd106ada4dee).
+> - v5 12/16 ("f2fs: wait for folio writeback before ffs_detach_free")
+>   is dropped, because the lkp warning reported by [1] was caused by a
+>   write_pages_pending leak on the GC truncate path.
+> 
+> - Improve large-folio support in the f2fs_do_write_data_page() path used
+>   by GC:
+>   - 05/15: use __folio_start_writeback(folio, folio_test_dirty(folio))
+>     in both the IPU and OPU paths, so a single-subpage GC write does not
+>     clear PAGECACHE_TAG_TOWRITE while other subpages are still dirty [3].
+>   - 05/15: add f2fs_ffs_put_write_pending() as the common writeback
+>     completion helper; do_write_block() only ends writeback for order-0
+>     folios.
+>   - 08/15: move the write_pages_pending increment from move_data_page()
+>     into f2fs_do_write_data_page(), take it only after
+>     __folio_start_writeback(), and drop it on every error path.
+>     move_data_page() no longer adjusts write_pages_pending or clears
+>     gcing on error [1].
+> 
+> - 02/15: compute bio_offset/bio_len against the folio actually added to
+>   the bio [5].
+> 
+> - 05/15, 06/15: fix the order-0 dirty accounting leak in the cp_error
+>   path [2].
+> 
+> - 10/15: allocate ffs before f2fs_truncate_read_extent() [4].
+> 
+> - 11/15: move the existing truncated-page handling into
+>   f2fs_clear_truncated_page_state() and reuse it for the subpage-aware
+>   large-folio writeback path, including the -ENOENT/NULL_ADDR case [2].
+> 
+> Link to v5: [6]
+> 
+> Many thanks to Chao, Daeho and Jaegeuk for the reviews, and to the
+> kernel test robot for the report.
+> 
+> [1] https://lore.kernel.org/oe-lkp/202610081027.b13dcf10-lkp@intel.com
+> [2] https://lore.kernel.org/r/6be679d1-d8ab-41b3-9975-1f1bcd552579@kernel.org
+> [3] https://lore.kernel.org/r/fc101bc7-6ece-4a30-9e19-9b32376489a8@kernel.org
+> [4] https://lore.kernel.org/r/36220ef3-5b00-4aa1-ad11-60b10857a886@kernel.org
+> [5] https://lore.kernel.org/r/atA8dsZ35E6wTMD6@google.com
+> [6] https://lore.kernel.org/r/20261014064445.2835813-1-zhaonanzhe@xiaomi.com/
+> 
+> Nanzhe Zhao (15):
+>   f2fs: extend folio state for large folio write path
+>   f2fs: carry subpage offset and count in write IO
+>   f2fs: support regular file buffered writes on large folios
+>   f2fs: support atomic file large folios buffered write
+>   f2fs: support large folio writeback
+>   f2fs: account large folio dirty data at block granularity
+>   f2fs: prepare mmap write faults for large folios
+>   f2fs: make GC migration large-folio aware
+>   f2fs: optimize small block size large folio read
+>   f2fs: support partial uptodate large folio read
+>   f2fs: handle partial truncate of large folio dirty subpages
+>   f2fs: fix zeroing paths for large folios
+>   f2fs: handle block cloning within the same large folio
+>   f2fs: allow large folio support to writeable files
+>   f2fs: make compressed files compatible with large folio
+> 
+>  Documentation/filesystems/f2fs.rst |   10 +
+>  fs/f2fs/checkpoint.c               |   40 +-
+>  fs/f2fs/compress.c                 |    7 +-
+>  fs/f2fs/data.c                     | 1550 +++++++++++++++++++++++++---
+>  fs/f2fs/dir.c                      |    2 +-
+>  fs/f2fs/f2fs.h                     |  182 +++-
+>  fs/f2fs/file.c                     |  269 +++--
+>  fs/f2fs/gc.c                       |   51 +-
+>  fs/f2fs/inline.c                   |    3 +-
+>  fs/f2fs/inode.c                    |    4 +-
+>  fs/f2fs/namei.c                    |    1 +
+>  fs/f2fs/node.c                     |    2 +-
+>  fs/f2fs/segment.c                  |   13 +-
+>  13 files changed, 1869 insertions(+), 265 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
