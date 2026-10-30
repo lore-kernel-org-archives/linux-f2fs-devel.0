@@ -1,99 +1,119 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979D6606A31A
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2026 07:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB25D606A31E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2026 09:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=Z3S1pYyq;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=bueKxnXE;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=kfNQpKAH;
-	dkim=neutral header.d=foxmail.com header.i=@foxmail.com header.a=rsa-sha256 header.s=s201512 header.b=oP7JFeMz
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=l8uRh5FN;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Va44KFQ+;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=eFLZsYFT;
+	dkim=neutral header.d=cs.unc.edu header.i=@cs.unc.edu header.a=rsa-sha256 header.s=google header.b=IHQ9iYHd
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Date:To:From:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=KNmeD9YzhoS1zMziLHdzTD5Sm3iTeqNPb2PDCfOMACY=; b=Z3S1pYyqSWee5vCs5FYjtpb7kE
-	PdCCNdoAOzHgXEl1HDsD+X177S0krNVUCsiEFYmR4Bk/yjDPEfQm6KXK/lvlPIz6wvj5gWoK5J3GL
-	9XubZC8Cw6t/UKVzDstPnq5xXwrMXI9GJHoJPF44oc17qATYz/jew5tZsJVYjVuLOLZg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Unsubscribe-Post:List-Owner;
+	bh=nrDHMRCI/bcp5AyVuN8trI10og5qJIoGTpIoIduIrio=; b=l8uRh5FNF3g4b7fFwseb2QweZs
+	1uEN0Wvt14OVaYstlTJ0gwZGpHRoibGrFR8RbjEZEdQg6aBI7GvXupgyTecGPoxTlRSj77Hh03x2s
+	tQU+Id+thhXUv1/HbgUO02I/0PJlxHuNBoNLHaif6SwH10tjRR534IjrmAmmjR3OKnOU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xMhJq-000000008Vj-3vV2;
-	Fri, 30 Oct 2026 07:46:34 +0000
+	id 1xMj7X-0000000040b-2Uge;
+	Fri, 30 Oct 2026 09:41:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <treebacker@foxmail.com>) id 1xMhJo-000000008Vc-3G4Y
+ (envelope-from <hengyul@cs.unc.edu>) id 1xMj7W-000000003zv-0NMN
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Oct 2026 07:46:33 +0000
+ Fri, 30 Oct 2026 09:41:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Date:Subject
- :Cc:To:From:Message-ID:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f6hSTVr503+xmAIVsp1Ae9a/mr3a7mKY8k2VZgMpr+g=; b=bueKxnXE81i+53e74Nd2aokGqT
- KwT4ZSpukGKRX7nbohKz570QgIucTo5YPmQbvWI1IiNSaOc9+wEhmn3wxJsqSFUU6mudFgMX52jq9
- uEHE8562ZFK++HNVk4nIn5IHHmyD6WgYZrE+7EBuXMxBDNqEC5r7j4j5a0PQFVeFdLsc=;
+ bh=b0Pwj0msTdPhzaKN21Jqub3HQ2ivQUi/T4qOGcLK2DU=; b=Va44KFQ+nh6OLPiwA64XjgJ74W
+ HZnzwe0kXsgTxZ4IrMOeoHFxEoRYUYC89usQTg/0/vhd4b0hYLdBj4DKM6vRtSv1XE1OU5jkBN41q
+ 323GXlzSxQdGBbj8OCRaZoRCa9HJ7o19lkuiRhiQpoGiOJ8rIQ3SbtNaCdNtT5vUwWtU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Date:Subject:Cc:To:From:Message-ID
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f6hSTVr503+xmAIVsp1Ae9a/mr3a7mKY8k2VZgMpr+g=; b=kfNQpKAH7VN8xR9Sp/UFQq/P3p
- K4fcN6R8aPy0zsDUReDeIAMPdwlsgEw9DuPBcd6hOcKuoj6L5GB33cRwnR91teHjgSX67oLwlQvMK
- AFn1hEisrruThGHXM6vXo7no8s/cELzHBpkdzetfQmsqEpYLyWcclr4ttz04tK9932WM=;
-Received: from out203-205-221-192.mail.qq.com ([203.205.221.192])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xMhJm-000000007mm-2NMx
+ bh=b0Pwj0msTdPhzaKN21Jqub3HQ2ivQUi/T4qOGcLK2DU=; b=eFLZsYFTXLfJp7m5cxb1/N53Ce
+ 3WCpNMufSyNXazjp/M/wu1SYA2SPeb3rNaiB0JQTEApW7+W8lSp5ZJpU4RDwiswdwOzdwTGgt/pDA
+ kLaw2Y67B8bfr02yVQR9unedy7oV0Sh478B0zOKbziLj1yBSje2UMLi5itgk3ik5pSlw=;
+Received: from mail-pg1-f181.google.com ([209.85.215.181])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xMj7V-000000000Hh-0jpJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Oct 2026 07:46:32 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
- s=s201512; t=1793346382;
- bh=f6hSTVr503+xmAIVsp1Ae9a/mr3a7mKY8k2VZgMpr+g=;
- h=From:To:Cc:Subject:Date;
- b=oP7JFeMzlzYXelUSjf/kxNzTbvm9DEqQ/v+CsvjTRwaRzZIoZE6jnZMEBTlRAfM7R
- IF7MIrHhjdHs6+Aws4qkXLRzjYYdW+cT1wcDEy0UlwcCwyog17Z94pXtpyvS3AoFNV
- qSaqK2rmwYn51neXsQVsYoFCk/0/tNO3U2cS1TAw=
-Received: from HAPYCAO-MC1.tencent.com ([101.226.143.247])
- by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
- id 7A899E33; Fri, 30 Oct 2026 15:30:40 +0800
-X-QQ-mid: xmsmtpt1793345440tzby8u61l
-Message-ID: <tencent_13F84AEDEBCC170BE121ADA2D44EA69CEA07@qq.com>
-X-QQ-XMAILINFO: MHMEtxMLMqJxsWMD/aMU0npTSqh8V45E639L0BYQrjACCYD0JomrwHkQ2IFNsH
- hM6a3f+PpasIbjmzf/+FBmQiY25ER9WTNd3eg2y0hqmfVsNf2gdK4eSr9NJ9egMWOFF9iL+7MeN4
- tChVGwxEhPZUJU/CCcudNcrgdk7vHB26MMTPirgdVX4sjaGIhvMgsgRjkkdyXP2TZ5Xhu5085QkM
- a/17MAuxc9uWhkWzj5K7d3WTjQvgCh8oGRRtNx1vy8CKWjAqMB21/V9gYE4jbXf7TYDWqIGBD9ou
- rlVM1/TFF2U+M21Reb8KpU2aRxgB/E2fGHkJuwFYEfSQ77lO4+ixH2ciHpXT6QGUZ7r0auUi7lth
- BqUEpO8gLb5NKwSLfSh7QmDErpmud/k90matkEBJPsj/eDl0FgFtCD7pWvd3taxNy+EyRYHW+Ql8
- aEjsXXPe2WV6yfvjeflLJUlWIES+l1O3WZQMDJ8MYRXuzuJUK0J8iG8xWx5iqUYewXk5K8tKQ7V2
- sEalmpiSxI9nKmxavlxmYfQue+IYDRmtg8nGOT6sW9oHbh8jAADYNNOKjXUzng91yRmzz3HXbefQ
- qkTKKZL15g8CIsl6dyzhIi9G3fQOhNJc1Lz60vE8qTNLzSpOr6gxE6cjnST540d6l+ks6EqAj8QY
- 3OWQQGnIJts1C//daz4Z9E+MLqTiVoDSBgJzpWxY0tis7YENjyODb694hAP9TnEx7WLUx/Fx+jVg
- 3axjQ9EiVwwelOBRKY8YURD43M1jp++2XjmeXrCHW1JOmVLSQ/CT9TTIdsfxsOLBmgBsY1gGPY2m
- vw9XWMOSg+TWvXqHKQW1a8qm/cHOyKv2/CjkeSbEuCN1u52pGXm9LmzlvAfzLrcE+ShJnX/Ripug
- B17gQiHAJNaQMhIWExk6J8Cve0cNMfiQ3U119spxqSxe/KCzXY3NIPOavcSwZO6lO4FcmDYnDy8f
- FOJHKZIU+OmexVjn+HratjlQY3VEtomsypQhiyIR9FWIbsnOgvPB003a8YEPK/smHB1qLzYOxu0H
- 1xLuTocb82MKCkMaCBaNySDCHiKVu2uf/G56sGoOwFBtxZdllItQ9lx7EkorKEzZawFqJ9PaqJAP
- 8WSd028w0ZxyM0rkWj/P6n0mD4A3abDbzIqggn7QFMALV2mNyE3KKTil9YZX7J1ihuq5XPcjSaIA
- TGrLYVsu21ewLiHg==
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-From: bo cao <treebacker@foxmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 30 Oct 2026 15:30:40 +0800
-X-OQ-MSGID: <20261030073040.83304-1-treebacker@foxmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+ Fri, 30 Oct 2026 09:41:58 +0000
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-ccce6d9abfeso337218a12.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 30 Oct 2026 02:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cs.unc.edu; s=google; t=1793353311; x=1793958111; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=b0Pwj0msTdPhzaKN21Jqub3HQ2ivQUi/T4qOGcLK2DU=;
+ b=IHQ9iYHd2iAx9mXbtpAiyDHyRiQPO/rKZfM5kE4wa3lF4e2MXWqq3cW8Wmj2J5wPWp
+ IZcsXcTEiMI03MYRTuyZcXInPdXPaxvNVTPqTUtFJlx+Hg2CHStozzmQ34C1OrMgG7sg
+ FJCUxPeGdlE2jPG7EfOF4jF/LgYgrOknOIU2qOtv2dJxNb1pzMy6BFa3V9/CaR7VZL+1
+ Djsi1hEi6dxfPQ73nilxsfcfJFaIATmLQSvsStXrGVHhoRpB7wDO9i55nUnkzEvCPpdJ
+ J8LRQmqdhaqQ5eDYIaOP3sfv8UoNhTazNUtpajxS2MxbGC25+mW0q+trbfYUMKxaqm2f
+ eDyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793353311; x=1793958111;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=b0Pwj0msTdPhzaKN21Jqub3HQ2ivQUi/T4qOGcLK2DU=;
+ b=hYSDjEfc1my4UzrFckgCcPOUNIHIUa66op+83Wu9uTJQUDuCN+Z1wQfMhuNZwrf82c
+ JKySc8QE+kJdnJ6gsdviff0JomSrPmXxm5bdUnvDROCx+qH69DrmWMMjnxZzXr0QEsnq
+ Ewy5d9a0cDmpHG2aLDW+mHdNQO6H0FOFL5tAzIYUUgFn6XnLJYVRxEKgxWNoQDmCDoWt
+ arn9I536Qapjfl5itHIzuilDoFMdyMtHHQg4/hH+J/BxLfLDgxArNLWZo5XNZTU4gb07
+ W3WgS/IlTPwqY471xEhGW232XpZIMeCFNPE3FBN/gzXRF+iReq3k4b5Xwq7GXJGVOLX4
+ 0rzQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwiBsiV+07LX0OT801IXp8evxL23GVF8hywj+SchVArQSg8sslNKB0yiV0uizVxa0HOIxYIwfS6Ejx0XoQdmazv@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYLrXfJXaEWk09f75hfteZgVuIb4zTwFu9qfjBTjPOjX5sGYxLA1
+ ba3I/xUvPffZ8dmRpOrCmiQT3iePrl9ZSMinKV2C3mHbg1Lpgx53f56sirQN37V0XBxeSJnt34P
+ gOZ+TNA==
+X-Gm-Gg: AYBFou1m7VLvceeCNcdwejdVKGbtVfk+KRQKhLF3A2uv54tXaNxD+GuIEol19E1ot3P
+ kQ4vvTuhmPruBFiMarFVjvEswUv2FHvseBJaKA6bPuNP+/4vRJHtBEZkgM1PeECR2C81eMbmdme
+ Devz5OrCpGUT80ictw6G6jRZ2ET0wrhKRZRbzWTLlLWJ14c6jpQPOKmL1hxs8dx2tvaePYL0dfQ
+ NRoMU2FJ4I2m+TK5hCi9Dvxa41AA9JMjYDEPVWv8z+eeVrj5gIsOxBVBMmNNhhDakYkOuz0m8Jd
+ S7AWYFwzqSkTqYEEOL/Ywsg8rN8uoupcjTsC7ENAcJ9mFwuTOd3st9x4Kb3OqLc1qpCKTgdiloM
+ FNKCVNgI9jpn7P23Rk2Uj7/Tbk8a1poHtGAjw7MmaX/C0023A0BwzrQ4qn+WmAW+QWbAXfq5Gpk
+ vL1ZCx/Vq7rFVq43ghTRmu/IcZmOTNVffK6TKXf5k5DFL7xACDWTymgZiBNwtzNHBKQix7HMAsf
+ o5xtIBufcYHcqX2r7KwYONS3PGxmN32P15JNPJ663wKfT+svgB1VZSsDncXKW9UfGBl6HBS2UcO
+ Zvybkble3/TNbau0/kYcGCfOkPkuizsJbsYLyjQyinNsuj44sMKSyQ==
+X-Received: by 2002:ad4:5cab:0:b0:919:5a24:d77c with SMTP id
+ 6a1803df08f44-91ca4b2a557mr24211986d6.31.1793351733042; 
+ Fri, 30 Oct 2026 02:15:33 -0700 (PDT)
+Received: from cobra01.cs.unc.edu (cobra01.cs.unc.edu. [152.2.130.143])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-91ca7f4767asm10428406d6.21.2026.10.30.02.15.28
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 30 Oct 2026 02:15:30 -0700 (PDT)
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Fri, 30 Oct 2026 05:15:24 -0400
+Message-ID: <20261030091524.292463-1-hengyul@cs.unc.edu>
+X-Mailer: git-send-email 2.53.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xMhJm-000000007mm-2NMx
-Subject: [f2fs-dev] [PATCH] f2fs: disallow size-changing truncation on
- atomic files
+X-Headers-End: 1xMj7V-000000000Hh-0jpJ
+Subject: [f2fs-dev] [PATCH] f2fs: don't fail namespace operations on dirsync
+ checkpoint errors
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -103,130 +123,181 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: daeho43@google.com, jaegeuk@kernel.org, stable@vger.kernel.org
+From: Hengyu Liang via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Hengyu Liang <hengyul@cs.unc.edu>
+Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-ftruncate() (and open() with O_TRUNC) does not go through ->write_begin,
-so it bypasses the COW inode and modifies the original inode directly:
-it updates i_size and releases the original inode's blocks in
-[new_size, old_size) while the file is in atomic write mode.
+Commit dafb84f092a6 ("f2fs: fix to propagate error from f2fs_sync_fs()")
+made create, link, unlink, symlink, mkdir, mknod and rename return the
+result of the checkpoint for a dirsync directory. That checkpoint runs
+after the directory has changed, but the VFS takes an error to mean that
+nothing happened and skips d_move(), d_delete() and S_DEAD. The dcache no
+longer matches the directory.
 
-06dfe4a7eb69 ("f2fs: disallow mmap write and data-modifying fallocate on
-atomic files") rejected mmap stores and data-modifying fallocate for
-exactly this reason, but the truncation path slipped through: the
-ATTR_SIZE branch of f2fs_setattr() has no f2fs_is_atomic_file() check
-(compression, device aliasing and pinned files are all checked there,
-but not atomic).
+For example, on a filesystem mounted with -o dirsync whose device was then
+set read-only with BLKROSET, rename() fails with EROFS while readdir lists
+only the new name and stat() only finds the old one. After a failed
+rmdir(), stat() still finds the directory with no links, and a create
+inside it fails with EROFS but leaves the file there. Once the device is
+writable again, these "failed" changes reach the disk. A write error during
+the checkpoint causes the same mismatch with EIO.
 
-Consequences observed with a reproducer (Ubuntu 7.3.0-9-generic, arm64):
-fill [0, 1MB) with a non-zero per-page pattern (page pg filled with
-the byte (pg | 0x50), so page 24 reads 0x58), fsync, and verify the
-baseline: 946176 non-zero bytes in [100KB, 1MB).  Then
-F2FS_IOC_START_ATOMIC_WRITE, rewrite [100KB, 1MB) with the byte 0xB1
-(goes to the COW inode), then ftruncate(fd, 100KB).  The
-ftruncate succeeds (it is not rejected) and:
+As commit 24c1a47f1ed2 ("f2fs: don't leave the hashed inode while it's
+unlinked") notes for symlink, the final flush or checkpoint is not a reason
+to roll back the operation. Ignore its result again in these paths. Errors
+from before the directory changes are still returned, syncfs() still
+reports the checkpoint failure, and the remount change from the same commit
+is kept.
 
-- On F2FS_IOC_ABORT_ATOMIC_WRITE, f2fs_abort_atomic_write() restores
-  i_size to fi->original_i_size (1MB) while the blocks in
-  [100KB, 1MB) have already been released.  Note that
-  f2fs_i_size_write() skips f2fs_mark_inode_dirty_sync() and
-  FI_AUTO_RECOVER for atomic files, further persisting the damage.
-
-- On F2FS_IOC_COMMIT_ATOMIC_WRITE, __f2fs_commit_atomic_write()
-  computes the commit length from the truncated i_size_read(inode)
-  (25 pages) and silently drops the 231 dirty COW pages beyond it,
-  breaking the all-or-nothing atomicity.
-
-Reproducer output:
-
-  abort:   i_size=1048576, nonzero bytes in [100KB,1MB): 946176 -> 0,
-           fiemap@100KB: no extent
-  commit:  i_size=102400, range [100KB,1MB) past EOF, 231 dirty COW
-           pages silently dropped, first 25 pages of original data intact
-
-After the abort, the final state of the file can be verified directly
-with stat and hexdump:
-
-  $ stat /tmp/a12-mnt/f
-    File: /tmp/a12-mnt/f
-    Size: 1048576         Blocks: 200        IO Block: 4096   regular file
-  Device: 7,0     Inode: 4           Links: 1
-
-  $ hexdump -s 0x18ff0 -n 0x30 /tmp/a12-mnt/f
-  0018ff0 5858 5858 5858 5858 5858 5858 5858 5858
-  0019000 0000 0000 0000 0000 0000 0000 0000 0000
-  *
-
-stat: the inode claims Size=1048576 (1MB) but holds only
-Blocks=200 * 512B = 100KB of physical blocks.  hexdump: 0x18ff0 is the
-tail of page 24, the last live page (its pattern byte is 0x58 =
-pg24|0x50); from 0x19000 (= 100KB exactly) the file reads as zeros.
-The boundary falls exactly at 100KB -- 924KB of data silently gone,
-with no extent behind it.
-
-Note that the file is not sparse: the [100KB, 1MB) range was filled
-with non-zero patterns, fsync'ed, and read back (946176 non-zero
-bytes) before the atomic write started.  The zeros after the abort
-are lost data, not holes -- unlike a sparse file, where the extent
-table legitimately records never-written ranges as holes.
-
-The committed file shows the mirror-image damage: every step succeeds
-(the 231 pwrites, the ftruncate, the commit ioctl), yet the file ends
-up identical to one that was never written to beyond 100KB:
-
-  $ stat /tmp/a12-mnt/f2
-    File: /tmp/a12-mnt/f2
-    Size: 102400          Blocks: 200        IO Block: 4096   regular file
-  Device: 7,0     Inode: 6           Links: 1
-
-  $ hexdump -s 0x19000 -n 0x100 /tmp/a12-mnt/f2
-  0019000
-  (no output -- 0x19000 is exactly EOF; the range does not exist)
-
-Found by extracting the invariant of 06dfe4a7eb69 and diffing all 24
-f2fs_is_atomic_file() call sites (none in the setattr/truncate path)
-against operations that modify the original inode while bypassing
-->write_begin; ftruncate() is the only uncovered entry point.  The
-analysis was assisted by an LLM and confirmed at runtime by the
-reproducer above.
-
-Reject size-changing truncation on atomic files, mirroring the
-fallocate check added by 06dfe4a7eb69.  Return -EOPNOTSUPP like
-fallocate does.  f2fs_setattr() covers ftruncate(), truncate() and
-open(O_TRUNC) alike.
-
-Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+Fixes: dafb84f092a6 ("f2fs: fix to propagate error from f2fs_sync_fs()")
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/linux-f2fs-devel/20261010024133.2444761-1-daeho43@gmail.com/
-Signed-off-by: bo cao <treebacker@foxmail.com>
+Signed-off-by: Hengyu Liang <hengyul@cs.unc.edu>
 ---
- fs/f2fs/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+With this patch a dirsync operation can return 0 although its checkpoint
+failed, as before v7.3. In the write error test below the change is not on
+disk after a remount, so the EIO was accurate about durability, but the VFS
+cannot represent "changed but not durable". The filesystem has stopped by
+then: later creates get EIO and syncfs() reports it.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e2c0f5083313..5ed1f3176f70 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1165,6 +1165,9 @@ int f2fs_setattr(const struct mnt_idmap *idmap, struct dentry *dentry,
- 			F2FS_BLK_TO_BYTES(sbi, fi->i_cluster_size)))
- 			return -EINVAL;
+Tested on x86-64 KVM with KASAN, f2fs dev 83f32c773255 with and without
+this patch:
+- 14 namespace operations (all eight callbacks plus rmdir, overwrite,
+  cross-directory rename and whiteout) with -o sync, -o dirsync and
+  FS_DIRSYNC_FL on a read-only device: EROFS and stat/readdir disagree
+  before, success and they agree after. Remounted contents match on both.
+  No change without dirsync or on a writable device.
+- dm error target under -o sync, nine operations: EIO and the same mismatch
+  before, 0 and no mismatch after.
+- ENOTEMPTY, EEXIST, ENOENT and injected ENOSPC are still returned, with
+  the namespace intact.
+- fsck.f2fs --dry-run exits 0 on all images.
+
+xfstests were not run; without a failing checkpoint the only difference is
+ignoring a zero return.
+
+ fs/f2fs/namei.c | 46 ++++++++++++++--------------------------------
+ 1 file changed, 14 insertions(+), 32 deletions(-)
+
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index ce5d536d892b..9b127b38b6c6 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -402,11 +402,8 @@ static int f2fs_create(const struct mnt_idmap *idmap, struct inode *dir,
  
-+		if (f2fs_is_atomic_file(inode))
-+			return -EOPNOTSUPP;
-+
- 		if (f2fs_is_pinned_file(inode)) {
- 			/*
- 			 * It may break section-aligned fallocate recovery
+ 	d_instantiate_new(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			return err;
+-	}
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 	return 0;
+@@ -458,11 +455,8 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
+ 
+ 	d_instantiate(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			return err;
+-	}
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ out:
+ 	clear_inode_flag(inode, FI_INC_LINK);
+@@ -642,7 +636,7 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 		d_invalidate(dentry);
+ 
+ 	if (IS_DIRSYNC(dir))
+-		err = f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
++		f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
+ out:
+ 	trace_f2fs_unlink_exit(d_inode(dentry), err);
+ 	return err;
+@@ -730,7 +724,7 @@ static int f2fs_symlink(const struct mnt_idmap *idmap, struct inode *dir,
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, 0,
+ 					   disk_link.len - 1);
+ 	if (!ret && IS_DIRSYNC(dir))
+-		err = f2fs_sync_fs(sbi->sb, 1);
++		f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_balance_fs(sbi, true);
+ out:
+@@ -787,11 +781,8 @@ static struct dentry *f2fs_mkdir(const struct mnt_idmap *idmap, struct inode *di
+ 
+ 	d_instantiate_new(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			return ERR_PTR(err);
+-	}
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 	return NULL;
+@@ -845,11 +836,8 @@ static int f2fs_mknod(const struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	d_instantiate_new(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			return err;
+-	}
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 	return 0;
+@@ -1149,11 +1137,8 @@ static int f2fs_rename(const struct mnt_idmap *idmap, struct inode *old_dir,
+ 
+ 	f2fs_unlock_op(sbi, &lc);
+ 
+-	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			return err;
+-	}
++	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	return 0;
+@@ -1321,11 +1306,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	f2fs_unlock_op(sbi, &lc);
+ 
+-	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
+-		err = f2fs_sync_fs(sbi->sb, 1);
+-		if (err)
+-			return err;
+-	}
++	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	return 0;
+
+base-commit: 83f32c773255720a661aa45d83e36278135f23f5
 -- 
-2.39.5 (Apple Git-154)
+2.53.0
 
 
 
