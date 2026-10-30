@@ -1,90 +1,119 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B60C606A321
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2026 04:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E79C606A31A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2026 07:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=JURooOxw;
-	dkim=temperror header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=VHGjcult;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=WQHsm2dD;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eHRLmm8t
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=KlgKYfXu;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=GM4A+7A9;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=K+weDzF5;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CBWEGkP4
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=RqW2m1JvmxfO1wAEGm4yXtQXj6wln5NJhEgA4IWHYaM=; b=JURooOxw2ZeKDY
-	YSiQVZKkJ5GFNrcVbWbtWzVR7uTJZ08hKDIg7cndrKJ1eBncouoWSckLLDhTMKIC8anL8VFKr//Hh
-	MEjCj1QjEq1OhjSWUBoriJsSMUQ+ODuMN5XDpDvWtKSWFN/ENMqWqbnfuJPaJ0bBTh3tZxNpdnVIn
-	6fU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
+	bh=OcKaFVUek7gNPuNBh49uVq9DYWL/aXk7Nrzl1rwUfNo=; b=KlgKYfXuvo5q8U0x4ySwOSv8tn
+	j+pGAjhO7/87Dbt31tcEDSPIoPBa6WoGUlR7U31nHjNKM2qN/35PDfUy1W8sGE6ULakc7hCLyo8ak
+	hbpUaxsGW6SLQK7u0OlXcCpt9AvdHlGZA9R2/6iw+a1PPieMl0dc1N1ZJcvHYWdhgV0w=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xMeGn-000000007Ny-3Brg;
-	Fri, 30 Oct 2026 04:31:13 +0000
+	id 1xMgyj-000000004HK-3RGn;
+	Fri, 30 Oct 2026 07:24:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xMeGl-000000007Nq-3cza
+ (envelope-from <zhanxusheng1024@gmail.com>)
+ id 1xMgyZ-000000004H8-3Q25
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Oct 2026 04:31:11 +0000
+ Fri, 30 Oct 2026 07:24:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4IW+eTP3qlFhNM2ajwGDdQt1qVWs4834B+J6XwQpvms=; b=VHGjcultZhTxImCyJiBIw3uMNn
- Py1XIaS+pUQ3RC73vvhrRcXyFiXFCZJrdUvFXAkKHcoQFYxKofWySAjz5YIXh80ni+MQaP1Buxw+F
- l6tpEDGt/gNqbRsckF3lYBwrykBXykGaMCfWgxJpkK0FS1I2hl+MEwemqBkeApbdX5EY=;
+ bh=TC09uNuPonGXjl/unVFttCF+flEGGGYAyLCGtQa6eaw=; b=GM4A+7A9HygTONHaR4chnnhDOA
+ 6TIiAbM8tt/f5oJS13XZgTxrr0hjY7tTHV13qN4UoheNgajmm6b0XpRq06n9f7bYDxUadiGvLOrNz
+ gB/cAhgHlQWcSbhiLq+nwsfW4huosroAQ0ZS/EuLlXnOvFW2jWqbAaUHx5ViOk/qBrhE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4IW+eTP3qlFhNM2ajwGDdQt1qVWs4834B+J6XwQpvms=; b=WQHsm2dDM4STPjkEXwf7bQgpcw
- lt6G+RNAZ0mFtdk2D32Wh/0CngTGcC8nguDBLZoO7L3CHqUg3oP9JQ4IxMd3NggxGvg/J5wSIpjqk
- 4T3deXuI0uStp7yrI3KF3GCiEdzdTOWKCaQyp75flZ2pISFqbAXQiRDqHQlI55B1Em+0=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=TC09uNuPonGXjl/unVFttCF+flEGGGYAyLCGtQa6eaw=; b=K+weDzF5Y9aT0AXDzfE8saayF6
+ gSYF2vSn9rQkuldrSBdVh9/qewRm+9OxSD0WMOglCqd4lKSnYRccJxFP+uS4PQoOwLuqek3SyWzFd
+ syULzIECUGvlZAAbOtPpFl0DEUmG69FPZg07HckuqDaYYgczrUmlURGvjNQDx7NPxCZU=;
+Received: from mail-dy1-f177.google.com ([74.125.82.177])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xMeGk-000000003vY-3l6R
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xMgyY-000000007Nf-1XY7
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Oct 2026 04:31:11 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 814FE42DCD
+ Fri, 30 Oct 2026 07:24:35 +0000
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-36a17a332ecso778618eec.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 30 Oct 2026 04:31:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 527CF1F000C1;
- Fri, 30 Oct 2026 04:31:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793334665;
- bh=4IW+eTP3qlFhNM2ajwGDdQt1qVWs4834B+J6XwQpvms=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=eHRLmm8tqPMW//AXrXY5DTpcZ5X24nfz4hCUds6P/c4j0RQZSnVRTVw/sf4fShl+6
- b9hpNb9g7UsPsHg9J4lb7Ao8lsPz6euSZXaL1UeX2DOltH4WsvPPPEjFmaIdYdUbFO
- UCRgmBFii4mMPj5L6bpqbyMQp7Sd7FkA8Cl1NkKvFtb5RhMz+aKgGh0+kL33odmvnS
- Ey89o2M7yVxNAkN8jHq68pLWwt1D3GsvnZ6lmc3Qmp6vUBV8VsT0EdzvoHrFEodEFL
- QOW8FAWO8gzANXL+Z/HW5uszLtcf3oNJTGRTTl+e/AlOP9+ErGgXEEUHp+3fJDxuHx
- Lg5Jiozr0TIjw==
-Message-ID: <8264bbea-10f9-448b-b88b-529c34ea2f9c@kernel.org>
-Date: Fri, 30 Oct 2026 12:31:02 +0800
+ Fri, 30 Oct 2026 00:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1793345069; x=1793949869; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=TC09uNuPonGXjl/unVFttCF+flEGGGYAyLCGtQa6eaw=;
+ b=CBWEGkP40ihgI3tRqShnjOoOVi9mpCKsqTUsHf3Rpr9LDxHFXUKKd+QkADPgFy2RHe
+ HnLngdTKBBGFeVPEDuz1xp2Hv/y2bkpEUtWmtp+hkz0zD0oiiv9iI2n2D8SFWFXHVl1u
+ 6PZ0xSDV6S2/IBOzSlsKPGKXblKlWbHRqevii4GWQpRtGS/lMEVHiAeVgQ3NTUYGjxal
+ Nfxp9jJjTDR1kt+IXZEAreT72bNCAwrWpth2bEG4Z8smimGoeplJpSV7iYQP40aE8zki
+ N4wV8y2VTig0nbuyc6ZvVFvj5Syz7lN2TjUCMc0maDtr29lRZgUeaANN0Ab6gr1Y+mud
+ I7jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793345069; x=1793949869;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=TC09uNuPonGXjl/unVFttCF+flEGGGYAyLCGtQa6eaw=;
+ b=yIHjvkAYBNHV4hJSJCyzx6VJD9PvxDQ+luF9ob7edIVAJCmV+KzJNKR1MKOSTocPQ3
+ JVzA3hLfXn0HVXXeU/RFiN0pD57eb3M4IhPAKslOVLn9654a6XfWKPI/MVRwehK9EJ2x
+ FvTgfuEOnG5zFCmOjjLEAGu25nda6+OmRYY2iSJ+2dWCOgSvc3e11gMReL+5NoetQDRq
+ NCPsUYu6Y3Dfm0ghcXZzvY6z773AV2O0k3p85h3ae5PsY5m+MpXBiMkYCxVyuYkYqi1R
+ 8doQ37uw8BZNomtk6SUnlrGYNmEGvoZ6nHae/9Uu0bpJJPa8oqFL4lqMlYr9QYwmfhAs
+ g5NA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzNN+7bL0hbSLr84sOCISr94wcpTGMP2yV/QJd2Tt/i/0Yyp6hcCGSdPhwMrDRGukq5qsTPqRyU9UwRl60Kr4+E@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYLJAk2ekllufpjzlqBEdUEI6zzRMvuRA5qwcYe31HaVukOUBGmx
+ GXZ4wPo9ws9XAeOtq0kQjQciZt+BefMQwxpSUsJYKGvZKjp6DgNJxpnO
+X-Gm-Gg: AYBFou1mITqpFkvv5pB95HzWftDs7swuWZtrYr1vI2Dchx/KLo6Ehvk+5vdr9QVA6T/
+ tALXT9U4SajFDqF3lH7up6bBpb+Gm6UNye39X7osvotw0KXg7Hi+dbDvuTqTvFilp/K20/hNNZA
+ SGBNh00r53zs+l7egIIvhgyxy12PcRKvIjWDVxd8TWaIw0QSGpcvJ11xK+KJKVofp3Lo+D4EUKf
+ /2efJvWZlXQyNbxLhV/JDDijfLOyNiP9LMBoCTnvNdh1H4gTqAWnxIRymO5JcuuODCYMqwTY+be
+ E2WCk0juiBwOqBZYkiM3H9dkbuQ8XJEjyjfsyZMXubYNrUmky6g3JA8bkH9JzOrLuVjVL03F6CM
+ xe19KGEyZ1RgVE0A6xEVaMJ/tqijzcxRqu5HWBeLNNE0Xwxai920CHPBDj3z8iFq3A++uvcJodv
+ 0Aa7gqXZ0w+XNCqv4vzT0XrGYqsm20SnjYM215riLeAFnOTkG7o13jVq8G0M3rPg7b94XIGYOfr
+ TB4YAfKX2x04aM6AxtxUr0kHHKSdS2UMK7CeV7mWlG03zOZEAkGGnCDeyiEDfnYe9qtvfJrrjmw
+ TDEBK2m0RJ0EPecjW/iNjXwmNXixx2poPqjCkUsuuthsIw==
+X-Received: by 2002:a05:701b:428b:20b0:1a3:dfb6:e593 with SMTP id
+ a92af1059eb24-1ac5eea3690mr2126468c88.27.1793345068566; 
+ Fri, 30 Oct 2026 00:24:28 -0700 (PDT)
+Received: from osman.mioffice.cn ([43.224.245.178])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-1ac18458e07sm4462883c88.8.2026.10.30.00.24.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 30 Oct 2026 00:24:28 -0700 (PDT)
+From: Zhan Xusheng <zhanxusheng1024@gmail.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Fri, 30 Oct 2026 15:24:22 +0800
+Message-ID: <20261030072423.197883-1-zhanxusheng1024@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20261028050615.259268-1-jaegeuk@kernel.org>
- <c87b011c-08fa-4e65-8b22-a6bf5a2efd5a@kernel.org>
- <auIUOuuiz3rbwSuZ@google.com>
-Content-Language: en-US
-In-Reply-To: <auIUOuuiz3rbwSuZ@google.com>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xMeGk-000000003vY-3l6R
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do f2fs_zero_post_eof_page for all the
- time
+X-Spam-Score: 0.1 (/)
+X-Headers-End: 1xMgyY-000000007Nf-1XY7
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: fix use-after-free of quota file names
+ on failed remount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,123 +123,102 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: sandeen@redhat.com, zhanxusheng@xiaomi.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ lihongbo22@huawei.com, syzbot+e818dd42ada3b583bed1@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 10/28/26 23:26, Jaegeuk Kim wrote:
-> On 10/28, Chao Yu via Linux-f2fs-devel wrote:
->> On 10/28/26 13:06, Jaegeuk Kim via Linux-f2fs-devel wrote:
->>> This fixes xfstests/generic/794, since the issue is not related to the
->>> posix=strict mode only.
->>
->> Jaegeuk,
->>
->> Actually, I fixed this only in fsync_mode=strict because I don't see such
->> scenario (described in original patch) in Android:
->>
->>      Steps of generic/794:
->>      1. write 4096 bytes to file w/ 0x5a
->>      2. use fiemap to get PBA of first block in file
->>      3. truncate file to 4080
->>      4. umount; write 4096 bytes to file w/ 0x5a directly via PBA; mount
+From: Zhan Xusheng <zhanxusheng@xiaomi.com>
 
-I don't remember there is any case writing via PBA across EOF in Android, let
-me know if I missed something.
+f2fs_show_options() prints the journalled quota file names without any
+lock that excludes remount, and a failed remount frees the current names
+before restoring the old ones.  Reading /proc/mounts at that moment is a
+use-after-free.
 
-Ah, it seems a common issue, I can reproduce reading stale data w/ below testcase
-which didn't write via PBA:
+Read the names under rcu_read_lock() and free them only after a grace
+period.
 
-1. pwrite -S 0x5a 0 4096; fsync; sync
-2. truncate 4080
-3. Checkpoint without writing back data, then power cut. Two ways to cut power:
-  - sysrq-b: f2fs_io checkpoint then echo b > /proc/sysrq-trigger, a real VM reset.
-  - shutdown: f2fs_io shutdown 1, which checkpoints and drops dirty data.
-4. After recovery, grow the file with truncate 8192, falloc 4096 4096, or pwrite @4096, then f2fs_io checkpoint, umount and mount.
-5. Read [4080,4096).
+Fixes: 4b2414d04e99 ("f2fs: support journalled quota")
+Reported-by: syzbot+e818dd42ada3b583bed1@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e818dd42ada3b583bed1
+Cc: stable@vger.kernel.org
+Signed-off-by: Zhan Xusheng <zhanxusheng@xiaomi.com>
+---
+The names are not marked __rcu: every other access holds s_umount,
+except is_journalled_quota(), which only tests them for NULL.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+ fs/f2fs/super.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1071059f2cc2..510df7998c18 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2325,6 +2325,7 @@ static inline void f2fs_show_quota_options(struct seq_file *seq,
+ {
+ #ifdef CONFIG_QUOTA
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	char *qf_name;
+ 
+ 	if (F2FS_OPTION(sbi).s_jquota_fmt) {
+ 		char *fmtname = "";
+@@ -2343,17 +2344,20 @@ static inline void f2fs_show_quota_options(struct seq_file *seq,
+ 		seq_printf(seq, ",jqfmt=%s", fmtname);
+ 	}
+ 
+-	if (F2FS_OPTION(sbi).s_qf_names[USRQUOTA])
+-		seq_show_option(seq, "usrjquota",
+-			F2FS_OPTION(sbi).s_qf_names[USRQUOTA]);
++	/* Remount frees replaced names only after a grace period */
++	rcu_read_lock();
++	qf_name = READ_ONCE(F2FS_OPTION(sbi).s_qf_names[USRQUOTA]);
++	if (qf_name)
++		seq_show_option(seq, "usrjquota", qf_name);
+ 
+-	if (F2FS_OPTION(sbi).s_qf_names[GRPQUOTA])
+-		seq_show_option(seq, "grpjquota",
+-			F2FS_OPTION(sbi).s_qf_names[GRPQUOTA]);
++	qf_name = READ_ONCE(F2FS_OPTION(sbi).s_qf_names[GRPQUOTA]);
++	if (qf_name)
++		seq_show_option(seq, "grpjquota", qf_name);
+ 
+-	if (F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
+-		seq_show_option(seq, "prjjquota",
+-			F2FS_OPTION(sbi).s_qf_names[PRJQUOTA]);
++	qf_name = READ_ONCE(F2FS_OPTION(sbi).s_qf_names[PRJQUOTA]);
++	if (qf_name)
++		seq_show_option(seq, "prjjquota", qf_name);
++	rcu_read_unlock();
+ #endif
+ }
+ 
+@@ -3151,8 +3155,12 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ #ifdef CONFIG_QUOTA
+ 	F2FS_OPTION(sbi).s_jquota_fmt = org_mount_opt.s_jquota_fmt;
+ 	for (i = 0; i < MAXQUOTAS; i++) {
+-		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
+-		F2FS_OPTION(sbi).s_qf_names[i] = org_mount_opt.s_qf_names[i];
++		char *qf_name = F2FS_OPTION(sbi).s_qf_names[i];
++
++		/* Pairs with READ_ONCE() in f2fs_show_quota_options() */
++		smp_store_release(&F2FS_OPTION(sbi).s_qf_names[i],
++				  org_mount_opt.s_qf_names[i]);
++		kfree_rcu_mightsleep(qf_name);
+ 	}
+ #endif
+ 	sbi->mount_opt = org_mount_opt;
 
->>      5. extend filesize via
->>         a) append 4096 from offset 4096, or
->>         b) truncate 8192, or
->>         c) fallocate 4096 from offset 4096
->>      6. verify the gap is zeroed in memory [4080,4096)
->>      7. sync range 4096 from offset 4096; shutdown -f (flush meta before shutdown)
->>      8. umount; mount; verify [4080,4096) is zeroed or not.
-> 
-> I saw your comment and I think we should not connect posix=strict to who's
-> using that. It was supposed to handle the myth of the recovery on rename().
-> This sequence looks general which seems we should guarantee.
-> 
->>
->> Maybe we should only enable fsync_mode=strict for 794 to let it pass?
->>
->> Thanks,
->>
->>>
->>> Cc: stable@kernel.org
->>> Fixes: 5eced87b7d19 ("f2fs: fix to zero post-EOF data when extending file size")
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>   fs/f2fs/file.c | 14 ++------------
->>>   1 file changed, 2 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 8b4a7a9d7dbe..823df06ae0f2 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -74,15 +74,10 @@ static int f2fs_zero_post_eof_page(struct inode *inode,
->>>   					loff_t new_size, bool lock, bool writeback)
->>>   {
->>>   	loff_t old_size = i_size_read(inode);
->>> -	bool strict =
->>> -		F2FS_OPTION(F2FS_I_SB(inode)).fsync_mode == FSYNC_MODE_STRICT;
->>>   
->>>   	if (old_size >= new_size)
->>>   		return 0;
->>>   
->>> -	if (!strict && mapping_empty(inode->i_mapping))
->>> -		return 0;
->>> -
->>>   	if (lock)
->>>   		filemap_invalidate_lock(inode->i_mapping);
->>>   	/* zero or drop pages only in range of [old_size, new_size] */
->>> @@ -90,14 +85,9 @@ static int f2fs_zero_post_eof_page(struct inode *inode,
->>>   	if (lock)
->>>   		filemap_invalidate_unlock(inode->i_mapping);
->>>   
->>> -	if (!writeback || !strict)
->>> +	if (!writeback)
->>>   		return 0;
->>> -	/*
->>> -	 * In fsync_mode=strict, when we expand an unaligned EOF size, we
->>> -	 * should zero post EOF data and writeback the data immediately,
->>> -	 * so that it can avoid exposing stale data after metadata flush
->>> -	 * and POR.
->>> -	 */
->>> +
->>>   	return do_zero_post_eof_page(inode, new_size);
->>>   }
->>>   
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+base-commit: c339f4010dea8b0d754f84ace70cd1b089878ef8
+-- 
+2.43.0
 
 
 
