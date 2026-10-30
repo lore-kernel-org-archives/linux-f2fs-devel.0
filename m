@@ -1,95 +1,90 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD20606A31A
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2026 02:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B60C606A321
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2026 04:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=VQnXnRqe;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=BVpy6t3s;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=k3TRVvt1
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=JURooOxw;
+	dkim=temperror header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=VHGjcult;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=WQHsm2dD;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eHRLmm8t
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=vsilqII6CHsfwnKBinUjWlGOJe9c340I8LMlfc0B9RQ=; b=VQnXnRqemzL+wSfV9tgeegqinT
-	mymU4NRxx7LhKUUCIATY9YaAh3pz1a8tAfB9Ehx1wSnMUzroEVS7QgywSdzoPkuZMDgFK+z/MVWyz
-	aQROcxVe1ih45zmBOMQnQVuU5QR+1bPVU0GrpI97uiaaExbxUM8HGABdQAEJG5FsZvMU=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
+	List-Owner; bh=RqW2m1JvmxfO1wAEGm4yXtQXj6wln5NJhEgA4IWHYaM=; b=JURooOxw2ZeKDY
+	YSiQVZKkJ5GFNrcVbWbtWzVR7uTJZ08hKDIg7cndrKJ1eBncouoWSckLLDhTMKIC8anL8VFKr//Hh
+	MEjCj1QjEq1OhjSWUBoriJsSMUQ+ODuMN5XDpDvWtKSWFN/ENMqWqbnfuJPaJ0bBTh3tZxNpdnVIn
+	6fU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xMcU7-000000000jt-2aiH;
-	Fri, 30 Oct 2026 02:36:51 +0000
+	id 1xMeGn-000000007Ny-3Brg;
+	Fri, 30 Oct 2026 04:31:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1) (envelope-from
- <3uwLkagkbAK4gmnYOZZSfOddWR.UccUZSigSfQcbhSbh.Qca@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1xMcU6-000000000jf-1Nrw
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
+ (envelope-from <chao@kernel.org>) id 1xMeGl-000000007Nq-3cza
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Oct 2026 02:36:50 +0000
+ Fri, 30 Oct 2026 04:31:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LZpY3C/W3YVvnLmO3CF3zYjfsRgXkvzAHK5Myqx7bt8=; b=BVpy6t3smSkGuyXMDSk4JMISrj
- h3otwAXIwiMU0QrJtcdFtqHzTi3pPjKJUpc/q5IIrIMAXJ0Quis2JJBJM10xbg6DZKRBGhwSaizLF
- UFANR+pDX5syZjlyeBrqLxKf5kSlsDJpl/CQWpFeznv+qdc1jHv2oskQ07aBZvQoPmdg=;
+ bh=4IW+eTP3qlFhNM2ajwGDdQt1qVWs4834B+J6XwQpvms=; b=VHGjcultZhTxImCyJiBIw3uMNn
+ Py1XIaS+pUQ3RC73vvhrRcXyFiXFCZJrdUvFXAkKHcoQFYxKofWySAjz5YIXh80ni+MQaP1Buxw+F
+ l6tpEDGt/gNqbRsckF3lYBwrykBXykGaMCfWgxJpkK0FS1I2hl+MEwemqBkeApbdX5EY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LZpY3C/W3YVvnLmO3CF3zYjfsRgXkvzAHK5Myqx7bt8=; b=k3TRVvt1/zSf/Bb4gV21vVGgu8
- 17hh+Lgxysp7oarQLWm7qjjCP8DnOuwG/sY6h5jz0xlaWod+iwu47sZuvAT55jnvblA5Fs2H+JufJ
- GhqkezUV2LRhtm4zsXOC91SXK97PmRa/dV7I3UaKHrjf1mumeSTfdxl5OQW/5TP0EtlY=;
-Received: from mail-oi1-f198.google.com ([209.85.167.198])
+ bh=4IW+eTP3qlFhNM2ajwGDdQt1qVWs4834B+J6XwQpvms=; b=WQHsm2dDM4STPjkEXwf7bQgpcw
+ lt6G+RNAZ0mFtdk2D32Wh/0CngTGcC8nguDBLZoO7L3CHqUg3oP9JQ4IxMd3NggxGvg/J5wSIpjqk
+ 4T3deXuI0uStp7yrI3KF3GCiEdzdTOWKCaQyp75flZ2pISFqbAXQiRDqHQlI55B1Em+0=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xMcU4-000000001WC-3ukm
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
+ id 1xMeGk-000000003vY-3l6R
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Oct 2026 02:36:50 +0000
-Received: by mail-oi1-f198.google.com with SMTP id
- 5614622812f47-547ae874949so375834b6e.2
+ Fri, 30 Oct 2026 04:31:11 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 814FE42DCD
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 29 Oct 2026 19:36:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793327803; x=1793932603;
- h=content-type:to:from:subject:message-id:date:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=LZpY3C/W3YVvnLmO3CF3zYjfsRgXkvzAHK5Myqx7bt8=;
- b=rEvikcyUdeuxu7c9O93Z5akps/k3VOD5sn+wwEFS6H3umtjr2JhgJh4D8PDm9QZl10
- Pb9oELvWnk/6SG1nzoEMDZ93DtYvRja4QgBKsW+4mLr6YfOafqlVSoPSx5tdvmNleLG+
- VAYy5/iA2sPjpfqZjn1vmbigrstpi3ECRQYaUN+bO/CGWG6w0oQ5nRK27IyKkJcCvkRS
- bo4O3BmULfMc0tvgDU2FWzqC6u7D4P2gR79YP1O4yDwH6b9lhTwvOb1u5lMuBrYhEmaI
- tvQYCsTGF+bqiiqBV0YwKC3TBrLOi1IpZkfCw+LACGpvUyum4l+4LYhqE4RmbmJbJUvx
- cpwg==
-X-Forwarded-Encrypted: i=1;
- AKwUvByFBYfy/jx03TQOsB9coL8Re7RktvN99/TPRetelRrrTm6eHpAAdURozg1vvS5NbfbJ+PWbT+PPJoEyZvv3cfU9@lists.sourceforge.net
-X-Gm-Message-State: AFq9FYLcRl4c3agKhIgSgnr1ljwtzo1MGsAeSqOAISaVE8QCpoGV7Ho7
- IFc6682LkP49loHrps9B/oM2UpxgVw4lPsKYjim4xjbtbpzD/vnZ/L1C2nMWbW0Yh4O1tG7nOBL
- slAbg0L4iYsxb0RdfHORuGugIwy1ia4LTc2CSy6o2fqQ8BT6Vc5axnWVM5/U=
+ Fri, 30 Oct 2026 04:31:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 527CF1F000C1;
+ Fri, 30 Oct 2026 04:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1793334665;
+ bh=4IW+eTP3qlFhNM2ajwGDdQt1qVWs4834B+J6XwQpvms=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=eHRLmm8tqPMW//AXrXY5DTpcZ5X24nfz4hCUds6P/c4j0RQZSnVRTVw/sf4fShl+6
+ b9hpNb9g7UsPsHg9J4lb7Ao8lsPz6euSZXaL1UeX2DOltH4WsvPPPEjFmaIdYdUbFO
+ UCRgmBFii4mMPj5L6bpqbyMQp7Sd7FkA8Cl1NkKvFtb5RhMz+aKgGh0+kL33odmvnS
+ Ey89o2M7yVxNAkN8jHq68pLWwt1D3GsvnZ6lmc3Qmp6vUBV8VsT0EdzvoHrFEodEFL
+ QOW8FAWO8gzANXL+Z/HW5uszLtcf3oNJTGRTTl+e/AlOP9+ErGgXEEUHp+3fJDxuHx
+ Lg5Jiozr0TIjw==
+Message-ID: <8264bbea-10f9-448b-b88b-529c34ea2f9c@kernel.org>
+Date: Fri, 30 Oct 2026 12:31:02 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:6508:b0:4f5:4780:582 with SMTP id
- 5614622812f47-5640dfeff32mr678119b6e.50.1793327803370; Thu, 29 Oct 2026
- 19:36:43 -0700 (PDT)
-Date: Thu, 29 Oct 2026 19:36:43 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6ae402bb.0c1d3ab6.e3d48.006c.GAE@google.com>
-From: syzbot <syzbot+6c000dea1a93b4f5905c@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-X-Spam-Score: 0.6 (/)
-X-Headers-End: 1xMcU4-000000001WC-3ukm
-Subject: [f2fs-dev] [syzbot] [f2fs?] memory leak in f2fs_apply_options
+User-Agent: Mozilla Thunderbird
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20261028050615.259268-1-jaegeuk@kernel.org>
+ <c87b011c-08fa-4e65-8b22-a6bf5a2efd5a@kernel.org>
+ <auIUOuuiz3rbwSuZ@google.com>
+Content-Language: en-US
+In-Reply-To: <auIUOuuiz3rbwSuZ@google.com>
+X-Spam-Score: -0.2 (/)
+X-Headers-End: 1xMeGk-000000003vY-3l6R
+Subject: Re: [f2fs-dev] [PATCH] f2fs: do f2fs_zero_post_eof_page for all the
+ time
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,107 +94,124 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hello,
+On 10/28/26 23:26, Jaegeuk Kim wrote:
+> On 10/28, Chao Yu via Linux-f2fs-devel wrote:
+>> On 10/28/26 13:06, Jaegeuk Kim via Linux-f2fs-devel wrote:
+>>> This fixes xfstests/generic/794, since the issue is not related to the
+>>> posix=strict mode only.
+>>
+>> Jaegeuk,
+>>
+>> Actually, I fixed this only in fsync_mode=strict because I don't see such
+>> scenario (described in original patch) in Android:
+>>
+>>      Steps of generic/794:
+>>      1. write 4096 bytes to file w/ 0x5a
+>>      2. use fiemap to get PBA of first block in file
+>>      3. truncate file to 4080
+>>      4. umount; write 4096 bytes to file w/ 0x5a directly via PBA; mount
 
-syzbot found the following issue on:
+I don't remember there is any case writing via PBA across EOF in Android, let
+me know if I missed something.
 
-HEAD commit:    c339f4010dea Merge tag 'platform-drivers-x86-v7.4-1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15fbdd95580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=73ec643490576dec
-dashboard link: https://syzkaller.appspot.com/bug?extid=6c000dea1a93b4f5905c
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c1448d580000
+Ah, it seems a common issue, I can reproduce reading stale data w/ below testcase
+which didn't write via PBA:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/533212b95d17/disk-c339f401.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5cb62d3629c7/vmlinux-c339f401.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/12da5b4ca87c/bzImage-c339f401.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/546324936b23/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=17480929580000)
+1. pwrite -S 0x5a 0 4096; fsync; sync
+2. truncate 4080
+3. Checkpoint without writing back data, then power cut. Two ways to cut power:
+  - sysrq-b: f2fs_io checkpoint then echo b > /proc/sysrq-trigger, a real VM reset.
+  - shutdown: f2fs_io shutdown 1, which checkpoints and drops dirty data.
+4. After recovery, grow the file with truncate 8192, falloc 4096 4096, or pwrite @4096, then f2fs_io checkpoint, umount and mount.
+5. Read [4080,4096).
 
-AI-generated root cause summary:
-In F2FS, when remounting a filesystem with an empty journalled quota option
-(such as 'usrjquota='), f2fs_apply_quota_options() overwrites
-F2FS_OPTION(sbi).s_qf_names[i] with NULL without freeing the previously
-allocated quota filename string. While __f2fs_remount() duplicates the existing
-quota file names into org_mount_opt via kstrdup() at the start of remount and
-frees them upon successful completion, this only frees the temporary backup
-copy, leaving the original allocated string orphaned. This results in a kernel
-heap memory leak on every remount that clears a journalled quota filename
-option.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-full analysis:  https://syzkaller.appspot.com/x/ai_root_cause?x=6c000dea1a93b4f5905c
+Thanks,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6c000dea1a93b4f5905c@syzkaller.appspotmail.com
+>>      5. extend filesize via
+>>         a) append 4096 from offset 4096, or
+>>         b) truncate 8192, or
+>>         c) fallocate 4096 from offset 4096
+>>      6. verify the gap is zeroed in memory [4080,4096)
+>>      7. sync range 4096 from offset 4096; shutdown -f (flush meta before shutdown)
+>>      8. umount; mount; verify [4080,4096) is zeroed or not.
+> 
+> I saw your comment and I think we should not connect posix=strict to who's
+> using that. It was supposed to handle the myth of the recovery on rename().
+> This sequence looks general which seems we should guarantee.
+> 
+>>
+>> Maybe we should only enable fsync_mode=strict for 794 to let it pass?
+>>
+>> Thanks,
+>>
+>>>
+>>> Cc: stable@kernel.org
+>>> Fixes: 5eced87b7d19 ("f2fs: fix to zero post-EOF data when extending file size")
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>   fs/f2fs/file.c | 14 ++------------
+>>>   1 file changed, 2 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index 8b4a7a9d7dbe..823df06ae0f2 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -74,15 +74,10 @@ static int f2fs_zero_post_eof_page(struct inode *inode,
+>>>   					loff_t new_size, bool lock, bool writeback)
+>>>   {
+>>>   	loff_t old_size = i_size_read(inode);
+>>> -	bool strict =
+>>> -		F2FS_OPTION(F2FS_I_SB(inode)).fsync_mode == FSYNC_MODE_STRICT;
+>>>   
+>>>   	if (old_size >= new_size)
+>>>   		return 0;
+>>>   
+>>> -	if (!strict && mapping_empty(inode->i_mapping))
+>>> -		return 0;
+>>> -
+>>>   	if (lock)
+>>>   		filemap_invalidate_lock(inode->i_mapping);
+>>>   	/* zero or drop pages only in range of [old_size, new_size] */
+>>> @@ -90,14 +85,9 @@ static int f2fs_zero_post_eof_page(struct inode *inode,
+>>>   	if (lock)
+>>>   		filemap_invalidate_unlock(inode->i_mapping);
+>>>   
+>>> -	if (!writeback || !strict)
+>>> +	if (!writeback)
+>>>   		return 0;
+>>> -	/*
+>>> -	 * In fsync_mode=strict, when we expand an unaligned EOF size, we
+>>> -	 * should zero post EOF data and writeback the data immediately,
+>>> -	 * so that it can avoid exposing stale data after metadata flush
+>>> -	 * and POR.
+>>> -	 */
+>>> +
+>>>   	return do_zero_post_eof_page(inode, new_size);
+>>>   }
+>>>   
+>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-BUG: memory leak
-unreferenced object 0xffff888128b26a10 (size 8):
-  comm "syz.0.17", pid 5977, jiffies 4294944034
-  hex dump (first 8 bytes):
-    66 32 66 73 00 00 00 00                          f2fs....
-  backtrace (crc 49a76b1f):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4733 [inline]
-    slab_alloc_node mm/slub.c:5033 [inline]
-    __do_kmalloc_node mm/slub.c:5530 [inline]
-    __kmalloc_node_track_caller_noprof+0x3e0/0x530 mm/slub.c:5662
-    __kmemdup_nul mm/util.c:64 [inline]
-    kstrdup+0x3c/0x80 mm/util.c:84
-    f2fs_apply_quota_options fs/f2fs/super.c:1661 [inline]
-    f2fs_apply_options+0x99c/0xb70 fs/f2fs/super.c:1804
-    f2fs_fill_super+0xfc4/0x43f0 fs/f2fs/super.c:5288
-    get_tree_bdev_flags+0x1c0/0x290 fs/super.c:1883
-    vfs_get_tree+0x30/0x120 fs/super.c:1943
-    fc_mount fs/namespace.c:1282 [inline]
-    do_new_mount_fc fs/namespace.c:3910 [inline]
-    do_new_mount fs/namespace.c:3986 [inline]
-    path_mount+0x5a9/0x1580 fs/namespace.c:4337
-    do_mount fs/namespace.c:4350 [inline]
-    __do_sys_mount fs/namespace.c:4565 [inline]
-    __se_sys_mount fs/namespace.c:4542 [inline]
-    __x64_sys_mount+0x1a3/0x1e0 fs/namespace.c:4542
-    do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-    do_syscall_64+0xe9/0x530 arch/x86/entry/syscall_64.c:84
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
 
 _______________________________________________
