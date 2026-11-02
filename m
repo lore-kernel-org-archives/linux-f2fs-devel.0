@@ -1,107 +1,120 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF536096213
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Nov 2026 17:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6581F606A33D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Nov 2026 19:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=bwQtwhKN;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=dz45/ug/;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=SIO6CUBN;
-	dkim=neutral header.d=izzo.pro header.i=@izzo.pro header.a=rsa-sha256 header.s=soverin header.b=L+hL2IrZ;
-	dkim=neutral header.d=izzo.pro header.i=@izzo.pro header.a=rsa-sha256 header.s=soverin1 header.b=VkfqiytD
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=MeMGAtt8;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=bmQgZnWn;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Gm6eSqHd;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CfNgasWc
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:Message-Id:Date:
-	Mime-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=wD7tWFPTI1FtPEm0D3n6Uw1YLCzRM8Wjv156WeoaYoI=; b=bwQtwhKNcYXdES
-	VXOATB/biMH9a3OskBXV6gMBbqzH6JzeSVDtgg906GnUF79JOmnYu9T1OYirnDUVwlO9W2em8UGY3
-	7yL5tWFiIXwsmay2F9TMHJ05q3Sba1WP6AQXk0T3mEeVHAu6LQwQinppruhw7NBE+dkALfgJHrBI9
-	m48=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
+	bh=NDC5DmnknJExekZLfGAsEsk1Ytwmc8DXmwuPBKv39+A=; b=MeMGAtt8JZ5/WYCaGYkHGafgd1
+	iFnXSgggO8JHxijEX0lcsDaaWRlqaYu7OF3s47hqfdeO2o+7pUQg0M9Tv/J2RHY2w32IV6qRv/OQU
+	pl4hrmaEwPk2m04puxtsbEjA9lctTewYioBXqnLcEqxEMpGv05uyziCrEWQ41osMMjEc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xNvhI-000000001oF-24ok;
-	Mon, 02 Nov 2026 17:19:52 +0000
+	id 1xNxt4-000000003vf-1SfO;
+	Mon, 02 Nov 2026 19:40:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <federico@izzo.pro>) id 1xNvhF-000000001o7-3euE
+ (envelope-from <daeho43@gmail.com>) id 1xNxt2-000000003vX-2McB
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Nov 2026 17:19:50 +0000
+ Mon, 02 Nov 2026 19:40:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:References:Subject:Cc:To:From:
- Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tA6yS6egf4ZKmabtXohaYHvAsvwo9J58qDcIcd6gWOo=; b=dz45/ug/Nu5u0A3+qdgFCo4eiH
- 7RWKpdcuJGsdzcJ/hwHtxJ9ddCR2RBT185EqUZo5OlxAx2NJoOENs5UASRgEKCvwoOzHnolJgsccU
- FsBajvyCkbbKB3zqyZS05LNGZ66Wi3Bjq3NLMguIPeULUypsWKMpq0gbTGS7QD9IWzYI=;
+ bh=aAt/D2xAxDDJsgiaipx8quTUg87/88xSQ3Xpia9P9eU=; b=bmQgZnWnXtX0++p54cGT+85vSs
+ m7ItE9rAO1ux/FtBLh8XujfneN5GySvgMZ1GQVelQWnhPCedFkhetcYzXq9Sccosz6JT84KMkCY2F
+ ydPnTHJZ1lVE0D09zpKtPxhJIKTd74p0VCGJwBfK6tLJnHmYC7IvGD5Iag+9zm69m7mw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:References:Subject:Cc:To:From:Message-Id:Date:Content-Type:
- Content-Transfer-Encoding:Mime-Version:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tA6yS6egf4ZKmabtXohaYHvAsvwo9J58qDcIcd6gWOo=; b=SIO6CUBNeB/EPUmcjk7UJIyA40
- xWBuxodNiT97brGtSUYSDok6KBzKxrjKVPaIvbxPR7EnyqDxWgn+myJ+iNHMEeQ3T5QcdKTJVUDr2
- l3lAAYEOOIYZ7kqr4Kmrrxwrh68sNPzI5/t1SRpButP+k2kCm+QvSqvBfHcRdwnFtYpw=;
-Received: from outbound.soverin.net ([185.233.34.146])
+ bh=aAt/D2xAxDDJsgiaipx8quTUg87/88xSQ3Xpia9P9eU=; b=Gm6eSqHdAT0YST3SxsbJijoqgK
+ bLYXV57P2a47d+5dr+gOvUL8FEIP3zJmp4mzi3Vs97JFifoCbZ++amSKtwF2S7p/jrdwlw0R+PRVU
+ Z4/hOPLXkTP9Cqvf1kXNXl5a1uZLR9MZslhKjiAodFqyKbllSyV0VgqQwR+DUgy0x/Lc=;
+Received: from mail-pg1-f170.google.com ([209.85.215.170])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xNvhE-000000006Qr-1OFG
+ id 1xNxt1-000000002Cl-3nao
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Nov 2026 17:19:49 +0000
-Received: from smtp.soverin.net (unknown [10.103.10.154])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by outbound.soverin.net (Postfix) with ESMTPS id 4jJJNZ017ZztVs;
- Mon,  2 Nov 2026 17:19:42 +0000 (UTC)
-Received: from smtp.soverin.net (smtp.soverin.net [10.103.10.154]) by
- soverin.net (Postfix) with ESMTPSA id 4jJJNY2H0LznRP; 
- Mon, 02 Nov 2026 17:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=izzo.pro; s=soverin;
- t=1793639981; bh=zGqH16W82mACATSInG434H2uDjCzI/u1eJC015Cypqk=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=L+hL2IrZrzNv/TYbxRdDMGMEePenCmhCnITl77/STUEgCrrbh7BBVp9Uk0ET1sWE/
- e6SaDk6HZjF9YAvVs2INLJRA+NW67HH/vo862HS89kpNoI1QQ9oafgW9uS9/5wUFzD
- 1aHzCbrxDyXSFN+COXmlQ17PXLHdTlPH3EcTRoS3anWQAkenulQ+ttMpbH/Cl/GMKH
- xQyn9kbELzwLa3Kc/ZZq+t8tciRoZ602nX58l27c25bP3ncv1zFaURopWC+4p+39Os
- Ga3AHGtdkHwOeuJ+YU1s3UDzP0c7YoXDTenIj38UBhJe1hpmhHCVmCH58AWRM0bN5D
- vILACKr4cwaBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=izzo.pro; s=soverin1; 
- t=1793639981;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=tA6yS6egf4ZKmabtXohaYHvAsvwo9J58qDcIcd6gWOo=;
- b=VkfqiytDZqQanyhL4j1FwDEJey4Xn/+frC50M7b8XrSa0On+6aYAav0UJjiJkrhyYuzLhK
- 1+m6hLkBdA24c6iFyD/68TuERfjmwVBdnYhiDYmspBuekyQjQcJiJY6nyIjKBpGoIzS1Pd
- 3isB3xuPU8AIYA1DJGVJWBnhzGPpERO9JKTWwLN9P5dNhOGdG3Tig5Oof4RUCEZ/rlMIeV
- CmuOx2rsaVSy2H2nXE78qieFk3bLRUrsOuUp1RKyVUFjCECZ5zMtAHNALBl6S/ziM10Iwk
- y2lxvuv+dwe4T9T3ZVPGasyZLdSx1Z3E6iPl5LajBOLA36s7NCSww0VMI2wHTw==
-X-CM-Envelope: MS4xfEaej7UEMYKuu7ajQRkTaTIAyn7uiLMDiZTIj4d/RMajLMYEKqe/j1ToRk41DElSsKVmZCjJzOFJr4Uqycgtr3XEJlIrBnLaXx61e9sLw+8f6Xvaeihs
- R3cHPVJ1jH6d+fozC/L9wjA4OJK4id9Q+K7JF9tIX1Yd6cf+Tj2rFnvZJvZXY/yZNqb/YSflfsGFViUJ19P8m07ydxlejZ8oByAtnd0buyXltGcyrNPK9HSj
- bQFiEd5RbyPImIAkHPivKOiT2ZnIxaDaJWDs/PaqV5E/TbeA+2ZJ/TXUX4cXdyZz
-X-Soverin-Id: 01a19d46-1fc8-7a6f-9cee-af4a584bcfa1
+ Mon, 02 Nov 2026 19:40:08 +0000
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-cd69954c755so2474800a12.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 02 Nov 2026 11:40:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1793648402; x=1794253202; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=aAt/D2xAxDDJsgiaipx8quTUg87/88xSQ3Xpia9P9eU=;
+ b=CfNgasWceqcDi0YKqe3JkXKyoCaOc1mAuFLM3YregNC3eA0ZjbAGJBlgvG8QjVZVXR
+ if5eWCq8EiLoW1hLc46B8IevHopgfoik6GjqB46gfJ64Yjd+6u2QmWh0NSGZldo9OlN7
+ zfiYty5HlGoggMDL0mBHU3CbnS7NvFGJIXNxgmGgwgKbrjJsb0zs93QAy5VkmZuQvF5X
+ gqxe9WmHix9FF2yklwBe4YolzWCOQmbmAOUG4lwB6Cf4oPfMTKEK96vcTGmeQJfvotS+
+ cbXu3BxF7BTTiaIKwLTcqvSFy2FEmmRe8o4UH2VhKLO3fS/IzzgCI9BlOiGg8zTyMfCB
+ PAeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793648402; x=1794253202;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=aAt/D2xAxDDJsgiaipx8quTUg87/88xSQ3Xpia9P9eU=;
+ b=MtAEGAQ8clXmXltGT76tW90mCGoPtERfDpk3Wd6+V2Xh0cegwozqiRVhn87HN1iyAw
+ K+Rl3/GJJy+JkgmMi1jK0VCjU71pkkBEa/d7Q7yMpL/jtToheMXZtyU1WzX7/lk+ZQHr
+ 0KkRtBHAtcvCK7hNCskIdzfBMksefEg+KD9vFQ7IKmPY0SM6us+1FSdV/YT9saJgZkxC
+ 2nzygrey81YErY7ooe1DteeRfiFWKAtx9LzIcLgi/9jSNUUslHd7Q5btpzM/g1CAysW4
+ rOp/GXjNKwx8O2tXtxdn74M/nZxdSNSZv6yDguJXigGs2tQROjisvJHolNVJ5z4kNzHN
+ YBjQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwVvgnVynQOAuvZNvZtF1HaGiAgcKXDkP/O/1iNprvGBtL+4as3XoBDvdbuFjGQLDJ3fcxLFE1d0qoehwg6fZzx@lists.sourceforge.net
+X-Gm-Message-State: AFq9FYLl819Vk6Uvl8LPbmqbzGhnvivq+Qk3ry/J3dY8XgtNxDW+wHL5
+ 66otZDdtSkGhvVApQvbU8Ycn+6+GuGB+PoFyuWn9DNe/svFrlo4OuPyRImmrITKp
+X-Gm-Gg: AYBFou1NVBy62cxGieChyCtWfmpKUCBuG7xe6VbMPxaPwVG6Z5pckB1vSfDypMq69At
+ 1YOYBGeCaQNEUMNrmiezjpmHSgAwKECJe2Jp1gb4SnNunBs6GI/qZj6yJ4Wg7x6pCC9Of0eZ2Oz
+ xs3skxtp4CXkSjFEev+nCXkeYPEYotOLNZke2Y8J4qGPACGzKNQ/e2YuJVb9zVE1n54ekvxOxgq
+ Au9VHiUMRxbws8HpO26XryE/w053e4wagx7dCCATX8rYpr9QRAIABUEzS102F/iTVGZYIkp32A7
+ RGtUS/lhyTugGsAdtwj+m6al/gKGSSt2mxEf0PIMHmvpkBFj4O7bixb1knTGygJYwuezdc9df3e
+ rklaEBiWg7a8QPkgvs/x3ltLLFNv8nvxp3CodjqSqpdKW3+7ZFZfcXYaFDRhUWbdVI6ldr1WdMM
+ +4Nx4M3HNIUqZ7XmnBlGjvvpSk0wCQXktJXNcWyvftbo9BfCpsFn3lWtXvBxKpHdyHviJz2Rdr7
+ Bd68Bc4UPxtS5jjS9IMp5NO9O2w+zXcRvJk8KhNJIAoRzox1LzTYb9GyiEvVuurcmGFREKh6G4i
+ Zj1WDvLjXW+Wl+37hCFC1MRk45vkaFkXogc+n09UNvJed6TV5gEOEXts7tZqyo/fgVHPCXRvnOa
+ aMdXKue5cRDp0SXzgbQ+ujXV/hZmgBMEE3+R06yHeb0Pw/w==
+X-Received: by 2002:a05:6a21:3945:b0:3e1:aa91:7134 with SMTP id
+ adf61e73a8af0-3e928ace8d8mr9717391637.72.1793648402077; 
+ Mon, 02 Nov 2026 11:40:02 -0800 (PST)
+Received: from f2fs-test.c.googlers.com.com
+ (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-cdb364c48d4sm241826a12.27.2026.11.02.11.39.59
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 02 Nov 2026 11:40:00 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Mon,  2 Nov 2026 11:39:32 -0800
+Message-ID: <20261102193952.3002018-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.56.0.385.gac671c819a-goog
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 02 Nov 2026 18:19:40 +0100
-Message-Id: <DMKWB3WUHCS8.2NJ6PJ9ZRQQ0I@izzo.pro>
-To: "Jaegeuk Kim" <jaegeuk@kernel.org>, "Federico Amedeo Izzo"
- <federico@izzo.pro>
-References: <DMJR2CYAC8C3.36W5SE92C5OL4@izzo.pro> <aui8cqosL0gDFlhF@google.com>
-In-Reply-To: <aui8cqosL0gDFlhF@google.com>
-X-Spampanel-Class: ham
-X-Spam-Score: 0.8 (/)
-X-Headers-End: 1xNvhE-000000006Qr-1OFG
-Subject: Re: [f2fs-dev] update_data_blkaddr assert during resize.f2fs in
- Nura initramfs
+MIME-Version: 1.0
+X-Spam-Score: 1.1 (+)
+X-Headers-End: 1xNxt1-000000002Cl-3nao
+Subject: [f2fs-dev] [PATCH 00/20] f2fs: support block size smaller than
+ PAGE_SIZE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -111,45 +124,135 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Federico Amedeo Izzo via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Federico Amedeo Izzo <federico@izzo.pro>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
-	PDS_PRO_TLD,SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no
-	version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon Nov 2, 2026 at 5:38 PM CET, Jaegeuk Kim wrote:
-> Hi Federico,
->
->
-> If possible, can you share the image that you're trying to resize?
->
-> Thanks,
->
+From: Daeho Jeong <daehojeong@google.com>
 
-Hi Jaegeuk,
+F2FS has required the filesystem block size to equal PAGE_SIZE. On a
+kernel with 16KB pages, this means an existing F2FS image with 4KB
+blocks cannot be mounted, e.g. the userdata partition of an Android
+device that moves from a 4KB page kernel to a 16KB page kernel.
 
-Sure, you can download a zip archive from here:
-https://nextcloud.postmarketos.org/s/G3AixpnQSBcMk3q
+This series lets F2FS mount and use a filesystem whose block size is
+smaller than PAGE_SIZE, such as 4KB blocks on a 16KB page kernel. The
+on-disk format does not change.
 
-It contains two files:
-* fairphone-fp5-userdata-gpt.img: The GPT image containing boot and root
-	partitions, usually flashed to the userdata Android partition
-* fairphone-fp5-rootfs-f2fs.img: just the f2fs root partition, extracted from
-	the phone using U-Boot UMS after flashing userdata, before running the first
-	boot resize operation.
+With subpage blocks, even an order-0 folio holds several blocks, so
+the series builds on the large folio support from Nanzhe Zhao [1] and
+tracks uptodate and dirty state per block in f2fs_folio_state for any
+folio that holds more than one block. Most paths then work in blocks
+instead of pages:
 
-Keep in mind that this phone (Fairphone 5) has UFS storage, so it uses 4096B
-sectors.
+- Patches 1-2 convert the remaining page based index and size
+  calculations to block based ones, and add the superblock and mount
+  infrastructure. Subpage block sizes are still rejected at this
+  point.
+- Patch 3 extends f2fs_folio_state with per-block state, identified by
+  a magic number, and allocates it on demand with __GFP_NOFAIL.
+- Patches 4-7 handle directories, the per-inode dirty counters, the
+  read path and GC, and the write path and writeback per block.
+- Patches 8-19 adapt the remaining features: range operations and
+  mmap, pinned files, collapse/insert range, move range,
+  defragmentation, swapfile, fs-verity, atomic writes, inline data,
+  online resize and compression, and remove the -EOPNOTSUPP checks
+  that patch 2 added for the features that need them.
+- Patch 20 stops rejecting subpage block sizes.
 
-Thanks,
-Federico
+When the block size equals PAGE_SIZE, the behavior does not change,
+except for the fixes noted in the individual patches, some of which
+also apply to large folios.
+
+A few of the patches adjust code from the large folio series [1]:
+
+- f2fs_folio_has_ffs() checks the folio state magic instead of
+  requiring a large folio, since order-0 multi-block folios also carry
+  a folio state, and the page private flags can legitimately be set
+  before a state is attached.
+- f2fs_ffs_find_or_alloc() cannot fail with __GFP_NOFAIL, so the NULL
+  checks of its result in f2fs_get_lock_data_folio() and
+  redirty_blocks() are removed.
+- Defragmentation and swapfile activation mark only the target block
+  dirty instead of the whole page.
+- redirty_blocks() does not dirty the blocks past EOF.
+
+Testing:
+
+Built every patch for x86_64 and arm64 (16KB pages), and the whole
+series for arm (32-bit).
+
+Ran the xfstests auto group (excluding the clone, dedupe and thin
+groups) on arm64 QEMU with mount options "discard,fsync_mode=strict"
+in these combinations of page size / block size:
+
+- 16KB/4KB:  default, compression (lz4, zstd, lz4hc, lzo-rle with
+             64KB clusters and checksum), compression+encryption,
+             encryption+verity, mode=lfs, atgc
+- 4KB/4KB:   default, compression, encryption+verity,
+             compression+encryption, mode=lfs
+- 16KB/16KB: default, compression, encryption+verity,
+             compression+encryption, mode=lfs
+
+plus generic/019, 521 and 522 for each combination, and a 24 hour
+power-off recovery test with fsstress for each of the three
+combinations.
+
+There were no crashes or hangs, and the power-off recovery tests found
+no corruption.
+
+[1] https://lore.kernel.org/linux-f2fs-devel/20261028154407.1601430-1-nzzhao.sigma@gmail.com/
+
+Daeho Jeong (20):
+  f2fs: use block-based index and size calculations in remaining paths
+  f2fs: support subpage block size superblock and mount
+  f2fs: extend f2fs_folio_state for subpage blocks
+  f2fs: support subpage blocks in directory operations
+  f2fs: convert inode dirty page counters to dirty block counters
+  f2fs: support subpage blocks in data read path and GC
+  f2fs: support subpage blocks in data write path and writeback
+  f2fs: adapt range operations and mmap for subpage blocks
+  f2fs: support subpage blocks in pinned files
+  f2fs: support subpage blocks in collapse and insert range
+  f2fs: support subpage blocks in move range
+  f2fs: support subpage blocks in defragmentation
+  f2fs: support subpage blocks in swapfile activation
+  f2fs: support subpage blocks in fs-verity enablement
+  f2fs: support subpage blocks in atomic writes
+  f2fs: preserve inline data in subpage block mode
+  f2fs: support subpage blocks in online resize
+  f2fs: support subpage blocks in compression
+  f2fs: count compress cache entries in pages for its memory limit
+  f2fs: enable subpage block size support
+
+ fs/f2fs/checkpoint.c    |   41 +-
+ fs/f2fs/compress.c      |  518 +++++++++----
+ fs/f2fs/data.c          | 1552 +++++++++++++++++++++++----------------
+ fs/f2fs/dir.c           |  124 +++-
+ fs/f2fs/f2fs.h          |  225 ++++--
+ fs/f2fs/file.c          |  553 ++++++++------
+ fs/f2fs/gc.c            |   89 ++-
+ fs/f2fs/inline.c        |   13 +-
+ fs/f2fs/inode.c         |    4 +-
+ fs/f2fs/node.c          |   17 +-
+ fs/f2fs/segment.c       |    7 +-
+ fs/f2fs/super.c         |  162 ++--
+ fs/f2fs/verity.c        |    5 -
+ include/linux/f2fs_fs.h |    1 +
+ 14 files changed, 2078 insertions(+), 1233 deletions(-)
+
+
+base-commit: 4c5e07aaeeb8a27d769a7e4e13d0b26aea0cb108
+-- 
+2.56.0.317.g454f8302e1-goog
+
 
 
 _______________________________________________
