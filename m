@@ -1,88 +1,86 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B5F60895AE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Nov 2026 16:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F965606B0F9
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Nov 2026 16:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=QBxvdv0M;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=KPpGyBP+;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=fuq1LYT+;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ciznAjsp
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=kwxE7Ez0;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Rl9MjMGB;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=g7tpJHHv;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=or9ocfnt
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=0K/UWlDnrowktVjVUTvK7gcsyHsOB+LuQQqLn3i26gg=; b=QBxvdv0MDDTet7
-	y7qPHwJVpzwrqSM7V/ADdHjHAesL6K0u1l/u0g85zN6+eiyYGzPdpgDDibPafli0j2USRa28NVy23
-	71zWsF3bv3NwcpWkCH0uoL29VAHsw5qKdS9Sy+kJ+OCEXw2Ed1UYBVimX2tHF/RILrYDoqs0+NGxf
-	ksU=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Unsubscribe-Post:List-Owner;
+	bh=lfYhUUj9gnYAr2AlKoiYgVGqLgrByZABagOlUKsBSw8=; b=kwxE7Ez0R//iQusNB0YdeHHk9j
+	Vr0ydfUU2GyNDSTDJdJWnG43XMYar4FgAvT6NwouC+OyytOx2iuzRLyGQZmnm3G6/IsggCHIfnT5n
+	ymlsNP3hMxSKcw3nCI1o/s6qhp3+T2sl7m8D+m2BsCJuPvxNujE6XjprCdQXV2h2L+Oo=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xNuvR-000000002TR-1g8H;
-	Mon, 02 Nov 2026 16:30:25 +0000
+	id 1xNv36-000000002iT-37Gn;
+	Mon, 02 Nov 2026 16:38:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <patchwork-bot+f2fs@kernel.org>)
- id 1xNuvO-000000002TJ-3VPc
+ (envelope-from <jaegeuk@kernel.org>) id 1xNv35-000000002iM-4956
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Nov 2026 16:30:22 +0000
+ Mon, 02 Nov 2026 16:38:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5SF/q8pr/2pIISxjfoSE04GDV9J/4diNi7cS9BtLTyo=; b=KPpGyBP+ob+qEZ6/CFq+lC4W4e
- 8r1eer5nWqnrRZSVS8VaBR6/76p+Bwjf65+3TMq530rfvHFNOcguyPF6FZTEJXJ3lJqbEWhgZDGuL
- dn11AE8IBh448nt6vASw5p3Sj2yz/WHXU0bWlT6sB+Z1NK/bEScL1Rk2tpy676VcTVGM=;
+ bh=+EjIng1wmWPZLMPlxavzBwtkLK4d8SnEFxgxVSFNl0E=; b=Rl9MjMGBUxx5CcPYGJpOGslYSm
+ GmNgJJL9+rVdoYCZuSFX5qo9hiFv2+4as9xbi7nf0/U6aGMyjWhnVGMLM/JX9lJmVfYrI6oNgbEtl
+ fmoIWqV03pvBPVbi5g8XNOACZhJZ3xeByaBqRwvroBKj4kLs1LE6Cp5gZ9eUZnaDOGe8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5SF/q8pr/2pIISxjfoSE04GDV9J/4diNi7cS9BtLTyo=; b=fuq1LYT+42u8xSSblzvoD8J2eQ
- xWTrNc97qPv3jD8aSAOVy1qZWPyNg+RhyJ00mbZDxJTgR9Ca8anxilJDKeZs+HUcromZE9m904WSG
- Su/qDY3DI2cTrFQP2MMfjXJ2+k7fDp8KpkBZgQ8cYw7gwQi5c4DOFehwBS82wukhjAsQ=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=+EjIng1wmWPZLMPlxavzBwtkLK4d8SnEFxgxVSFNl0E=; b=g7tpJHHvbZVzemEBeSqhSJMeVr
+ Jq8dn4WbxtRZLvE6ZcfG1SczQcF1naPaXBHPoLKHHque/3joevnXiR+h2PIv8pljLLzCPOe3b9Jvy
+ dInRZbQrCDBJzs5icQBVjdkhui9OQHzHArUAkYSR8GQzgyJb0kyCz6xEIqZHbYMfcIh8=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xNuvM-000000005HP-0Pn0
+ id 1xNv33-000000005Np-1dtx
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Nov 2026 16:30:22 +0000
+ Mon, 02 Nov 2026 16:38:19 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 64EDF60A51;
- Mon,  2 Nov 2026 16:30:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3001F00A17;
- Mon,  2 Nov 2026 16:30:14 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 0FAC340F08;
+ Mon,  2 Nov 2026 16:38:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF8551F00A18;
+ Mon,  2 Nov 2026 16:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793637014;
- bh=5SF/q8pr/2pIISxjfoSE04GDV9J/4diNi7cS9BtLTyo=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=ciznAjspHmO4moOwJm6immabK8shiofklXsWTDE1+bx2tjLWwSLXCegPdzIGbmpUv
- 4N8lgAz//ShZfHI411NOlMVHsKeZT2ZOX3ZTUlIJzd5UaqlXayldAIN5/y6BkcmrqQ
- ojaz4WrLshfrtK9nTyJEayS0UCus4FDlJQkiQtEnsIkzQlMDA1LgoNtAwdS8EYlhPt
- i/IYjcQMGmht1rw/RSXGV+jxKQJwyqYv6cke2XS3eiTDF51ky7ypHTkcTdLeRBcoKc
- bcBGjOs/8b22m5dS+SWd1kJwmIsSDsWo8eIXHzhutxnq2nRYn3qccEqu/800bn4cdO
- Hkizi7T2F3fkw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 03116380821F; Mon,  2 Nov 2026 16:30:14 +0000 (UTC)
+ s=k20260515; t=1793637491;
+ bh=+EjIng1wmWPZLMPlxavzBwtkLK4d8SnEFxgxVSFNl0E=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=or9ocfnt8lZHMXQBMd7fdzy56Q0zdhckeQteDMj/Z00g63zvPIuEZlrK3mlqpBYRn
+ Gp+5UFXk6nYBUliHkNTPq6ogvkSr9W7PM8C6zfDvc7KCbaU9si+tDTGvAJMeELPNyU
+ xPoaCe09coNxTOpg01JJ5rUXmolhXiJw6h+rlklbKZvDlygruAkMM8IBi9WwFR5x1M
+ s6TWe1BdIXNCw3KX7w/wMIbObWQJKzwF/qQXmjdg+7GBlCV25PWifXkfA9ulKPCul8
+ yKgS1EcJ8IDHe45H4rVgNOaNMow6IntOihuJ1QnMHsY7S+o8qFpZs5t949K67vbHoa
+ OOJfPcsh/BDkQ==
+Date: Mon, 2 Nov 2026 16:38:10 +0000
+To: Federico Amedeo Izzo <federico@izzo.pro>
+Message-ID: <aui8cqosL0gDFlhF@google.com>
+References: <DMJR2CYAC8C3.36W5SE92C5OL4@izzo.pro>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-Id: <179363701254.39295.10495634103077499993.git-patchwork-notify@kernel.org>
-Date: Mon, 02 Nov 2026 16:30:12 +0000
-References: <20261028154407.1601430-1-nzzhao.sigma@gmail.com>
-In-Reply-To: <20261028154407.1601430-1-nzzhao.sigma@gmail.com>
-To: Nanzhe Zhao <nzzhao.sigma@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <DMJR2CYAC8C3.36W5SE92C5OL4@izzo.pro>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xNuvM-000000005HP-0Pn0
-Subject: Re: [f2fs-dev] [PATCH v8 00/15] f2fs: support & optimize large
- folios for writable files
+X-Headers-End: 1xNv33-000000005Np-1dtx
+Subject: Re: [f2fs-dev] update_data_blkaddr assert during resize.f2fs in
+ Nura initramfs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,77 +90,97 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: baohua@kernel.org, nzzhao@126.com, jyescas@google.com,
- daehojeong@google.com, zhaonanzhe@xiaomi.com, Dev.Jain@arm.com,
- linux-kernel@vger.kernel.org, David.Hildenbrand@arm.com,
- linux-f2fs-devel@lists.sourceforge.net, zhangbo56@xiaomi.com,
- kaleshsingh@google.com, jaegeuk@kernel.org, lipengfei28@xiaomi.com,
- Ryan.Roberts@arm.com
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_PASS,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+	SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hello:
+Hi Federico,
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Wed, 28 Oct 2026 23:43:51 +0800 you wrote:
-> From: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+On 11/01, Federico Amedeo Izzo via Linux-f2fs-devel wrote:
+> Hello,
 > 
-> This series supports large folios for most readable/writable files
-> in buffered I/O paths, including normal files, block-layer encrypted
-> files, and atomic files except for inline-data files, compressed files,
-> and quota files.
+> I am a member of Nura (formerly postmarketOS), a Linux distribution for mobile
+> devices. Our system optionally supports F2FS as filesystem; developers can
+> enable it instead of the default ext4 when building an image for their device.
+> I noticed a regression on fsck.f2fs/resize.f2fs from f2fs-tools 1.17.0
+> resulting in a corrupted filesystem making impossible to boot a fresh Nura F2FS
+> installation.
 > 
-> [...]
+> Our setup to install Nura on Android devices is to create a small image 
+> containing a GPT table, a FAT32 EFI boot partition and a ext4/F2FS root
+> partition. This image is flashed on the userdata partition using fastboot and
+> gets resized by the initramfs during the first boot to make the rootfs use all 
+> the available space in the userdata partition.
+> 
+> The fsck or resize operation is corrupting the filesystem, resulting in an
+> assert during update_data_blkaddr(). See the commands we use in the Nura
+> initramfs and the corresponding logs at the bottom of this message.
+> 
+> Note: We recently introduced the `-F` option to run the resize
+> non-interactively, as we run it in the initramfs during boot as described above.
+> 
+> I hope you can help us solve this issue and restore the F2FS functionality on
+> new installations. I am available for making further tests or investigations.
 
-Here is the summary with links:
-  - [f2fs-dev,v8,01/15] f2fs: extend folio state for large folio write path
-    (no matching commit)
-  - [f2fs-dev,v8,02/15] f2fs: carry subpage offset and count in write IO
-    (no matching commit)
-  - [f2fs-dev,v8,03/15] f2fs: support regular file buffered writes on large folios
-    https://git.kernel.org/jaegeuk/f2fs/c/97c64ba5ddb7
-  - [f2fs-dev,v8,04/15] f2fs: support atomic file large folios buffered write
-    https://git.kernel.org/jaegeuk/f2fs/c/8ac2add73d76
-  - [f2fs-dev,v8,05/15] f2fs: support large folio writeback
-    (no matching commit)
-  - [f2fs-dev,v8,06/15] f2fs: account large folio dirty data at block granularity
-    (no matching commit)
-  - [f2fs-dev,v8,07/15] f2fs: prepare mmap write faults for large folios
-    https://git.kernel.org/jaegeuk/f2fs/c/ef600b86fa0d
-  - [f2fs-dev,v8,08/15] f2fs: make GC migration large-folio aware
-    (no matching commit)
-  - [f2fs-dev,v8,09/15] f2fs: optimize small block size large folio read
-    https://git.kernel.org/jaegeuk/f2fs/c/3db2859c36ab
-  - [f2fs-dev,v8,10/15] f2fs: support partial uptodate large folio read
-    https://git.kernel.org/jaegeuk/f2fs/c/3a54a923164e
-  - [f2fs-dev,v8,11/15] f2fs: handle partial truncate of large folio dirty subpages
-    https://git.kernel.org/jaegeuk/f2fs/c/a17b730b74d2
-  - [f2fs-dev,v8,12/15] f2fs: fix zeroing paths for large folios
-    https://git.kernel.org/jaegeuk/f2fs/c/feb4f88c369a
-  - [f2fs-dev,v8,13/15] f2fs: handle block cloning within the same large folio
-    https://git.kernel.org/jaegeuk/f2fs/c/25076e575f0e
-  - [f2fs-dev,v8,14/15] f2fs: allow large folio support to writeable files
-    https://git.kernel.org/jaegeuk/f2fs/c/987f5d0098a6
-  - [f2fs-dev,v8,15/15] f2fs: make compressed files compatible with large folio
-    (no matching commit)
+If possible, can you share the image that you're trying to resize?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks,
 
-
+> 
+> Thank you very much,
+> Federico Amedeo Izzo
+> 
+> ### Command: fsck.f2fs -p /dev/loop0p2
+> Info: Use default preen mode
+> Info: MKFS version
+>   "Linux version 7.2.11-arch1-1 (linux@archlinux) (gcc (GCC) 16.2.1 20260810, GNU ld (GNU Binutils) 2.47) #1 SMP PREEMPT_DYNAMIC Fri, 16 Oct 2026 00:28:58 +0000"
+> Info: FSCK version
+>   from "Linux version 7.2.11-arch1-1 (linux@archlinux) (gcc (GCC) 16.2.1 20260810, GNU ld (GNU Binutils) 2.47) #1 SMP PREEMPT_DYNAMIC Fri, 16 Oct 2026 00:28:58 +0000"
+>     to "Linux version 7.2.9 (pmos@build) (Alpine clang version 23.1.3, LLD 23.1.3) #3-postmarketos-qcom-sc7280 SMP PREEMPT Sat Oct 17 01:53:13 UTC "
+> Info: superblock features = 828 :  extra_attr inode_checksum sb_checksum
+> Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+> Info: Segments per section = 1
+> Info: Sections per zone = 1
+> Info: total FS sectors = 700160 (2735 MB)
+> Info: CKPT version = 39bb7788
+> Info: Casefold: linear_lookup [enable]
+> Info: checkpoint state = 145 :  trimmed crc compacted_summary unmount
+> Info: No error was reported
+> 
+> ### Command: resize.f2fs -F /dev/loop0p2
+> Info: Force to resize
+> Info: MKFS version
+>   "Linux version 7.2.11-arch1-1 (linux@archlinux) (gcc (GCC) 16.2.1 20260810, GNU ld (GNU Binutils) 2.47) #1 SMP PREEMPT_DYNAMIC Fri, 16 Oct 2026 00:28:58 +0000"
+> Info: FSCK version
+>   from "Linux version 7.2.11-arch1-1 (linux@archlinux) (gcc (GCC) 16.2.1 20260810, GNU ld (GNU Binutils) 2.47) #1 SMP PREEMPT_DYNAMIC Fri, 16 Oct 2026 00:28:58 +0000"
+>     to "Linux version 7.2.9 (pmos@build) (Alpine clang version 23.1.3, LLD 23.1.3) #3-postmarketos-qcom-sc7280 SMP PREEMPT Sat Oct 17 01:53:13 UTC "
+> Info: superblock features = 828 :  extra_attr inode_checksum sb_checksum
+> Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+> Info: Segments per section = 1
+> Info: Sections per zone = 1
+> Info: total FS sectors = 700160 (2735 MB)
+> Info: CKPT version = 39bb7788
+> Info: reszie wanted target FS sectors = 55974510 (218650 MB)
+> Info: flush_journal_entries() n_nats: 25, n_sits: 0
+> Info: Duplicate valid checkpoint to mirror position 1024 -> 512
+> Info: Write valid nat_bits in checkpoint
+> Info: write_checkpoint() cur_cp:1
+> Not enough space to migrate blocksTry to do defragement: Skip
+> [update_data_blkaddr:2527] NAT and SIT is inconsistent: ino: 3871, nid: 3871, blkaddr: 838754, segtype: 0[ASSERT] (update_data_blkaddr:2529) 0
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
