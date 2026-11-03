@@ -1,89 +1,116 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38C0606A32D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2026 09:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7E9606BFA3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2026 10:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=M/Jn5vxT;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=WEn++w5X;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=ZK+zqBhf;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JgikbGlL
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=VGq9r80z;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=ZffR0lTq;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=MsYupNYd;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Tn/pHOcM
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=P4LLvthbcG3n3pGQMExUUSFk3beuBm/Dqmelku+uI6g=; b=M/Jn5vxTZoRsjn
-	sFUVEvNLUVKcy1sXH5LxYYvndShAdsxbniiHReLVN2x5xIJ8c8Da+sf4RWHtBoj+diN2NQM5L4yCX
-	XDvgBcJdGkybXcB/V9eAKVVJ72748qy3Mf3tv3oaWCsLkFtOouNQWeA3rbL7lZ2jN6+00sR08zc9M
-	n3A=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
+	bh=Vuu2RYTBkKX7NhDNDojwP1yP4T9bw8pCaraCEP56uzw=; b=VGq9r80z43Fph4lgWBzy+U0AC/
+	YI6D16+SKAI16idUzVyEREThV8WA4qhEWuALCIOQQknjhKWyIPQ44UKnAKzd8pKy1zpsxpVt4HzO1
+	uwMJscZgSU0SDyG6z84luK3PS7GzFY3EaoDV+sKv4nzipy9NAAJr5cdEbiBTDrc2SrB0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xOAmT-000000004MR-1Joo;
-	Tue, 03 Nov 2026 09:26:13 +0000
+	id 1xOBV8-000000005pV-1JHa;
+	Tue, 03 Nov 2026 10:12:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xOAmR-000000004MB-2cm7
+ (envelope-from <seungbum.ju@gmail.com>) id 1xOBV7-000000005oi-00qY
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Nov 2026 09:26:11 +0000
+ Tue, 03 Nov 2026 10:12:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=v029MmB/+Kg/3AvfJCngSTrZpw2MdCxPVZPycItk8Ak=; b=WEn++w5XP4QEdObPQPcNwetYft
- TQLaC39kKGvnQv+mzsTnzowCdXZKxaGpx9PBirCU3ZKkRJ25Dv3s8CkvfrVSP8XSPAeEfzI5we5DA
- UOOOLVUoq1CetGFWGSrXuzClyzM5VY5Gr/qSuQD4UGj3BekV6Zh5sJGtsIgfdPY5k75M=;
+ bh=FfNOitLIXBWU/EzJpPhxbyv+UkEWJ2JnXPpF+ZYiRo4=; b=ZffR0lTqHaGis0I5TJIzyHirIt
+ xHdOYc8gOSWG9zSC1b1XQfzMpgkjT8I7/u9ZA5X4XxAqZqpC9MCAFHkbIcvIGQJzb2SI6qDkFNBFz
+ u3k2vTb9mTNDMem5SJoSRmRdH3QcgNLblgN6PaBW0QRNg5+uFd7MuHG8vgrXYXkAJ+p0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=v029MmB/+Kg/3AvfJCngSTrZpw2MdCxPVZPycItk8Ak=; b=ZK+zqBhfnXEupu/PKrTRnqHp2m
- 8kwvKrs1NEiiEwaUxr5b1OjvJURfzqX9kDZMGyboVRgJSMNGenoZVHEry5ZSAMinzzqIjdxgtkVgd
- PPuKgcnsWb5ZnLSh/CrwL+cTwkEluqrV1D9qmqrKEDGhojMO727cyN/ehuBXWIVoFlWw=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=FfNOitLIXBWU/EzJpPhxbyv+UkEWJ2JnXPpF+ZYiRo4=; b=MsYupNYd/Mf0xfmQoTlNC6unVA
+ fPFlE7Vie5SkCnt/yxbQrFHSIvGaPCV1VNzRxsjWz4B3WVdugb1gNHD+54gteW/pA15jimxZhPc5S
+ YdGWLIcHXWJsvgza+UwtGicECEegZsZFB/Rnw+wN9Gf+dtcvG5lY4lIuvD2xFA9Wm2mE=;
+Received: from mail-pj1-f41.google.com ([209.85.216.41])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xOAmO-000000007oV-3693
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xOBV5-000000000Xd-2ezU
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Nov 2026 09:26:11 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id F3514601EF;
- Tue,  3 Nov 2026 09:26:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA151F000C1;
- Tue,  3 Nov 2026 09:26:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793697962;
- bh=v029MmB/+Kg/3AvfJCngSTrZpw2MdCxPVZPycItk8Ak=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=JgikbGlLywr2vC4l7vQs7IvGnFhpsf4QP301/Qzidll+exoyRF/dTdgSG8aUfIIBa
- zLyn7gjjy0FpP4H3sJ+C0jdweK8P2IvYVPBwVfl8zJFd1IEl/pdTwk8MlLzsJsrLzO
- /Tfyu/czycVG9WggXKAMtivVzrmKAVdn40mvJ71Yq0xqVOxDMl1Lg5ghHjwDAttz9K
- yenTXdvh3NmaqTSHaDUVRnKh468d8q+qKMVdxltgbrRT3MQr4pvf5qI0C4kmqRBDX7
- nUxSkWSCk45EPaRHhaQGObZ4BAjJ3LGGYQ/kYles2plzDCCYBavA+nn9BK+5j6R6Lk
- VWbpOPBmNKXcw==
-Message-ID: <0ac04f29-982c-423c-b65d-ebed996c4a52@kernel.org>
-Date: Tue, 3 Nov 2026 17:26:00 +0800
+ Tue, 03 Nov 2026 10:12:20 +0000
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-3ae6b4c669fso332054a91.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 03 Nov 2026 02:12:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1793700734; x=1794305534; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=FfNOitLIXBWU/EzJpPhxbyv+UkEWJ2JnXPpF+ZYiRo4=;
+ b=Tn/pHOcMJEu8dyYH21vVHoutO2+V8WH2rF/eWKWXULrHj57UYDFtOTiggiPyjLHImv
+ +RvwX1fclmWos7Dkx+TpVQg6+E+EZZ5Y7nbRpfucT3lZru+31LoI++c3IloYmUTKz/0q
+ J7rheVG4tPifPH3mtayzlEJtYJ6+QIBsCywzd+V1SOl8fV+DtWOJ6DARKC8ZEjr2zwdd
+ ++vB4wwpQSP/GZJAv10JVTUAV1yJH1Sxo4hWRq3mQhc2XYPnMCMRcuPThymTfVgnNP2g
+ MRaLlYJNZZyc7Fzq12GeezJqIxNNPd5lueyLnjyUqF+6u2awkS4z7DnrLzNASw/LsJLm
+ +MRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793700734; x=1794305534;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=FfNOitLIXBWU/EzJpPhxbyv+UkEWJ2JnXPpF+ZYiRo4=;
+ b=kKmcFPvpFx3x/6LRAjF1p7IH9uM60/2o3kPP4FC4OeX9callHykOHFdkQnUqKWqnaA
+ w6qnfxPQHdjluTVjgFUZMgG213GsV7s4y4xdBwAE4CGk1SWjeIyQH8GXQrdBnZhrjPjt
+ hXM+8r6t5s2+7yj/kQicTZaUQX7dc92H1G98HqYDM6mve4g/FYNjD8+YJhTieeQ/2cNo
+ 1u1tnJc4pgjI5F5C+WBarWzT31hnJQktIHIuBCEySzhMDmRTx89DibUPr/3bGHyXYTZ3
+ xG4AShzHYaRkKFMC4q9bdUrXzHO53Qpx+EoSfKU3cXmxyYot5+1C74oSbL/OWFHGNPHs
+ dtCQ==
+X-Gm-Message-State: APuU4Z9NMwefKgXi0FaFsbkF/ajg0X30lPBTH9dq+xGGKXYivfYpNbco
+ jGS+/przp9d3FesDkYJ7U9ZsT8xzE4Hf5Rjvhkog2Tga7IejqZR4EnOE
+X-Gm-Gg: AYBFou2cg8Ndy9TA8DXujzBCTwTKWwM8Z+Caz5BGw0n1PbVUs7LSxsQYaCT0zaPtnt3
+ gIElLsiRPWFawoasRXVnbi1nvhFW9H0byXZaOVLcmU53J8gLu4Pgd3gngjmG7Lf2g2dbtG/tv/b
+ v3HECHUPkGxW8bXNTBC2OJmWtAHLTWMU1InWupDRBw4Osao92X//fPUgUrqCczrxw+HE/ED30/S
+ gkO3QyRHKe9ibUSilnEk3ClZLpj9ph3w1WAwSUSHj1VIhTynZ4AxFR/MW1ZGcdNL2KFSnGPkcHn
+ fqdwN078+RZFoXatusO/W3kz8eBJGNFM6mTLLugHUwwBoF/v+EMokJcWD/Cq5VEc1SatAVWov6K
+ XRznrZqVCU+zgUpWrvwbgI0/bj8qd5xnL/gyi8+dFED16XAfaBcqvmdnhpT8MjQzLSLPvPvIBkF
+ Xs8hibzaCRFI1oSWlOaxkMHkJ9hI+iSyeef82jbtIobsgAoiX4yP4YJScPh8SBafAcHnhUVm10m
+ c3cbcdVpEMzwivk3Vaw7E4CiReGZdvRGW0tccJorGEJOg4jTwvQkeIDOSKXJSrxyC6KiQdPSCo8
+ bwYkuP6v5aLr+8Sb9wjDvnDAAtC9AI1UjsEdgU6/K209OmLoXt68TVZSIIE=
+X-Received: by 2002:a17:90b:1cc5:b0:3ae:3d82:5d88 with SMTP id
+ 98e67ed59e1d1-3ae8917bf84mr7426716a91.0.1793700733700; 
+ Tue, 03 Nov 2026 02:12:13 -0800 (PST)
+Received: from localhost.localdomain ([106.101.10.14])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3aebc89475asm4934624a91.0.2026.11.03.02.12.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 03 Nov 2026 02:12:12 -0800 (PST)
+From: Seungbum Ju <seungbum.ju@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Tue,  3 Nov 2026 19:12:08 +0900
+Message-ID: <20261103101208.4550-1-seungbum.ju@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20261102193952.3002018-1-daeho43@gmail.com>
- <20261102193952.3002018-3-daeho43@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20261102193952.3002018-3-daeho43@gmail.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xOAmO-000000007oV-3693
-Subject: Re: [f2fs-dev] [PATCH 02/20] f2fs: support subpage block size
- superblock and mount
+X-Headers-End: 1xOBV5-000000000Xd-2ezU
+Subject: [f2fs-dev] [PATCH] f2fs: wait for node writeback on the first fsync
+ after a checkpoint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,634 +120,70 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: Seungbum Ju <seungbum.ju@gmail.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 11/3/26 03:39, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> Add the infrastructure to mount F2FS with a block size smaller than
-> PAGE_SIZE, e.g. 4KB blocks on a 16KB page kernel.
-> 
-> - Add helpers to convert between block indices, folio indices and
->   offsets within a folio.
-> - Take the block size from the 1st superblock, which is at the same
->   offset for every block size. If it is invalid, probe the 2nd
->   superblock with each supported block size.
-> - Allow log_blocksize up to PAGE_SHIFT, and write back only the target
->   superblock block instead of the whole folio.
-> - Keep rejecting subpage block sizes, and return -EOPNOTSUPP for the
->   features that do not support them yet. Later patches add the support
->   and lift these restrictions.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->  fs/f2fs/compress.c      |   2 +
->  fs/f2fs/f2fs.h          |  61 ++++++++++++---
->  fs/f2fs/file.c          |  42 +++++++++++
->  fs/f2fs/super.c         | 160 ++++++++++++++++++++++++++++------------
->  fs/f2fs/verity.c        |   3 +
->  include/linux/f2fs_fs.h |   1 +
->  6 files changed, 212 insertions(+), 57 deletions(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index c7910688c318..0b0f31af6626 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -550,6 +550,8 @@ bool f2fs_is_compress_backend_ready(struct inode *inode)
->  {
->  	if (!f2fs_compressed_file(inode))
->  		return true;
-> +	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode)))
-> +		return false;
->  	return f2fs_cops[F2FS_I(inode)->i_compress_algorithm];
->  }
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 50a5f845176d..11de12a3e804 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1372,11 +1372,11 @@ struct f2fs_io_info {
->  };
->  
->  #define F2FS_FIO_LBLK(fio)						\
-> -	(((fio)->folio)->index + (fio)->folio_offset)
-> +	(f2fs_folio_lblk((fio)->sbi, (fio)->folio) + (fio)->folio_offset)
->  #define F2FS_FIO_BLKCNT(fio)						\
->  	((fio)->folio_blkcnt)
->  #define F2FS_FIO_BIO_OFFSET(fio)					\
-> -	((fio)->folio_offset << PAGE_SHIFT)
-> +	F2FS_BLK_TO_BYTES((fio)->sbi, (fio)->folio_offset)
->  #define F2FS_FIO_BIO_SIZE(fio)					\
->  	F2FS_BLK_TO_BYTES((fio)->sbi, F2FS_FIO_BLKCNT(fio))
->  
-> @@ -2326,19 +2326,59 @@ static inline void make_dentry_ptr_block(struct inode *inode,
->  					SIZE_OF_DIR_ENTRY * entries;
->  }
->  
-> +static inline unsigned int f2fs_blocks_per_folio(struct f2fs_sb_info *sbi,
-> +						 const struct folio *folio)
-> +{
-> +	return folio_size(folio) >> sbi->log_blocksize;
-> +}
-> +
-> +static inline bool f2fs_has_subpage_blocks(struct f2fs_sb_info *sbi)
-> +{
-> +	return F2FS_BLKSIZE(sbi) < PAGE_SIZE;
-> +}
-> +
-> +static inline pgoff_t f2fs_folio_lblk(struct f2fs_sb_info *sbi,
-> +				      const struct folio *folio)
-> +{
-> +	return ((loff_t)folio->index << PAGE_SHIFT) >> sbi->log_blocksize;
-> +}
-> +
-> +static inline pgoff_t f2fs_lblk_to_folio_index(struct f2fs_sb_info *sbi,
-> +					       pgoff_t index)
-> +{
-> +	return F2FS_BLK_TO_BYTES(sbi, index) >> PAGE_SHIFT;
-> +}
-> +
-> +static inline pgoff_t f2fs_folio_blk_offset(struct f2fs_sb_info *sbi,
-> +					     const struct folio *folio,
-> +					     pgoff_t index)
-> +{
-> +	return index - f2fs_folio_lblk(sbi, folio);
-> +}
-> +
-> +static inline size_t f2fs_folio_byte_offset(struct f2fs_sb_info *sbi,
-> +					     const struct folio *folio,
-> +					     pgoff_t index)
-> +{
-> +	return F2FS_BLK_TO_BYTES(sbi, f2fs_folio_blk_offset(sbi, folio, index));
-> +}
-> +
-> +static inline void *f2fs_folio_lblk_address(struct f2fs_sb_info *sbi,
-> +					    struct folio *folio, pgoff_t index)
-> +{
-> +	return folio_address(folio) + f2fs_folio_byte_offset(sbi, folio, index);
-> +}
-> +
->  static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
->  {
->  	return (struct f2fs_super_block *)(sbi->raw_super);
->  }
->  
-> -static inline struct f2fs_super_block *F2FS_SUPER_BLOCK(struct folio *folio,
-> -								pgoff_t index)
-> +static inline struct f2fs_super_block *
-> +F2FS_SUPER_BLOCK(struct f2fs_sb_info *sbi, struct folio *folio, pgoff_t index)
->  {
-> -	pgoff_t idx_in_folio = index % folio_nr_pages(folio);
-> -
->  	return (struct f2fs_super_block *)
-> -		(page_address(folio_page(folio, idx_in_folio)) +
-> -						F2FS_SUPER_OFFSET);
-> +		(f2fs_folio_lblk_address(sbi, folio, index) + F2FS_SUPER_OFFSET);
->  }
->  
->  static inline struct f2fs_checkpoint *F2FS_CKPT(struct f2fs_sb_info *sbi)
-> @@ -3905,11 +3945,10 @@ static inline bool f2fs_is_time_consistent(struct inode *inode)
->  
->  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  {
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	bool ret;
->  
->  	if (dsync) {
-> -		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> -
->  		spin_lock(&sbi->inode_lock[DIRTY_META]);
->  		ret = list_empty(&F2FS_I(inode)->gdirty_list);
->  		spin_unlock(&sbi->inode_lock[DIRTY_META]);
-> @@ -3917,7 +3956,7 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  	}
->  	if (!is_inode_flag_set(inode, FI_AUTO_RECOVER) ||
->  			file_keep_isize(inode) ||
-> -			i_size_read(inode) & ~PAGE_MASK)
-> +			i_size_read(inode) & (F2FS_BLKSIZE(sbi) - 1))
+f2fs_add_fsync_node_entry() numbers each fsync'd warm node page with
+sbi->fsync_seg_id++, and f2fs_reset_fsync_node_info() sets the counter back
+to 0 at every checkpoint. The first node page fsync'd after a checkpoint
+therefore gets seq_id 0, which f2fs_do_sync_file() passes to
+f2fs_wait_on_node_pages_writeback(). That function treats 0 as "nothing to
+wait for":
 
-Use F2FS_BLKSIZE_MASK(sbi) for cleanup
+    while (seq_id && cur_seq_id < seq_id) {
 
->  		return false;
->  
->  	if (!f2fs_is_time_consistent(inode))
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 93d3088c96f0..82eb62301c48 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2207,6 +2207,15 @@ static long f2fs_fallocate(struct file *file, int mode,
->  		goto out;
->  	}
->  
-> +	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode))) {
-> +		if ((mode & (FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_INSERT_RANGE)) ||
-> +		    f2fs_is_pinned_file(inode) || f2fs_is_atomic_file(inode) ||
-> +		    f2fs_compressed_file(inode)) {
-> +			ret = -EOPNOTSUPP;
-> +			goto out;
-> +		}
-> +	}
-> +
->  	ret = file_modified(file);
->  	if (ret)
->  		goto out;
-> @@ -2455,6 +2464,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->  	loff_t isize;
->  	int ret;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!(filp->f_mode & FMODE_WRITE))
->  		return -EBADF;
->  
-> @@ -3262,6 +3274,9 @@ static int f2fs_ioc_defragment(struct file *filp, unsigned long arg)
->  	struct f2fs_defragment range;
->  	int err;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
->  
-> @@ -3484,6 +3499,9 @@ static int f2fs_ioc_move_range(struct file *filp, unsigned long arg)
->  {
->  	struct f2fs_move_range range;
->  
-> +	if (f2fs_has_subpage_blocks(F2FS_I_SB(file_inode(filp))))
-> +		return -EOPNOTSUPP;
-> +
->  	if (copy_from_user(&range, (struct f2fs_move_range __user *)arg,
->  							sizeof(range)))
->  		return -EFAULT;
-> @@ -3734,6 +3752,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->  	__u32 pin;
->  	int ret = 0;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (get_user(pin, (__u32 __user *)arg))
->  		return -EFAULT;
->  
-> @@ -4114,6 +4135,9 @@ static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
->  	__u64 block_count;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
->  
-> @@ -4131,6 +4155,9 @@ static int f2fs_ioc_enable_verity(struct file *filp, unsigned long arg)
->  {
->  	struct inode *inode = file_inode(filp);
->  
-> +	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode)))
-> +		return -EOPNOTSUPP;
-> +
->  	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
->  
->  	if (!f2fs_sb_has_verity(F2FS_I_SB(inode))) {
-> @@ -4311,6 +4338,9 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
->  	int ret;
->  	int writecount;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!f2fs_sb_has_compression(sbi))
->  		return -EOPNOTSUPP;
->  
-> @@ -4506,6 +4536,9 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
->  	unsigned int reserved_blocks = 0;
->  	int ret;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!f2fs_sb_has_compression(sbi))
->  		return -EOPNOTSUPP;
->  
-> @@ -4827,6 +4860,9 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
->  	struct f2fs_comp_option option;
->  	int ret = 0;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!f2fs_sb_has_compression(sbi))
->  		return -EOPNOTSUPP;
->  
-> @@ -4965,6 +5001,9 @@ static int f2fs_ioc_decompress_file(struct file *filp)
->  	pgoff_t page_idx = 0, last_idx, cluster_idx;
->  	int ret;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!f2fs_sb_has_compression(sbi) ||
->  			F2FS_OPTION(sbi).compress_mode != COMPR_MODE_USER)
->  		return -EOPNOTSUPP;
-> @@ -5046,6 +5085,9 @@ static int f2fs_ioc_compress_file(struct file *filp)
->  	pgoff_t page_idx = 0, last_idx, cluster_idx;
->  	int ret;
->  
-> +	if (f2fs_has_subpage_blocks(sbi))
-> +		return -EOPNOTSUPP;
-> +
->  	if (!f2fs_sb_has_compression(sbi) ||
->  			F2FS_OPTION(sbi).compress_mode != COMPR_MODE_USER)
->  		return -EOPNOTSUPP;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 78dbf1e92285..f34558b661eb 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -4000,7 +4000,7 @@ static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
->  	folio_lock(folio);
->  	folio_wait_writeback(folio);
->  	if (update)
-> -		memcpy(F2FS_SUPER_BLOCK(folio, index), F2FS_RAW_SUPER(sbi),
-> +		memcpy(F2FS_SUPER_BLOCK(sbi, folio, index), F2FS_RAW_SUPER(sbi),
->  					sizeof(struct f2fs_super_block));
->  	folio_mark_dirty(folio);
->  	folio_clear_dirty_for_io(folio);
-> @@ -4010,9 +4010,10 @@ static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
->  	bio = bio_alloc(sbi->sb->s_bdev, 1, opf, GFP_NOFS);
->  
->  	/* it doesn't need to set crypto context for superblock update */
-> -	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(sbi, folio->index);
-> +	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(sbi, index);
->  
-> -	if (!bio_add_folio(bio, folio, folio_size(folio), 0))
-> +	if (!bio_add_folio(bio, folio, F2FS_BLKSIZE(sbi),
-> +			   f2fs_folio_byte_offset(sbi, folio, index)))
->  		f2fs_bug_on(sbi, 1);
->  
->  	ret = submit_bio_wait(bio);
-> @@ -4025,7 +4026,7 @@ static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
->  static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
->  					struct folio *folio, pgoff_t index)
->  {
-> -	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(folio, index);
-> +	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(sbi, folio, index);
->  	struct super_block *sb = sbi->sb;
->  	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
->  	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
-> @@ -4107,11 +4108,13 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
->  			res = "internally";
->  		} else {
->  			/*
-> -			 * __f2fs_commit_super() will access log_blocksize
-> -			 * in SECTOR_FROM_BLOCK(), init it in advance.
-> +			 * __f2fs_commit_super() will access log_blocksize and
-> +			 * blocksize to locate the superblock, init them in
-> +			 * advance.
->  			 */
->  			sbi->log_blocksize =
->  				le32_to_cpu(raw_super->log_blocksize);
-> +			sbi->blocksize = BIT(sbi->log_blocksize);
->  			err = __f2fs_commit_super(sbi, folio, index, false);
->  			res = err ? "failed" : "done";
->  		}
-> @@ -4129,7 +4132,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->  {
->  	block_t segment_count, segs_per_sec, secs_per_zone, segment_count_main;
->  	block_t total_sections, blocks_per_seg;
-> -	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(folio, index);
-> +	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(sbi, folio, index);
->  	size_t crc_offset = 0;
->  	__u32 crc = 0;
->  
-> @@ -4155,14 +4158,23 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->  		}
->  	}
->  
-> -	/* only support block_size equals to PAGE_SIZE */
-> -	if (le32_to_cpu(raw_super->log_blocksize) != PAGE_SHIFT) {
-> -		f2fs_info(sbi, "Invalid log_blocksize (%u), supports only %u",
-> +	/* Keep one or more filesystem blocks in each base-page folio. */
-> +	if (le32_to_cpu(raw_super->log_blocksize) <
-> +			F2FS_MIN_LOG_BLOCKSIZE ||
-> +			le32_to_cpu(raw_super->log_blocksize) > F2FS_MAX_LOG_BLOCKSIZE) {
-> +		f2fs_info(sbi, "Invalid log_blocksize (%u), supports %u..%u",
->  			  le32_to_cpu(raw_super->log_blocksize),
-> -			  PAGE_SHIFT);
-> +			  F2FS_MIN_LOG_BLOCKSIZE, F2FS_MAX_LOG_BLOCKSIZE);
->  		return -EFSCORRUPTED;
->  	}
->  
-> +	/* Subpage block size is enabled after all paths support it. */
-> +	if (le32_to_cpu(raw_super->log_blocksize) != PAGE_SHIFT) {
-> +		f2fs_info(sbi, "Subpage block size (%u) is not supported yet",
-> +			  le32_to_cpu(raw_super->log_blocksize));
-> +		return -EOPNOTSUPP;
-> +	}
-> +
->  	/* check log blocks per segment */
->  	if (le32_to_cpu(raw_super->log_blocks_per_seg) != 9) {
->  		f2fs_info(sbi, "Invalid log blocks per segment (%u)",
-> @@ -4181,7 +4193,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->  	}
->  	if (le32_to_cpu(raw_super->log_sectors_per_block) +
->  		le32_to_cpu(raw_super->log_sectorsize) !=
-> -			F2FS_MAX_LOG_SECTOR_SIZE) {
-> +			le32_to_cpu(raw_super->log_blocksize)) {
->  		f2fs_info(sbi, "Invalid log sectors per block(%u) log sectorsize(%u)",
->  			  le32_to_cpu(raw_super->log_sectors_per_block),
->  			  le32_to_cpu(raw_super->log_sectorsize));
-> @@ -4703,56 +4715,103 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
->   * to get the first valid one. If any one of them is broken, we pass
->   * them recovery flag back to the caller.
->   */
-> +static int check_super_block(struct f2fs_sb_info *sbi,
-> +			     struct f2fs_super_block *super,
-> +			     int block, int *valid_super_block,
-> +			     struct f2fs_super_block **raw_super)
-> +{
-> +	struct folio *folio;
-> +	int err;
-> +
-> +	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping,
-> +				   f2fs_lblk_to_folio_index(sbi, block), NULL);
-> +	if (IS_ERR(folio))
-> +		return PTR_ERR(folio);
-> +
-> +	/* Skip unmatched magic during probing to avoid noisy logs */
-> +	if (block != 0 && !*raw_super &&
-> +	    le32_to_cpu(F2FS_SUPER_BLOCK(sbi, folio, block)->magic) !=
-> +			F2FS_SUPER_MAGIC) {
-> +		folio_put(folio);
-> +		return -EINVAL;
+so the fsync issues its cache flush without waiting for its own node page.
+If the flush completes before the node write, the inode's fsync-marked
+node block (needed by roll-forward recovery) is not covered by the flush,
+and a power loss can lose data that fsync reported as durable. In our
+traces the first fsync after a checkpoint returned before its node write
+completed in many trials.
 
-err = -EINVAL;
-goto out_put;
+Start the numbering at 1, so that 0 keeps meaning "no node page written".
 
-> +	}
-> +
-> +	/*
-> +	 * The 2nd superblock was located with sbi->log_blocksize. Check it
-> +	 * before sanity_check_raw_super(), which may write the superblock
-> +	 * back with its own log_blocksize.
-> +	 */
-> +	err = 0;
-> +	if (block) {
+Testing (kernel 7.0.0-42, f2fs built as a module from the same source,
+QEMU/KVM, block-layer FLUSH/FUA model with dm-log-writes replay):
+- block traces, append+fsync after sync: FLUSH issued before the node
+  write completed in 29/30 first fsyncs unpatched, 0/30 patched; never
+  for later fsyncs;
+- crash-state replay (28 cells x 3 recordings per module): SQLite
+  WAL/TRUNCATE/PERSIST, LevelDB, RocksDB, LMDB and an append log lose
+  acknowledged commits or become unopenable in 24 cells unpatched, and
+  are clean in all of them patched.
 
-Can we combine above "if (block != 0)" and "if (block)":
+The same code is present in Android GKI android12-5.10 through
+android15-6.6 and in the f2fs dev tree as of 2026-11-02.
 
-if (block) {
-	/* ... */
-	if (!*raw_super &&
-		le32_to_cpu(F2FS_SUPER_BLOCK(sbi, folio, block)->magic) !=
-		F2FS_SUPER_MAGIC) {
-		...
-	}
+Fixes: 50fa53eccf9f ("f2fs: fix to avoid broken of dnode block list")
+Cc: stable@vger.kernel.org
+Signed-off-by: Seungbum Ju <seungbum.ju@gmail.com>
+---
+ fs/f2fs/node.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	/* ... */
-	if (log_bs != sbi->log_blocksize) {
-		...
-	}
-	
-}
-
-> +		u32 log_bs = le32_to_cpu(F2FS_SUPER_BLOCK(sbi, folio,
-> +						block)->log_blocksize);
-> +
-> +		if (log_bs != sbi->log_blocksize) {
-> +			f2fs_info(sbi, "Mismatched log_blocksize (%u) in 2nd superblock, expected %u",
-> +				  log_bs, sbi->log_blocksize);
-> +			err = -EFSCORRUPTED;
-
-goto out_put;
-
-Then we can clean up below !err check.
-
-> +		}
-> +	}
-> +	if (!err)
-> +		err = sanity_check_raw_super(sbi, folio, block);
-
-err = sanity_check_raw_super(sbi, folio, block);
-
-> +	if (!err && !*raw_super) {
-> +		memcpy(super, F2FS_SUPER_BLOCK(sbi, folio, block),
-> +		       sizeof(*super));
-> +		*valid_super_block = block;
-> +		*raw_super = super;
-> +		sbi->log_blocksize = le32_to_cpu(super->log_blocksize);
-> +		sbi->blocksize = BIT(sbi->log_blocksize);
-> +	}
-
-out_put:
-
-> +	folio_put(folio);
-> +	return err;
-> +}
-> +
->  static int read_raw_super_block(struct f2fs_sb_info *sbi,
->  			struct f2fs_super_block **raw_super,
->  			int *valid_super_block, int *recovery)
->  {
-> -	struct super_block *sb = sbi->sb;
-> -	int block;
-> -	struct folio *folio;
->  	struct f2fs_super_block *super;
-> -	int err = 0;
-> +	int log_bs, err;
->  
->  	super = kzalloc_obj(struct f2fs_super_block);
->  	if (!super)
->  		return -ENOMEM;
->  
-> -	for (block = 0; block < 2; block++) {
-> -		folio = read_mapping_folio(sb->s_bdev->bd_mapping, block, NULL);
-> -		if (IS_ERR(folio)) {
-> -			f2fs_err(sbi, "Unable to read %dth superblock",
-> -				 block + 1);
-> -			err = PTR_ERR(folio);
-> -			*recovery = 1;
-> -			continue;
-> -		}
-> +	/* 1. Read 1st superblock (block 0) */
-> +	err = check_super_block(sbi, super, 0, valid_super_block, raw_super);
-> +	if (err) {
-> +		f2fs_err(sbi, "Can't find valid F2FS filesystem in 1st superblock");
-> +		*recovery = 1;
-> +	}
->  
-> -		/* sanity checking of raw super */
-> -		err = sanity_check_raw_super(sbi, folio, block);
-> -		if (err) {
-> -			f2fs_err(sbi, "Can't find valid F2FS filesystem in %dth superblock",
-> -				 block + 1);
-> -			folio_put(folio);
-> +	/* 2. Read 2nd superblock (block 1) */
-> +	if (*raw_super) {
-> +		if (check_super_block(sbi, super, 1, valid_super_block, raw_super)) {
-> +			f2fs_err(sbi, "Can't find valid F2FS filesystem in 2nd superblock");
->  			*recovery = 1;
-> -			continue;
->  		}
-> -
-> +	} else {
-> +		for (log_bs = F2FS_MIN_LOG_BLOCKSIZE;
-> +		     log_bs <= F2FS_MAX_LOG_BLOCKSIZE; log_bs++) {
-> +			sbi->log_blocksize = log_bs;
-> +			sbi->blocksize = BIT(log_bs);
-> +			err = check_super_block(sbi, super, 1, valid_super_block,
-> +						raw_super);
-> +			if (!err)
-> +				break;
-
-Later err = -EINVAL due to sb magic mismatch (not exist) will overwrite previous
-err = -EFSCORRUPTED due to sb corruption, how about not overwriting it for such case?
-to get correct error number.
-
-> +		}
->  		if (!*raw_super) {
-> -			memcpy(super, F2FS_SUPER_BLOCK(folio, block),
-> -							sizeof(*super));
-> -			*valid_super_block = block;
-> -			*raw_super = super;
-> +			f2fs_err(sbi, "Can't find valid F2FS filesystem in 2nd superblock");
-> +			*recovery = 1;
-
-Not needed to set *recovery, because both superblocks are corrupted.
-
-Thanks,
-
->  		}
-> -		folio_put(folio);
->  	}
->  
-> -	/* No valid superblock */
-> -	if (!*raw_super)
-> +	/* No valid superblock: return the error of the last probe. */
-> +	if (!*raw_super) {
->  		kfree(super);
-> -	else
-> -		err = 0;
-> -
-> -	return err;
-> +		return err;
-> +	}
-> +	return 0;
->  }
->  
->  int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
-> @@ -4777,7 +4836,8 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
->  
->  	/* write back-up superblock first */
->  	index = sbi->valid_super_block ? 0 : 1;
-> -	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping, index, NULL);
-> +	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping,
-> +				f2fs_lblk_to_folio_index(sbi, index), NULL);
->  	if (IS_ERR(folio))
->  		return PTR_ERR(folio);
->  	err = __f2fs_commit_super(sbi, folio, index, true);
-> @@ -4789,7 +4849,8 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
->  
->  	/* write current valid superblock */
->  	index = sbi->valid_super_block;
-> -	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping, index, NULL);
-> +	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping,
-> +				f2fs_lblk_to_folio_index(sbi, index), NULL);
->  	if (IS_ERR(folio))
->  		return PTR_ERR(folio);
->  	err = __f2fs_commit_super(sbi, folio, index, true);
-> @@ -5263,6 +5324,13 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	}
->  	mutex_init(&sbi->flush_lock);
->  
-> +	/*
-> +	 * The 1st superblock is at F2FS_SUPER_OFFSET of block 0 for every
-> +	 * block size, so locate it with the minimum supported block size.
-> +	 */
-> +	sbi->log_blocksize = F2FS_MIN_LOG_BLOCKSIZE;
-> +	sbi->blocksize = F2FS_MIN_BLKSIZE;
-> +
->  	err = read_raw_super_block(sbi, &raw_super, &valid_super_block,
->  								&recovery);
->  	if (err)
-> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> index 4a2cea4288f9..af1b7f21c1d8 100644
-> --- a/fs/f2fs/verity.c
-> +++ b/fs/f2fs/verity.c
-> @@ -94,6 +94,9 @@ static int f2fs_begin_enable_verity(struct file *filp)
->  	struct inode *inode = file_inode(filp);
->  	int err;
->  
-> +	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode)))
-> +		return -EOPNOTSUPP;
-> +
->  	if (f2fs_verity_in_progress(inode))
->  		return -EBUSY;
->  
-> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> index 3081702b1ddb..1b3276d57bce 100644
-> --- a/include/linux/f2fs_fs.h
-> +++ b/include/linux/f2fs_fs.h
-> @@ -15,6 +15,7 @@
->  #define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
->  #define F2FS_MAX_LOG_SECTOR_SIZE	PAGE_SHIFT	/* Max is Block Size */
->  #define F2FS_MIN_LOG_BLOCKSIZE		12
-> +#define F2FS_MAX_LOG_BLOCKSIZE		PAGE_SHIFT
->  #define F2FS_MIN_BLKSIZE		4096UL
->  #define F2FS_MAX_BLKSIZE		PAGE_SIZE
->  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
-
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 1234567..89abcdef 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -361,7 +361,7 @@ static unsigned int f2fs_add_fsync_node_entry(struct f2fs_sb_info *sbi,
+ 	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+ 	list_add_tail(&fn->list, &sbi->fsync_node_list);
+-	fn->seq_id = sbi->fsync_seg_id++;
++	fn->seq_id = ++sbi->fsync_seg_id;
+ 	seq_id = fn->seq_id;
+ 	sbi->fsync_node_num++;
+ 	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+-- 
+2.45.0
 
 
 _______________________________________________
