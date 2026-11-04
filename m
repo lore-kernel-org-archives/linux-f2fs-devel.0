@@ -1,13 +1,13 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74708606A872
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2026 19:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B216A608E394
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2026 19:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ZKcJcsld;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=YHWiMnw+;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=B4EKNjpw;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JV8zWonE
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ih4WNd76;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=YIy1sW26;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=fbUeYbHq;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SUmeHC3e
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
@@ -15,29 +15,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=NHkISQK8+TDJ50cPmwK+JAf5SCXno9TY5sEVpqj22wM=; b=ZKcJcsldGMdjIv/jRM98d+9U9S
-	mLLQlVWOs5JEBWYRzE5mKk6GSWd6a5r6Am5EVKQXvYHceQfQYLWbn37rn5Jn92PC+pRGbK7rrgcgp
-	8z2D6a87fxbQb+9/gXvlr9V+fglrJixnq5IldjOTmmrtL0YltEF4LPGfk1w7YijrrUt8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=Q6jPgnBW8wFPYFLpO5PKXW/bHB0767j2u2s1uGKdM5Y=; b=ih4WNd76HcMhMyCps3JGX8KF7Z
+	QQfEA+XdV17jfVstdoq9OzPehoSSuWXEtJRkBnZPTfiTG9JFs1v0xpJ2zWF1/mjxP/crOQ9Xg22W9
+	afqZwEuqzgidHiNx+88N/jO+QiumW0Jg0HGmPkHHNfmisCHlhg/jGVfsb+kb76AZrPTg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xOgwe-000000000pg-3lnc;
-	Wed, 04 Nov 2026 19:46:52 +0000
+	id 1xOgwh-000000007Sp-1peC;
+	Wed, 04 Nov 2026 19:46:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <aalbersh@kernel.org>) id 1xOgwb-000000000oy-2zzF
+ (envelope-from <aalbersh@kernel.org>) id 1xOgwe-000000007SR-0z7T
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Nov 2026 19:46:49 +0000
+ Wed, 04 Nov 2026 19:46:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nLWgWt4BnslkaMJq2Nml0U4unW/O/XancfYoUJ4qlpY=; b=YHWiMnw+f2rWyZaMYU4psfQlJp
- A9lwUtj6zQ0ONldp5Y4oVrAImO+DM7EUWfEXZZqGVIy+SvZdFxvU9gqVvMxQTjuDFlrdQo4VvQtdx
- cPSpxDIHMQziJtnAAH2gpnvVoLvFS77lcUJ2oC5I042Rg+eQeVC2XeE1Co8DLfa4Tmq4=;
+ bh=+IrPC0FHgxyuSqXIoEfYMR7j75cyEud/FZQj+mfi+S8=; b=YIy1sW26g5HkgsBU0TM2WVq7iR
+ dKgT6zaQy+F3DulVBBZTRc4jExx0JyNJSAFeyipbYG2z6L67qnAc+s5hBn7vDt+EwTlX50iaKpOHU
+ 31elZuomi5fWXQ5fwmOkLo/Aon14umrHWz4KSL0emqeMha9Tjqde+Swm72wu8YXuC9LE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -45,44 +45,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nLWgWt4BnslkaMJq2Nml0U4unW/O/XancfYoUJ4qlpY=; b=B4EKNjpwEJXxTh9uoyqCwI+BKn
- Ays+Ziy0+Jv8GLmW5HrjZf2V/j1yt3LJcRBrojegrZ3FUsBdeq0iOntceyLA6BekK8f3S3ttDN8fu
- OJP71Ukh54y+kIk6/i1Hcd6qxwD3ZpANLojMH+FMJXGNAGhnDfGaZ6J4ukUiHmd5GZpE=;
+ bh=+IrPC0FHgxyuSqXIoEfYMR7j75cyEud/FZQj+mfi+S8=; b=fbUeYbHqk+IkP7SAQOAC9WvLE0
+ H4lg9jOQ9ntX0gkM96lS0u3zG7aFNxDllD4Opjj9ifswzl/qXArNj6kQlxOytiZcpjqHhvTqnoR0g
+ zT0BEUgZPLyMBiOfFzVOa1whbJoO/bFtQjEjPHvmo2rgfRN4RKxgTF2DL75sUHgbSNAI=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xOgwX-000000004N6-2yMf
+ id 1xOgwc-000000004NO-2KfH
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Nov 2026 19:46:46 +0000
+ Wed, 04 Nov 2026 19:46:52 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 5D7BF435AA;
- Wed,  4 Nov 2026 19:46:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF741F00A16;
- Wed,  4 Nov 2026 19:46:38 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 452D04485C;
+ Wed,  4 Nov 2026 19:46:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363941F00A16;
+ Wed,  4 Nov 2026 19:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793821600;
- bh=nLWgWt4BnslkaMJq2Nml0U4unW/O/XancfYoUJ4qlpY=;
+ s=k20260515; t=1793821605;
+ bh=+IrPC0FHgxyuSqXIoEfYMR7j75cyEud/FZQj+mfi+S8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=JV8zWonEqR4h/SA8OGbd0OSvNnOISgTde/PJZyQvV1QYh4hIfYDy6ZUo3B/Tsa7zS
- KRnPzr0RRgpZaOo3XRH9Ca6/X1rXXlfmG42parV4Tii1FPjJF7/17Et/xBBEuGDeDe
- 7TYoSGkCtI07xrLzEX4p+1MoUXAYaWShcL0vimgdoVfQ9lF+4WWgJJ3M5MlqDATX1x
- nfE2/ikrKF0aXkVED6MPX7LDtqUR7TMLZuXVw2c+EoMTlkzeJegvDNBCT0keEmtRPs
- +Me/+ExzC7K3eVvS41POcZA5uk5r9XRL3lRh3a6P/frCL8jNfLH52V05V5KeQTFrB7
- 3npT5IofCfN3w==
+ b=SUmeHC3eWMj9MBJ0bfdQODEB4CV922n/jhkYBuNy8AggTFQ6V8v1ZjODDwNjM0+hM
+ rmI7sNnbr2TB5M+e+h8d8iHLg91FD2jJ8uynipWi//ADuLI7Qv8fqcFHdyMfZWahsn
+ BwUyIJDQg/5G1Ev2naInKGejyRh37ZZhZdJLeDe3dtFCe4HVs29SK96oAWPof+sKzM
+ ESMOb14olMvXJs60Kiy1aGz9rJoH8QPkUM633r65la4mUw8QaHnTuKu+9fZ6XqNo+6
+ egPoXk7669p315xny3RwmfygPlRBPArsuHr8jfuJYgOe18BVcCMTVPGPDD+owasejn
+ C1serAR/EEgYQ==
 To: ebiggers@kernel.org,
 	hch@lst.de,
 	fsverity@lists.linux.dev
-Date: Wed,  4 Nov 2026 20:46:11 +0100
-Message-ID: <20261104194618.103332-3-aalbersh@kernel.org>
+Date: Wed,  4 Nov 2026 20:46:13 +0100
+Message-ID: <20261104194618.103332-5-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261104194618.103332-1-aalbersh@kernel.org>
 References: <20261104194618.103332-1-aalbersh@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xOgwX-000000004N6-2yMf
-Subject: [f2fs-dev] [PATCH 2/5] fsverity: add I_VERITY_BUILDING inode state
- flag
+X-Headers-End: 1xOgwc-000000004NO-2KfH
+Subject: [f2fs-dev] [PATCH 4/5] ext4: use I_VERITY_BUILDING instead of
+ private flags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,143 +107,222 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Every filesystem that supports fs-verity keeps a private runtime inode
-flag meaning Merkle tree is currently being built *_VERITY_IN_PROGRESS.
-They all serve the same two purposes: reject a concurrent enable with
--EBUSY and let the write paths recognize the special writes done while
-the tree is under construction.
+Now that the VFS tracks an inode whose Merkle tree is under construction
+via I_VERITY_BUILDING and handles the concurrent-enable guard in the
+generic fs-verity enable path, drop the per-filesystem runtime flags that
+duplicated this state.
 
-Hoist this flag into the VFS as a new inode state flag,
-I_VERITY_BUILDING, and manage its lifetime in the generic fs-verity
-enable path. The flag is set after ->begin_enable_verity() succeeds and
-cleared after ->end_enable_verity() returns (both on the success and the
-rollback paths). Add the concurrent-enable guard.
-
-A new helper, fsverity_is_building(), is provided for filesystems to
-query the flag. No filesystem uses it yet; the per-fs flags are
-converted in following patches.
+Replace ext4 own helper ext4_verity_in_progress() with
+fsverity_is_building(), and remove the EXT4_STATE_VERITY_IN_PROGRESS
+flags. The IS_ENABLED() guard is fine to remove now as
+fsverity_is_building() has stub for disabled fsverity.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/verity/enable.c       | 22 +++++++++++++++++++---
- include/linux/fs.h       |  6 ++++++
- include/linux/fsverity.h | 21 +++++++++++++++++++++
- 3 files changed, 46 insertions(+), 3 deletions(-)
+ fs/ext4/ext4.h   |  7 -------
+ fs/ext4/file.c   |  2 +-
+ fs/ext4/inode.c  | 17 +++++++++--------
+ fs/ext4/ioctl.c  |  3 +--
+ fs/ext4/verity.c | 18 +++++-------------
+ 5 files changed, 16 insertions(+), 31 deletions(-)
 
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index fe8493280b77..65d3571c62b5 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -229,13 +229,23 @@ static int enable_verity(struct file *filp,
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index f38fec3167fb..bc624ed58353 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2049,7 +2049,6 @@ enum {
+ 	EXT4_STATE_MAY_INLINE_DATA,	/* may have in-inode data */
+ 	EXT4_STATE_EXT_PRECACHED,	/* extents have been precached */
+ 	EXT4_STATE_LUSTRE_EA_INODE,	/* Lustre-style ea_inode */
+-	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
+ 	EXT4_STATE_FC_COMMITTING,	/* Fast commit ongoing */
+ 	EXT4_STATE_FC_FLUSHING_DATA,	/* Fast commit flushing data */
+ 	EXT4_STATE_ORPHAN_FILE,		/* Inode orphaned in orphan file */
+@@ -2128,12 +2127,6 @@ static inline int ext4_inode_state_wait_bit(int bit)
+ #define EXT4_SB(sb)	(sb)
+ #endif
+ 
+-static inline bool ext4_verity_in_progress(struct inode *inode)
+-{
+-	return IS_ENABLED(CONFIG_FS_VERITY) &&
+-	       ext4_test_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
+-}
+-
+ #define NEXT_ORPHAN(inode) EXT4_I(inode)->i_dtime
+ 
+ /*
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 50d3c92709c8..109dea94c6e3 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -318,7 +318,7 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	 * partial block that beyond the existing EOF, as it may contains
+ 	 * stale data written through mmap.
+ 	 */
+-	if (iocb->ki_pos > old_size && !ext4_verity_in_progress(inode)) {
++	if (iocb->ki_pos > old_size && !fsverity_is_building(inode)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 10cd85d4c721..171028185c9d 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -42,6 +42,7 @@
+ #include <linux/bitops.h>
+ #include <linux/iomap.h>
+ #include <linux/iversion.h>
++#include <linux/fsverity.h>
+ 
+ #include "ext4_jbd2.h"
+ #include "ext4_extents.h"
+@@ -511,7 +512,7 @@ void ext4_check_map_extents_env(struct inode *inode)
+ 	    is_special_ino(inode->i_sb, inode->i_ino) ||
+ 	    (inode_state_read_once(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) ||
+ 	    ext4_test_inode_flag(inode, EXT4_INODE_EA_INODE) ||
+-	    ext4_verity_in_progress(inode))
++	    fsverity_is_building(inode))
+ 		return;
+ 
+ 	WARN_ON_ONCE(!inode_is_locked(inode) &&
+@@ -1498,7 +1499,7 @@ static int ext4_write_begin(const struct kiocb *iocb,
+ 
+ 	if (ret) {
+ 		bool extended = (pos + len > inode->i_size) &&
+-				!ext4_verity_in_progress(inode);
++				!fsverity_is_building(inode);
+ 
+ 		folio_unlock(folio);
+ 		/*
+@@ -1565,7 +1566,7 @@ static int ext4_write_end(const struct kiocb *iocb,
+ 	loff_t old_size = inode->i_size;
+ 	int ret = 0, ret2;
+ 	int i_size_changed = 0;
+-	bool verity = ext4_verity_in_progress(inode);
++	bool verity = fsverity_is_building(inode);
+ 
+ 	trace_ext4_write_end(inode, pos, len, copied);
+ 
+@@ -1670,7 +1671,7 @@ static int ext4_journalled_write_end(const struct kiocb *iocb,
+ 	int partial = 0;
+ 	unsigned from, to;
+ 	int size_changed = 0;
+-	bool verity = ext4_verity_in_progress(inode);
++	bool verity = fsverity_is_building(inode);
+ 
+ 	trace_ext4_journalled_write_end(inode, pos, len, copied);
+ 	from = pos & (PAGE_SIZE - 1);
+@@ -2215,7 +2216,7 @@ static void mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
+ 	size = i_size_read(mpd->inode);
+ 	len = folio_size(folio);
+ 	if (folio_pos(folio) + len > size &&
+-	    !ext4_verity_in_progress(mpd->inode))
++	    !fsverity_is_building(mpd->inode))
+ 		len = size & (len - 1);
+ 	ext4_bio_write_folio(&mpd->io_submit, folio, len);
+ }
+@@ -2305,7 +2306,7 @@ static int mpage_process_page_bufs(struct mpage_da_data *mpd,
+ 	ext4_lblk_t blocks = (i_size_read(inode) + i_blocksize(inode) - 1)
+ 							>> inode->i_blkbits;
+ 
+-	if (ext4_verity_in_progress(inode))
++	if (fsverity_is_building(inode))
+ 		blocks = EXT_MAX_BLOCKS;
+ 
+ 	do {
+@@ -2711,7 +2712,7 @@ static int mpage_journal_page_buffers(handle_t *handle,
+ 	mpd->wbc->nr_to_write -= folio_nr_pages(folio);
+ 
+ 	if (folio_pos(folio) + len > size &&
+-	    !ext4_verity_in_progress(inode))
++	    !fsverity_is_building(inode))
+ 		len = size & (len - 1);
+ 
+ 	return ext4_journal_folio_buffers(handle, folio, len);
+@@ -3276,7 +3277,7 @@ static int ext4_da_write_begin(const struct kiocb *iocb,
+ 
+ 	index = pos >> PAGE_SHIFT;
+ 
+-	if (ext4_nonda_switch(inode->i_sb) || ext4_verity_in_progress(inode)) {
++	if (ext4_nonda_switch(inode->i_sb) || fsverity_is_building(inode)) {
+ 		*fsdata = (void *)FALL_BACK_TO_NONDELALLOC;
+ 		return ext4_write_begin(iocb, mapping, pos,
+ 					len, foliop, fsdata);
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index e8e579498c99..d3db2e77ebda 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -575,8 +575,7 @@ static bool dax_compatible(struct inode *inode, unsigned int oldflags,
+ 
+ 	if (flags & EXT4_DAX_FL) {
+ 		if ((oldflags & EXT4_DAX_MUT_EXCL) ||
+-		     ext4_test_inode_state(inode,
+-					  EXT4_STATE_VERITY_IN_PROGRESS)) {
++		     fsverity_is_building(inode)) {
+ 			return false;
+ 		}
+ 	}
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 56fe3e5b33e0..0189c8868b74 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -83,9 +83,6 @@ static int ext4_begin_enable_verity(struct file *filp)
+ 	if (IS_DAX(inode) || ext4_test_inode_flag(inode, EXT4_INODE_DAX))
+ 		return -EINVAL;
+ 
+-	if (ext4_verity_in_progress(inode))
+-		return -EBUSY;
+-
+ 	/*
+ 	 * Since the file was opened readonly, we have to initialize the jbd
+ 	 * inode and quotas here and not rely on ->open() doing it.  This must
+@@ -123,8 +120,6 @@ static int ext4_begin_enable_verity(struct file *filp)
+ 		return PTR_ERR(handle);
+ 
+ 	err = ext4_orphan_add(handle, inode);
+-	if (err == 0)
+-		ext4_set_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
+ 
+ 	ext4_journal_stop(handle);
+ 	return err;
+@@ -185,10 +180,9 @@ static int ext4_end_enable_verity(struct file *filp, const void *desc,
+ 		goto cleanup;
  
  	/*
- 	 * Start enabling verity on this file, serialized by the inode lock.
--	 * Fail if verity is already enabled or is already being enabled.
-+	 * Fail if verity is already enabled or is already being enabled. Set
-+	 * I_VERITY_BUILDING inode runtime flag which will be cleared when
-+	 * enablement succeeded or rolled back.
+-	 * Write all pages (both data and verity metadata).  Note that this must
+-	 * happen before clearing EXT4_STATE_VERITY_IN_PROGRESS; otherwise pages
+-	 * beyond i_size won't be written properly.  For crash consistency, this
+-	 * also must happen before the verity inode flag gets persisted.
++	 * Write all pages (both data and verity metadata). For crash
++	 * consistency, this also must happen before the verity inode flag gets
++	 * persisted.
  	 */
- 	inode_lock(inode);
--	if (IS_VERITY(inode))
-+	if (IS_VERITY(inode)) {
- 		err = -EEXIST;
--	else
-+	} else if (inode_state_read_once(inode) & I_VERITY_BUILDING) {
-+		err = -EBUSY;
-+	} else {
- 		err = vops->begin_enable_verity(filp);
-+		if (!err) {
-+			spin_lock(&inode->i_lock);
-+			inode_state_set(inode, I_VERITY_BUILDING);
-+			spin_unlock(&inode->i_lock);
-+		}
-+	}
- 	inode_unlock(inode);
+ 	err = filemap_write_and_wait(inode->i_mapping);
  	if (err)
- 		goto out;
-@@ -291,6 +301,9 @@ static int enable_verity(struct file *filp,
+@@ -224,7 +218,6 @@ static int ext4_end_enable_verity(struct file *filp, const void *desc,
+ 
+ 	/* Now that rollback is no longer possible, set S_VERITY. */
+ 	ext4_set_inode_flags(inode, false);
+-	ext4_clear_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
+ 	return 0;
+ 
+ stop_and_cleanup:
+@@ -234,13 +227,12 @@ static int ext4_end_enable_verity(struct file *filp, const void *desc,
+ 	/*
+ 	 * Verity failed to be enabled, so clean up by truncating any verity
+ 	 * metadata that was written beyond i_size (both from cache and from
+-	 * disk), removing the inode from the orphan list (if it wasn't done
+-	 * already), and clearing EXT4_STATE_VERITY_IN_PROGRESS.
++	 * disk) and removing the inode from the orphan list (if it wasn't done
++	 * already).
  	 */
- 	inode_lock(inode);
- 	err = vops->end_enable_verity(filp, desc, desc_size, params.tree_size);
-+	spin_lock(&inode->i_lock);
-+	inode_state_clear(inode, I_VERITY_BUILDING);
-+	spin_unlock(&inode->i_lock);
- 	inode_unlock(inode);
- 	if (err) {
- 		fsverity_err(inode, "%ps() failed with err %d",
-@@ -317,6 +330,9 @@ static int enable_verity(struct file *filp,
- rollback:
- 	inode_lock(inode);
- 	(void)vops->end_enable_verity(filp, NULL, 0, params.tree_size);
-+	spin_lock(&inode->i_lock);
-+	inode_state_clear(inode, I_VERITY_BUILDING);
-+	spin_unlock(&inode->i_lock);
- 	inode_unlock(inode);
- 	goto out;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 99caef43ff3c..7c90ce09f797 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -707,6 +707,11 @@ is_uncached_acl(struct posix_acl *acl)
-  * I_LRU_ISOLATING	Inode is pinned being isolated from LRU without holding
-  *			i_count.
-  *
-+ * I_VERITY_BUILDING	fs-verity is being enabled on the inode: the Merkle
-+ *			tree is under construction.  The file is effectively
-+ *			read-only to userspace; the only writes happening are
-+ *			for the fs-verity metadata.
-+ *
-  * Q: What is the difference between I_WILL_FREE and I_FREEING?
-  *
-  * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
-@@ -741,6 +746,7 @@ enum inode_state_flags_enum {
- 	I_SYNC_QUEUED		= (1U << 17),
- 	I_PINNING_NETFS_WB	= (1U << 18),
- 	I_METADATA_WRITEBACK	= (1U << 19),
-+	I_VERITY_BUILDING	= (1U << 20),
- };
- 
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 61fe96ccdff6..c72edec57e30 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -164,6 +164,22 @@ static inline bool fsverity_active(const struct inode *inode)
- 	return false;
+ 	truncate_inode_pages(inode->i_mapping, inode->i_size);
+ 	ext4_truncate(inode);
+ 	ext4_orphan_del(NULL, inode);
+-	ext4_clear_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
+ 	return err;
  }
  
-+/**
-+ * fsverity_is_building() - is fs-verity being enabled on the inode
-+ * @inode: inode to check
-+ *
-+ * This checks whether the inode's Merkle tree is currently being built.
-+ * While this is the case the file is read-only to userspace and the only writes
-+ * allowed are for the fs-verity metadata. This becomes false when fsverity
-+ * metadata is fully created and written to disk or building failed.
-+ *
-+ * Return: true if fs-verity is being enabled on the inode
-+ */
-+static inline bool fsverity_is_building(const struct inode *inode)
-+{
-+	return inode_state_read_once((struct inode *)inode) & I_VERITY_BUILDING;
-+}
-+
- struct fsverity_info *__fsverity_get_info(const struct inode *inode);
- /**
-  * fsverity_get_info - get fsverity information for an inode
-@@ -217,6 +233,11 @@ static inline bool fsverity_active(const struct inode *inode)
- 	return false;
- }
- 
-+static inline bool fsverity_is_building(const struct inode *inode)
-+{
-+	return false;
-+}
-+
- static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- {
- 	return NULL;
 -- 
 2.54.0
 
