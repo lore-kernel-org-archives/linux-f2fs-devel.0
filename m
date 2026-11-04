@@ -1,43 +1,43 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D9B606A328
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2026 11:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33197606A338
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2026 11:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=EWSzUj8L;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Fh8uNcc0;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=VKExhaRY;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ItNIRzeU
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=M0T/j20b;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=ixy58484;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=haH1syEi;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WCjOtnvW
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=O+u8Advq2TWUZ7l73PQqJV+jJhpg0zbHijCQ+VSdNwo=; b=EWSzUj8LQ2lkiJ
-	X+Nb5mCT+wH9Lyx54Fz4fOYpEN8W211gKp5Gh9SeMQwZw6lOCvimrQRtcoZ04z4+VSJr3Blq32j0b
-	3WzOA5Y2ZiMCXfFheGYkME2HzYvT6ogRqtfVDpEpKbR6FIRjlIoCEiTXmll8Wx3mceuwyEnd1ss3M
-	LxQ=;
+	List-Owner; bh=rKpBD80QCliHFZ1RP167PbOBefeKBzhy/u9+5a9vwE0=; b=M0T/j20b+24xKj
+	5YD/oznozQ/SY/ekPnj25zOBfG1f/geanChEjg6lp2o1BAJJ7OQxF+/Ue8FZpJhLmBvWbStv9TiPq
+	qkWxm/0Gt5OLUfvfbOYQU23DdlPAh0QT1hn5B2tzI8Dwn+B1T2IJAbq09ka3gNseikQ/lmEjtWrGX
+	G5Q=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xOYva-000000007yU-272Z;
-	Wed, 04 Nov 2026 11:13:14 +0000
+	id 1xOZ6q-000000008FF-2LPn;
+	Wed, 04 Nov 2026 11:24:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xOYvZ-000000007yO-2CPS
+ (envelope-from <chao@kernel.org>) id 1xOZ6p-000000008F9-2VkT
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Nov 2026 11:13:13 +0000
+ Wed, 04 Nov 2026 11:24:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vyZpc5+vZeCU+0YbT+Y0OwhtiWtaEkOrtE7aWiCWgK4=; b=Fh8uNcc0Pijs+S2K4hqzljgUsQ
- k0wG4bz7InDICtoDjQwmMAUMK+UL/tXLpcE6KEQfPrFR+QxPEqCfSYl1GVQTOf4Bjim7S4GO4guKy
- ya8UBAYnPdKLP0/BMUSFcNshtKlwTHUffcYMtHsTXm4S6g/OLVwAXcJljnhpSipq1ks8=;
+ bh=yYfc6qIJf0zgcdugxMKsYNadr8ul1ATfMksRxunTrnw=; b=ixy58484cuOTIB92+vdo/5I8k8
+ HPICuD2eoa1LIoxbNsKZAqvhWt5MPigsmRPPqb7t4gFDJT4FgsE3+nHkzYn2gWPRGDXMgN3FSniGC
+ bn6iYGYrLtf05NSrejLTWbitffUxQbfMCmmb3Z6b4b5YWzzmzuAZpEiDjYNY30oJ08l0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -45,45 +45,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vyZpc5+vZeCU+0YbT+Y0OwhtiWtaEkOrtE7aWiCWgK4=; b=VKExhaRYYxzsvRIisgx9ZYAtEv
- +FuPmjxr6iWyX/t3IPwjdnA/wqXwHoQMDLlJuiSZydis+cBtGGb7eiJt+rvfT5ZB1Qx1FKmGNSyVx
- Q0MriwV2H3rS1rKqOcY4xRiK1SD4gIeIOEQlVSiAWaiN5PCPpfJyzREnhnIQT7Q6BYhM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=yYfc6qIJf0zgcdugxMKsYNadr8ul1ATfMksRxunTrnw=; b=haH1syEirVAr3/uZJDN/IA3QUN
+ HypY8Y+rwoiuC+0Dx30I168PHj7JRyNsEN0W96DobSub8F8ERN+GnBC3fjWqEWR3LRqWAgFoTlj/8
+ V8qUhVqn7DmbIKSQhB4zIWMRQZnrJIr+ssQ5hKewo3ihJtoQxMCGcexTCOOq/drnU+EU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xOYvY-000000000PY-1iRL
+ id 1xOZ6m-000000000i2-43V5
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Nov 2026 11:13:13 +0000
+ Wed, 04 Nov 2026 11:24:51 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id B19D560F2D;
- Wed,  4 Nov 2026 11:13:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 644FD1F000C1;
- Wed,  4 Nov 2026 11:13:05 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7E22440BEC;
+ Wed,  4 Nov 2026 11:24:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB801F000C1;
+ Wed,  4 Nov 2026 11:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793790786;
- bh=vyZpc5+vZeCU+0YbT+Y0OwhtiWtaEkOrtE7aWiCWgK4=;
+ s=k20260515; t=1793791483;
+ bh=yYfc6qIJf0zgcdugxMKsYNadr8ul1ATfMksRxunTrnw=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=ItNIRzeUCfLh7VLRjA7RqFdH2THL2WsDuFALEBn1ViJ/UAmrzrjvuVduLgaHG9UGD
- uLU7WrNMUrT8YZfIh/atL8ivqynj7BZJ4urPCLUr4hKCSRxem9IO8hBAzFh32CZYWD
- lQUzMZgh6Uvb21AH9q5E/YEeZZ2p8GjqFgJaHcJW2IlxDjiiywIm+mGGv0ZL1VYrjV
- +JM6pFnC6/RDh+GId69/Dim7/bfPjAX43zGioDxgZsNbk2m/9hdfn+wvRc26nB69oZ
- 1HX/uYRTV+TdqXNOvrA94drCkaDn8eUmTPnL6BEel7abtzvA+Iv063SsLiDPIzx9Cc
- WCll3/KlTeDDw==
-Message-ID: <37b8dccd-f15f-4f19-b07a-db6b04b627a1@kernel.org>
-Date: Wed, 4 Nov 2026 19:13:03 +0800
+ b=WCjOtnvWIqUi4yXdLPDoE0incKouGPh9h+P9i/Ag2kcmXHRuz1CCDJBhAF1FKZnlF
+ GRDCHHGdOzeWgxgWbO/lInlkR6lcyevU2LqNw0R6v3MRMS6DJG+Kbv/O9sgQgENGsR
+ GDOLcHryJuQ5wY0zhTpq7ADIBNKE8CD1XwcJ7BazYCaWMZxbNzBI/Ivl9BR5VtxGZS
+ aRbnzV0nwNZrYKUKfDIbKEbKAk3r//ziPeSfEmf7u6b4Z00fodEnVJpq59h3OOoHp4
+ 6GGapbIclPAU3OnhcDZtC0YSG2CbVy03sbznS+0XAmurz53nmy+4IirJ/+OG0B4t2b
+ nlvCfN4VUZP0g==
+Message-ID: <c9338038-0eae-457a-a04e-06615354ddd4@kernel.org>
+Date: Wed, 4 Nov 2026 19:24:40 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
 References: <20261102193952.3002018-1-daeho43@gmail.com>
- <20261102193952.3002018-5-daeho43@gmail.com>
+ <20261102193952.3002018-6-daeho43@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20261102193952.3002018-5-daeho43@gmail.com>
+In-Reply-To: <20261102193952.3002018-6-daeho43@gmail.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xOYvY-000000000PY-1iRL
-Subject: Re: [f2fs-dev] [PATCH 04/20] f2fs: support subpage blocks in
- directory operations
+X-Headers-End: 1xOZ6m-000000000i2-43V5
+Subject: Re: [f2fs-dev] [PATCH 05/20] f2fs: convert inode dirty page
+ counters to dirty block counters
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,372 +108,305 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 On 11/3/26 03:39, Daeho Jeong wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> With subpage blocks, a directory folio holds several dentry blocks.
-> Address a dentry block within its folio by its block index, and mark
-> only the modified dentry block dirty. When an empty dentry block is
-> freed, clear only the state of that block and keep the folio dirty if
-> other blocks in it are still dirty.
+> The per-inode dirty counter is compared against block based thresholds
+> such as min_fsync_blocks and BLKS_PER_SEG, so with subpage blocks it
+> has to count blocks instead of pages. Rename it to dirty_blocks, make
+> its helpers take block counts, and convert to pages where it is
+> compared with page based values. The conversions are no-ops when the
+> block size equals PAGE_SIZE.
 > 
 > Signed-off-by: Daeho Jeong <daehojeong@google.com>
 > ---
->  fs/f2fs/dir.c    | 120 +++++++++++++++++++++++++++++++++--------------
->  fs/f2fs/f2fs.h   |   2 +
->  fs/f2fs/inline.c |   6 +--
->  3 files changed, 89 insertions(+), 39 deletions(-)
+>  fs/f2fs/checkpoint.c |  4 ++--
+>  fs/f2fs/data.c       | 13 +++++++------
+>  fs/f2fs/f2fs.h       | 36 +++++++++++++++++-------------------
+>  fs/f2fs/file.c       | 16 ++++++++--------
+>  fs/f2fs/inode.c      |  2 +-
+>  fs/f2fs/node.c       |  3 ++-
+>  fs/f2fs/super.c      |  2 +-
+>  7 files changed, 38 insertions(+), 38 deletions(-)
 > 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 3eb0b7255951..aa3511c6f8fe 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -37,6 +37,31 @@ static inline bool f2fs_should_fallback_to_linear(struct inode *dir)
->  extern struct kmem_cache *f2fs_cf_name_slab;
->  #endif
->  
-> +static inline pgoff_t f2fs_dentry_to_lblk(struct f2fs_sb_info *sbi,
-> +					  struct folio *folio, void *de)
-> +{
-> +	size_t off = round_down((size_t)(de - folio_address(folio)),
-> +				(size_t)F2FS_BLKSIZE(sbi));
-> +
-> +	return f2fs_folio_lblk(sbi, folio) + (off >> sbi->log_blocksize);
-
-return f2fs_folio_lblk(sbi, folio) + F2FS_BYTES_TO_BLK(sbi, off);
-
-> +}
-> +
-> +void f2fs_mark_dentry_folio_dirty(struct inode *dir, struct folio *folio,
-> +				  pgoff_t bidx)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-> +
-> +	if (f2fs_has_subpage_blocks(sbi)) {
-> +		size_t off = f2fs_folio_byte_offset(sbi, folio, bidx);
-> +
-> +		f2fs_ffs_mark_subrange_uptodate(folio, off, F2FS_BLKSIZE(sbi));
-> +		f2fs_ffs_mark_subrange_dirty(folio, off, F2FS_BLKSIZE(sbi));
-> +	} else if (!folio_test_uptodate(folio)) {
-> +		folio_mark_uptodate(folio);
-> +	}
-> +	folio_mark_dirty(folio);
-> +}
-> +
->  static unsigned long dir_blocks(struct inode *inode)
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 158d97fc349a..1060ee651756 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1316,7 +1316,7 @@ static void __remove_dirty_inode(struct inode *inode, enum inode_type type)
 >  {
->  	return F2FS_BYTES_TO_BLK(F2FS_I_SB(inode),
-> @@ -190,15 +215,16 @@ static unsigned long dir_block_index(unsigned int level,
+>  	int flag = (type == DIR_INODE) ? FI_DIRTY_DIR : FI_DIRTY_FILE;
+>  
+> -	if (get_dirty_pages(inode) || !is_inode_flag_set(inode, flag))
+> +	if (get_dirty_blocks(inode) || !is_inode_flag_set(inode, flag))
+>  		return;
+>  
+>  	list_del_init(&F2FS_I(inode)->dirty_list);
+> @@ -1325,7 +1325,7 @@ static void __remove_dirty_inode(struct inode *inode, enum inode_type type)
 >  }
 >  
->  static struct f2fs_dir_entry *find_in_block(struct inode *dir,
-> -				struct folio *dentry_folio,
-> +				struct folio *dentry_folio, pgoff_t bidx,
->  				const struct f2fs_filename *fname,
->  				int *max_slots,
->  				bool use_hash)
+>  /*
+> - * Account @nr dirty pages (negative when dirtiness is cleared) for @inode.
+> + * Account @nr dirty blocks (negative when dirtiness is cleared) for @inode.
+>   */
+>  void f2fs_account_dirty_blocks(struct inode *inode, int nr)
 >  {
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
->  	void *dentry_blk;
->  	struct f2fs_dentry_ptr d;
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index e983b59e4a65..f2254e872a3d 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -4282,7 +4282,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
 >  
-> -	dentry_blk = folio_address(dentry_folio);
-> +	dentry_blk = f2fs_folio_lblk_address(sbi, dentry_folio, bidx);
+>  	folio_batch_init(&fbatch);
 >  
->  	make_dentry_ptr_block(dir, &d, dentry_blk);
->  	return f2fs_find_target_dentry(&d, fname, max_slots, use_hash);
-> @@ -289,7 +315,7 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->  	unsigned int nbucket, nblock;
->  	unsigned int bidx, end_block, bucket_no;
->  	struct f2fs_dir_entry *de = NULL;
-> -	pgoff_t next_pgofs;
-> +	pgoff_t next_blkofs;
->  	bool room = false;
->  	int max_slots;
+> -	if (get_dirty_pages(mapping->host) <=
+> +	if (get_dirty_blocks(mapping->host) <=
+>  				SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
+>  		set_inode_flag(mapping->host, FI_HOT_DATA);
+>  	else
+> @@ -4527,7 +4527,7 @@ static int f2fs_write_cache_folios(struct address_space *mapping,
+>  	bool op_locked = false;
+>  	bool retry = false;
 >  
-> @@ -306,11 +332,11 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->  	while (bidx < end_block) {
->  		/* no need to allocate new dentry pages to all the indices */
->  		struct folio *dentry_folio;
-> -		dentry_folio = f2fs_find_data_folio(dir, bidx, &next_pgofs);
-> +		dentry_folio = f2fs_find_data_folio(dir, bidx, &next_blkofs);
->  		if (IS_ERR(dentry_folio)) {
->  			if (PTR_ERR(dentry_folio) == -ENOENT) {
->  				room = true;
-> -				bidx = next_pgofs;
-> +				bidx = next_blkofs;
->  				continue;
->  			} else {
->  				*dentry_block = dentry_folio;
-> @@ -318,7 +344,8 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->  			}
->  		}
+> -	if (get_dirty_pages(inode) <= SM_I(sbi)->min_hot_blocks)
+> +	if (get_dirty_blocks(inode) <= SM_I(sbi)->min_hot_blocks)
+>  		set_inode_flag(inode, FI_HOT_DATA);
+>  	else
+>  		clear_inode_flag(inode, FI_HOT_DATA);
+> @@ -4791,7 +4791,7 @@ static inline bool __should_serialize_io(struct inode *inode,
+>  		return true;
+>  	if (wbc->sync_mode != WB_SYNC_ALL)
+>  		return true;
+> -	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+> +	if (get_dirty_blocks(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+>  		return true;
+>  	return false;
+>  }
+> @@ -4830,7 +4830,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>  	bool locked = false;
 >  
-> -		de = find_in_block(dir, dentry_folio, fname, &max_slots, use_hash);
-> +		de = find_in_block(dir, dentry_folio, bidx, fname, &max_slots,
-> +				   use_hash);
->  		if (IS_ERR(de)) {
->  			f2fs_folio_put(dentry_folio, false);
->  			*dentry_block = ERR_CAST(de);
-> @@ -354,7 +381,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
->  					 const struct f2fs_filename *fname,
->  					 void **dentry_block)
->  {
-> -	unsigned long npages = dir_blocks(dir);
-> +	unsigned long nblocks = dir_blocks(dir);
->  	struct f2fs_dir_entry *de = NULL;
->  	unsigned int max_depth;
->  	unsigned int level;
-> @@ -370,7 +397,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
->  		goto out;
->  	}
+>  	/* skip writing if there is no dirty page in this inode */
+> -	if (!get_dirty_pages(inode) && wbc->sync_mode == WB_SYNC_NONE)
+> +	if (!get_dirty_blocks(inode) && wbc->sync_mode == WB_SYNC_NONE)
+>  		return 0;
 >  
-> -	if (npages == 0)
-> +	if (nblocks == 0)
->  		goto out;
+>  	/* during POR, we don't need to trigger writepage at all. */
+> @@ -4839,7 +4839,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
 >  
->  	max_depth = F2FS_I(dir)->i_current_depth;
-> @@ -468,7 +495,8 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
->  		f2fs_folio_wait_writeback(folio, true, true);
->  		de->ino = cpu_to_le32(inode->i_ino);
->  		de->file_type = fs_umode_to_ftype(inode->i_mode);
-> -		folio_mark_dirty(folio);
-> +		f2fs_mark_dentry_folio_dirty(dir, folio,
-> +				f2fs_dentry_to_lblk(F2FS_I_SB(dir), folio, de));
->  	}
+>  	if ((S_ISDIR(inode->i_mode) || IS_NOQUOTA(inode)) &&
+>  			wbc->sync_mode == WB_SYNC_NONE &&
+> -			get_dirty_pages(inode) < nr_caches_to_skip(sbi, DATA) &&
+> +			get_dirty_blocks(inode) < nr_caches_to_skip(sbi, DATA) &&
+>  			f2fs_available_free_memory(sbi, DIRTY_DENTS))
+>  		goto skip_write;
 >  
->  	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-> @@ -539,12 +567,12 @@ static int make_empty_dir(struct inode *inode,
->  	if (IS_ERR(dentry_folio))
->  		return PTR_ERR(dentry_folio);
+> @@ -4898,7 +4898,8 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>  	return ret;
 >  
-> -	dentry_blk = folio_address(dentry_folio);
-> +	dentry_blk = f2fs_folio_lblk_address(F2FS_I_SB(inode), dentry_folio, 0);
->  
->  	make_dentry_ptr_block(inode, &d, dentry_blk);
->  	f2fs_do_make_empty_dir(inode, parent, &d);
->  
-> -	folio_mark_dirty(dentry_folio);
-> +	f2fs_mark_dentry_folio_dirty(inode, dentry_folio, 0);
->  	f2fs_folio_put(dentry_folio, true);
+>  skip_write:
+> -	wbc->pages_skipped += get_dirty_pages(inode);
+> +	wbc->pages_skipped += get_dirty_blocks(inode) >>
+> +					F2FS_LOG_BLKS_PER_PAGE(sbi);
+
+It seems not accurate here? because all dirty blocks can locates in one page or spread
+in several pages? not sure, it's worth to keep both dirty_{pages,blocks}, it's complicate
+to maintain both of them, or can we add a comments here at least to describe the issue,
+if no further issue was found w/ current approach.
+
+>  	update_skipped_write(sbi, wbc);
+>  	trace_f2fs_writepages(mapping->host, wbc, DATA);
 >  	return 0;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3822824326d7..bc67416a6663 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -957,7 +957,7 @@ struct f2fs_inode_info {
+>  	unsigned long flags[BITS_TO_LONGS(FI_MAX)];	/* use to pass per-file flags */
+>  	unsigned int ioprio_hint;	/* hint for IO priority */
+>  	struct f2fs_rwsem i_sem;	/* protect fi info */
+> -	atomic_t dirty_pages;		/* # of dirty pages */
+> +	atomic_t dirty_blocks;		/* # of dirty blocks */
+>  	f2fs_hash_t chash;		/* hash value of given file name */
+>  	unsigned int clevel;		/* maximum level of given file name */
+>  	struct task_struct *task;	/* lookup and create consistency */
+> @@ -2336,6 +2336,8 @@ static inline unsigned int f2fs_blocks_per_folio(struct f2fs_sb_info *sbi,
+>  	return folio_size(folio) >> sbi->log_blocksize;
 >  }
-> @@ -737,7 +765,8 @@ int f2fs_add_regular_entry(struct inode *dir, const struct f2fs_filename *fname,
->  		if (IS_ERR(dentry_folio))
->  			return PTR_ERR(dentry_folio);
 >  
-> -		dentry_blk = folio_address(dentry_folio);
-> +		dentry_blk = f2fs_folio_lblk_address(F2FS_I_SB(dir),
-> +						     dentry_folio, block);
->  		make_dentry_ptr_block(dir, &d, dentry_blk);
->  		bit_pos = f2fs_room_for_filename(d.bitmap, slots, d.max);
->  		if (bit_pos < d.max)
-> @@ -764,7 +793,7 @@ int f2fs_add_regular_entry(struct inode *dir, const struct f2fs_filename *fname,
->  	f2fs_update_dentry(ino, mode, &d, &fname->disk_name, fname->hash,
->  			   bit_pos);
+> +#define F2FS_LOG_BLKS_PER_PAGE(sbi)	(PAGE_SHIFT - (sbi)->log_blocksize)
+> +
+>  static inline bool f2fs_has_subpage_blocks(struct f2fs_sb_info *sbi)
+>  {
+>  	return F2FS_BLKSIZE(sbi) < PAGE_SIZE;
+> @@ -2979,40 +2981,36 @@ static inline void dec_cache_count(struct f2fs_sb_info *sbi, int count_type)
+>  	sub_cache_counts(sbi, count_type, 1);
+>  }
 >  
-> -	folio_mark_dirty(dentry_folio);
-> +	f2fs_mark_dentry_folio_dirty(dir, dentry_folio, block);
+> -/*
+> - * Account @nr dirty pages for @inode; one page is
+> - * (PAGE_SIZE >> log_blocksize) filesystem blocks.
+> - */
+> -static inline void inode_add_dirty_blocks(struct inode *inode, int nr)
+> +static inline void inode_add_dirty_blocks(struct inode *inode,
+> +					  unsigned int nr_blocks)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> -	int blocks = nr * (PAGE_SIZE >> sbi->log_blocksize);
 >  
->  	if (inode) {
->  		f2fs_i_pino_write(inode, dir->i_ino);
-> @@ -902,25 +931,28 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, void *dentry_block,
->  	struct folio *folio;
->  	unsigned int bit_pos;
->  	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-> +	size_t block_offset;
->  	pgoff_t index;
->  	int i;
+> -	atomic_add(blocks, &F2FS_I(inode)->dirty_pages);
+> +	atomic_add(nr_blocks, &F2FS_I(inode)->dirty_blocks);
+>  	if (S_ISDIR(inode->i_mode))
+> -		add_cache_counts(sbi, F2FS_DIRTY_DENTS, blocks);
+> +		add_cache_counts(sbi, F2FS_DIRTY_DENTS, nr_blocks);
+>  	else
+> -		add_cache_counts(sbi, F2FS_DIRTY_DATA, blocks);
+> +		add_cache_counts(sbi, F2FS_DIRTY_DATA, nr_blocks);
+>  	if (IS_NOQUOTA(inode))
+> -		add_cache_counts(sbi, F2FS_DIRTY_QDATA, blocks);
+> +		add_cache_counts(sbi, F2FS_DIRTY_QDATA, nr_blocks);
+>  }
 >  
-> -	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
-> +	f2fs_update_time(sbi, REQ_TIME);
+> -static inline void inode_sub_dirty_blocks(struct inode *inode, int nr)
+> +static inline void inode_sub_dirty_blocks(struct inode *inode,
+> +					  unsigned int nr_blocks)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> -	int blocks = nr * (PAGE_SIZE >> sbi->log_blocksize);
 >  
-> -	if (F2FS_OPTION(F2FS_I_SB(dir)).fsync_mode == FSYNC_MODE_STRICT)
-> -		f2fs_add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
-> +	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
-> +		f2fs_add_ino_entry(sbi, dir->i_ino, TRANS_DIR_INO);
+>  	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
+>  			!S_ISLNK(inode->i_mode))
+>  		return;
 >  
->  	if (f2fs_has_inline_dentry(dir))
->  		return f2fs_delete_inline_entry(dentry,
->  				f2fs_dentry_cache(dentry_block), dir, inode);
+> -	atomic_sub(blocks, &F2FS_I(inode)->dirty_pages);
+> +	atomic_sub(nr_blocks, &F2FS_I(inode)->dirty_blocks);
+>  	if (S_ISDIR(inode->i_mode))
+> -		sub_cache_counts(sbi, F2FS_DIRTY_DENTS, blocks);
+> +		sub_cache_counts(sbi, F2FS_DIRTY_DENTS, nr_blocks);
+>  	else
+> -		sub_cache_counts(sbi, F2FS_DIRTY_DATA, blocks);
+> +		sub_cache_counts(sbi, F2FS_DIRTY_DATA, nr_blocks);
+>  	if (IS_NOQUOTA(inode))
+> -		sub_cache_counts(sbi, F2FS_DIRTY_QDATA, blocks);
+> +		sub_cache_counts(sbi, F2FS_DIRTY_QDATA, nr_blocks);
+>  }
 >  
->  	folio = f2fs_dentry_folio(dentry_block);
-> -	index = folio->index;
+>  static inline void inode_inc_dirty_block(struct inode *inode)
+> @@ -3052,9 +3050,9 @@ static inline s64 get_nr_caches(struct f2fs_sb_info *sbi, int count_type)
+>  	return atomic_read(&sbi->nr_caches[count_type]);
+>  }
 >  
->  	folio_lock(folio);
->  	f2fs_folio_wait_writeback(folio, true, true);
+> -static inline int get_dirty_pages(struct inode *inode)
+> +static inline int get_dirty_blocks(struct inode *inode)
+>  {
+> -	return atomic_read(&F2FS_I(inode)->dirty_pages);
+> +	return atomic_read(&F2FS_I(inode)->dirty_blocks);
+>  }
 >  
-> -	dentry_blk = folio_address(folio);
-> +	index = f2fs_dentry_to_lblk(sbi, folio, dentry);
-> +	block_offset = f2fs_folio_byte_offset(sbi, folio, index);
-> +	dentry_blk = folio_address(folio) + block_offset;
+>  static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index e339cfd84b27..97c052b98559 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -376,7 +376,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  		goto go_write;
+>  
+>  	/* if fdatasync is triggered, let's do in-place-update */
+> -	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+> +	if (datasync || get_dirty_blocks(inode) <= SM_I(sbi)->min_fsync_blocks)
+>  		set_inode_flag(inode, FI_NEED_IPU);
+>  	ret = file_write_and_wait_range(file, start, end);
+>  	clear_inode_flag(inode, FI_NEED_IPU);
+> @@ -2495,9 +2495,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+>  	 * Should wait end_io to count F2FS_WB_CP_DATA correctly by
+>  	 * f2fs_is_atomic_file.
+>  	 */
+> -	if (get_dirty_pages(inode))
+> -		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%llu, npages=%u",
+> -			  inode->i_ino, get_dirty_pages(inode));
+> +	if (get_dirty_blocks(inode))
+> +		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%llu, nblocks=%u",
+> +			  inode->i_ino, get_dirty_blocks(inode));
+>  	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+>  	if (ret)
+>  		goto out_unlock;
+> @@ -2519,7 +2519,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+>  		F2FS_I(fi->cow_inode)->atomic_inode = inode;
+>  	} else {
+>  		/* Reuse the already created COW inode */
+> -		f2fs_bug_on(sbi, get_dirty_pages(fi->cow_inode));
+> +		f2fs_bug_on(sbi, get_dirty_blocks(fi->cow_inode));
+>  
+>  		invalidate_mapping_pages(fi->cow_inode->i_mapping, 0, -1);
+>  
+> @@ -4877,7 +4877,7 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
+>  		goto out;
+>  	}
+>  
+> -	if (f2fs_is_mmap_file(inode) || get_dirty_pages(inode)) {
+> +	if (f2fs_is_mmap_file(inode) || get_dirty_blocks(inode)) {
+>  		ret = -EBUSY;
+>  		goto out;
+>  	}
+> @@ -5033,7 +5033,7 @@ static int f2fs_ioc_decompress_file(struct file *filp)
+>  		if (ret < 0)
+>  			break;
+>  
+> -		if (get_dirty_pages(inode) >= BLKS_PER_SEG(sbi)) {
+> +		if (get_dirty_blocks(inode) >= BLKS_PER_SEG(sbi)) {
+>  			ret = filemap_fdatawrite(inode->i_mapping);
+>  			if (ret < 0)
+>  				break;
+> @@ -5123,7 +5123,7 @@ static int f2fs_ioc_compress_file(struct file *filp)
+>  		if (ret < 0)
+>  			break;
+>  
+> -		if (get_dirty_pages(inode) >= BLKS_PER_SEG(sbi)) {
+> +		if (get_dirty_blocks(inode) >= BLKS_PER_SEG(sbi)) {
+>  			ret = filemap_fdatawrite(inode->i_mapping);
+>  			if (ret < 0)
+>  				break;
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index f5a4dac98ef2..5c6a64b31b05 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -872,7 +872,7 @@ static void f2fs_pre_evict_inode(struct inode *inode)
+>  	    test_opt(sbi, COMPRESS_CACHE) && f2fs_compressed_file(inode))
+>  		f2fs_invalidate_compress_pages(sbi, inode->i_ino);
+>  
+> -	f2fs_bug_on(sbi, get_dirty_pages(inode));
+> +	f2fs_bug_on(sbi, get_dirty_blocks(inode));
+>  	f2fs_remove_dirty_inode(inode);
+>  	f2fs_remove_donate_inode(inode);
+>  
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index e53871f32c35..cb8affb2c1e0 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -85,7 +85,8 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
+>  	} else if (type == DIRTY_DENTS) {
+>  		if (bdi_wb_dirty_exceeded(sbi->sb->s_bdi))
+>  			return false;
+> -		mem_size = get_nr_caches(sbi, F2FS_DIRTY_DENTS);
+> +		mem_size = get_nr_caches(sbi, F2FS_DIRTY_DENTS) >>
+> +					F2FS_LOG_BLKS_PER_PAGE(sbi);
 
-Use f2fs_folio_lblk_address() for cleanup?
+It loses accurate here as well.
 
 Thanks,
 
->  	make_dentry_ptr_block(dir, &d, dentry_blk);
->  	bit_pos = dentry - d.dentry;
->  	for (i = 0; i < slots; i++)
-> @@ -928,18 +960,31 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, void *dentry_block,
+>  		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
+>  	} else if (type == INO_ENTRIES) {
+>  		int i;
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f34558b661eb..fa74564adcfb 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1855,7 +1855,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>  	init_once((void *) fi);
 >  
->  	/* Let's check and deallocate this dentry page */
->  	bit_pos = find_next_bit_le(d.bitmap, d.max, 0);
-> -	folio_mark_dirty(folio);
-> +	f2fs_mark_dentry_folio_dirty(dir, folio, index);
->  
->  	if (bit_pos == d.max &&
->  	    !f2fs_truncate_hole(dir, index, index + 1)) {
-> +		if (f2fs_has_subpage_blocks(sbi)) {
-> +			bool dirty;
-> +
-> +			dirty = f2fs_ffs_clear_subrange_dirty_and_test(folio,
-> +					block_offset, F2FS_BLKSIZE(sbi));
-> +			f2fs_ffs_clear_subrange_uptodate(folio, block_offset,
-> +							 F2FS_BLKSIZE(sbi));
-> +			if (dirty)
-> +				goto keep_dirty;
-> +		}
->  		f2fs_clear_page_cache_dirty_tag(folio);
->  		folio_clear_dirty_for_io(folio);
-> -		folio_clear_uptodate(folio);
-> -		folio_detach_private(folio);
-> +		if (!f2fs_has_subpage_blocks(sbi)) {
-> +			folio_clear_uptodate(folio);
-> +			folio_detach_private(folio);
-> +			inode_dec_dirty_block(dir);
-> +		}
->  
-> -		inode_dec_dirty_block(dir);
->  		f2fs_remove_dirty_inode(dir);
->  	}
-> +keep_dirty:
->  	f2fs_folio_put(folio, true);
->  
->  	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-> @@ -961,20 +1006,21 @@ bool f2fs_empty_dir(struct inode *dir)
->  		return f2fs_empty_inline_dir(dir);
->  
->  	while (bidx < nblock) {
-> -		pgoff_t next_pgofs;
-> +		pgoff_t next_blkofs;
->  		struct folio *dentry_folio;
->  
-> -		dentry_folio = f2fs_find_data_folio(dir, bidx, &next_pgofs);
-> +		dentry_folio = f2fs_find_data_folio(dir, bidx, &next_blkofs);
->  		if (IS_ERR(dentry_folio)) {
->  			if (PTR_ERR(dentry_folio) == -ENOENT) {
-> -				bidx = next_pgofs;
-> +				bidx = next_blkofs;
->  				continue;
->  			} else {
->  				return false;
->  			}
->  		}
->  
-> -		dentry_blk = folio_address(dentry_folio);
-> +		dentry_blk = f2fs_folio_lblk_address(F2FS_I_SB(dir),
-> +						     dentry_folio, bidx);
->  		make_dentry_ptr_block(dir, &d, dentry_blk);
->  		if (bidx == 0)
->  			bit_pos = 2;
-> @@ -1080,7 +1126,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->  static int f2fs_readdir(struct file *file, struct dir_context *ctx)
->  {
->  	struct inode *inode = file_inode(file);
-> -	unsigned long npages = dir_blocks(inode);
-> +	unsigned long nblocks = dir_blocks(inode);
->  	void *dentry_blk = NULL;
->  	struct file_ra_state *ra = &file->f_ra;
->  	loff_t start_pos = ctx->pos;
-> @@ -1089,6 +1135,8 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
->  	unsigned int n = (unsigned long)ctx->pos / entries;
->  	struct f2fs_dentry_ptr d;
->  	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
-> +	pgoff_t f_last = nblocks ? f2fs_lblk_to_folio_index(sbi, nblocks - 1) : 0;
-> +	pgoff_t f_index, ra_pages;
->  	int err = 0;
->  
->  	if (IS_ENCRYPTED(inode)) {
-> @@ -1106,9 +1154,9 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
->  		goto out_free;
->  	}
->  
-> -	for (; n < npages; ctx->pos = n * entries) {
-> +	for (; n < nblocks; ctx->pos = n * entries) {
->  		struct folio *dentry_folio;
-> -		pgoff_t next_pgofs;
-> +		pgoff_t next_blkofs;
->  
->  		/* allow readdir() to be interrupted */
->  		if (fatal_signal_pending(current)) {
-> @@ -1118,23 +1166,25 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
->  		cond_resched();
->  
->  		/* readahead for multi pages of dir */
-> -		if (npages - n > 1 && !ra_has_index(ra, n))
-> -			page_cache_sync_readahead(inode->i_mapping, ra, file, n,
-> -				min(npages - n, (pgoff_t)MAX_DIR_RA_PAGES));
-> +		f_index = f2fs_lblk_to_folio_index(sbi, n);
-> +		ra_pages = f_last - f_index + 1;
-> +		if (nblocks - n > 1 && !ra_has_index(ra, f_index))
-> +			page_cache_sync_readahead(inode->i_mapping, ra, file, f_index,
-> +				min(ra_pages, (pgoff_t)MAX_DIR_RA_PAGES));
->  
-> -		dentry_folio = f2fs_find_data_folio(inode, n, &next_pgofs);
-> +		dentry_folio = f2fs_find_data_folio(inode, n, &next_blkofs);
->  		if (IS_ERR(dentry_folio)) {
->  			err = PTR_ERR(dentry_folio);
->  			if (err == -ENOENT) {
->  				err = 0;
-> -				n = next_pgofs;
-> +				n = next_blkofs;
->  				continue;
->  			} else {
->  				goto out_free;
->  			}
->  		}
->  
-> -		dentry_blk = folio_address(dentry_folio);
-> +		dentry_blk = f2fs_folio_lblk_address(sbi, dentry_folio, n);
->  
->  		make_dentry_ptr_block(inode, &d, dentry_blk);
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 114d3d7bcd3e..3822824326d7 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4193,6 +4193,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, void *dentry_blk,
->  int f2fs_do_tmpfile(struct inode *inode, struct inode *dir,
->  					struct f2fs_filename *fname);
->  bool f2fs_empty_dir(struct inode *dir);
-> +void f2fs_mark_dentry_folio_dirty(struct inode *dir, struct folio *folio,
-> +				  pgoff_t bidx);
->  
->  static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
->  {
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 49905aa08418..ba0aff8e5643 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -463,10 +463,6 @@ static int f2fs_move_inline_dirents(struct inode *dir,
->  	memcpy(dst.dentry, src.dentry, SIZE_OF_DIR_ENTRY * src.max);
->  	memcpy(dst.filename, src.filename, src.max * F2FS_SLOT_LEN);
->  
-> -	if (!folio_test_uptodate(folio))
-> -		folio_mark_uptodate(folio);
-> -	folio_mark_dirty(folio);
-> -
->  	/* clear inline dir and flag after data writeback */
->  	f2fs_truncate_inline_inode(dir, ientry, 0);
->  
-> @@ -484,6 +480,8 @@ static int f2fs_move_inline_dirents(struct inode *dir,
->  	f2fs_i_depth_write(dir, 1);
->  	if (i_size_read(dir) < F2FS_BLKSIZE(F2FS_I_SB(dir)))
->  		f2fs_i_size_write(dir, F2FS_BLKSIZE(F2FS_I_SB(dir)));
-> +
-> +	f2fs_mark_dentry_folio_dirty(dir, folio, 0);
->  out:
->  	f2fs_folio_put(folio, true);
->  	return err;
+>  	/* Initialize f2fs-specific inode info */
+> -	atomic_set(&fi->dirty_pages, 0);
+> +	atomic_set(&fi->dirty_blocks, 0);
+>  	atomic_set(&fi->i_compr_blocks, 0);
+>  	atomic_set(&fi->open_count, 0);
+>  	atomic_set(&fi->writeback, 0);
 
 
 
