@@ -1,98 +1,120 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AE3606A32E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Nov 2026 00:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5260E606A32D
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Nov 2026 03:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ZJU+WMiK;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=JWS4tM2p;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=CTi+m4yg;
-	dkim=neutral header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=gvyOKN4C
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=POgky6+l;
+	dkim=temperror header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=FJiTN7hS;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=JATLdQm1;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=M2q6Sr6h
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Cc:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:Message-ID:To:From:Date:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Unsubscribe-Post:List-Owner;
-	bh=zYHxZPfLTxEnMyRedY++lQPCsuqqK6a8WHyr4Y3vSh8=; b=ZJU+WMiKNsay60W0JtjImxMXZO
-	9CL6xTRWHi9xeFUO8asEomd1iIBhoiaIr0KZVUrv/YGuykbiT8R4fmblvlCRgcVLc8bs3/7APZ/DZ
-	I7Z9VuzBFLfhx3KM/noV68h+iHOouYoYYta0+H0KDH+G8ER6Pt2tlZ6jvq5DQboqoTAQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=WbYmzMrjdz8/h1hduenYuQlvlgePRFFYvYpM2M5FAmQ=; b=POgky6+lREQcWWCVKOpLCdw+Kx
+	H/RndCf0fMqdJQZ69JBhSnRV0q5rBKC8sxVHGW2Fys4pTIjdVa6deaUYUILS6Ux6j/rJdt7TRe1+Z
+	WufoGoJ9IUPrJZ9NyKRXPAFyCvF/dSmAqs9nrVGon8w+bdZnZVSQZgix9MwP5/bErktA=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xOlZW-000000008OO-1d54;
-	Thu, 05 Nov 2026 00:43:18 +0000
+	id 1xOoOu-000000003ez-0Zqq;
+	Thu, 05 Nov 2026 03:44:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <lkp@intel.com>) id 1xOlYv-000000008Ng-4C3V
+ (envelope-from <zhanxusheng1024@gmail.com>)
+ id 1xOoOt-000000003es-03i8
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Nov 2026 00:42:42 +0000
+ Thu, 05 Nov 2026 03:44:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=r3zgLIpUWMJ2+WHQph3F4ViA1LF3ChoHkwJlbzmT41Y=; b=JWS4tM2p1VYJg4Y4Z43GfhmJ3K
- 55yhapZw5Rzhb1GnsZok5xU31W9imB/7DQ8KP8AF86ify9ZYWaBPJkxpzPGmML0gAXQDStoF9Us4W
- VomeEWdGELBVbUGxIOnP+ei1t6H7cp6vZuEmTLc/Z2mpbFI7mUtbpgyzqvGNWZ9HnTU8=;
+ bh=PVB1DrB3lcAejFSUkzSavFgFkaENftsrN7fvqCjWIpI=; b=FJiTN7hSeUkfjKCPN4+Xq1tOCo
+ pPYpASEyhCJFVWC+o+HlvTE3KZWhKpwln/r695D3k8CL/UUR6A+6/j+gmP7aTYVpE+OPo5NphsS61
+ YMnKcE8PpoR9BZBMCRKs7qyQqjval+SDFmodztcVK5j/Ho18DL3JMTOeQiR6R5KNB9ac=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:MIME-Version:
- Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=r3zgLIpUWMJ2+WHQph3F4ViA1LF3ChoHkwJlbzmT41Y=; b=CTi+m4ygBq8H9rS9JSNclVWi02
- gG4GfB5p/r6mxtXFX2TpLJYWgE43l0vK/NoUNncxlF3yv1Eqw1/epTufdFkaoygZuosaQh9im++Wp
- FZQHKFPcnX6GbfpqEJbffmA1enRYY8M5C+BJuXhkgqd54C2IyXAnZR1eT4/H4iL+4sJ8=;
-Received: from mgamail.intel.com ([198.175.65.11])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xOlYu-000000003dL-0TJY
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=PVB1DrB3lcAejFSUkzSavFgFkaENftsrN7fvqCjWIpI=; b=JATLdQm1HijmeZ6RnJwYVng7Yc
+ erCbTocZqWLSxSQhdnSXzFQ/OFcv0vh5V8gW/lgZlbjk+iHHR1EgiWT2ikwlY7D3NnT44PLAyJpxt
+ C7FhIqMQQz/eJsYX/SEJHbFB78YaXv4I+O1+gNNKtYrRIdYGgr4F046c0/ZFdxir0of0=;
+Received: from mail-dy1-f179.google.com ([74.125.82.179])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xOoOs-000000003Jx-1JKB
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Nov 2026 00:42:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793839360; x=1825375360;
- h=date:from:to:cc:subject:message-id;
- bh=0uBpTP5Dps/79hfyzKUc0lAFQpD1rxNfe12QLLmVz7Q=;
- b=gvyOKN4CbQ5caxMW3c9QbygtBm0ChyaUGI3xqTWu+zAAVp0o4/2Jn8Md
- WzWVbnxWztxz43lYuw0O7ucjuDUQDcoWogpoHYTcXSSuiJu7RrQ24BAeE
- uJSDbeC+gszMx7Ywz/AxGs7D1X6uoDPEx7U0Yuo0htzwHTNnjikrOfvyS
- FMDPeAXDE9zcC84lr6wmi5Fd/+Wwq7hvI2NS/V1p1cMWwuQs0mcaFVNqf
- YLxJIF7lTkbOgjlH6xJye3FcqzRHX1W++eLv4utLbNLpoUVRynCdhsFbS
- 3/nrQNPiAj9avp8J9GQSKWiyhruH7XD/lxz/R/6AIrRdPCxyoliTXHH0U Q==;
-X-CSE-ConnectionGUID: SjsIkR3LTF+ldASxZTfvYg==
-X-CSE-MsgGUID: ibcI9BMlR9SxNmz+Azfv1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2494519"
-X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
-   d="scan'208";a="2494519"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Nov 2026 16:42:34 -0800
-X-CSE-ConnectionGUID: CQ++3C60QRKVuXv5OQZBqQ==
-X-CSE-MsgGUID: 6KsMS6CsTZ2hDbQJ9YxxoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
-   d="scan'208";a="6735986"
-Received: from igk-lkp-server01.igk.intel.com (HELO 58ca8a381a5c)
- ([10.211.93.152])
- by orviesa005.jf.intel.com with ESMTP; 04 Nov 2026 16:42:32 -0800
-Received: from kbuild by 58ca8a381a5c with local (Exim 4.98.2)
- (envelope-from <lkp@intel.com>) id 1xOlYh-000000009Pn-2pry;
- Thu, 05 Nov 2026 00:42:27 +0000
-Date: Thu, 05 Nov 2026 01:41:48 +0100
-From: kernel test robot <lkp@intel.com>
-To: Daeho Jeong <daehojeong@google.com>
-Message-ID: <202611050144.47BOVak5-lkp@intel.com>
-User-Agent: s-nail v14.9.25
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xOlYu-000000003dL-0TJY
-Subject: [f2fs-dev] [jaegeuk-f2fs:dev-test 25/42] fs/f2fs/data.c:5196:34:
- warning: variable 'ffs' set but not used
+ Thu, 05 Nov 2026 03:44:30 +0000
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-36661f953e4so1980397eec.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 04 Nov 2026 19:44:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1793850265; x=1794455065; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=PVB1DrB3lcAejFSUkzSavFgFkaENftsrN7fvqCjWIpI=;
+ b=M2q6Sr6hdO7BmbCFS3jQQbrW7a0/H+eK2HY7A4fuJpCy7oj8+0DSWK3mYP6ZH0wYyB
+ npVyyk2z6gWpoRxNh4Hnr5d29SPHpOHKNi8qkpLW/0lYpsJ4qgbvznrptO4oAljlfFZi
+ QXH5XjroP56epCcYabgWMdAZIVoiy0c5loo9OnbBidiXkjS4YwXyTxPhzPMR8y2Mggcz
+ IZIBVvOzjWLJWAU0NBrDbL7ctzYCEEfTXsVNH1hPK0uvIOF0Dg7LKVbnqn3zk/mW50ix
+ 7bXVp6av0vZyYSr6HI1GX3Z8+H3q+8wLP7hs/FG7YuO/kMutRBhY63US+Yx8gBI8N9Ch
+ MNKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793850265; x=1794455065;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=PVB1DrB3lcAejFSUkzSavFgFkaENftsrN7fvqCjWIpI=;
+ b=Z6NzsLt/vbwRvJQoYN3pSZVCjyKdIseypU2n1GwTGC/bAOlYKf4m9YeDaM8pgAbp1d
+ wdojIjUQA1DNf4eUP3uKXn5PAhH08iUrebEbuQCgaYeckBgZMY7ZrkW8L7Bhb1Qc7u/Y
+ vaOgcIZRd1YuwQW0MWZpyHf8IDLREkFf+9/SCgbtZRKZZOk8idgUSlg6BxwGzMLzGrxk
+ QhR51w+moHdiQPLuIClTSD96bgVVUbR0EY9uBl47i930xqsneRYi9wWw6GwwGu+CfTts
+ 4wwAOZ4AzRBiawbc6IUe/T24qrGsLy6kOqszHacp0LK67EsfXtAgMCgKYpS66PdWzgsy
+ 3QPw==
+X-Gm-Message-State: APuU4Z8qRKV1l3GUuRBzAYIlPVnacYh17zOv+SaTmLr6bIgzcqUe4l+o
+ 0XTX6JvVCfRko8dtX72jk4vAOODb9pkHHtTPvaNLi/J7c8LyJsXbc8Mp
+X-Gm-Gg: AYBFou3IGXpF0tFWgeiKgyZpkUonvfnGCuFOGkjwXYh1CdN6Td5Cc6pr9dbmQt3B94e
+ 413F3m9+iQENY8T3HnNT+MfbLqYcs2GgrInNfjnBwLlnokegl3YKiajZFUStbdBglmId7pDzSe+
+ PkRUdZMTiLO7xJKDZ7xK5VwYldhaXJEYew0krlS/2ZWFM2H8k7/EYM28ZoO5W0J1MS83t0YReFB
+ 3lNFrF2Ds8oYvq0rlC/rZCCSC6JeUKy2jMvhtJaP9EKYHmRpbyaOn5M3BPAQyuA0+feHRuQ2Ey5
+ ntsROHn3RU1d02udqh4JEQzBXRBnTV6gf72RjhTSiYiHksh8+s9Eq7qOSlBJyWaS5900H1J+EPC
+ 97yzPIx8z8EDrPHhCZ+L/NSloxuCTkSC76+Tmem+WFp15S3KaQ+Wm0/HyF49B2NIvQ/LlW3xxAZ
+ 9HxwTSQjiNaqTOPfN0WDgm01lxtu452KStPIuSY8jAg2IeWFkY6c3JmAQ0MKXC1SOdi47ho/gmk
+ CDXjD20sm/Re43i+GgARJWV/qxliuowSYYxU5iOF2aTj1NFU+TxL2nZh71q2G2tU/R7CYU3WV2v
+ edlN2grysiVzQRsK3Vm1xIR88RszWwPjpnrEpFl72x5mQ+0=
+X-Received: by 2002:a05:693c:20c1:20b0:369:f70e:bd40 with SMTP id
+ 5a478bee46e88-36a4237cf7fmr26430282eec.16.1793850264521; 
+ Wed, 04 Nov 2026 19:44:24 -0800 (PST)
+Received: from osman.mioffice.cn ([43.224.245.178])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-36ca39c5f0csm11370113eec.29.2026.11.04.19.44.22
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Nov 2026 19:44:24 -0800 (PST)
+From: Zhan Xusheng <zhanxusheng1024@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Thu,  5 Nov 2026 11:44:19 +0800
+Message-ID: <20261105034419.2701443-1-zhanxusheng1024@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <tencent_B30A444DF94444D1A63A7D6F8E2039F1990A@qq.com>
+References: <tencent_B30A444DF94444D1A63A7D6F8E2039F1990A@qq.com>
+X-Archived-By: <archiver.kernel.org>
+MIME-Version: 1.0
+X-Spam-Score: 0.1 (/)
+X-Headers-End: 1xOoOs-000000003Jx-1JKB
+Subject: [f2fs-dev] [PATCH] f2fs: don't BUG_ON a missing orphan inode at
+ mount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,152 +124,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- oe-kbuild-all@lists.linux.dev
-X-Archived-By: <archiver.kernel.org>
-MIME-Version: 1.0
+Cc: Guikun Yang <yangguikun19@qq.com>, stable@kernel.org,
+ zhanxusheng@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_PASS,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-head:   648bdfa9bae3850908df31617e5922e0683d5fff
-commit: 00f5f06b33d389a9c82286286412243795d31ed3 [25/42] f2fs: extend f2fs_folio_state for subpage blocks
-config: openrisc-randconfig-2200-20261104 (https://download.01.org/0day-ci/archive/20261105/202611050144.47BOVak5-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 16.2.0
-smatch: v0.5.0-9187-g5189e3fb
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261105/202611050144.47BOVak5-lkp@intel.com/reproduce)
+From: Zhan Xusheng <zhanxusheng@xiaomi.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611050144.47BOVak5-lkp@intel.com/
+recover_orphan_inode() treats -ENOENT from f2fs_iget() as a kernel
+bug, but the ino comes from the on-disk orphan block. An image whose
+orphan entry names an inode without a NAT entry hits the BUG_ON at
+mount with CONFIG_F2FS_CHECK_FS, or a WARN and a failed mount
+without it.
 
-All warnings (new ones prefixed by >>):
+To reproduce, unlink a file while it is still open, sync, crash,
+then change ino[0] in the checkpoint's orphan block to an unused
+nid and mount:
 
-   fs/f2fs/data.c: In function 'prepare_large_folio_write_begin':
->> fs/f2fs/data.c:5196:34: warning: variable 'ffs' set but not used [-Wunused-but-set-variable=]
-    5196 |         struct f2fs_folio_state *ffs;
-         |                                  ^~~
+  kernel BUG at fs/f2fs/checkpoint.c:967!
+  RIP: 0010:f2fs_recover_orphan_inodes+0x6a3/0x9a0
 
+Treat it as corruption, the same way the entry_count check does:
+fail the mount with -EFSCORRUPTED and record
+ERROR_INCONSISTENT_ORPHAN for fsck.
 
-vim +/ffs +5196 fs/f2fs/data.c
+Fixes: 8c14bfadeac2 ("f2fs: handle error of f2fs_iget correctly")
+Reported-by: Guikun Yang <yangguikun19@qq.com>
+Closes: https://lore.kernel.org/linux-f2fs-devel/tencent_B30A444DF94444D1A63A7D6F8E2039F1990A@qq.com/
+Cc: stable@kernel.org
+Signed-off-by: Zhan Xusheng <zhanxusheng@xiaomi.com>
+---
+Tested in QEMU on f2fs/dev with CONFIG_F2FS_CHECK_FS=y:
 
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5190  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5191  static int prepare_large_folio_write_begin(struct inode *inode,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5192  					  struct folio *folio, loff_t pos,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5193  					  unsigned int len)
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5194  {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5195  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28 @5196  	struct f2fs_folio_state *ffs;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5197  	size_t ori_off = offset_in_folio(folio, pos);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5198  	size_t need_off = ori_off;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5199  	int err = 0;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5200  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5201  	/*
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5202  	 * when the write did not come through f2fs_write_iter, we preallocate all
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5203  	 * blocks in the write range here.
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5204  	 */
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5205  	if (!is_inode_flag_set(inode, FI_PREALLOCATED_ALL) &&
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5206  	    !IS_DEVICE_ALIASING(inode)) {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5207  		pgoff_t first = F2FS_BYTES_TO_BLK(sbi, pos);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5208  		pgoff_t last = F2FS_BLK_ALIGN(sbi, pos + len);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5209  		pgoff_t idx;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5210  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5211  		for (idx = first; idx < last; idx++) {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5212  			block_t blkaddr = NULL_ADDR;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5213  			bool node_changed = false;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5214  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5215  			err = __reserve_data_block(inode, idx, &blkaddr,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5216  						   &node_changed);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5217  			if (err)
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5218  				return err;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5219  			if (f2fs_balance_fs_folio_locked(folio, folio->mapping,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5220  						   node_changed))
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5221  				return -EAGAIN;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5222  		}
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5223  	}
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5224  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5225  	ffs = f2fs_ffs_find_or_alloc(folio);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5226  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5227  	/* Skip read if the folio is already fully uptodate or the write
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5228  	 * covers the entire folio.
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5229  	 */
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5230  	if (folio_test_uptodate(folio) || len == folio_size(folio))
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5231  		return 0;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5232  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5233  	if (!f2fs_verity_in_progress(inode) &&
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5234  	    !(pos & (PAGE_SIZE - 1)) && (pos + len) >= i_size_read(inode)) {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5235  		size_t zoff = ori_off + len;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5236  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5237  		if (zoff < folio_size(folio))
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5238  			folio_zero_segment(folio, zoff, folio_size(folio));
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5239  		return 0;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5240  	}
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5241  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5242  	/* Inline data must have been converted before reaching here. */
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5243  	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5244  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5245  	while (find_next_valid_block(folio, ori_off,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5246  				     &need_off, len)) {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5247  		struct dnode_of_data dn;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5248  		pgoff_t index = folio->index + (need_off >> PAGE_SHIFT);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5249  		block_t blkaddr;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5250  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5251  		if (!f2fs_lookup_read_extent_cache_block(inode, index,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5252  							&blkaddr)) {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5253  			if (IS_DEVICE_ALIASING(inode))
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5254  				return -ENODATA;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5255  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5256  			set_new_dnode(&dn, inode, NULL, NULL, 0);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5257  			err = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5258  			if (err)
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5259  				return err;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5260  			blkaddr = dn.data_blkaddr;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5261  			f2fs_put_dnode(&dn);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5262  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5263  			if (blkaddr == NEW_ADDR) {
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5264  				size_t off = offset_in_folio(folio,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5265  							     (loff_t)index << PAGE_SHIFT);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5266  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5267  				folio_zero_segment(folio, off, off + PAGE_SIZE);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5268  				f2fs_ffs_mark_subrange_uptodate(folio, off,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5269  							       PAGE_SIZE);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5270  				continue;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5271  			}
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5272  		}
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5273  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5274  		/*
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5275  		 * The read extent cache only validates the first and last
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5276  		 * block of i_ext, so check both the cached and dnode paths.
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5277  		 */
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5278  		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5279  					  DATA_GENERIC_ENHANCE_READ))
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5280  			return -EFSCORRUPTED;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5281  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5282  		err = f2fs_submit_page_read_sync(inode, folio, index, blkaddr);
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5283  		if (err)
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5284  			return err;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5285  	}
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5286  
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5287  	return 0;
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5288  }
-97c64ba5ddb76f7 Nanzhe Zhao 2026-10-28  5289  
+  orphan ino   before            after
+  4 (real)     mounts            mounts
+  1000         BUG at mount      -EFSCORRUPTED, s_errors bit set
 
-:::::: The code at line 5196 was first introduced by commit
-:::::: 97c64ba5ddb76f7b7b1db4860310b6227278c6b3 f2fs: support regular file buffered writes on large folios
+ fs/f2fs/checkpoint.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-:::::: TO: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-:::::: CC: Jaegeuk Kim <jaegeuk@kernel.org>
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 1ed38c668fc5..e57904a33ff8 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -960,12 +960,13 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 
+ 	inode = f2fs_iget_retry(sbi->sb, ino);
+ 	if (IS_ERR(inode)) {
+-		/*
+-		 * there should be a bug that we can't find the entry
+-		 * to orphan inode.
+-		 */
+-		f2fs_bug_on(sbi, PTR_ERR(inode) == -ENOENT);
+-		return PTR_ERR(inode);
++		if (PTR_ERR(inode) != -ENOENT)
++			return PTR_ERR(inode);
++		/* The orphan area lists an inode that does not exist. */
++		f2fs_err(sbi, "orphan inode %u does not exist", ino);
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_handle_error(sbi, ERROR_INCONSISTENT_ORPHAN);
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	err = f2fs_dquot_initialize(inode);
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+base-commit: 9b12299b437e0cc3ebf402e7b36a89cc69151238
+-- 
+2.43.0
+
 
 
 _______________________________________________
