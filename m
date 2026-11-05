@@ -1,88 +1,96 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAB0606D838
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Nov 2026 10:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3846E606A32C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Nov 2026 11:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=jKL/HmJ9;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=IDdmTScU;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=czpTcDHr;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g7fvykx8
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=YieVS2Wi;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=gwI1PIGk;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=ccNNvsuE
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Unsubscribe-Post:List-Owner;
-	bh=crsX3M5hZsXgYi1X7dMP9ArSBJKQ4haeckba6uc1vPs=; b=jKL/HmJ9Qx8Xt4fF4Qa+znJIT/
-	UR0wYkJgePZTPQttpaR9KXQ6G5kJc/UE8k6uyjer/BWg9tXe1FFFQx4oEsd1rSBC3sLZz6+bp2jcC
-	vqQJowgxGE4mPEBqgrGUlY6fRuwCu1IX2JBTi06mNq5Klx8jjaE4lZBToBgEg4cha4I4=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
+	bh=rwoI3bLKgwdO6/iKjxwW9+pSEcsRWm1QoWyKeDGHT6U=; b=YieVS2WiyI6hOoYEZH1jae7PS3
+	HbuxyjYwpm2rjwLsrDcOk0f3zwVL2qrljGOE9UjW2jw1/tSo6qHucCgOtJiw3WhLTRnrF/8SA0tjb
+	/Ulr5jmc15lucXl6NDRH4i+BLXhB3/86mghF+yRuPGTHA0ZvJOkwiEyVx8tNw67BHhXs=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xOv9Q-000000001tf-0pwQ;
-	Thu, 05 Nov 2026 10:57:00 +0000
+	id 1xOvMs-000000002ec-2cEH;
+	Thu, 05 Nov 2026 11:10:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <aalbersh@kernel.org>) id 1xOv94-000000001rY-0JjJ
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1) (envelope-from
+ <3M2TsagkbAAw4ABwmxxq3m11up.s00sxq64q3o0z5qz5.o0y@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1xOvMq-000000002eW-47DX
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Nov 2026 10:56:38 +0000
+ Thu, 05 Nov 2026 11:10:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kIGFat1YPpHm6A50US9FPElDUzbSDilNLMTmvulOH6Y=; b=IDdmTScUd+yyR1yFIsVLgCNHQw
- DrKW4Tzq/C7hHmDuN3eLJF2Xy0vACa+o5OZtRqwHrjSkxcTdvlq2bpzY+GyPg/w5NEinh3/k2qplg
- sMXZ/dqYF2x5vSi5/5bnFrvCOSTWqa8aTLh1zj6OmOWko838sgzFGsKOCl6twZwLVCxc=;
+ bh=QOIwjIRpeVDqlXAgbw2FLrO0KLt63dq5HpsWbh7v4l4=; b=gwI1PIGk1MMkKFLUNQ+E1fjiEO
+ vmXG0iYrk8FtsKZDCvuP5ESmNQIIouItrYbUZ6woUZ+mZPHLiec90z6fxCQdb8HlG/TFfDjq6buvn
+ UEmkSnN1AFeyc3/sVj3L1kEm1qGqTkRm0aJ8zkwVrAM+HdCvumPjQb6gfmDEM/Ugc2jg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kIGFat1YPpHm6A50US9FPElDUzbSDilNLMTmvulOH6Y=; b=czpTcDHrEjQT4lJacotTUE01SJ
- y9Rg3M9DiHe9Io6PsOYJvwew0AgqGaZbTJ2QeeiWUIbjIpL7W2VG5ab3Vj0k2f1EZhHpo8XyaSD0L
- EWdUz8x7kW6/LHmK1ydQ4V4aoTbCkdhh7mk0j71pEwt7fU9WykPggB5vRgR0Q6h63f/I=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=QOIwjIRpeVDqlXAgbw2FLrO0KLt63dq5HpsWbh7v4l4=; b=ccNNvsuElGq185JFCDEQTLAZMc
+ 18wGwwMqY/vkwElfplJ9G5vDn7wvbxm+FfQ5mQsXRMiAkg85dcpRnX88vm61YZzxUP20xb1+98QcT
+ UVyhBNE5sqA6kqlCIjcnR63q3d/EM95n8Gfrs1xYe4DKfvyxNW+pABHxEPu9UnvIGXXs=;
+Received: from mail-ot1-f69.google.com ([209.85.210.69])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xOv92-0000000064a-30Pn
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xOvMn-000000006PZ-0Rf6
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Nov 2026 10:56:38 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 43A6E41E5A;
- Thu,  5 Nov 2026 10:56:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D21D1F000C1;
- Thu,  5 Nov 2026 10:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1793876191;
- bh=kIGFat1YPpHm6A50US9FPElDUzbSDilNLMTmvulOH6Y=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=g7fvykx8Ix7cTEWT0bAjqJg/gY8/ovVJxpBlsvj2Tt7NloT1HJAeW5AlaJON46r9F
- cfpMdQh6MQENydfLq+Q8Bkqveli/Sk89/R34mvGQrKJw0dsq2YE/sjpYhpcWwSIf54
- /9jGLdK5yCh1S7lsmW/oLGZqLgYZ9uiWZ7Dl0WGOMAWfcbpfUnB6RwX3sDkfkqHJej
- EumqusUmUrmqAvl6Cl74CSXhTJEUK5c+h+m6n2snl3zEbwlOMnoboEDi5nMkixI2T9
- nb7VvvfxOJPwzDNMTIgSlUQRJYmOtcz3Au2p2msBq0fS6B8Mz/GwVMfZIh5UkJWSss
- +hhWsrEtRUK+w==
-Date: Thu, 5 Nov 2026 11:56:26 +0100
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <auxSTGvdG-UPqL34@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
-References: <20261104194618.103332-1-aalbersh@kernel.org>
- <20261104215749.GA3648616@google.com>
- <20261105075244.GB17923@lst.de>
+ Thu, 05 Nov 2026 11:10:52 +0000
+Received: by mail-ot1-f69.google.com with SMTP id
+ 46e09a7af769-823d73ffca1so2607715a34.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 05 Nov 2026 03:10:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793877043; x=1794481843;
+ h=content-type:to:from:subject:message-id:date:mime-version
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=QOIwjIRpeVDqlXAgbw2FLrO0KLt63dq5HpsWbh7v4l4=;
+ b=yeJN2NcvNdgTQrC1xzKx5vmNrq7FtuZbGteXAhnRtMHkrXD0hpkqN3zeEPV7in7b3O
+ hlPt0fovAUbMEznHoxKiM7Uv105MO6tP4nvj6XGfLaGpx9FsUOcdxtrrpM1eL5q0oLzC
+ RVGpXY/Y1j+FWz0taW8vxUlCy6dqzjzY0d/yFPPSi3N5u+OVMFlozELKCnjquw4yRlI8
+ 28ccNBkFRpGFaErY5/N2ceoDBA62LkSLO/De7jTitDWWKVtArge6kXYGQt57TEZK/AfS
+ qZqac0RESY++m+tMPo+pFnpqBpGz51INfaPd9hLvYBy81bymWD10lMxvORy1k74XhLmt
+ W3cg==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzJ5adi8OJQp9SZRVeOsY16v8Uwcwo+Ak2CYYbMhmZZXmtPdJTXQ76TI1ceVNvDQD8QgjaOzixx1kE5zOfeHMXT@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z9dMR9S4IOhg3PmGOVGY1q0Qv64TyNRH8Kz41fd3wvlvc75wbQD
+ cJMuQsZpZgpCDy+Vr8kC2WX9FVzoreL5LIimbhoUsGWKWaZK+cozLFrmnWk0XufWe8M29bd13Z7
+ b10CfPEJRCezh1AQBJls38Yf88+OfcZ+OxlWnELw0IdNqlfWVXZqaI5Ymbd8=
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20261105075244.GB17923@lst.de>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xOv92-0000000064a-30Pn
-Subject: Re: [f2fs-dev] [PATCH 0/5] fsverity: lift ioctl() input masking and
- runtime inode flag to VFS
+X-Received: by 2002:a05:6808:1783:b0:4fb:ac9b:b06a with SMTP id
+ 5614622812f47-5640de0fc9emr14499827b6e.48.1793877043501; Thu, 05 Nov 2026
+ 03:10:43 -0800 (PST)
+Date: Thu, 05 Nov 2026 03:10:43 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6aec6433.0ce67c00.35143.0002.GAE@google.com>
+From: syzbot <syzbot+d60be66dd00b4490fa96@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, jgg@ziepe.ca, leon@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com
+X-Spam-Score: 3.1 (+++)
+X-Headers-End: 1xOvMn-000000006PZ-0Rf6
+Subject: [f2fs-dev] [syzbot] [rdma?] [f2fs?] memory leak in
+ radix_tree_insert (3)
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,42 +100,150 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
-	SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 2026-11-05 08:52:44, Christoph Hellwig wrote:
-> On Wed, Nov 04, 2026 at 09:57:49PM +0000, Eric Biggers wrote:
-> > Changes to 'struct inode' should be Cc'ed to linux-fsdevel as well.
+Hello,
 
-ah, thanks! Will resend shortly
+syzbot found the following issue on:
 
-> 
-> Yes.  Except for that and the two btrfs/f2fs issue reported by Sashiko
-> this looks sane.  Please try to do a full fsverity xfstests run for
-> all the touched file systems.
+HEAD commit:    6628e7d4c6b2 Linux 7.4-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=149fc6b1580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=441b6cc593d83cc4
+dashboard link: https://syzkaller.appspot.com/bug?extid=d60be66dd00b4490fa96
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1613be2d580000
 
--g verity passes for all fs, except btrfs/277 and btrfs+generic/574.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bd1857dac9bc/disk-6628e7d4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0750834263ca/vmlinux-6628e7d4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef4090776a72/bzImage-6628e7d4.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b8af1c9e7f1c/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16e69cdd580000)
 
-The btrfs/277 seems to fail due to difference between what kernel
-and userspace versions support (btrfs-progs v7.1 doesn't seem to
-support latest streams v3).
+AI-generated root cause summary:
+In lib/radix-tree.c:__radix_tree_create(), intermediate radix_tree_node
+(xa_node) structures are allocated and linked into parent slots as the function
+descends through tree levels (shift -= RADIX_TREE_MAP_SHIFT). If a subsequent
+node allocation fails with -ENOMEM before reaching the leaf slot,
+__radix_tree_create() returns the error immediately without unwinding or
+deleting the newly allocated empty intermediate nodes. Consequently, slot-based
+iterators such as radix_tree_for_each_slot() used during cleanup (e.g. in
+uverbs_destroy_api() -> uapi_remove_range()) never encounter the empty nodes
+(which have count == 0), causing those radix_tree_node objects to leak when the
+containing object is destroyed.
 
-The generic/574 on BTRFS fails only for 1024 block size no matter
-the change (fails on v7.3 too). I haven't checked why.
+full analysis:  https://syzkaller.appspot.com/x/ai_root_cause?x=d60be66dd00b4490fa96
 
--- 
-- Andrey
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d60be66dd00b4490fa96@syzkaller.appspotmail.com
+
+BUG: memory leak
+unreferenced object 0xffff88810d78f488 (size 576):
+  comm "syz.1.32", pid 7505, jiffies 4294948085
+  hex dump (first 32 bytes):
+    0c 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    40 e5 f3 11 81 88 ff ff a0 f4 78 0d 81 88 ff ff  @.........x.....
+  backtrace (crc d8883653):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4733 [inline]
+    slab_alloc_node mm/slub.c:5033 [inline]
+    kmem_cache_alloc_noprof+0x35b/0x3e0 mm/slub.c:5047
+    radix_tree_node_alloc.constprop.0+0x81/0x1a0 lib/radix-tree.c:276
+    __radix_tree_create lib/radix-tree.c:624 [inline]
+    radix_tree_insert+0x140/0x390 lib/radix-tree.c:712
+    uapi_add_elm drivers/infiniband/core/uverbs_uapi.c:27 [inline]
+    uapi_add_elm drivers/infiniband/core/uverbs_uapi.c:16 [inline]
+    uapi_add_get_elm+0x61/0x140 drivers/infiniband/core/uverbs_uapi.c:41
+    uapi_merge_obj_tree drivers/infiniband/core/uverbs_uapi.c:178 [inline]
+    uapi_merge_def+0x4c4/0xb60 drivers/infiniband/core/uverbs_uapi.c:297
+    uapi_merge_def+0xf0/0xb60 drivers/infiniband/core/uverbs_uapi.c:286
+    uverbs_alloc_api+0x85/0xc50 drivers/infiniband/core/uverbs_uapi.c:659
+    ib_uverbs_create_uapi drivers/infiniband/core/uverbs_main.c:1140 [inline]
+    ib_uverbs_add_one+0x1b1/0x350 drivers/infiniband/core/uverbs_main.c:1196
+    add_client_context+0x290/0x480 drivers/infiniband/core/device.c:755
+    enable_device_and_get+0x106/0x250 drivers/infiniband/core/device.c:1375
+    ib_register_device drivers/infiniband/core/device.c:1503 [inline]
+    ib_register_device+0x4fe/0x7f0 drivers/infiniband/core/device.c:1441
+    siw_device_register drivers/infiniband/sw/siw/siw_main.c:71 [inline]
+    siw_newlink drivers/infiniband/sw/siw/siw_main.c:433 [inline]
+    siw_newlink+0x36a/0x3f0 drivers/infiniband/sw/siw/siw_main.c:415
+    nldev_newlink+0x26f/0x3e0 drivers/infiniband/core/nldev.c:1859
+    rdma_nl_rcv_msg+0x1ad/0x2d0 drivers/infiniband/core/netlink.c:195
+    rdma_nl_rcv_skb.constprop.0.isra.0+0x175/0x1f0 drivers/infiniband/core/netlink.c:239
+    netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+    netlink_unicast+0x3e0/0x530 net/netlink/af_netlink.c:1361
+
+BUG: memory leak
+unreferenced object 0xffff88810d792920 (size 576):
+  comm "syz.1.32", pid 7505, jiffies 4294948085
+  hex dump (first 32 bytes):
+    06 09 00 00 00 00 00 00 88 f4 78 0d 81 88 ff ff  ..........x.....
+    40 e5 f3 11 81 88 ff ff 38 29 79 0d 81 88 ff ff  @.......8)y.....
+  backtrace (crc 415aa5b6):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4733 [inline]
+    slab_alloc_node mm/slub.c:5033 [inline]
+    kmem_cache_alloc_noprof+0x35b/0x3e0 mm/slub.c:5047
+    radix_tree_node_alloc.constprop.0+0x81/0x1a0 lib/radix-tree.c:276
+    __radix_tree_create lib/radix-tree.c:624 [inline]
+    radix_tree_insert+0x140/0x390 lib/radix-tree.c:712
+    uapi_add_elm drivers/infiniband/core/uverbs_uapi.c:27 [inline]
+    uapi_add_elm drivers/infiniband/core/uverbs_uapi.c:16 [inline]
+    uapi_add_get_elm+0x61/0x140 drivers/infiniband/core/uverbs_uapi.c:41
+    uapi_merge_obj_tree drivers/infiniband/core/uverbs_uapi.c:178 [inline]
+    uapi_merge_def+0x4c4/0xb60 drivers/infiniband/core/uverbs_uapi.c:297
+    uapi_merge_def+0xf0/0xb60 drivers/infiniband/core/uverbs_uapi.c:286
+    uverbs_alloc_api+0x85/0xc50 drivers/infiniband/core/uverbs_uapi.c:659
+    ib_uverbs_create_uapi drivers/infiniband/core/uverbs_main.c:1140 [inline]
+    ib_uverbs_add_one+0x1b1/0x350 drivers/infiniband/core/uverbs_main.c:1196
+    add_client_context+0x290/0x480 drivers/infiniband/core/device.c:755
+    enable_device_and_get+0x106/0x250 drivers/infiniband/core/device.c:1375
+    ib_register_device drivers/infiniband/core/device.c:1503 [inline]
+    ib_register_device+0x4fe/0x7f0 drivers/infiniband/core/device.c:1441
+    siw_device_register drivers/infiniband/sw/siw/siw_main.c:71 [inline]
+    siw_newlink drivers/infiniband/sw/siw/siw_main.c:433 [inline]
+    siw_newlink+0x36a/0x3f0 drivers/infiniband/sw/siw/siw_main.c:415
+    nldev_newlink+0x26f/0x3e0 drivers/infiniband/core/nldev.c:1859
+    rdma_nl_rcv_msg+0x1ad/0x2d0 drivers/infiniband/core/netlink.c:195
+    rdma_nl_rcv_skb.constprop.0.isra.0+0x175/0x1f0 drivers/infiniband/core/netlink.c:239
+    netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+    netlink_unicast+0x3e0/0x530 net/netlink/af_netlink.c:1361
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
 
 _______________________________________________
