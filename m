@@ -1,41 +1,41 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE56606A32C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Nov 2026 10:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589F9606A326
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Nov 2026 10:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=a9Vrz/h5;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=SjQGoZFA;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=gcFU4XPP
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=BN2YtFqr;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=HkU0/fPy;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=PM+0kJuB
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=a9Vrz/h5y+5Bd/e+n4pFcynhY8
-	fV78ORCAFQiSjAuGnCXIUiZ5243Zm0ttGLizCc1l6Mn+LP0QNT1gf+55PYZ9ozXOrP+SOKA9OCg0y
-	L83gFUVKCG/cIg63cmLiPyz8FXb+CTpL8GazYz2hfUL6KZ21ivm674bf1yx9AfLy5MMM=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=BN2YtFqrU0Vo8lEtPUM0Jm7wLy
+	M6nd5ItqwTTzCSu1wXidY4qeRjndMr8OfWyWIZAEgI+VuGgxT4jHHdPHqDac/I5Uw29wjjRxTDBh/
+	b7tPUok9uco/4zdxU6d26elRmRIxffOFcIfJGpRE94N2Ed9VP9pgpugFnIM07/uhmRvo=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xPH9t-000000004FV-0ICM;
-	Fri, 06 Nov 2026 10:26:57 +0000
+	id 1xPHA6-000000002v1-0OLV;
+	Fri, 06 Nov 2026 10:27:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <hch@lst.de>) id 1xPH9r-000000004FJ-1Jrb
+ (envelope-from <hch@lst.de>) id 1xPHA4-000000002uu-2NUD
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 06 Nov 2026 10:26:55 +0000
+ Fri, 06 Nov 2026 10:27:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=SjQGoZFAIPrGp3ARHjLBHB0HQ9
- oj1I/2vagKmsvDoeBDgg7iAdIWPpKENw63sUP6E5i0O3WUjcD08meOtfCpdT/H+ZZxdxeXwZhtYCY
- BwFCMk4IUjwu5O1gQJHnqIqwgHoMP8/1UgCqa7FIpp1lC8gzUthI4PQL5FZYwYtU6Hk8=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=HkU0/fPyrk4nySnpDDvekztxSX
+ loRfX4kNny0XRHYDu+w92H3IDJO0UmtCUt2pOGoaVMfyYbZVObV2DO4DHi+ZFYDsW164+HA8+Ao1E
+ bOo6jGVqJE7sBjSIMKnE95g/EtagBzRbMWAm3aDiuMRsZgE0lo9hrxJ9zsnGd3J//7+I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -43,32 +43,32 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=gcFU4XPPfTwaorXgoAVNx0nV5U
- t8lEimBPqd21ppFdrfQgCip3rloszEWnDnQERIm7p54DGyxIJnWL2tyXJfxJO8UjUcHazc+qkEsqj
- 9XTym1buf756Rn+IAG0Bop4kl+K3X+N1FIrv89BmgjDSZP1CBMZ63yguUxfbbTWeq9jE=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=PM+0kJuB8dmnjnAbsrGmC9N+dk
+ H2CmWZJ9zcCW/RZZZ+cPwiyrD/+MJFmOXX+AUOt2NmeGOr7ifqBaXm+o3soNPMfY0tVbxfpIZ1ENC
+ iENcWnMXBERSgTgl5plwX2LbL0IdAPW8bP8JFriYYTeQC0UhFxQVlPtAImmaFElDdkVE=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xPH9p-000000007a8-2iHX
+ id 1xPHA4-000000007aZ-00ak
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 06 Nov 2026 10:26:55 +0000
+ Fri, 06 Nov 2026 10:27:08 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id A031B68BEB; Fri,  6 Nov 2026 11:26:45 +0100 (CET)
-Date: Fri, 6 Nov 2026 11:26:45 +0100
+ id C5F7F68BEB; Fri,  6 Nov 2026 11:26:58 +0100 (CET)
+Date: Fri, 6 Nov 2026 11:26:58 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20261106102645.GB5319@lst.de>
+Message-ID: <20261106102658.GC5319@lst.de>
 References: <20261105115532.613467-1-aalbersh@kernel.org>
- <20261105115532.613467-3-aalbersh@kernel.org>
+ <20261105115532.613467-4-aalbersh@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20261105115532.613467-3-aalbersh@kernel.org>
+In-Reply-To: <20261105115532.613467-4-aalbersh@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Spam-Score: 0.0 (/)
-X-Headers-End: 1xPH9p-000000007a8-2iHX
-Subject: Re: [f2fs-dev] [PATCH v2 2/5] fsverity: add I_VERITY_BUILDING inode
- state flag
+X-Headers-End: 1xPHA4-000000007aZ-00ak
+Subject: Re: [f2fs-dev] [PATCH v2 3/5] btrfs: use I_VERITY_BUILDING instead
+ of private flags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
