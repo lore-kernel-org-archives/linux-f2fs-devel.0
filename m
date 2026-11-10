@@ -1,13 +1,13 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755A8606A33F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Nov 2026 23:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C749606A31C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Nov 2026 23:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ZPIrs0+m;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=PeJmnZEi;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=gnSVD230;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j2wbnJ7r
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=GGKkY1Bk;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=XjmGAcDG;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=KUg8srKf;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kBTW1rxq
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
@@ -15,29 +15,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=ezc776gEawYpqQ5Djz16INRzOvVKc+nlSwKQPnkx5S8=; b=ZPIrs0+mC0LczIZxwnN/zQIkVq
-	7OfREqyWF6RsRGINZuhfOOvszEr9TCXEHVXXDSZeLqDjwcQfNR75Bob1NKDnSLYrjhgVFDls14JPw
-	xb3Yv+yAq/GRmVGblfg3dzU0DkQB5snXYR8h+/BKsgJlLGVq4KB20urOXcakgY8tR1GQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=8foQlchKkyBciIfOWj1HewWDrjVkFiHNlikUl8zXDoo=; b=GGKkY1BkFXhjzcXW3fWKeXdsow
+	Aw1ABcBbdmLBiyW6qe00lgUdz76kgeCDwOdI7UUZLoJ/iDsKeUgOC6GAquOtH2nHCJpmVNTbVaAR4
+	tH2fmO4+qyRiaOibHxYuU55Xb2jF+ZxJfw/d0nQqVDFk9ymCqK+bwIjyaJfrWNv6Fb0Q=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xQuq9-000000006rV-0TEj;
-	Tue, 10 Nov 2026 23:01:21 +0000
+	id 1xQuss-000000006gV-3r4d;
+	Tue, 10 Nov 2026 23:04:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <ebiggers@kernel.org>) id 1xQuq7-000000006rD-1HKe
+ (envelope-from <ebiggers@kernel.org>) id 1xQusj-000000006g9-364r
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Nov 2026 23:01:19 +0000
+ Tue, 10 Nov 2026 23:04:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oYVduWeFdLHpkSE+FvHjAfBb/fTBb+zGdaWmZL4J7Wk=; b=PeJmnZEi0x0PNvTrOgU5clAjyE
- VnZu3gq8oqT44a8I5gNqTalxxNFgtqVG76RJTFrSteYxT9Mc9z6+kWSFTf9MT57BfBrpqeWck2I3k
- NH6ZjXhiRlsY7U5aW866n0+w6FMz+QhRdHeLPpZ+smfZPh0P0Sn7Plcg+t8umUsJf85M=;
+ bh=2pIaRdIwsMurNh146HSaQSteAZp0sNsCvcBlMEMyjn0=; b=XjmGAcDGcBVB8qSBSyYzDFq2ml
+ EnM5bMlXkm/k/d8cFht6L56+Xc3A3Za2M/rdklJh0dcu0KWDzUMGBceO8PrSdGwYENq2Qf1w/mEjA
+ Hqe3ykOC4mwhxWSUAGeXgcPpgvml89slVwxfXwkoMNCCaBaVWjzcP9X1d1Mnk6vyvQq4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,42 +45,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oYVduWeFdLHpkSE+FvHjAfBb/fTBb+zGdaWmZL4J7Wk=; b=gnSVD230cW0dpmAqoUf+hhUMHN
- 1RYhAPk0ZIyl1Q094THU5jlMf6DAqvS/FfyEikr6XjQhJSuRC9J9lUAt1s9eYud4Liy/uWSURt/8a
- 2+t7gXO6xPPvB3eRNDM3WJjzSjxuVHk5ZSSX9wHc1ZrwGrfFH0xZJu/znPpI7TtvkRzE=;
+ bh=2pIaRdIwsMurNh146HSaQSteAZp0sNsCvcBlMEMyjn0=; b=KUg8srKfzwPdMnFYnze4G8PDZZ
+ QQ+J8wRwe5qWG65MF31v4qWbx65mEnJQKiMgqDSECd5DiEgKrlwEHI3VWyz22sBTJoxK4HDBU5TyI
+ 98rlmQj/OiD4QXCdVuSao2ER46gs5EsOY354Dy6euEB6Tr4rEtq4k1YcVQHnzsCWK64s=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xQuq4-000000004c3-0u9u
+ id 1xQusi-000000003h1-1XPl
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Nov 2026 23:01:19 +0000
+ Tue, 10 Nov 2026 23:04:01 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id CCE7546A82;
- Tue, 10 Nov 2026 23:01:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF511F0093D;
- Tue, 10 Nov 2026 23:01:10 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id E955A44D36;
+ Tue, 10 Nov 2026 23:03:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AB91F00A04;
+ Tue, 10 Nov 2026 23:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1794351670;
- bh=oYVduWeFdLHpkSE+FvHjAfBb/fTBb+zGdaWmZL4J7Wk=;
+ s=k20260515; t=1794351834;
+ bh=2pIaRdIwsMurNh146HSaQSteAZp0sNsCvcBlMEMyjn0=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=j2wbnJ7r+jV6D2sUFFgdMC5pGUSMdi6CH9DFXl/JpqU3LmvM/RS9UjvMJfbN+Vt5T
- 6uG+XRcYWOSIywH/xg32gcrCKeiyyLYiFjr2QDTc7loU6hF0Nshb9m73bWG2ZZK3mk
- elTy3DMsvN5Urbwb2K7RZu0CKCdr+OvQjuBDknd3ssgclM7WNEY9P5o+qqxt6QnH9X
- 5PYHtansI+gM5fIrPJHVCp1DmmjoaIlOiJlPBxRgKKqF7oH3LabLx27zD1t0Lz13Dc
- lSecYCae4oyrjYK1yRu5tlCzIdLcFRddUJ05iIp9/jtMI8esq3Tl/YXEtBn0czZogg
- eysqhyVu3PsuA==
-Date: Tue, 10 Nov 2026 15:01:08 -0800
+ b=kBTW1rxq9WZhdtKSM6ZrjLcJDA8KX7zpquW0WCtTZj93ht9JZWcFZTmPvobJNFp5p
+ W7fw8ONKkd7a9uW9Mg/qf4xDHmOd8hlnRbFF4foksH2xX7qk3QGzGbJYkAa75ekFwJ
+ OzRNYXI4MvxDD+4HZGPSx2NnRi9PmevHAGdVkVYZRdLMTwDjyRsnAHYGk68OvDDay8
+ rDnhbCiAaL/Brr0qiCC6247tRAhK2n7XP0yf/xOtZuuMjJqM4qWjPWN7jzk4Svxfvw
+ pqYkF6OUqIPT5t0qg/xeybx0vaHstfPqOrvFTHTSgBMM/vz9TsD1LPwReRhbFj1B84
+ 7XfdQtupW+l0w==
+Date: Tue, 10 Nov 2026 15:03:53 -0800
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20261110230108.GH1907@quark>
+Message-ID: <20261110230353.GI1907@quark>
 References: <20261105115532.613467-1-aalbersh@kernel.org>
- <20261105115532.613467-5-aalbersh@kernel.org>
+ <20261105115532.613467-6-aalbersh@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20261105115532.613467-5-aalbersh@kernel.org>
+In-Reply-To: <20261105115532.613467-6-aalbersh@kernel.org>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xQuq4-000000004c3-0u9u
-Subject: Re: [f2fs-dev] [PATCH v2 4/5] ext4: use I_VERITY_BUILDING instead
+X-Headers-End: 1xQusi-000000003h1-1XPl
+Subject: Re: [f2fs-dev] [PATCH v2 5/5] f2fs: use I_VERITY_BUILDING instead
  of private flags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -107,22 +107,21 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Thu, Nov 05, 2026 at 12:55:29PM +0100, Andrey Albershteyn wrote:
+On Thu, Nov 05, 2026 at 12:55:30PM +0100, Andrey Albershteyn wrote:
 >  	/*
 > -	 * Write all pages (both data and verity metadata).  Note that this must
-> -	 * happen before clearing EXT4_STATE_VERITY_IN_PROGRESS; otherwise pages
-> -	 * beyond i_size won't be written properly.  For crash consistency, this
-> -	 * also must happen before the verity inode flag gets persisted.
+> -	 * happen before clearing FI_VERITY_IN_PROGRESS; otherwise pages beyond
+> -	 * i_size won't be written properly.  For crash consistency, this also
+> -	 * must happen before the verity inode flag gets persisted.
 > +	 * Write all pages (both data and verity metadata). For crash
 > +	 * consistency, this also must happen before the verity inode flag gets
 > +	 * persisted.
 >  	 */
->  	err = filemap_write_and_wait(inode->i_mapping);
 
-The deleted sentence (which wasn't deleted properly, as it left the
-"this also must happen" clause dangling) actually still applies.  Just
-it should be updated to use the new flag name, or else refer to
-->end_enable_verity() returning instead.
+Same as ext4 patch: the deleted sentence (which wasn't deleted properly,
+as it left the "this also must happen" clause dangling) actually still
+applies.  Just it should be updated to use the new flag name, or else
+refer to ->end_enable_verity() returning instead.
 
 - Eric
 
