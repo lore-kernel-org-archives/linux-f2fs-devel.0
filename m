@@ -1,128 +1,123 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AB3606A882
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Nov 2026 21:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD3B606B349
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Nov 2026 22:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ZCl848aU;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Pl3Ow/sw;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=guWynsFB;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O4vVOtbH
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=WCY7KCms;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=XOjyUsAv;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=WgAgQqSc;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H2HTk8rO
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-Id:MIME-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=NEAxwkdrI3CH41O+gCnDiQREyOln09Vo8kKjmov0D24=; b=ZCl848aUhd4wZujdUgKQaHtRgQ
-	NEgttsz+KeV1od/iUk5yDRx/6rTAa35mDb/hlCk5xYwJPD6JV0Hlk1Ihzi4jxXmHPkLy6diwjM0hD
-	MXaPddpLIsci7uaxSABFRObCjzOa09GgjEMCWITOsN+5P++N9p9lsQQzI1uKMEPpiRRY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=ORN0UZzcKVHTZUWtlBwyeIaHE40vtnTE4fQWz24Gx60=; b=WCY7KCmsq7KosewRPNZqOdVdRY
+	V2/rdPuz89Av5GO6PFp+mUYhtYkDJ3xaAdUZc7fhd8advZCSdedowd4ZhkyfQCWG6IT8ZlrR/cAnX
+	bRWlAG+oRTj34HcoNLnMBZEc4p9dfDP2ERIchpMfE8neFczo0qd7DSQjm+SRuU5BOP6s=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xRGES-000000000pG-1E9g;
-	Wed, 11 Nov 2026 21:51:52 +0000
+	id 1xRGPV-000000003UG-0dwT;
+	Wed, 11 Nov 2026 22:03:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <devnull+mt4022.columbia.edu@kernel.org>)
- id 1xRGEQ-000000000p1-33ix
+ (envelope-from <xiang@kernel.org>) id 1xRGPT-000000003U9-2UZz
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Nov 2026 21:51:50 +0000
+ Wed, 11 Nov 2026 22:03:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Reply-To:Cc:To:Message-Id
- :Content-Type:MIME-Version:Subject:Date:From:Sender:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O81Xzd5PWJmQde17k7H3DWNdQYVpfX8wGonqraBDnO8=; b=Pl3Ow/swqA2Q+FpnxRLzhN4jvF
- 4eXvSS6wVFnXpq5yobdqBEpUqtrHJY8wIJ86KMyhOQ6Gf5bjbFz11qjQWb1w8VU/zNim0Kn0C0Ny5
- Dp5Q7HAHQFJxVHDH970hbTjRQDPl5yeISkaAhKsdsjcSbPw7ArNvf7cpeaBFniZFHkcw=;
+ bh=/29Fh1u2FOm5/5k1pmwlztbcmx561O6eu158ApMSsyU=; b=XOjyUsAvH+OhlC9ZmoCd6U+Rk2
+ tffqetB7dBecgCKhkLzrfLIlRwJHJ5EgBEs46KYsYRt4/7PWW9l74A9TzO18Y93FcZep5yiTIZG39
+ vRBUcKA7PVUd+3FzU8bcNrQlXxfgJYNc9HEGQ3VIOu05aMbdPbgFCr8G2oh1WsQBvqq0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Reply-To:Cc:To:Message-Id:Content-Type:
- MIME-Version:Subject:Date:From:Sender:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O81Xzd5PWJmQde17k7H3DWNdQYVpfX8wGonqraBDnO8=; b=guWynsFB+4aUTv2Q+lVdnQ5khI
- yK4EdaLgOP1K4Ld5D+w5iVQgj8kkC34FuQm+RMkPd4JOP1AD/VEWvdBZ24Y3SwZSdbcW+C8AEEKiq
- uOt5cnlxef2gLwjBOJClzsMdh88tiK7peOjkPPczXYghh0/rtd+WPRv6Q8mynOfb4pIk=;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=/29Fh1u2FOm5/5k1pmwlztbcmx561O6eu158ApMSsyU=; b=WgAgQqScPVz9mg4iLYawTBlHj0
+ rLxb7IDkI5Vc+9R5iTCFD7/MmDj3DRiiU8cCqQ5ggc7qWLF3gmSlmrEFZgTSS1KbQnpCazY7fURkC
+ ckeF3Q6ZQCLgwagwIUcAmvpGMtHTfSqHmHK5YqICsLUCpXzGAZMYg/9r8+4dqrojJtqk=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xRGEQ-000000001fj-09oV
+ id 1xRGPQ-000000004d5-39eq
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Nov 2026 21:51:50 +0000
+ Wed, 11 Nov 2026 22:03:15 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 6E48860DFE;
- Wed, 11 Nov 2026 21:51:44 +0000 (UTC)
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
- t=1794433904;
- b=fDvXUtGjI4gO6K6olQmap8XAV3KOKlB1vSSC2PCdcaLl/JaWut7OkUVhKkK9TgcDphK6
- 5u6LSuPnd/etgChO1DlhnHFzZW/+S8/Y9dDG+aLWrsvshtH6BKiuMAoC3L168PeufP5NA
- H6TiZcSP+uegIs0oTjjO7zHyLkJZmYrqqRX2oehLFP58oTnGq7ufYiKBil2IB5xCzgTwT
- pl8ga8iRe22BF42Ilf1d8K6RG5Mu+y09Lgy4rihgCeyRb4pU77AbiVZYQN+WNCUDFdIoH
- fQqFAyZYo7vYmfT6ds5MGUNE14UhWFvD8snYmxk6jXcA6KbCrNEE7+YzK/lqK39U4Uw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
- c=relaxed/relaxed; t=1794433904;
- h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
- Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
- X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
- X-Original-From:Reply-To:Content-Transfer-Encoding;
- bh=O81Xzd5PWJmQde17k7H3DWNdQYVpfX8wGonqraBDnO8=;
- b=OXaoIRqv/QeIbTR8YE7o/0+rez1k0rBDsJx1pVuPypxV7Fanao2I5IAOyuRoPwCeqk9G
- kaRw7Na1jSd6F5YFMubgsRTX9vXMQGeCNL5teWqHj2yHVUcv6x0/CZ0tlu0WQwOKiPefS
- 877qMEgN2Rox4uU0R4fezvxcCoKFYwrCJCxipdonoeyhzMLy2rHY+5W8celuG+zxvKLWf
- QUMdgWclHoKF17Gg0RQscweHNFfUv4FJv0aytnhgP5fMFZ3pRugzJV57UM6t0Ls8pjSbP
- 0iNEHQPpSFcBUtNut8ZDVU/biBFG+8uyZLkrf3AQu7+XkUub9A+YfI2vz7/yGIXwBYQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
- arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by smtp.kernel.org (Postfix) with ESMTPS id A17111F00A05;
- Wed, 11 Nov 2026 21:51:43 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 2040261D2C;
+ Wed, 11 Nov 2026 22:03:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2E751F00A05;
+ Wed, 11 Nov 2026 22:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1794433904;
- bh=O81Xzd5PWJmQde17k7H3DWNdQYVpfX8wGonqraBDnO8=;
- h=From:Date:Subject:To:Cc:Reply-To;
- b=O4vVOtbHL9RcEif0xC/qkh4WNAdPJqIl+btoLJRmbFrgx6fetfF94FnlgDKMWYdiL
- x/9hNeXNELNlT+7D+goxCFsh7Azes0rZIVb43WG8meuA6Y1Ni/fcxAAkN3fAgy2fc+
- FLb6XCAu40aSkDmfGmSvSb1i8swHqNizetClYsF4CL05DVXhEasLz9hWwH8DIGqIC2
- 4qP6qB5ApZxASZJlnsAw8yVJkaGdwONLWyJH5cfXpFtHPKf5vMas8KXZbqEGD3PbzG
- cwHuyij2hmA+5xqOwOxiRLIiKdEYvhuWnxoYiYeblonQ3X0pAbflzFekRYAW7lUFt9
- 2lxambfrAmdZw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
- by lkml.kernel.org (Postfix) with ESMTP id ECCFB49126;
- Wed, 11 Nov 2026 21:51:42 +0000 (UTC)
-Date: Wed, 11 Nov 2026 16:51:43 -0500
+ s=k20260515; t=1794434586;
+ bh=/29Fh1u2FOm5/5k1pmwlztbcmx561O6eu158ApMSsyU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=H2HTk8rOLZgWw9Lm2uB8it44XJGQ1VP252zKM3Vsl27YeQT3fQC/oPf+9dR1GGuPe
+ fTrdVHJg83sazuCLRwsK7FMBmZ65BjYmx/5l1Fr9V4zrWbVX2E4c/EGrAZHOJ23iP5
+ K6oVJy3Ue6XdepxFi87RWoq3TdzVK9qDLL8BM8XMCz9n7H3pjJ8s2COHz+NjnFIDwg
+ 2eGJ+4dbOKk2dBpxqBDuRpXAU1slNtJxbA2Dkar3W/730CiqV+uxXwdTMmafxIRXoH
+ hanK6KHxVmWrohkzaChiP47GtgTq+nQUar+jL+4xWJclsB1e8afff/e4uoWiQs4JB9
+ jrQrJYXOzTbWA==
+Date: Wed, 11 Nov 2026 23:02:51 +0100
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Message-ID: <avTmC_1I59FKA1FN@MacBookPro.fritz.box>
+Mail-Followup-To: Michal Wilczynski <m.wilczynski@samsung.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-block@vger.kernel.org, Yann Collet <yann.collet.73@gmail.com>,
+ Nick Terrell <terrelln@meta.com>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ David Laight <david.laight.linux@gmail.com>,
+ Sungguk <sungguk.na@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-erofs@lists.ozlabs.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ linux-crypto@vger.kernel.org
+References: <20261106-lz4-vendor-upstream-v2-0-ee04c3f0d7dc@samsung.com>
+ <CGME20261106144309eucas1p2a9bfcc1cf81779d473fb073e7d9139b7@eucas1p2.samsung.com>
+ <20261106-lz4-vendor-upstream-v2-12-ee04c3f0d7dc@samsung.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-Id: <20261111-f2fs-cp-read-error-v1-1-a30ede66e589@columbia.edu>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMOw6DQAxF0a0g17HETPgo2UqUAowNTgHIJggJs
- fdM4HWneHcHZ1N2eGY7GK/qOo0J4ZYBDc3YM2qXDDGPVUhDieJIMxo3HbLZZCj3R1tToKqQEtJ
- xNhbdzujrfdm/7Ydp+ZfgOH5OPmHEdgAAAA==
-X-Change-ID: 20261111-f2fs-cp-read-error-f39b7c1c64f5
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794433902; l=3204;
- i=mt4022@columbia.edu; s=20261026; h=from:subject:message-id;
- bh=XjX2qFti2q+oUj8LyAqSc1Ajj/P6RtOkjfwWfSeWPYg=;
- b=uWMZPqjz0pg/OiaLYsHX47sNdInhj4oH1koQiqWYRL6KI2YMQwvz5qlixoz9L39oAbk09Vqv3
- rkZRDjTRdzlCW0fofOTdYcvkxxuU5JPtxryOEPhjR20GrcPBoPF5+dF
-X-Developer-Key: i=mt4022@columbia.edu; a=ed25519;
- pk=gljCMQDuxyKPmd5y37CRpEJGSPXDV1MyAnHBhCgXl0I=
-X-Endpoint-Received: by B4 Relay for mt4022@columbia.edu/20261026 with
- auth_id=1322
-X-Original-From: Mani Tofigh <mt4022@columbia.edu>
+Content-Disposition: inline
+In-Reply-To: <20261106-lz4-vendor-upstream-v2-12-ee04c3f0d7dc@samsung.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xRGEQ-000000001fj-09oV
-Subject: [f2fs-dev] [PATCH] f2fs: don't fall back to the older checkpoint on
- a read error
+X-Headers-End: 1xRGPQ-000000004d5-39eq
+Subject: Re: [f2fs-dev] [PATCH v2 12/15] lib/lz4: widen
+ LZ4_DECOMPRESS_INPLACE_MARGIN for the fast decode loop
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -132,112 +127,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Mani Tofigh via B4 Relay via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: mt4022@columbia.edu
-Cc: Mani Tofigh via B4 Relay <devnull+mt4022.columbia.edu@kernel.org>,
- Mani Tofigh <mt4022@columbia.edu>, stable@kernel.org, tz2294@columbia.edu,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Gao Xiang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Gao Xiang <xiang@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-mips@vger.kernel.org,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Bill Wendling <morbo@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Sungguk <sungguk.na@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, Minchan Kim <minchan@kernel.org>,
+ Helge Deller <deller@gmx.de>, x86@kernel.org,
+ Russell King <linux@armlinux.org.uk>, Eric Biggers <ebiggers@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Yann Collet <yann.collet.73@gmail.com>,
+ Gao Xiang <xiang@kernel.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, llvm@lists.linux.dev,
+ Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ linux-crypto@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+ Nick Terrell <terrelln@meta.com>, Borislav Petkov <bp@alien8.de>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-parisc@vger.kernel.org,
+ Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Thomas Gleixner <tglx@kernel.org>, Justin Stitt <justinstitt@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org,
+ David Laight <david.laight.linux@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-24.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_PASS,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Mani Tofigh <mt4022@columbia.edu>
+Hi Michal,
 
-One read error on the newest checkpoint pack at mount rolls f2fs back to
-the older checkpoint for good.  Everything synced since then is lost,
-even if the error was transient.
+On Fri, Nov 06, 2026 at 03:42:52PM +0100, Michal Wilczynski wrote:
+> erofs decompresses a pcluster in place when the slack after the output
+> is at least LZ4_DECOMPRESS_INPLACE_MARGIN(compressed size), upstream's
+> (compressedSize >> 8) + 32.
+> 
+> That holds for the fork, which overshoots its output by at most 8
+> bytes. Upstream's LZ4_FAST_DEC_LOOP, which the next patch brings in for
+> x86 and arm64, copies in 32-byte steps and can overwrite input it has
+> not read yet: of 172410 valid streams laid out as erofs does at exactly
+> that margin, 3660 fail to decode, none with the fork. The worst needs
+> (compressedSize >> 8) + 33. Images mkfs.erofs built did not hit this,
+> but nothing in the format rules it out.
+> 
+> Use (compressedSize >> 8) + (compressedSize >> 15) + 36, which takes a
+> 4K pcluster's margin from 48 to 52 bytes. Upstream's lz4.h defines the
+> macro too, so undefine it first.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
-get_checkpoint_version() returns -EIO when a cp block can't be read, and
-validate_checkpoint() treats that like a bad CRC.
-f2fs_get_valid_checkpoint() then mounts the other pack, and the next
-checkpoint overwrites the pack it couldn't read.  E.g., with a dm error
-target over the first block of the newest pack for the mount only:
+First, I really think kernel LZ4 should be updated for many years, so
+thanks for this!
 
-  write OLD; sync; write NEW; sync; <power cut>
-  mount /dev/mapper/err /mnt   # mounts the older checkpoint
-  umount /mnt
-  mount /dev/ram0 /mnt         # NEW is missing
+But my personal thought is that could you just fold this patch into
+the next one ("lib/lz4: switch the decompressor to the vendored sources")?
+Because this one should be part of the fast loop update.
 
-Return -EIO from validate_checkpoint() and fail the mount instead, as we
-already do when a payload block of the chosen pack can't be read.  We
-can't tell which pack is newer without reading it, so a read error on
-the older pack fails the mount too.  A bad CRC or version mismatch still
-falls back to the other pack.  With the fix, the mount fails and NEW is
-there on the next mount.
+Although the current patch order is also fine, but my potential concern
+is that people don't know the details maybe pick the random ones for
+backporting, which is what I'd like to avoid so I hope this patch could
+be just part of it, otherwise the inplace decompression could be broken.
 
-This bug was identified and confirmed with the help of a deterministic
-hypervisor currently under development.  The C reproducer below however
-hits it every time.
-
-Fixes: 7735730d39d7 ("f2fs: fix to propagate error from __get_meta_page()")
-Cc: stable@kernel.org
-Signed-off-by: Mani Tofigh <mt4022@columbia.edu>
----
-Reproducer: https://github.com/manitofigh/files/blob/main/linux-repros/f2fscpeio.c
----
- fs/f2fs/checkpoint.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a9a2b9d93231..cbedd3e1399f 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1178,6 +1178,8 @@ static struct f2fs_cached_block *validate_checkpoint(struct f2fs_sb_info *sbi,
- 
- 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
- 					&cp_entry_1, version);
-+	if (err == -EIO)
-+		return ERR_PTR(err);
- 	if (err)
- 		return NULL;
- 
-@@ -1193,6 +1195,10 @@ static struct f2fs_cached_block *validate_checkpoint(struct f2fs_sb_info *sbi,
- 	cp_addr += cp_blocks - 1;
- 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
- 					&cp_entry_2, version);
-+	if (err == -EIO) {
-+		f2fs_put_cache(cp_entry_1, true);
-+		return ERR_PTR(err);
-+	}
- 	if (err)
- 		goto invalid_cp;
- 	cur_version = *version;
-@@ -1231,11 +1237,19 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 	 */
- 	cp_start_blk_no = le32_to_cpu(fsb->cp_blkaddr);
- 	cp1 = validate_checkpoint(sbi, cp_start_blk_no, &cp1_version);
-+	if (IS_ERR(cp1)) {
-+		err = PTR_ERR(cp1);
-+		goto free_fail_no_cp;
-+	}
- 
- 	/* The second checkpoint pack should start at the next segment */
- 	cp_start_blk_no += ((unsigned long long)1) <<
- 				le32_to_cpu(fsb->log_blocks_per_seg);
- 	cp2 = validate_checkpoint(sbi, cp_start_blk_no, &cp2_version);
-+	if (IS_ERR(cp2)) {
-+		err = PTR_ERR(cp2);
-+		goto free_fail_no_cp;
-+	}
- 
- 	if (cp1 && cp2) {
- 		if (ver_after(cp2_version, cp1_version))
-
----
-base-commit: 648bdfa9bae3850908df31617e5922e0683d5fff
-change-id: 20261111-f2fs-cp-read-error-f39b7c1c64f5
-
-Best regards,
---  
-Mani Tofigh <mt4022@columbia.edu>
-
-
+Thanks,
+Gao Xiang
 
 
 _______________________________________________
