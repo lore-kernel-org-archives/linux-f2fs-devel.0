@@ -1,43 +1,43 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33910606A32E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Nov 2026 08:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BE5606A321
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Nov 2026 08:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=CysWu8KK;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=AfYtc3D7;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=TEQd+HIK;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VEXLROa6
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=VJcBEFVP;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=BlH7tjz8;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=ViwTpZT9;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QHbhhraw
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=AmzBQcIRibtjwuX+sxcbvb0dmK7OYyFhdofFJbDGLy8=; b=CysWu8KKKWaZGr
-	emJ8y5lyG+lLmNArzzoJD5LAXSr6E6teUDmYSxa9tc/S0eyeTIE5hyT35oofHqWvGqw3F3qklKqh3
-	d9QjFdR7wnMUYQhch9z5NX35gt4QcBGiOEAjYsfeluB+aer70IFJr27FT05X4xyxg3D1DSvVpzuPM
-	k4Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Owner; bh=J5NtW3stXHmkRmsXoszoTcAqXTAx5kcpxeUSgQ+EcyU=; b=VJcBEFVP6+MSLc
+	NbyPCgSfHswF6SpbF1nPhHgXAN/L0iJXC+wPr9K7s0XX3Cis4D8YW4CtxOUyhYdnvbZ4Ge0eyj5xj
+	dYipxGSClt9LaWRwqgOtdu9wfH9/Y6IY47W0d2t13xUiv/lZGPtjKho+BmFpcCUsPn1BG4t6UiPMA
+	GN0=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xR3Yo-000000001iS-1Noi;
-	Wed, 11 Nov 2026 08:20:02 +0000
+	id 1xR3cP-000000003JN-1ZM8;
+	Wed, 11 Nov 2026 08:23:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xR3Ym-000000001hc-32PM
+ (envelope-from <chao@kernel.org>) id 1xR3cN-000000003JH-39WD
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Nov 2026 08:20:00 +0000
+ Wed, 11 Nov 2026 08:23:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+oxjStHEHoefxFsm+KwtZhtmkkwQmSjmnWwb2W4j1Jw=; b=AfYtc3D7F4ArKeX4mCIR2Nw0fq
- 2GTLSbY1x3Ya7wZMhse+EbgZK4jP/aDymdCptHjRqrCNyuqdSEEfAifzKgv/KoQRdmqSw1jIgAFTh
- IioVH1swsBt7DS2ENHWRx7Mxg+zd3o3a87bm+1WE83OiBQGSNwKaaCdH5fCLK/fGhUtg=;
+ bh=CU4hnlrXZCd9tMMKXfDhfgcXLuc9tfgbhabHI1pc2r4=; b=BlH7tjz8xAiWYPR32BPoIMy2pb
+ DiLoPQpmsrOb2PdsXspiJytq+0+8WK8QVGC7EHxSRcp95c5gMUkqLUnpwr1sFvgJYJwX0E0GngREy
+ 5KCnD+MXoZRlA7GUbDoKWndUymK9fzJYu70r4PWWhtJgJiGrtOC/1db4+OJtXVQvNwCI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -45,43 +45,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+oxjStHEHoefxFsm+KwtZhtmkkwQmSjmnWwb2W4j1Jw=; b=TEQd+HIKGbQiYzNpD9iuzyhzBy
- l8Vv4S7Ftnq0Pq3aAsK/HYXe1pnopmO3kLieS9fUSwi5oVDPNGTQPYjjKSGFMiqQa4zaUTyOlV7uO
- 7qWYXUnmonIjt4K/8HmBuHhXL8Oj0h2FcJlUo92iKumIUB20OPF8PwTS5ppSxFCUuHZs=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=CU4hnlrXZCd9tMMKXfDhfgcXLuc9tfgbhabHI1pc2r4=; b=ViwTpZT9yshtWxqwnDUYC1pUFC
+ iNTAik7Ct08iuuAFAuTuY8IrIei2Ge06IykcjSvMkirbDsAanaz/+QoLTd1uA9f5yDZmOKkVyluB6
+ A0OIV2yzRd/7q/lv3sgy47rzOTn91+7T51Pq/SswMtsxWzIEeBYF+GNbC+jhQ3EQUvcU=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xR3Yl-000000006sk-19m4
+ id 1xR3cN-0000000075N-19jC
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Nov 2026 08:20:00 +0000
+ Wed, 11 Nov 2026 08:23:43 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id C5CAF43611;
- Wed, 11 Nov 2026 08:19:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05E01F00A05;
- Wed, 11 Nov 2026 08:19:52 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id A37CF611F1;
+ Wed, 11 Nov 2026 08:23:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D3A1F00A05;
+ Wed, 11 Nov 2026 08:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1794385193;
- bh=+oxjStHEHoefxFsm+KwtZhtmkkwQmSjmnWwb2W4j1Jw=;
+ s=k20260515; t=1794385417;
+ bh=CU4hnlrXZCd9tMMKXfDhfgcXLuc9tfgbhabHI1pc2r4=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=VEXLROa6kvDRDxSIQt7NekFU+4rly7RsSMI/io8cmB/6VfRX39IvQacxb64yIiwQS
- 3DFuH6dQQSO9njzgnwHL+14rzTJHFmwDK5NzYSXdXXkuhWVkTWng3kNiBIFYzp5NdI
- mDmXISG0aABpTpSfX4NOA0LVBgLn+R049kFCTiRBEZQOz19P1oTEGZcUK4+NNQTNVu
- eN8oyHwzNjI1RDWgqVgCdXK0KmEcS0P25La5Pcpyyx8FvlDg77bbVHX3MTYTJBRJVb
- Nz6kl9aX4BABcf2pNtllaWcdSQhXhRz9n18QPCr0hMVu2BJEafzinrg2/TYTVClzr0
- Se3MePmg5oTnw==
-Message-ID: <b2253246-48ba-4c48-899c-9f568fa2df71@kernel.org>
-Date: Wed, 11 Nov 2026 16:19:50 +0800
+ b=QHbhhraw3DXiSH2OvMIT8zikgFolnxYI6yo6kNp8HlhaXPyVH99BWHGiHmP4u+i5l
+ gCY6OIxgtJgGGUEY5+mkyI5K0SvWFVt1vAD8tzll9oMFV1RuxCsJI+x8CkYXmmKci4
+ 5/nlB26c2WSshqzGzIWx3QfMGn0uSGOuMXEoQZRqdEOdI3mgXil+dd2chSNDlapZk/
+ U57EGNGL8C/dHFSRmjA3oszXqGQX55H8yT3v4xgq6t7FFviJdH9GeDEQu/qBHNYOFN
+ C+pwbW5PhGjVAow3SmrtaDSEo4a5DuBu9yzfl+kI5nXRDUP3RrPYLif4DTOzzXBHzr
+ kXUWjrU/oDQVQ==
+Message-ID: <205eb014-0ebc-422f-8421-f9cf175acad7@kernel.org>
+Date: Wed, 11 Nov 2026 16:23:34 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: huang zheng <huangzheng9869@gmail.com>, jaegeuk@kernel.org
-References: <20261103091215.180531-1-huangzheng9869@gmail.com>
+To: Seungbum Ju <seungbum.ju@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20261103101208.4550-1-seungbum.ju@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20261103091215.180531-1-huangzheng9869@gmail.com>
+In-Reply-To: <20261103101208.4550-1-seungbum.ju@gmail.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xR3Yl-000000006sk-19m4
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add checkpoint step timing statistics
- to debugfs
+X-Headers-End: 1xR3cN-0000000075N-19jC
+Subject: Re: [f2fs-dev] [PATCH] f2fs: wait for node writeback on the first
+ fsync after a checkpoint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,97 +93,55 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: huangzheng1@xiaomi.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 11/3/26 17:12, huang zheng wrote:
-> From: Huang Zheng <huangzheng9869@gmail.com>
+On 11/3/26 18:12, Seungbum Ju wrote:
+> f2fs_add_fsync_node_entry() numbers each fsync'd warm node page with
+> sbi->fsync_seg_id++, and f2fs_reset_fsync_node_info() sets the counter back
+> to 0 at every checkpoint. The first node page fsync'd after a checkpoint
+> therefore gets seq_id 0, which f2fs_do_sync_file() passes to
+> f2fs_wait_on_node_pages_writeback(). That function treats 0 as "nothing to
+> wait for":
 > 
-> This patch adds detailed timing statistics for each checkpoint step
-> to the debugfs stat_show interface. It displays the time taken by
-> each phase of the checkpoint process, including:
+>     while (seq_id && cur_seq_id < seq_id) {
 > 
-> - lock acquisition
-> - block operations
-> - flushing data/node/meta pages
-> - flushing NAT/SIT
-> - syncing metadata
-> - waiting for dirty meta/checkpoint data
-> - device flushing
-> - waiting for last checkpoint
-
-Well, all spot times should be consistent only after checkpoint(), if stat_show()
-captures times during checkpoint, the times could be inconsistent.
-
+> so the fsync issues its cache flush without waiting for its own node page.
+> If the flush completes before the node write, the inode's fsync-marked
+> node block (needed by roll-forward recovery) is not covered by the flush,
+> and a power loss can lose data that fsync reported as durable. In our
+> traces the first fsync after a checkpoint returned before its node write
+> completed in many trials.
 > 
-> This information is valuable for debugging checkpoint performance
-> issues and identifying which steps are taking the most time during
-> the checkpoint process.
+> Start the numbering at 1, so that 0 keeps meaning "no node page written".
 > 
-> The statistics show the longest recorded time for each step, helping
-
-It didn't, it record the time every time, but only printing the stats in
-kmsg if the total time exceeds the threshold (5sec).
+> Testing (kernel 7.0.0-42, f2fs built as a module from the same source,
+> QEMU/KVM, block-layer FLUSH/FUA model with dm-log-writes replay):
+> - block traces, append+fsync after sync: FLUSH issued before the node
+>   write completed in 29/30 first fsyncs unpatched, 0/30 patched; never
+>   for later fsyncs;
+> - crash-state replay (28 cells x 3 recordings per module): SQLite
+>   WAL/TRUNCATE/PERSIST, LevelDB, RocksDB, LMDB and an append log lose
+>   acknowledged commits or become unopenable in 24 cells unpatched, and
+>   are clean in all of them patched.
+> 
+> The same code is present in Android GKI android12-5.10 through
+> android15-6.6 and in the f2fs dev tree as of 2026-11-02.
+> 
+> Fixes: 50fa53eccf9f ("f2fs: fix to avoid broken of dnode block list")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Seungbum Ju <seungbum.ju@gmail.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
-> developers and users understand where checkpoint bottlenecks occur.
-> 
-> Signed-off-by: Huang Zheng <huangzheng1@xiaomi.com>
-> ---
->  fs/f2fs/debug.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index 6fe606e2c70d..8fd76a69dcad 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -445,6 +445,22 @@ static const char *ipu_mode_names[F2FS_IPU_MAX] = {
->  	[F2FS_IPU_HONOR_OPU_WRITE]	= "HONOR_OPU_WRITE",
->  };
->  
-> +static const char *cp_time_names[CP_TIME_MAX] = {
-> +	[CP_TIME_START]		= "begin",
-> +	[CP_TIME_LOCK]		= "lock",
-> +	[CP_TIME_OP_LOCK]	= "block_operation",
-> +	[CP_TIME_MERGE_WRITE]	= "flush_data_node_meta",
-> +	[CP_TIME_FLUSH_NAT]	= "flush_nat",
-> +	[CP_TIME_FLUSH_SIT]	= "flush_sit",
-> +	[CP_TIME_SYNC_META]	= "sync_meta",
-> +	[CP_TIME_SYNC_CP_META]	= "sync_cp_meta",
-> +	[CP_TIME_WAIT_DIRTY_META] = "wait_dirty_meta",
-> +	[CP_TIME_WAIT_CP_DATA]	= "wait_cp_data",
-> +	[CP_TIME_FLUSH_DEVICE]	= "flush_device",
-> +	[CP_TIME_WAIT_LAST_CP]	= "wait_last_cp",
-> +	[CP_TIME_END]		= "unblock_operation",
-> +};
-> +
->  static int stat_show(struct seq_file *s, void *v)
->  {
->  	struct f2fs_stat_info *si;
-> @@ -631,6 +647,14 @@ static int stat_show(struct seq_file *s, void *v)
->  		seq_printf(s, "  - Total : %4d\n", si->nr_total_ckpt);
->  		seq_printf(s, "  - Cur time : %4d(ms)\n", si->cur_ckpt_time);
->  		seq_printf(s, "  - Peak time : %4d(ms)\n", si->peak_ckpt_time);
-> +		seq_puts(s, "CP steps (longest):\n");
-> +		seq_printf(s, "  - Total : %llu(ms)\n",
-> +			   (u64)ktime_ms_delta(sbi->cp_stats.times[CP_TIME_END],
-> +					sbi->cp_stats.times[CP_TIME_START]));
-> +		for (j = 0; j < CP_TIME_MAX - 1; j++)
-> +			seq_printf(s, "  - %s : %llu(ms)\n", cp_time_names[j + 1],
-> +				   (u64)ktime_ms_delta(sbi->cp_stats.times[j + 1],
-> +					sbi->cp_stats.times[j]));
->  		seq_printf(s, "GC calls: %d (gc_thread: %d)\n",
->  			   si->gc_call_count[BACKGROUND] +
->  			   si->gc_call_count[FOREGROUND],
-
 
 
 _______________________________________________
