@@ -1,87 +1,135 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20100606A321
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Nov 2026 11:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3B4606A31C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Nov 2026 13:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=AvF1Tpfy;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Zs9JNfiC;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=SNlk3nrP;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mXNCcv7A
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=DKqbL5p+;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=GTI59hyZ;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=MaG9CJLH;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kXLJT622
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=eYFy9KETgJ03sLl3AelaWV/VlvhlHDbEzf34hyP3oF0=; b=AvF1TpfyJQ07H8
-	FzPjPLhP/tr9QQEPSoUWcXj1QZ3GScM8WHjeB3DIjWLN48+2ZeaHefBDYbNzyZWoNspvY6ZMQZmvC
-	rzMr6Ik93YXKVDOsNCuIW3sbY1jApx/ndQDK0bi5I5rHbnPL+uRYDlgHCnAGGIzI0NrekFwMk/F8H
-	WKA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=rLQ23SYgpTrz72cKgqETT9XkH5+OfZS333VPjD0T7lA=; b=DKqbL5p+ZjtzHLudwHIvSqfuaj
+	Ii9HmI5epZrVfboNutnXh0e4rfoarLp3qxRlJRoU5eO0iYdrezS5NsthRSzJHV7PSyeAyVOoVYmxM
+	zXGrkLgPGW2RwUhXm7MMKjAAV18gUUCoUtoNbdIQSoCIqGYE60K4Ngnx/E6k+N6RxjTI=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xR6cu-000000008Pm-47xn;
-	Wed, 11 Nov 2026 11:36:28 +0000
+	id 1xR8aU-000000003Ct-3CmK;
+	Wed, 11 Nov 2026 13:42:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xR6ct-000000008PY-3ee5
+ (envelope-from <dennylin0707@gmail.com>) id 1xR8aT-000000003Cm-1pSp
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Nov 2026 11:36:27 +0000
+ Wed, 11 Nov 2026 13:42:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6ef3BW3A5FVT5x/mpefs4145su/1qFLNbKYUDqCerLU=; b=Zs9JNfiCy5YMTutjp3U1feiFKk
- 7Si/at1fZT0rhZj0OVykYU3LGr4dLacX4tePbqvvPUAdfQ2fcKIsHDk9Nl8vM4aD+eUeNNQjFTmB3
- OPQkF2Vc+kJcgZ9RY/Du6hG3MvkHfdiHXUh+BjEJsNciTn1LSdYWfJWzoBC5ola3xB0M=;
+ bh=DXnOrYJndBjtvfOZAozL2l4Cp0d2hZXtDRZnAOOlgK4=; b=GTI59hyZM827puz4t5bBrK7EHx
+ Q95/IktF3+f693PRwYQFSgcNk95yQS2VW9BR3jVfl4h/GjI9GMemarpbWmM7ZgT+IWztFCdxhvhqk
+ 20D4xP6IW1NY/8jAeLL853Y2s0oUBm4qaysFoOBPaNM4vkxTe6dylGCiKJYWVm6XsXYQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6ef3BW3A5FVT5x/mpefs4145su/1qFLNbKYUDqCerLU=; b=SNlk3nrPFf5yiks2BymYI2OiOi
- fPNZhSGifOLbLdsXvQ5c9diVpKcq/HOwFrsK1FFRQl1B9ClLvqoM2iASw9oo9DPyRJA5c3eGd8R04
- rKZe7JppxcxSOrtmYO4I+S/m8F31Ot1c0tW9HTKCc8u17dUa4Kqo9JWJdZPiSytB8How=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=DXnOrYJndBjtvfOZAozL2l4Cp0d2hZXtDRZnAOOlgK4=; b=MaG9CJLHRn9Ri+gAo58aSsgeHl
+ CGFUqIZ9vwTRJQu8dCEVPHl8XynNDizQEfmO4QMtYdiPkkMRPxq/9a7CP5ufUBH4wjwXVNRdY7BN9
+ PuBzCyst5ky96dzYI1MQZbv0Oaw8MDXE1C9AfDZCstHKPunInFQUjvkK+oc8caKG6B5A=;
+Received: from mail-oi2-f0.google.com ([74.125.231.192])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xR6cs-000000003uY-119X
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xR8aR-000000006of-3mvJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Nov 2026 11:36:27 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id DA7E843DA0;
- Wed, 11 Nov 2026 11:36:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE291F00A05;
- Wed, 11 Nov 2026 11:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1794396980;
- bh=6ef3BW3A5FVT5x/mpefs4145su/1qFLNbKYUDqCerLU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=mXNCcv7AXNopwNMQPTesiR1qQrAdv3fbAmc58SeIoRuUlniu3GMcK149CgUQ90txD
- XJuyrmzfEh1U+r4J7KnFuOkDkEsa2MGHAgxQN6L4s/7uGP9Si0geyi+LwXQpnSYGdX
- i1+syBY8hEyma1ohntJTd0yb86lKIP0i4jea5AOOEf+TCRXYCfuU0BYdad/+dyzXyx
- hDyKV8g7BF4VdO1cfrvjOD5Ru1zWjYa/RJFFCv9JNvVjIkTwWwOEuf48rMZveFWzQV
- +FEeyFpjxsi39MM0K1pVgb43DcRPSmyOUKboscRThZJzKK/XKIPeivshnWSfXXdMqS
- s624B+RcZyPsw==
-Message-ID: <f26ac11b-cf63-4627-9d12-e1216fc0135e@kernel.org>
-Date: Wed, 11 Nov 2026 19:36:18 +0800
+ Wed, 11 Nov 2026 13:42:05 +0000
+Received: by mail-oi2-f0.google.com with SMTP id
+ 5614622812f47-533fe730856so1367520b6e.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 11 Nov 2026 05:42:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794404518; cv=none;
+ d=google.com; s=arc-20260327;
+ b=omiYfPeny8vv/qpRtfMcEeqdZaXFxji+YJDzjlHkQPdwHdWayhCxFxCpqY5K46xn5/
+ CxEXokKAKKcUTantGDUX7gTTaHUe/dicx/vQpmbYNzE2rQLLkLQj6x+HVmh7mmfFBfhI
+ 0ML14wXaA650MvfzCjvYoVsUXOL5OQHs3nMxM0dJ605P9JB/SF35Cv5Neg/cYvWukQym
+ RKRb/8SgPuR1lLKtWEOeXYi7crg8CYgXCLN8JLtsRo0oXYjV0LwdZeRbD+ttTvbRnmrN
+ mWOlaKRYfJ+keDJWtZFq2QjG064UF0K7IcHbpUwRotk8/z4RN4FHDNEjfAhcGa7pEK3F
+ ziBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=DXnOrYJndBjtvfOZAozL2l4Cp0d2hZXtDRZnAOOlgK4=;
+ fh=45qVXSHYX50Tl9WFbOijFR4A+/RSX8vSQNQr5KN5APY=;
+ b=QhM/9/j816op1VzLln60bkKPPjqsmctpfsgkOQXeRrynJFrEEbromBwZvwe7BuIKY4
+ kBwZbuNLD37xmPoMRK62yetBO/BD2gDpwmuY+h4XUPCDHP+UjjQldjU+/9dcMCiSBjYu
+ DGAz+9CQP6+HOwjdrcShJkMyWzKPxaGwDvxfVq6NrhohpSo2qEorGCSNt5g4XhCXsigH
+ dXRlJMkmNlb/DbscaCA14mVaCKjfhTB8NaFl6Z9kcxO7XqwIKu0bbfVKAlTE8lTUS/iv
+ vg7N7jnZXpu6zGrgrxo5QP7LrVHq49VUE31OgkATeffcwiImfqL0LV3hl9vxgZgbu11k
+ RgDA==; darn=lists.sourceforge.net
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794404518; x=1795009318; darn=lists.sourceforge.net;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=DXnOrYJndBjtvfOZAozL2l4Cp0d2hZXtDRZnAOOlgK4=;
+ b=kXLJT622XH4fSPKYiqNzHhNWbj30aL4JXEjAumnIt2x1IzlkXJOJWYRncN+PZER361
+ xL2ynswPUuYK+PonVsVhO2Y0AabpZAFG46znOCBZHuyILRZvNvRf2j+iX8htfbMhWo/z
+ XZRLGQPDE+cR4r2DnYxgb6bzzSjrDhkIh3x5jHSsX9Dgy9SQmuuuCqjUdW5ZK/3IRfdD
+ zRrQRZ3fQiDVYruNBiKB+EY77bhIkjjNG6NELJY4JtENn6ImEhzs2gR+bb644DcsWFUa
+ Bo5ud3M1Yn0ocKHojgJFsmjxaLSmngvw+6Nka3GYjjF2g2BqOj05i8Oz6ZQY/ACZhqQM
+ N9QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794404518; x=1795009318;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=DXnOrYJndBjtvfOZAozL2l4Cp0d2hZXtDRZnAOOlgK4=;
+ b=LqW75w2s1fuc5evwpRHCNawWEE0KRbyc5qRIq0/ODLVuZng1JK7MdLruZWiHLfdv10
+ //X58ZnnzrV8rsELt3FAd+tDcF+oRfUVNnbsN+tdjExwVxAHOVCTTEWHwTwGfHZni9Dq
+ fQYp6FuSEFdGqGHxlXrz6Qf2GvuSJSEbmJQJ/wUBFQUdDYjKwVP4/v3xbAabbOIJOUqi
+ 6RJpMIyOZGAqDu8konYcAb6VtMqPEa+4CpjXAqq7XV3keaKLo99Vk2dLw2PQAnzuRnyU
+ 6elXbts1Tzo3acL9Xins4DTR/LurW35JgTPBKmIeUNTgS8QIMQAFhdwTcTHtbPzBd+MO
+ dOuw==
+X-Forwarded-Encrypted: i=1;
+ AL+hErEIEbDezmnrwt5bdaQuDW3l87asRrJ/kkPLlG7mWVBF/ZTV4ZNjbfT5a7PLY0i06Nj1j0hPkq+ajAIH8WH7Kx85@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z81S0f5LdBdkcxPTlIpLPKJVQqCecKkB97fYTbx9t6QmmZi+Kol
+ qTg/zwIrXHcCFK13Dnc2LyRVkBc/CXMbASODkXc9fGMi1NA7n4W9AOx+wo+XUL27n6K0e01NJPX
+ 75uwzPe1qs05aKYlO3bE6K0pPxoNDcTU=
+X-Gm-Gg: AYBFou2M5HRWEujhc2XIUla6rRwLuvkNsDbONaBuSJRP4IMuyv8qAjoOAoGl8DtTVKb
+ 51xpredDHP7CAnf3R8n08clcWU9OaOLTA9TkrAhCa2ZpPQi+1T4kmqnswEnVq0G9zGnAmLa95Ic
+ 22CLD8DwYV7LdGg4PHobJ1qTuFH22MPSP1z7T0LwE1Bm8aYIdxXm+1FjnGQZ569gDXM4eLzeKFj
+ iVUyuDnqrFbBUqExvrUGQLEuVHIW/9NYRZ4YETx1iTjwXFSPoLGEu2V8oia11P9aRfsMbTaDIId
+ VHQ2mk1rhoTM66IVIeuepL6I6qVISgIyKbPXqXp64XOgdArTwXg8WcFYGQ+LNR7E81ZPjHh//Vu
+ lgFIyCLlBoC5XuZJNKh4BqZSXa8i56mb5EjrtEWMCoHdY+OdGmUYXmZT6q0i99cu7jRDkQFAasS
+ X+LB5dCCfBX3Q3xWbMzYjm6qkMymhGQ9zL0mN/is/jyhVFmo6lw7/ZjgHp/hA8r1m1u3sNjYn01
+ A==
+X-Received: by 2002:a05:6808:10cd:b0:55b:f88d:6ebd with SMTP id
+ 5614622812f47-56b9293c5f0mr1861940b6e.3.1794404518140; Wed, 11 Nov 2026
+ 05:41:58 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Hungyu Lin <dennylin0707@gmail.com>, jaegeuk@kernel.org
-References: <20261108045722.12091-1-dennylin0707@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20261108045722.12091-1-dennylin0707@gmail.com>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xR6cs-000000003uY-119X
-Subject: Re: [f2fs-dev] [PATCH] f2fs: require inode ownership for ioctls
- that change per-file state
+References: <20261104191621.89561-1-dennylin0707@gmail.com>
+In-Reply-To: <20261104191621.89561-1-dennylin0707@gmail.com>
+From: Hungyu Lin <dennylin0707@gmail.com>
+Date: Wed, 11 Nov 2026 05:41:47 -0800
+X-Gm-Features: AclHuK979fFPsKcuUOg3hUc17dq81L1BTuEdNVZioITPsDqDO4LERCg-x-Z03Ik
+Message-ID: <CAGEkeHeMnYs_SM610dCCBPufJHAN6t00WBtC6YtgyZbw_GfUcA@mail.gmail.com>
+To: jaegeuk@kernel.org, chao@kernel.org
+X-Spam-Score: 0.1 (/)
+X-Headers-End: 1xR8aR-000000006of-3mvJ
+Subject: Re: [f2fs-dev] [PATCH] f2fs: read atomic replacements through the
+ COW inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,118 +139,23 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, daehojeong@google.com,
+Cc: linux-kernel@vger.kernel.org, daehojeong@google.com, stable@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-0.9 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 11/8/26 12:57, Hungyu Lin wrote:
-> F2FS_IOC_RELEASE_COMPRESS_BLOCKS, F2FS_IOC_RESERVE_COMPRESS_BLOCKS,
-> F2FS_IOC_SET_PIN_FILE and F2FS_IOC_IO_PRIO change the state of the inode
-> behind the file descriptor without checking who the caller is. Any user
-> who can open a file, even read-only, can:
+Hi Chao,
 
-How about checking write permission instead of inode_owner_or_capable()?
-
-	if (inode_permission(file_mnt_idmap(filp), inode, MAY_WRITE))
-		return -EACCES;
-
-> 
->  - release its compressed blocks, after which writes to the file fail
->    with -EPERM until the blocks are reserved again or the file is
->    truncated to zero;
->  - reserve released blocks again, which consumes free space;
->  - pin it while it has no data blocks, after which writes that extend
->    the file fail with -EIO;
->  - unpin it, so that garbage collection may move blocks that a user of
->    F2FS_IOC_SET_PIN_FILE expects to stay in place;
->  - set its write I/O priority hint.
-> 
-> F2FS_IOC_SET_PIN_FILE checked inode_owner_or_capable() when it was
-> added. Commit aff7b628ac2d ("f2fs: set pin_file under CAP_SYS_ADMIN")
-> replaced that with a CAP_SYS_ADMIN check, and commit b13bdf03bb80
-> ("f2fs: allow all the users to pin a file") then removed the
-> CAP_SYS_ADMIN check, leaving the ioctl without any permission check.
-> 
-> The atomic write ioctls require both FMODE_WRITE and
-> inode_owner_or_capable(). Requiring FMODE_WRITE here would break
-> f2fs_io, which releases and reserves compressed blocks through a
-
-I think we can fix f2fs_io.
-
-> read-only file descriptor, and Android, which releases them the same
-> way. Require only inode_owner_or_capable(), as F2FS_IOC_SET_PIN_FILE
-> originally did, so that only the owner or a caller with CAP_FOWNER can
-> change this state. Users can still pin their own files.
-> 
-> Fixes: b13bdf03bb80 ("f2fs: allow all the users to pin a file")
-> Fixes: ef8d563f184e ("f2fs: introduce F2FS_IOC_RELEASE_COMPRESS_BLOCKS")
-> Fixes: c75488fb4d82 ("f2fs: introduce F2FS_IOC_RESERVE_COMPRESS_BLOCKS")
-> Fixes: 5f95c1812a65 ("f2fs: add ioctl to get IO priority hint")
-
-IMO, we'd better to fix them in separated patches.
+Gentle ping on this.
 
 Thanks,
-
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
-> ---
->  fs/f2fs/file.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index e2c0f5083313..0730de36554a 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3664,6 +3664,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->  	if (!pin && IS_DEVICE_ALIASING(inode))
->  		return -EOPNOTSUPP;
->  
-> +	if (!inode_owner_or_capable(file_mnt_idmap(filp), inode))
-> +		return -EACCES;
-> +
->  	ret = mnt_want_write_file(filp);
->  	if (ret)
->  		return ret;
-> @@ -3982,6 +3985,9 @@ static int f2fs_ioc_io_prio(struct file *filp, unsigned long arg)
->  	if (!S_ISREG(inode->i_mode) || level >= F2FS_IOPRIO_MAX)
->  		return -EINVAL;
->  
-> +	if (!inode_owner_or_capable(file_mnt_idmap(filp), inode))
-> +		return -EACCES;
-> +
->  	inode_lock(inode);
->  	F2FS_I(inode)->ioprio_hint = level;
->  	inode_unlock(inode);
-> @@ -4235,6 +4241,9 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
->  	if (f2fs_readonly(sbi->sb))
->  		return -EROFS;
->  
-> +	if (!inode_owner_or_capable(file_mnt_idmap(filp), inode))
-> +		return -EACCES;
-> +
->  	ret = mnt_want_write_file(filp);
->  	if (ret)
->  		return ret;
-> @@ -4430,6 +4439,9 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
->  	if (f2fs_readonly(sbi->sb))
->  		return -EROFS;
->  
-> +	if (!inode_owner_or_capable(file_mnt_idmap(filp), inode))
-> +		return -EACCES;
-> +
->  	ret = mnt_want_write_file(filp);
->  	if (ret)
->  		return ret;
-
+Hungyu
 
 
 _______________________________________________
