@@ -1,13 +1,13 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224EA60A5BCF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Nov 2026 14:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C93606A896
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Nov 2026 14:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=WqrTCgly;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=jiR6kD5z;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=FglXbS2v;
-	dkim=neutral header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=kNV69Zgc
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=dj0vs8jT;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=aIWbnIov;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=mjrOXO0i;
+	dkim=neutral header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=NwXEGQe+
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
@@ -15,19 +15,19 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=/KNiYR0Y1FJKexXNSEqWDf1DCqlJuEOEEfenPt19hA4=; b=WqrTCgly1GMu6LDLcyiCFLWgzD
-	JEc9zn5XRaUuigoXPu2/NZwit2D65PiSHsInb5M5uW6XWZqM9BfAm4ztqWxKUPll+T/+B8CXk3s78
-	b9swPR92b+LuF9xKAv+WWXUNpWLEbwK1FWwnA6uj/gxelwox19NLuczuyhIqw7uNvPGI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=wDWVQf+oOVKLA9Q5bh+L5xylc5gLHsVQpCVZFa01kOI=; b=dj0vs8jTNsQW5tSYY+xvFQ5VSP
+	rNmzZYdnjbuwHVd43JQ260CV9t2bFpEWJb0r2pPKPLFKpg4JOgefT1nMrj/YV/BQZ438wIJGIV6Id
+	WLVjr1MEJ6wP8LyrG9LaDYxAGsnbukm5o6GGYDgHigbp25JlqbeHevZkIEi66DUgO1cs=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xRVwi-000000008Em-3cVZ;
-	Thu, 12 Nov 2026 14:38:36 +0000
+	id 1xRVwk-000000001if-03GV;
+	Thu, 12 Nov 2026 14:38:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1) (envelope-from
- <3Ys_1agwKADcciknlTdhpldbZhhZeX.Vhf@flex--jprusakowski.bounces.google.com>)
- id 1xRVwh-000000008Eg-0Zcg
+ <3ZM_1agwKADkekmpnVfjrnfdbjjbgZ.Xjh@flex--jprusakowski.bounces.google.com>)
+ id 1xRVwh-000000001iX-10SH
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 12 Nov 2026 14:38:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -36,10 +36,10 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=chdsKhTOicvCPxU1lZpBQEsB9QRDWD9pdLuqQmhmbG4=; b=j
- iR6kD5zRAdc6grEQWcaSXMS8OogM7W5CmFTw7ljSKIrsKn2ebfmWmHJEQwwuHGnP5Wp2lB9JG+HLS
- EtwBSnsrVEtTxRT4ujuSTDNb6R+P2aOakv0tMxldwttZfOIJBsOViYZhpoc4EyJsgopMN8Bd4wcYi
- 1mfJDwluKCt74UcA=;
+ List-Owner:List-Archive; bh=pZVnsGpsllJ3BwCa9H7SVmcidWV76cNTLyaa8xLLihU=; b=a
+ IWbnIovoqSNPBOMeHCBtWxtMe5PWeucOwASKXuk1zYKcxHFurft3r7buWSsiLHcTzBCYLE4i2Uv4R
+ YJ4/9h4jHUpzd1N63i4nPHesJ0RbUkPB5YBomn9WS4hEg+fQwgIvZ7mAf1XNEYgGNVSHh+L61uWS2
+ +vYyAWvuKW+bb52M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
@@ -47,63 +47,63 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=chdsKhTOicvCPxU1lZpBQEsB9QRDWD9pdLuqQmhmbG4=; b=FglXbS2vSVGAI6YB/t35hup+Rl
- DHIMPJkOvuhSr8Zbnq3dxGgD5l1kOHDPP4yZKlzbXvcS6gWES0wCJgKZoa7VBSMwCfJR3Sv1gKC8Q
- wgNunv6q51WkNFWzAqjRr6JhOcOzwj1vJxp+H4+iJ8ZkPD6u9lCCHYeLBAHmcN00UhCg=;
-Received: from mail-ed1-f70.google.com ([209.85.208.70])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=pZVnsGpsllJ3BwCa9H7SVmcidWV76cNTLyaa8xLLihU=; b=mjrOXO0iFd/+nJWamJaXbmrc4E
+ iOkZSLcMJM6xbU+VEkY2nuAt1fnE0L/ToXK1QrJgz154r5LPmk1w7aoWlDrW4X8CeUIoLUr4Qs2PT
+ GvgqJpgUHk5LHHWCiqS/p8D8A65qDSnw3TlSd3PPZ1Uw/jCYVhrVfTwObLkBWnu93Nzc=;
+Received: from mail-ej1-f71.google.com ([209.85.218.71])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xRVwf-000000003PM-3JW7
+ id 1xRVwg-000000007rG-3Nwv
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 12 Nov 2026 14:38:35 +0000
-Received: by mail-ed1-f70.google.com with SMTP id
- 4fb4d7f45d1cf-6b42827bb4bso383094a12.1
+Received: by mail-ej1-f71.google.com with SMTP id
+ a640c23a62f3a-c293e604f0eso412572066b.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 12 Nov 2026 06:38:33 -0800 (PST)
+ Thu, 12 Nov 2026 06:38:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1794494307; x=1795099107;
+ d=google.com; s=20260707; t=1794494308; x=1795099108;
  darn=lists.sourceforge.net; 
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=chdsKhTOicvCPxU1lZpBQEsB9QRDWD9pdLuqQmhmbG4=;
- b=kNV69ZgcSPehQ6GKwapGfByjD76NVot51fZT32kIwNmz8j3Z/+tWCPcOjq+jbVyHLE
- srDEgXARIGjPFg+NVSOq7ZY8kjZzke2uiqDRvegTQLrqHm7Fozyl6qPdM7hoGGRTKhVh
- GmL5Zkkpz2U8r+TJTBgEOM+1hB1QO3rWEJeZA1G8nJRkU8lcvWxaIHPqgvUadmJsrwK3
- 8vy/uvnIft8gh64KC0kDOX/j5oNpJVPEYkbxnY4cwxKkZC7sLoywRHoE5iGeP+mVnmpy
- 43CwtkaxTkKhrWDy295oRhIOdVabtRe1lffCzuzaBD8CB8fNhpBrNszA6getl6O9je7+
- zE1Q==
+ :content-type; bh=pZVnsGpsllJ3BwCa9H7SVmcidWV76cNTLyaa8xLLihU=;
+ b=NwXEGQe+BJaAW48jOi98cyFEs4Z4y1QxLM88yiXPal4lHGj30NJ1DDh7Z+YRPrK/jA
+ ebw8ZURJRnBZ4/c/5/8v0CGGeTTnkfHPOwNxICLFomGuPqpbz8hgdIaZLwRFG/Qws645
+ L/R8bQNHXCirekpNluv0ihQA+bdG3hZSnmMucelQMLhoPxsNv2iMVZutvjuYFwOK9MrC
+ I/RK5Xluii8k/+8fXIYoEMNJbhD2QE3XVGFKYpPTnx1irl2oim32sLx1uK38GnCFux+h
+ GdOp0B74uUwEF3Os/W6gt8HJb7+E2sPhH61R84WnTg5XxQypHjJxAMDivyxuPuGuFfLc
+ potQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794494307; x=1795099107;
+ d=1e100.net; s=20260707; t=1794494308; x=1795099108;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=chdsKhTOicvCPxU1lZpBQEsB9QRDWD9pdLuqQmhmbG4=;
- b=vLgLHws0NEBX4m3sC53Szcm5yAUoTSPabgGRuEcUt24ntAncHHs9AX885Gxihh304r
- lyk68CQKr0tZNNVa52DqbZYPqXqzdokRBTNVpV0lWynLmueRoNGyoVBVJ7LelU9s2XMj
- DQQ1SUWmXDqAIwSATTJxa8zmm/C36ddSN2FMcyvQrUzrEYTfSCJMCTGT7aXs+oR0LqyR
- 5Cviy0s/9KdV7yk6yqJm9DXqS7SOtsx622Pa8POI+5scHQvfbFx12yd15hivdOPjE+HZ
- x758dxTuYBGyxFznIoHKCBbyKOxdwLXhoCTTAIfQeffJISDkfpHwZC9lWuVr7HuU4oQz
- WAlQ==
-X-Gm-Message-State: APuU4Z/lRkp1Y9lnvWsP4xjdahNSq0PdQgTcDU5Svy29o/+WJOCphgWW
- gEAZzEuGzkrwMHBMogUkIInDyQOtqiTs/7nima71Fn/czQhYfN8V9wGEC5vag/4Cd4RxyPXptV3
- AbV8gJEoi6RxLLD3UJsqwHXbjc7vD9Q==
-X-Received: from edqw21.prod.google.com ([2002:aa7:d295:0:b0:6b7:dc3:c9b6])
+ bh=pZVnsGpsllJ3BwCa9H7SVmcidWV76cNTLyaa8xLLihU=;
+ b=OxDIiCrDtWDse02IYbSbNYZZgNTdm8F/KWlp3gkMlQP1oKhRjky+muyjfsxjMZJvhY
+ T+7nT/A6D+ftE72CnTheuXJ71PW011L55pPROuX9gkY2SosMNIIy52pKQG3CcCRxb4yK
+ d8YW6S5ZWdizOuOXgv9WdZ6V0004Ob/lvpriZOx3Ozlla993rtXJCjdCSOwzcmbb4mdU
+ 9kuBq66YxlJfuENvx+/aiARzjH2gkHjvccGYokGmseJrnuNgVJBHEaZCqfIsGBKEh+rF
+ Z3q+YJRnQTNvPP8UsSsQ5MzyWcmxhZT59bknG5E+oCoI0EvruHplNsfxg88e5sDSD6Q2
+ CTAg==
+X-Gm-Message-State: APuU4Z9mElK1FOcIFV+h+ZvA5os+wrkjjc4f5ZIVm9rshoj2LxPdt52R
+ rhlwaClpvOOxVZM/UGSscG38SPL7CzBlWvn2jCHh6TlOv+VBGzitampOrHlW6mPC8Yj+746RMtB
+ NbMTphUm10q6Tc13ew9BJCtRs48bzxQ==
+X-Received: from ejcsa5.prod.google.com ([2002:a17:907:6d05:b0:c46:aa24:8716])
  (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:310f:b0:6ac:8ef4:177d with SMTP id
- 4fb4d7f45d1cf-6b7773fbc5amr3101064a12.20.1794494306680; 
- Thu, 12 Nov 2026 06:38:26 -0800 (PST)
-Date: Thu, 12 Nov 2026 14:33:48 +0000
+ 2002:a17:906:f597:b0:c50:6505:624 with SMTP id
+ a640c23a62f3a-c5066d83fb3mr434447266b.43.1794494308088; 
+ Thu, 12 Nov 2026 06:38:28 -0800 (PST)
+Date: Thu, 12 Nov 2026 14:33:49 +0000
 In-Reply-To: <20261112143355.2923939-1-jprusakowski@google.com>
 X-Archived-By: <archiver.kernel.org>
 Mime-Version: 1.0
 References: <20261112143355.2923939-1-jprusakowski@google.com>
 X-Mailer: git-send-email 2.56.0.567.gdb80ae8cd5-goog
-Message-ID: <20261112143355.2923939-3-jprusakowski@google.com>
+Message-ID: <20261112143355.2923939-4-jprusakowski@google.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
 X-Spam-Score: -7.6 (-------)
-X-Headers-End: 1xRVwf-000000003PM-3JW7
-Subject: [f2fs-dev] [PATCH RESEND 2/9] f2fs: compress: abort on read error
- in prepare_compress_overwrite()
+X-Headers-End: 1xRVwg-000000007rG-3Nwv
+Subject: [f2fs-dev] [PATCH RESEND 3/9] f2fs: keep old block address when
+ out-of-place write fails to allocate
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,85 +127,47 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-prepare_compress_overwrite() reads the existing pages of a compressed
-cluster before they are partially overwritten. If a folio is still not
-uptodate after the read, the function releases everything and restarts
-from the beginning.
+If f2fs_allocate_data_block() fails, do_write_block() ends writeback of
+the folio without submitting it and f2fs_allocate_data_block() sets
+fio->new_blkaddr to NULL_ADDR. f2fs_outplace_write_data() then still
+calls f2fs_update_data_blkaddr() with that address, which replaces the
+old (or reserved NEW_ADDR) block address in the dnode with NULL_ADDR.
+The block stays accounted in i_blocks and valid_block_count, so the
+in-memory metadata becomes inconsistent and the old data becomes
+unreachable.
 
-When the read failed because of a persistent device I/O error (e.g.
-dm-error in generic/250 and generic/252), every retry fails the same
-way. Commit 3147ee567dd9 ("f2fs: fix potential deadloop in
-prepare_compress_overwrite()") bounded this loop with
-f2fs_handle_page_eio(), so after MAX_RETRY_PAGE_EIO attempts checkpoint
-is stopped with STOP_CP_REASON_READ_DATA. As a result, a read error in a
-single data cluster shuts down the whole filesystem instead of failing
-the write with -EIO.
+Only update the dnode when the write was actually submitted.
 
-Return -EIO as soon as a folio is found not uptodate. Keep calling
-f2fs_handle_page_eio(), so that repeated failures on the same page
-across calls (e.g. from background writeback) still stop checkpoint as
-before. Both callers already handle errors: f2fs_write_begin() fails the
-write, and f2fs_write_cache_pages() stops writeback of the inode and
-returns the error, leaving the pages dirty.
+Allocation only fails after the checkpoint has been stopped with
+CP_ERROR_FLAG, so this does not reach the disk, but it keeps the
+in-memory state consistent for later reads and for code that rolls back
+failed writes.
 
-A folio that disappeared because of truncation (filemap_lock_folio()
-fails) still restarts via release_and_retry, which is now a separate
-error path after the success return.
-
-While at it, unlock the folios in cc->rpages before dropping our
-references to them in both error paths, so that a folio is never
-touched after its reference is released, and drop the check of ret
-before the success return, which is always true at that point.
-
-Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Fixes: 7d009e048d7c ("f2fs: fix to handle segment allocation failure correctly")
 Assisted-by: LLM
 Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
 ---
- fs/f2fs/compress.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ fs/f2fs/segment.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 9453254ff522..c5758da7c621 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1160,23 +1160,27 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a5f9de723a70..a26cde2dc60e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4257,7 +4257,12 @@ void f2fs_outplace_write_data(struct dnode_of_data *dn,
+ 		f2fs_update_age_extent_cache(dn);
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, fio->version);
+ 	do_write_block(&sum, fio);
+-	f2fs_update_data_blkaddr(dn, fio->new_blkaddr);
++	/*
++	 * If block allocation failed, fio->new_blkaddr is NULL_ADDR and the
++	 * folio was not submitted, so keep the old block address in the dnode.
++	 */
++	if (likely(fio->submitted))
++		f2fs_update_data_blkaddr(dn, fio->new_blkaddr);
  
- 		if (!folio_test_uptodate(folio)) {
- 			f2fs_handle_page_eio(sbi, folio->index, DATA);
--release_and_retry:
--			f2fs_put_rpages(cc);
-+			ret = -EIO;
-+			/* folio i has been added to cc->rpages as well */
- 			f2fs_unlock_rpages(cc, i + 1);
--			f2fs_destroy_compress_ctx(cc, true);
--			goto retry;
-+			goto put_pages;
- 		}
- 	}
- 
--	if (likely(!ret)) {
--		*fsdata = cc->rpages;
--		*pagep = cc->rpages[offset_in_cluster(cc, index)];
--		return cc->cluster_size;
--	}
-+	*fsdata = cc->rpages;
-+	*pagep = cc->rpages[offset_in_cluster(cc, index)];
-+	return cc->cluster_size;
- 
--unlock_pages:
-+release_and_retry:
-+	f2fs_unlock_rpages(cc, i);
- 	f2fs_put_rpages(cc);
-+	f2fs_destroy_compress_ctx(cc, true);
-+	goto retry;
-+
-+unlock_pages:
- 	f2fs_unlock_rpages(cc, i);
-+put_pages:
-+	f2fs_put_rpages(cc);
- 	f2fs_destroy_compress_ctx(cc, true);
- out:
- 	return ret;
+ 	f2fs_update_iostat(sbi, dn->inode, fio->io_type,
+ 					F2FS_BLKSIZE(sbi));
 -- 
 2.56.0.567.gdb80ae8cd5-goog
 
