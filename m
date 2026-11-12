@@ -1,101 +1,124 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E24606A889
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Nov 2026 12:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565BA606A323
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Nov 2026 12:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=gO8n7A2z;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Acnu1vdC;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=G7OgjTwc;
-	dkim=neutral header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=nR+r+VBD
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=As7yNWDr;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=MA5eRnIM;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=ReZK++G0;
+	dkim=neutral header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=res/twsR
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:References:In-Reply-To:From:To:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=ni6eUGC0xd2FtJoBJSIDqOEuaWLj5PVOpEbDyR7m3LI=; b=gO8n7A2ziJH9E4ZkrfzevYbRcB
-	ZNA4dVQPMumCyXAjgGzVHw0lyoWQKSzdd3sgB8kaZ3EVQM7FhMVGbX659JKrNRdu5gZevbNFlv5Vt
-	J15NupDaITD8BxStiQgfbGNcJjBrce3qDvkQuEbM/h8XMDs8HZM9iWk/92dhai5egifI=;
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
+	List-Owner; bh=gKiTnd2BtUXC6y5iABYaGEfyFh8GzWljLSsINhyZTZ4=; b=As7yNWDr2IlAZu
+	gpz7Mf3E0EO8SwCQDD0oMRzk9Y82Mc2VjBw/cjocJVt260GtjRnuibXC4jGPtUZJRSfX961udvP6T
+	JH+b7Ym6TlphawPirT1iSA46Ipr4wOgn7kfhTQxIkIfhbF6rUC02qa0NkDem4SEig803Sk3odrX5A
+	mr0=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xRTa1-000000006Th-1jkm;
-	Thu, 12 Nov 2026 12:07:01 +0000
+	id 1xRU6n-000000000bn-1wh4;
+	Thu, 12 Nov 2026 12:40:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <m.wilczynski@samsung.com>) id 1xRTZz-000000006TQ-1wgm
+ (envelope-from <m.wilczynski@samsung.com>) id 1xRU6k-000000000ba-2tfp
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Nov 2026 12:06:59 +0000
+ Thu, 12 Nov 2026 12:40:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- In-Reply-To:From:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ In-Reply-To:From:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3Ng2wYSW6+d3+F9nDyhML8DvJgaVLNMXoO8xfsPtTcI=; b=Acnu1vdCWdsFAI52c4g9J1E3FS
- V6Te408IrapLPs84SQjKazYPx9tXjtgp9PmkhMU5WuT8JEIJo9fynEE+SdJrn23t+WLqSS4gxNcbc
- uoIJcadOAFZsRRLa2+h3Fx65EFmGPsahwKotd9ZmOtSF7sk0aiyNJep9tHDa0sucsi/I=;
+ bh=I9X4XD5ud4JHTzb58pE9cFq0Gp7fU1CTG2I9JiABR6U=; b=MA5eRnIMujzomUaRSDIm1PNtZs
+ TZu8hCNWyvf3segSo+IUdPQY1MjpaoDUdGX8686UOu/h56igqASpvAdeGAT1E8+1IXlYooUt2FpX1
+ 3B5hM8dYZeykLEWmggoYfYk6HJ2qZiQEPt00Cbhh2FD0w6lO5ngVGcsqLIT/i+mZDeqA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:In-Reply-To:From:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=References:Content-Type:Content-Transfer-Encoding:In-Reply-To:From:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3Ng2wYSW6+d3+F9nDyhML8DvJgaVLNMXoO8xfsPtTcI=; b=G7OgjTwckb+9XSbH3KSeK2Qtut
- KTvmVt5ugaTggkhb6Pz2RCyaqQOlG2crSXv+FOfL4Ki+jtPjATIhS9iFGCmZIzBaNfNyWA0tG56+y
- eDxWEBnKyMIIAP8NgN9t7EQ5waWBTVvhWZco9yPhRqDZvr+LmO1dTw2gV1ysw7hjdgQU=;
-Received: from mailout2.w1.samsung.com ([210.118.77.12])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=I9X4XD5ud4JHTzb58pE9cFq0Gp7fU1CTG2I9JiABR6U=; b=ReZK++G0mJZOwXq49y+N0TkPHA
+ 0dwSPAU+AOfqIYOW+fdnxHl/5GeVULa+mI0PrGdUpdsOBFhqswhOw4Wijv3eI69+JYMkV3z5SrkWO
+ CnQupSn9Kny/duCucH3XjdhXTaB3RQyyUsD5ah6kC8Qz1tSliDNj7Oy7ubL709e6l/tc=;
+Received: from mailout1.w1.samsung.com ([210.118.77.11])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xRTZx-000000007jh-1V8g
+ id 1xRU6i-000000004sr-3RHZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Nov 2026 12:06:59 +0000
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id
- 20261112120650euoutp023394506fcbdf2a5d3fc56ab466d5f422~nSsqNDOqh0675106751euoutp02X;
- Thu, 12 Nov 2026 12:06:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com
- 20261112120650euoutp023394506fcbdf2a5d3fc56ab466d5f422~nSsqNDOqh0675106751euoutp02X
+ Thu, 12 Nov 2026 12:40:50 +0000
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id
+ 20261112124042euoutp01e70ce1178d26db6b7c248a8e4494b386~nTKOYIdlg2545925459euoutp01N;
+ Thu, 12 Nov 2026 12:40:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com
+ 20261112124042euoutp01e70ce1178d26db6b7c248a8e4494b386~nTKOYIdlg2545925459euoutp01N
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1794485210;
- bh=3Ng2wYSW6+d3+F9nDyhML8DvJgaVLNMXoO8xfsPtTcI=;
- h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
- b=nR+r+VBDOV4dVPVZ6tVQVAV+2ufcN1J8T2VQozNQKBTjeh1k71ccWpdHsHNgI8C7r
- CM7J2sePfPZZOiXnXMfytIDh2ES0EF9kB9rcJXE5tsaTcDudkOHHpGSzUVEgKo5+QX
- Epi4ngn19K3aDJSY4rfpKYKsTXWEmx79MdJPM+6M=
+ s=mail20170921; t=1794487242;
+ bh=I9X4XD5ud4JHTzb58pE9cFq0Gp7fU1CTG2I9JiABR6U=;
+ h=Date:Subject:To:From:In-Reply-To:References:From;
+ b=res/twsRekcb00rl0hpigdDQU49wJT9sewqF9AZUfNVtehuVCXJxiXNmMChvBTE4G
+ eET/M3Ndk/cN+pz1L0w+/FpjnaGKptZRpIyBuWJJY/P+4a8RF1Bcj0RGmLHmGYIVpi
+ 4s1s/PiyRviToazDh7OQfOe5aoNIe42v3Wv4p1io=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
  eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
- 20261112120649eucas1p2065df671e614cc14e86e0a5504215744~nSspZAxiA2721327213eucas1p2v;
- Thu, 12 Nov 2026 12:06:49 +0000 (GMT)
+ 20261112124041eucas1p2e0fefb8eb4e504a6bbf86fc3bbd57b3b~nTKOBqqaA1051410514eucas1p21;
+ Thu, 12 Nov 2026 12:40:41 +0000 (GMT)
 Received: from [192.168.1.44] (unknown [106.210.136.40]) by
  eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
- 20261112120647eusmtip1e71d40cb998922386d7f896a16ce37a9~nSsnwl8x91412914129eusmtip15;
- Thu, 12 Nov 2026 12:06:47 +0000 (GMT)
-Message-ID: <450cbb3b-6118-4b1d-9a71-7f0ea98030ed@samsung.com>
-Date: Thu, 12 Nov 2026 13:06:47 +0100
+ 20261112124039eusmtip15ffbafa2efefdb32bf4f0155ad33cff7~nTKMZv7ec1174711747eusmtip1g;
+ Thu, 12 Nov 2026 12:40:39 +0000 (GMT)
+Message-ID: <52c54fdf-0879-4dda-9eac-822180f811bc@samsung.com>
+Date: Thu, 12 Nov 2026 13:40:39 +0100
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Russell King <linux@armlinux.org.uk>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
+ Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
+ Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Minchan Kim <minchan@kernel.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Jens Axboe <axboe@kernel.dk>, Andrew
+ Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-block@vger.kernel.org, Yann Collet
+ <yann.collet.73@gmail.com>, Nick Terrell <terrelln@meta.com>, Gao Xiang
+ <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Jaegeuk Kim
+ <jaegeuk@kernel.org>, Eric Biggers <ebiggers@kernel.org>, Herbert Xu
+ <herbert@gondor.apana.org.au>, David Laight <david.laight.linux@gmail.com>,
+ Sungguk <sungguk.na@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, linux-erofs@lists.ozlabs.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org
 Content-Language: en-US
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <avKtyCOOmK3AH0xy@google.com>
-X-CMS-MailID: 20261112120649eucas1p2065df671e614cc14e86e0a5504215744
+In-Reply-To: <avTmC_1I59FKA1FN@MacBookPro.fritz.box>
+X-CMS-MailID: 20261112124041eucas1p2e0fefb8eb4e504a6bbf86fc3bbd57b3b
 X-Msg-Generator: CA
-X-RootMTR: 20261106144310eucas1p1d60fe5c2e0170c49f38a3142bb1d8f94
+X-RootMTR: 20261106144309eucas1p2a9bfcc1cf81779d473fb073e7d9139b7
 X-EPHeader: CA
-X-CMS-RootMailID: 20261106144310eucas1p1d60fe5c2e0170c49f38a3142bb1d8f94
+X-CMS-RootMailID: 20261106144309eucas1p2a9bfcc1cf81779d473fb073e7d9139b7
 References: <20261106-lz4-vendor-upstream-v2-0-ee04c3f0d7dc@samsung.com>
- <CGME20261106144310eucas1p1d60fe5c2e0170c49f38a3142bb1d8f94@eucas1p1.samsung.com>
- <20261106-lz4-vendor-upstream-v2-13-ee04c3f0d7dc@samsung.com>
- <avKtyCOOmK3AH0xy@google.com>
+ <CGME20261106144309eucas1p2a9bfcc1cf81779d473fb073e7d9139b7@eucas1p2.samsung.com>
+ <20261106-lz4-vendor-upstream-v2-12-ee04c3f0d7dc@samsung.com>
+ <avTmC_1I59FKA1FN@MacBookPro.fritz.box>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xRTZx-000000007jh-1V8g
-Subject: Re: [f2fs-dev] [PATCH v2 13/15] lib/lz4: switch the decompressor to
- the vendored sources
+X-Headers-End: 1xRU6i-000000004sr-3RHZ
+Subject: Re: [f2fs-dev] [PATCH v2 12/15] lib/lz4: widen
+ LZ4_DECOMPRESS_INPLACE_MARGIN for the fast decode loop
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -105,77 +128,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-mips@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Bill Wendling <morbo@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Sungguk <sungguk.na@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>, Helge Deller <deller@gmx.de>,
- x86@kernel.org, Russell King <linux@armlinux.org.uk>,
- Eric Biggers <ebiggers@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Yann Collet <yann.collet.73@gmail.com>, Gao Xiang <xiang@kernel.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, llvm@lists.linux.dev,
- Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- linux-crypto@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
- Nick Terrell <terrelln@meta.com>, Borislav Petkov <bp@alien8.de>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-parisc@vger.kernel.org,
- Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Minchan Kim <minchan@kernel.org>,
- Thomas Gleixner <tglx@kernel.org>, Justin Stitt <justinstitt@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org,
- David Laight <david.laight.linux@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 
 
-On 11/10/26 06:39, Sergey Senozhatsky wrote:
-> On (26/11/06 15:42), Michal Wilczynski wrote:
-> [..]
->> diff --git a/drivers/block/zram/backend_lz4.c b/drivers/block/zram/backend_lz4.c
->> index 50265e3ce256490994cb6dae32a45da376e408e0..b9b8a5f678c155442fa3fd2c1984e45182e6fc38 100644
->> --- a/drivers/block/zram/backend_lz4.c
->> +++ b/drivers/block/zram/backend_lz4.c
->> @@ -84,7 +84,7 @@ static int lz4_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
->>  		if (!zctx->mem)
->>  			goto error;
->>  	} else {
->> -		zctx->dstrm = kzalloc_obj(*zctx->dstrm);
->> +		zctx->dstrm = kzalloc(LZ4_MEM_DECOMPRESS, GFP_KERNEL);
->>  		if (!zctx->dstrm)
->>  			goto error;
->>  
->> diff --git a/drivers/block/zram/backend_lz4hc.c b/drivers/block/zram/backend_lz4hc.c
->> index e7ee3740219852f079d1e0866da6b213a3f3a583..1e09c93016264259c149e2913b2819571b56fab6 100644
->> --- a/drivers/block/zram/backend_lz4hc.c
->> +++ b/drivers/block/zram/backend_lz4hc.c
->> @@ -65,7 +65,7 @@ static int lz4hc_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
->>  		if (!zctx->mem)
->>  			goto error;
->>  	} else {
->> -		zctx->dstrm = kzalloc_obj(*zctx->dstrm);
->> +		zctx->dstrm = kzalloc(LZ4_MEM_DECOMPRESS, GFP_KERNEL);
->>  		if (!zctx->dstrm)
->>  			goto error;
+On 11/11/26 23:02, Gao Xiang wrote:
+> Hi Michal,
 > 
-> Ditto, outdated zram code.
+> On Fri, Nov 06, 2026 at 03:42:52PM +0100, Michal Wilczynski wrote:
+>> erofs decompresses a pcluster in place when the slack after the output
+>> is at least LZ4_DECOMPRESS_INPLACE_MARGIN(compressed size), upstream's
+>> (compressedSize >> 8) + 32.
+>>
+>> That holds for the fork, which overshoots its output by at most 8
+>> bytes. Upstream's LZ4_FAST_DEC_LOOP, which the next patch brings in for
+>> x86 and arm64, copies in 32-byte steps and can overwrite input it has
+>> not read yet: of 172410 valid streams laid out as erofs does at exactly
+>> that margin, 3660 fail to decode, none with the fork. The worst needs
+>> (compressedSize >> 8) + 33. Images mkfs.erofs built did not hit this,
+>> but nothing in the format rules it out.
+>>
+>> Use (compressedSize >> 8) + (compressedSize >> 15) + 36, which takes a
+>> 4K pcluster's margin from 48 to 52 bytes. Upstream's lz4.h defines the
+>> macro too, so undefine it first.
+>>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > 
-> My ask would be to not squash zram changes with lz4 changes, when (iff)
-> possible.
+> First, I really think kernel LZ4 should be updated for many years, so
+> thanks for this!
+> 
+> But my personal thought is that could you just fold this patch into
+> the next one ("lib/lz4: switch the decompressor to the vendored sources")?
+> Because this one should be part of the fast loop update.
+> 
+> Although the current patch order is also fine, but my potential concern
+> is that people don't know the details maybe pick the random ones for
+> backporting, which is what I'd like to avoid so I hope this patch could
+> be just part of it, otherwise the inplace decompression could be broken.
 > 
 
-Will do.
-The zram changes will go into a separate zram patch ahead of the lib/lz4
-ones.
+Make sense I'll fold it into the decompressor switch in v3 so the
+wider margin and the fast loop can't be picked up separately.
+
+Thanks for the review and the kind words
 
 Best regards,
 -- 
