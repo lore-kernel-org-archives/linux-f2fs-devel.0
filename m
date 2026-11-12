@@ -1,119 +1,122 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF06606A33B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A09E606A33A
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Nov 2026 21:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=LK9ni8jV;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=TcrBcHfq;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=kEDaV2kP;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WSpxQtKS
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=L0J2HRU6;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=IwOpo907;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=QA63qIdP;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ub4hrBoH
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=ukB9c8C7NOmIFLjR+aDM0YVW/2HC/y0yVcX79Fl8UpM=; b=LK9ni8jVhvUfE5cU60b5fSzW8R
-	ZOBkOzWfSIjENV8E+cmbTVuep0l6pGEERcj+1JKyuRGDw/q4N8TNuiMEt0TyjNPS5WcwX+PU2Ey2p
-	YBAg40Srl8zPinarrGtx4Bki82acOxm1Er4I4tL9FF40UXizVltGATEmTVkLsJ0Agn+w=;
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=JoSkbLTZ3tldGPKb8/VSnKpA4r08K5ucJvz929hCIQU=; b=L0J2HRU6s7BnbiSQhNBYr5QMLE
+	VjMrlSE7SwP8ZjUwfuO5+wUB2nq7U4DDerntPVpML/sYLEtfqRclrBcQA4A7M1LjrOJ7PcFwyO1sm
+	fEmEN1P4QYk+AHWufBP5Y4C2OZ5epdTTguIuWokqq+erqR3P/C12KNymA/vrh6af1WxQ=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xRca0-000000006BH-02vw;
+	id 1xRca0-000000006BO-114D;
 	Thu, 12 Nov 2026 21:43:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <dennylin0707@gmail.com>) id 1xRcZp-000000006AD-03n4
+ (envelope-from <dennylin0707@gmail.com>) id 1xRcZs-000000006Ae-2nDS
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Nov 2026 21:43:25 +0000
+ Thu, 12 Nov 2026 21:43:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3d20zwRz5YNuFbeVdw1xQneB3kQbFqU3BiherwQ14Wk=; b=TcrBcHfqnGdqfr4/hI+ZQ4cK8z
- eQsHVuHdADDD1oR1rBLlp8fIJq1L5mBnlSNU7mW352Ihu8G5rtxAdF7vCXfa3tbLO29jnQmifM1Ml
- n/2s7qkVOInvgQ86yTneKbC3J5heyLWw1o9HmGIa64QUgvJSsM4rlajPniJhl0rHoz94=;
+ bh=D0q4/bumRjYNT1+Q9z7QLzpTICqzesgJk/uGL7R0qDI=; b=IwOpo907bF/st3oxeqJVEZL0AO
+ CZDaJYFhkrCHr9ZKdLwiiveQCRMxj7gJxaF1mivejHL53jVocsPbESLD2ROPgCjiwuzSX6zz0PBfs
+ LF1/NGD0tYuX+pSWlxyacv/S1z9705qPzVAK7bfKRMbadwywWTc2b2nHIbn0yVyTeqHw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3d20zwRz5YNuFbeVdw1xQneB3kQbFqU3BiherwQ14Wk=; b=kEDaV2kPREuKZdmT669Warbouf
- L8lHWSOpF4pgoy+dk7qHCf/lSncogVPBF3GBZVWz5MSC6MZY3OCMlFQFey49qW6/hh0oC11SnVwBk
- buwP1/ry5tv226DGcc52lxu7PBagvCG1rVBUnlOAF4H5CE+3ev709dOKVhK7rsWWGlrM=;
-Received: from mail-dy2-f7.google.com ([74.125.229.7])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=D0q4/bumRjYNT1+Q9z7QLzpTICqzesgJk/uGL7R0qDI=; b=QA63qIdPd8BSM2CpnE9RGlZODl
+ tEV/yUSH74uFq+DAuXeSL7eON/PCTRBLuEnnESVxQvyiEiQJRUYdpQXdKImzwXmBcQM9U4zGlbo/s
+ AD463s/KG2wqy46svZ9INSTye40oLgIV3c7IYefuVi7rQODa+JuUf1WvBvJA+z1WB+X8=;
+Received: from mail-dy2-f5.google.com ([74.125.229.5])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xRcZo-0000000014i-1a9B
+ id 1xRcZr-000000005NO-3yJb
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Nov 2026 21:43:24 +0000
-Received: by mail-dy2-f7.google.com with SMTP id
- 5a478bee46e88-36c9b5c6faaso192600eec.0
+ Thu, 12 Nov 2026 21:43:28 +0000
+Received: by mail-dy2-f5.google.com with SMTP id
+ 5a478bee46e88-36caa19b0ffso185740eec.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 12 Nov 2026 13:43:24 -0800 (PST)
+ Thu, 12 Nov 2026 13:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794519799; x=1795124599; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=3d20zwRz5YNuFbeVdw1xQneB3kQbFqU3BiherwQ14Wk=;
- b=WSpxQtKSGrYzGttrxFBaUgKXTVQThuJmXxz/biLm7QPnbj7/QT9WVIG/urP6cfB4kZ
- PEzhhsevr/WmPXuo1pg+Jqsxt+CMPFjOVt6Z0j9QdsbiuSN3Aq47r6n1i51c8IWd9rnr
- g9UC5Cac6dHUhD6u17O115mpE5nFz9j5BckMb/JFOcDHEnFBW+BTj9Zp6PwJ5anWh5d8
- OSNTQYfwrwlvQ/DuLiKryNVdsqQLcpF2aYOO7oYH1ROVzodsqFAHm1DBcNvdL0Fcr5kL
- tQU+B8D3Q+5yUw1oKJe2rCUaSe1NnQsXEJMmvQBol6pIElQLtse3/Iu6GsfjgnIBC2gZ
- dpEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794519799; x=1795124599;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20260707; t=1794519802; x=1795124602; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=3d20zwRz5YNuFbeVdw1xQneB3kQbFqU3BiherwQ14Wk=;
- b=GtIs9NTzg0EP5WB70S04cYXN21YJ+FRgN1ab22HjzQG0gp3MACpNRjngx2i9zW91FQ
- XmC6fr3hMp9lHU7F+GPR/7OEvdkhO6hAquFCHeZ0McVsRUQTXgLMsPZlbJBblPrWhH5M
- mi2QqeYlxoVuvWkoXduIsFXXfj7VQDZrL9pi7SmICRiBsNjCMbEym3o6CfKWSesmLHSp
- 6qqcgxRYCOSrCbP06XTwRplBofoR2ZeaFV60RZEqyBZD4TfLBow+nVdoWfZlLH4AKzpx
- maUt5ZIucDCCtHtTu2p3icaLDqqr0sRtH1mQNKa4FDriazHcJliF1R90l8d/iPBAkkIh
- wgCw==
+ bh=D0q4/bumRjYNT1+Q9z7QLzpTICqzesgJk/uGL7R0qDI=;
+ b=ub4hrBoHJedLKEDs6gJ94n37FlA+bhuFhs0V8ynB2cKz2hP6RHy4xLtGq3f6RPn/4O
+ LLQuyeeQmz9RChQCxAPz7VhZ9K+l8CN911JJDfRIIfG/Jou8NvP8XvZnTfRDAnyHxDXz
+ /30HgqLe+SJyUo4lc0AYy0CCC8sgJcxTx22lLEW/w+DN+yZMFS+yw7eWbLXulIrNcNkU
+ cvkYuFQIh3w+HT/YYKW4AgGePgUXlmEBefN9zAOa6S/YgDUyLo6pZlbCeW5pQgk5YWCk
+ Oi5fiSTKf9GzondCo+9WZHkz3PVYDO4BrZCwhw1yLgMaBLxq0oY4yNI74epcuaPFFUJ9
+ 1+Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794519802; x=1795124602;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=D0q4/bumRjYNT1+Q9z7QLzpTICqzesgJk/uGL7R0qDI=;
+ b=UXjxMCppbXmi6FwD7vXn3xogh5v0PZUH5YZUnKrqfqxOFy2Lth5K7KfAw1RJbu6igc
+ MJmTskd75Z3InNL3i3d44Pu4CzFixY+N50yQparoWJjXispKafNnGFPkvdY6pTxEuZdC
+ H0izkWLytjduDS1KjrhC1kEMf+HPKSAnTlmwM9ySCvXNWkSBwJrzP6JBVJmGu/nvrqkn
+ sGLrDuAdrSPaKHvigwJUMpw3cipHx/rquJVHREemvcoHZBbfvZakEZ2oqYOXyM5QgpFC
+ W4PfA5mCIl9iJvZbkZ/MSpM0cDITkhY1w7piekncAZDgWuJUYQopuQFU0g1xEK3ew/fc
+ MVcw==
 X-Forwarded-Encrypted: i=1;
- AL+hErGNQ8F3LHcahDrlWukG3+u79LbNNT+1qKn4dGFkwEzpb/0U+eJxgX9wxBRIGOwDim4rt7hTUDCxOfKAovuRZT6C@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z9RXkpP/FudepzjbKtb4W4pCpFFJuO9xRaKgb0Di2G5yheQd+Kh
- rObEwXKYkm2LByq2u2oOnR8mShXOu3cPDw++FxLYMaFhDD+UoCwPacSg39gyq84Fj4AdtA==
-X-Gm-Gg: AYBFou0NUGDQ/S/+FoI+C4GnTyT3CTXZ5v8xZlwNmnR9DUCf+1juVSHYX0XtlGh6n/g
- Z22DBcZxLaWtXmO4JbXjCo4aZM0frU0AGuWMzEhFrBQcChNiBZNJpXGp6Z7qES3IavoYhEjr4ck
- mgJzblFkMeqHwNjekGCZ5DHmNueatRWlrTVQ0cypVEvJj2qGJXRQF4oPfjaiZQDvykE9su5Myep
- VNyij4T85zvXWwkdEhj772ZY1dEtE2aJCmE19TMwS4cx2PBBiGL6TtlAWmZQSKJ1+LXw9+7uToe
- vnPe62nQm1BsnVa6IfVV/G5CYQ/1rRqt6r6BBXBz/xUty8VNJG5hWEctTHqUVyGLwt3I3MahSg5
- gCfI+nkiFXHZZjp7X/zhZOSlfyyow9F5B085uzlHef+4+xtVw5ToJJlTm3+yqBWd9WVekrhlIbc
- 52RlzaT8O5R16m0sm+n6hSZlfxly4FYg41a0D7s9OqxACyRy3o1y+G3d9R/AhN3tSPa4g8SnEZs
- PuAr0lz7KroQsLhYRW5hO+VxfjrA2+EQldp9sIjyUERQBtT02jAw204pzrx22geu5XsaCQLbmsw
- kvopTnBpWTS9Bbb1TSfV+EuNm+kWgbKBOe+8t5c600B/455e75nQZiegdhzpLKxWpkH2atiCQD3
- +o5MeZ3aE8wsPWyjtF8yyGVleoVooNBtqbXiqSA==
-X-Received: by 2002:a05:693c:829b:10b0:370:ff2:f78d with SMTP id
- 5a478bee46e88-37965ca7d77mr461383eec.8.1794519798639; 
- Thu, 12 Nov 2026 13:43:18 -0800 (PST)
+ AL+hErG7MY+cygltfOOMebnOxlGE0pNuZQwpTh3Yd0uU7OemhK4dCIO4JR1OEsbvkcWEBWG+21uaMNsp/gV5FRqW+Aul@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z9Kl0okgdLiMnu7ebcwvdzc4gket8VIjaXvK9G/Gws6r7DxV7Qy
+ akp1UQ7Mvtdhlhkw4g1QHpk/0jv/5DdKamTj8bePO7NCRu4cBL4mX/uS
+X-Gm-Gg: AYBFou16nfj6eghXn5c6vFIm7HViCg8J47Xd4f1m9mAcPBZZrCgj71Pv2k8BnYBk6IS
+ Q2zhEJbS6l4pgx+zVeDhrFGDqKMsFEzdpCs3+VF7tcK5EzIlKtMO+4Su86XtduRh1u6t/4e8vS8
+ I5Yoc38+eOjROVlozvVuLXWRwhO8EVXofMMnp0EesNFpinUndjufdp2XaN99qNd/0m+7sch5mTw
+ VFTrZBY9OdQ05nJvmTsvdfSPWmsM67ydw9w9SZ3EKbHZL5Ab2aElJgBkedYJwAA/rC6PQ6MB/67
+ jV3rZvNQJPdGg6++95sJb7LfWOlMYSN21ophIAfy5hWAcy0BfY4yXvosI3HtJm/kpYUd/dqyQCk
+ CNzzBpbnmn7B6kjswFHbJUHhhr03vd7ugtJN8fBaAa7J+1Sbhr4+7AxPGlWNcsgqEgKPwRUiNrk
+ AuD6pcpVWc0AOvwoGGOwP4UPLHM2suUwTEWYiNDw8phRZgT8Aby3hQX44YceAjt00/yHsBj+GDO
+ RxFucLPTY5yICP16G5huwD20/rR8dcNs1+CXebr4PA6ElXX8nYU8t1Zeb09BEHVvTUD8XffMv8J
+ P1umBsJqV5CUVYEwQNaN5zlJRpbomtdRhAQzEW0J22flCYrUXi+IQ3XHfl0sOprL9OVaNnS4peA
+ mqgNfzy7jR2vql+w3sWlXxASUV1W0iz2SOzxRTA==
+X-Received: by 2002:a05:7300:cc82:b0:36c:9b35:5d46 with SMTP id
+ 5a478bee46e88-379681c811dmr418553eec.26.1794519802105; 
+ Thu, 12 Nov 2026 13:43:22 -0800 (PST)
 Received: from localhost.localdomain ([98.148.34.5])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-37956bad134sm1194466eec.27.2026.11.12.13.43.17
+ 5a478bee46e88-37956bad134sm1194466eec.27.2026.11.12.13.43.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Nov 2026 13:43:18 -0800 (PST)
+ Thu, 12 Nov 2026 13:43:21 -0800 (PST)
 From: Hungyu Lin <dennylin0707@gmail.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Thu, 12 Nov 2026 21:42:59 +0000
-Message-ID: <20261112214303.16198-1-dennylin0707@gmail.com>
+Date: Thu, 12 Nov 2026 21:43:03 +0000
+Message-ID: <20261112214303.16198-5-dennylin0707@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261112214303.16198-1-dennylin0707@gmail.com>
+References: <20261112214303.16198-1-dennylin0707@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: 0.1 (/)
-X-Headers-End: 1xRcZo-0000000014i-1a9B
-Subject: [f2fs-dev] [PATCH v2 0/4] f2fs: require write permission for ioctls
- that change per-file state
+X-Headers-End: 1xRcZr-000000005NO-3yJb
+Subject: [f2fs-dev] [PATCH v2 4/4] f2fs: require write permission for
+ F2FS_IOC_IO_PRIO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,44 +130,41 @@ Cc: linux-kernel@vger.kernel.org, dennylin0707@gmail.com, daehojeong@google.com,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-F2FS_IOC_SET_PIN_FILE, F2FS_IOC_RELEASE_COMPRESS_BLOCKS,
-F2FS_IOC_RESERVE_COMPRESS_BLOCKS and F2FS_IOC_IO_PRIO change the state
-of the inode behind the file descriptor without checking who the
-caller is, so any user who can open a file read-only can change that
-state. Each patch requires write permission on the inode in one of
-these ioctls.
+F2FS_IOC_IO_PRIO does not check who the caller is, so any user who can
+open a file, even read-only, can set its write I/O priority hint.
 
-inode_permission() does not depend on how the file was opened, so
-f2fs_io can keep using read-only file descriptors and does not need to
-change. It does refuse write access to immutable files, so these ioctls
-now fail on immutable files as well.
+Require write permission on the inode.
 
-Changes since v1:
-- Check write permission with inode_permission() instead of
-  inode_owner_or_capable(), as suggested by Chao Yu.
-- Split into one patch per ioctl.
+Fixes: 5f95c1812a65 ("f2fs: add ioctl to get IO priority hint")
+Suggested-by: Chao Yu <chao@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
+---
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v1: https://lore.kernel.org/all/20261108045722.12091-1-dennylin0707@gmail.com/
-
-Hungyu Lin (4):
-  f2fs: require write permission for F2FS_IOC_SET_PIN_FILE
-  f2fs: require write permission for F2FS_IOC_RELEASE_COMPRESS_BLOCKS
-  f2fs: require write permission for F2FS_IOC_RESERVE_COMPRESS_BLOCKS
-  f2fs: require write permission for F2FS_IOC_IO_PRIO
-
- fs/f2fs/file.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9d09ce597f72..e25c7166c367 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3985,6 +3985,9 @@ static int f2fs_ioc_io_prio(struct file *filp, unsigned long arg)
+ 	if (!S_ISREG(inode->i_mode) || level >= F2FS_IOPRIO_MAX)
+ 		return -EINVAL;
+ 
++	if (inode_permission(file_mnt_idmap(filp), inode, MAY_WRITE))
++		return -EACCES;
++
+ 	inode_lock(inode);
+ 	F2FS_I(inode)->ioprio_hint = level;
+ 	inode_unlock(inode);
 -- 
 2.43.0
 
