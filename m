@@ -1,113 +1,93 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB8A606A31C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Nov 2026 08:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18641606A339
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Nov 2026 09:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=DIO2Xsz9;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=kk3+ct0V;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=NlXuD1C2;
-	dkim=neutral header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=mOOOvMM7
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=b5skYwl/;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=bpSBA327;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=DRmpIsia;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SkevgVD3
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:References:Mime-Version:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Unsubscribe-Post:List-Owner;
-	bh=vmqPsG5C5+btVjydH3WqCuqy03uMsBB13Zvj5oDPS2A=; b=DIO2Xsz9q4Y6O5y0H5HnN1BRdm
-	BjH30PnBU1mQfMovId1SJkNXwBF7PTiFnyGakh9leRUvpNqDkmvlgGMI/+c9aUwSfGPDRtW/RPqvx
-	ndBW0xTCFcxT2LBKnTb40xekLRuMBmOodahFeP60NvOEFC+zMkup7lJy6C/u/23zM4Yc=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
+	List-Owner; bh=Nw0DfqO0UgWaLGtZ0KGp51lylmF8XYwwFwXtb49HgR8=; b=b5skYwl/+r/FeS
+	vZPZF7bY6+9gj+Mstt9zg2En2MLpCEpMuVKw29zDO1+GAukvkWpasusBPChdk1R7OerGlqmrm6AY9
+	mtHxUottwLN/yAfEULmpq3u0evlk4FzSki7dCrKWyj1GicA3E+RjuvG+M+WSCUzOR/o5B6JXqICGc
+	EnA=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xRmGK-000000004ls-22dw;
-	Fri, 13 Nov 2026 08:03:56 +0000
+	id 1xRnd9-000000006GD-1OfE;
+	Fri, 13 Nov 2026 09:31:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1) (envelope-from
- <39rP2ag4KAJcJ1IK81BBLBI5K97FF7C5.3FD@flex--sarthakkukreti.bounces.google.com>)
- id 1xRmGI-000000004lk-2MhT
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
+ (envelope-from <chao@kernel.org>) id 1xRnd7-000000006Fs-43oI
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 13 Nov 2026 08:03:54 +0000
+ Fri, 13 Nov 2026 09:31:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=32C0FxBlQriZemWnWfi76aDhbmP3Z0qG7c56b0ARCqE=; b=k
- k3+ct0VRKHcAYgQkkmTX9n7AOH3ufGVn1wjNPJEaa5kgZ/K5IvtOArL/xtrYFYE/MQjUGiwAZijqk
- XNAl7glU9eANChxPJX0SNMwmSoQzOT/Lty7LOI4fEiFG6J0So04dLVBJ4V8BO4Nb4BtqItM+MvSIJ
- KSknXSqYBT13RuVs=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=U+T4uJ/e8/uh76kjQ5Uc9g/ybxEFK3XIJAOLTkG2Nds=; b=bpSBA327KTYKcV/8v1ftlvDYx9
+ UXQnR5+Mg5Kqwq4ojTsS/9w5r/tpdAn8zKeKkrzbesnEwNIkRilik37sXoEBEaFOeWnIO3TbVazok
+ JoqO+Px2UCz6qTcegQeXez5t8KYbxO+zP+CX/UiucaQ8Y7JW1qul0GikCwecaP2vA/J4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=32C0FxBlQriZemWnWfi76aDhbmP3Z0qG7c56b0ARCqE=; b=NlXuD1C2FyKqDXDxkL0fX6myZH
- 5ZdCY2WEk2hBVGwHNfJnZ6eQ9G6H3ZIh5HWGuXl6+ppMCgzyb8pohelvnQh/Dh/zG7lyWDALPc7gN
- 73CAjjT2a3hkJhPOH0ccOngc1fKeoEcOsrS2EbjuJhNLln+uMQLk8LfmS9SbArORDCDA=;
-Received: from mail-qk1-f200.google.com ([209.85.222.200])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xRmGH-0000000088U-0pdf
+ bh=U+T4uJ/e8/uh76kjQ5Uc9g/ybxEFK3XIJAOLTkG2Nds=; b=DRmpIsiayaod1yrTkBYepFKIK6
+ WWetYTAhadHRSlvxodYl9aOPeiG+echTayjMTOI4wmVN5QKoERjJOT85roky3o4A530SZCc+vK1Rk
+ EtVe2oAa5zF9qb1r5e7dQ73v+/Rm/bZzZkpbEa0b9Rq9xF/QXDz1X4UaM9Mf7xuHDoE0=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
+ id 1xRnd4-000000007cE-1sEt
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 13 Nov 2026 08:03:54 +0000
-Received: by mail-qk1-f200.google.com with SMTP id
- af79cd13be357-93f2005ce21so120492085a.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 13 Nov 2026 00:03:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1794557027; x=1795161827;
- darn=lists.sourceforge.net; 
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=32C0FxBlQriZemWnWfi76aDhbmP3Z0qG7c56b0ARCqE=;
- b=mOOOvMM7ytiI5Bd16qBj9mOtwDwsHJG7sKSuhOw7n2aZOBfuHtiZk3p+vTpY+61/Qs
- f8HVnBV6zhs6gcNANqvsxFCTH5R0+HGj8eTG9Qx/qVY2tqprlRQogujGT4/0+jnySrCg
- wyrhZAmffS+zyXptkRyjJKC0VxtDHoQ1D9jj8R8Jm6Hi3gxNql9O9rYIjS2IiBxxx+nt
- awIo4s4pXoYqrvizwcTK3bY9yY5G0rKaieMuql1Q0TONbLJC8AVBHqMJfDoXp9gjj994
- wnU+e1I16vR5svL5yS3TSJrK1WkSB0MIq/alAcUhn5dDZJCi03nttQL30M5L3NVG6xr2
- 3S9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794557027; x=1795161827;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=32C0FxBlQriZemWnWfi76aDhbmP3Z0qG7c56b0ARCqE=;
- b=0ehNgZPQtM82Tyuhsdulz7XfMTLOK62y5LFEAU/sUasv7R6hHQN0vvyNrMuV1tn26W
- Sq2Yy/fpP04LJd3TLnWVU99H2ZHGie6aDcelsfKHUKICR6AFfDyQ/fqMtzUDBjusVBFR
- oLUjUloSaRKWoldJi8NNyrhfNiQGqCGZfY5Xi+5v7pVqW/Llfp1ybhY2HKdzkheTA61n
- NdBkmahd/NQW11rUpHsachprP9wTl9lgx6blBHBRsAe0qTyrKJeX1gXQObe56qg46u5P
- qFyAQKwxn29acJUJS8gyJfDQQgTlRrFVJwifu9sFRB6aunqMYnbsWuN4CUw5Z9bOcVy3
- wVaw==
-X-Forwarded-Encrypted: i=1;
- AL+hErGilwBUitOvWCwkakb10xOUNWQYuVjoQOe46yeBnUAq29HGddk5bkXep+MZwNfkink2D5U79NINqRmajkKMP9eq@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z8nPNtgr3BC+HZwFBPv9GdtxUsJYdw1/cIIPgSG/M28ACMZfYGi
- SeoygFDPGzJBBAEiFcVZD3M+e369MmjS2/kbGR/jn2j2RGG/BtaEw3bLXGQav65N1ESvoPHLC5D
- ukZ9RhomsDukhITxOWB7aLGRerUt61DI/iRB73Q==
-X-Received: from dyp12.prod.google.com ([2002:a05:693c:65cc:b0:36c:9b55:8436])
- (user=sarthakkukreti job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:7301:1a05:b0:369:f035:661 with SMTP id
- 5a478bee46e88-37967315a1emr1295500eec.15.1794552822463; 
- Thu, 12 Nov 2026 22:53:42 -0800 (PST)
-Date: Thu, 12 Nov 2026 22:53:31 -0800
-In-Reply-To: <20261113065332.929085-1-sarthakkukreti@google.com>
+ Fri, 13 Nov 2026 09:31:33 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 1B51342E29;
+ Fri, 13 Nov 2026 09:31:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68321F000C4;
+ Fri, 13 Nov 2026 09:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1794562285;
+ bh=U+T4uJ/e8/uh76kjQ5Uc9g/ybxEFK3XIJAOLTkG2Nds=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=SkevgVD3y0KBQDFc35+Xm3Vp1FTWw7yzvBaNGH5AIIsVODesjyHZvCjMr89UoeGXq
+ L4pfTvoZHc4AjXxWo72FhCC5po/1IkVbUj2m5khZom2Ias3DJFs3ldtyP61Lcbiu0C
+ hl0+dJ0kEvToxfNojfUSd5VWkk1D8TnqxG6Ck0KzEv/0bhd9qdgOQJDASygIZZJK5j
+ hkwsvuSjMaeUnAZ2M8Wwte20vqushYu8R6UtrqDpcT/pLbpps3DD26187iwMCYp2xM
+ NqReSRoPng1JY223qLCugqqmdGD3WIlDAY4J0lZtz+o610Z4dg7zfPW4PsFrzUquMf
+ zCD51KcDKuJYw==
+Message-ID: <86627f3f-cdda-4165-8ca2-0c8dd4e321a9@kernel.org>
+Date: Fri, 13 Nov 2026 17:31:21 +0800
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-References: <20261113065332.929085-1-sarthakkukreti@google.com>
-X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
-Message-ID: <20261113065332.929085-3-sarthakkukreti@google.com>
-To: "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>
-X-Spam-Score: -7.6 (-------)
-X-Headers-End: 1xRmGH-0000000088U-0pdf
-Subject: [f2fs-dev] [PATCH 2/3] ext4: reject casefolded names that fold to
- ".", "..", or empty
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Seongjae Jeong <jsjlee1020@gmail.com>
+References: <20261004061007.7433-1-jsjlee1020@gmail.com>
+ <f3f5fe2c-f0f5-4c23-a2f7-6cb5e09ced5a@kernel.org>
+ <CAPHXVrzaWHYccYe+PWLeAf_N3md8ens0UsW7aH-047KGhM4BUg@mail.gmail.com>
+ <102da404-ab62-4ba6-b46a-1846ca64c72b@kernel.org>
+ <CAPHXVry2O-AYxTvGdzu+m6b3Q=ho=xL0kpWWqCn0vjj-gOe0ZQ@mail.gmail.com>
+ <0e156b8a-2876-4bbe-b16c-55c70b3201b3@kernel.org>
+ <CAPHXVrxHvXChxiBxCcHWLaFwvatnDVhSu7wdvPWiBDYaUSOQJg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAPHXVrxHvXChxiBxCcHWLaFwvatnDVhSu7wdvPWiBDYaUSOQJg@mail.gmail.com>
+X-Spam-Score: -0.2 (/)
+X-Headers-End: 1xRnd4-000000007cE-1sEt
+Subject: Re: [f2fs-dev] [PATCH] f2fs: skip further SIT updates for already
+ invalidated blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,114 +97,53 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Sarthak Kukreti via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Sarthak Kukreti <sarthakkukreti@google.com>
-Cc: Eric Biggers <ebiggers@google.com>,
- Sarthak Kukreti <sarthakkukreti@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
- Dmitry Torokhov <dtor@google.com>
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, yi.sun@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
+	SPF_HELO_PASS,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Filenames consisting solely of ignorable Unicode characters fold to
-empty strings, while names with leading dots and ignorable characters
-fold to "." or "..". Allowing such names to be created or looked up in
-casefolded directories collides with on-disk "." and ".." entries (which
-triggers EXT4_ERROR_INODE in ext4_lookup()) and introduces duplicate
-entries that e2fsck flags as corruption.
+Hi Seongjae,
 
-Skip casefolding when the lookup name is literally "." or "..", reject
-any non-dot names that fold to "", ".", or ".." in
-ext4_fname_setup_ci_filename(), and fall back to opaque byte hashing in
-ext4fs_dirhash() when utf8_casefold() yields "", ".", or "..".
+On 11/12/26 18:36, Seongjae Jeong wrote:
+>> I don't see how commit a66cdd985532 ("f2fs: introduce discard_map for f2fs_trim_fs")
+>> introduce the bug? from the timeline, at that point there is no error handling in
+>> update_sit_entries() if sit bitmap is inconsistent, right?
+>>
+> 
+> Hi Chao,
+> 
+> Commit a66cdd985532 added the following two lines:
+> 
+>     if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map))
+>         f2fs_bug_on(sbi, 1);
 
-Fixes: b886ee3e778e ("ext4: Support case-insensitive file name lookups")
-Co-developed-by: Dmitry Torokhov <dtor@google.com>
-Signed-off-by: Dmitry Torokhov <dtor@google.com>
-Signed-off-by: Sarthak Kukreti <sarthakkukreti@google.com>
----
- fs/ext4/hash-test.c | 14 ++++++++++++++
- fs/ext4/hash.c      |  2 +-
- fs/ext4/namei.c     |  9 +++++++--
- 3 files changed, 22 insertions(+), 3 deletions(-)
+Previously, we will trigger f2fs_bug_on() and there is no further error handling
+at that point, so that we will update SIT_I(sbi)->written_valid_blocks as well
+incorrectly, so I don't think this is a bug of a66cdd985532.
 
-diff --git a/fs/ext4/hash-test.c b/fs/ext4/hash-test.c
-index 49b0d874c833..a8b206a6d751 100644
---- a/fs/ext4/hash-test.c
-+++ b/fs/ext4/hash-test.c
-@@ -541,6 +541,20 @@ static void test_ext4fs_dirhash_casefold_fallback(struct kunit *test)
- 	KUNIT_ASSERT_EQ(test, ret_plain, 0);
- 	KUNIT_EXPECT_EQ(test, folded_dir.hash, plain.hash);
- 	KUNIT_EXPECT_EQ(test, folded_dir.minor_hash, plain.minor_hash);
-+
-+	ret_cf = ext4fs_dirhash(&ei->vfs_inode, ".\xe2\x80\xae", 4, &folded_dir);
-+	ret_plain = ext4fs_dirhash(plain_dir, ".\xe2\x80\xae", 4, &plain);
-+	KUNIT_ASSERT_EQ(test, ret_cf, 0);
-+	KUNIT_ASSERT_EQ(test, ret_plain, 0);
-+	KUNIT_EXPECT_EQ(test, folded_dir.hash, plain.hash);
-+	KUNIT_EXPECT_EQ(test, folded_dir.minor_hash, plain.minor_hash);
-+
-+	ret_cf = ext4fs_dirhash(&ei->vfs_inode, "\xe2\x80\xae", 3, &folded_dir);
-+	ret_plain = ext4fs_dirhash(plain_dir, "\xe2\x80\xae", 3, &plain);
-+	KUNIT_ASSERT_EQ(test, ret_cf, 0);
-+	KUNIT_ASSERT_EQ(test, ret_plain, 0);
-+	KUNIT_EXPECT_EQ(test, folded_dir.hash, plain.hash);
-+	KUNIT_EXPECT_EQ(test, folded_dir.minor_hash, plain.minor_hash);
- }
- #endif
- 
-diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
-index 978bd92da0ad..65019de4af93 100644
---- a/fs/ext4/hash.c
-+++ b/fs/ext4/hash.c
-@@ -327,7 +327,7 @@ int ext4fs_dirhash(const struct inode *dir, const char *name, int len,
- 			return -ENOMEM;
- 
- 		dlen = utf8_casefold(um, &qstr, buff, PATH_MAX);
--		if (dlen < 0) {
-+		if (dlen <= 0 || name_is_dot_dotdot(buff, dlen)) {
- 			kfree(buff);
- 			goto opaque_seq;
- 		}
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index a6386c1d237f..096f78ea5df4 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1368,7 +1368,8 @@ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- 	int len;
- 
- 	if (!IS_CASEFOLDED(dir) ||
--	    (IS_ENCRYPTED(dir) && !fscrypt_has_encryption_key(dir))) {
-+	    (IS_ENCRYPTED(dir) && !fscrypt_has_encryption_key(dir)) ||
-+	    name_is_dot_dotdot(iname->name, iname->len)) {
- 		cf_name->name = NULL;
- 		return 0;
- 	}
-@@ -1378,9 +1379,13 @@ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- 		return -ENOMEM;
- 
- 	len = utf8_casefold(dir->i_sb->s_encoding, iname, buf, EXT4_NAME_LEN);
--	if (len <= 0) {
-+	if (len < 0) {
- 		kfree(buf);
- 		buf = NULL;
-+	} else if (len == 0 || name_is_dot_dotdot(buf, len)) {
-+		kfree(buf);
-+		cf_name->name = NULL;
-+		return -EINVAL;
- 	}
- 	cf_name->name = buf;
- 	cf_name->len = (unsigned) len;
--- 
-2.56.0.611.g1030f0b940-goog
+Thanks,
+
+> + if (f2fs_test_and_clear_bit(offset, se->discard_map))
+> +     sbi->discard_blks++;
+> 
+> Even if the cur_valid_map bit was already clear, the added code
+> could still clear the discard bit and increment discard_blks if the
+> discard bit was set.
+> 
+> Since my patch skips that update for an already invalidated block,
+> I thought a66cdd985532 was an appropriate Fixes tag for the discard
+> bitmap part of the change.
+> 
+> Thanks,
+> Seongjae
 
 
 
