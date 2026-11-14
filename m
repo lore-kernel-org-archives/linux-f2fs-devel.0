@@ -1,42 +1,42 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE7D606A330
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Nov 2026 01:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F0E606A33B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Nov 2026 01:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=Knq5yOxO;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=GhOPGBZ1;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Hiuzhr7q;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Sqn19WJw
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=QUnVww2c;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=KngSgI9Z;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=EAGnCsb3;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IvwEiiRK
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=ozzgoZzkh6nMsGyqEJ8HG8OzzJg651b26t4/gV65KkE=; b=Knq5yOxO6Iwo04lncOdGzVYHBv
-	dP7+M7XHRjEOe99yG7uFCmgDPeA7nZHJYzzsaosHryr7k3RSAsZ6o91C3R+Lkm9L3R+vpcd+pXGwr
-	iExD5eZ/2t9dgeqxG5t0Jw+2HtKrvmhaQxF7OSy1eQVSFwWnG+dJr7F511flMSDj2MHY=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=q1fkHXQLSRebhCjrHXyaNAACgpJ1YNsSseWf/7PJBiU=; b=QUnVww2cEL6cGt3M+UD86IVC/h
+	J3JgEhXbfmHL9A3Y2fizpYHnL0XWbquf5O5HSye8MFfMlyrU5oDA7mxm7MiYdjDpTw8xP0v7GE42D
+	k/065wrz6fj796Y06ipdespTRYDEfD1At20aPx/RZv0MTMlG8oTGveuRLF7iEld/MF0U=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xS2Oq-00000000271-2CnJ;
-	Sat, 14 Nov 2026 01:17:48 +0000
+	id 1xS2PL-000000002pg-0009;
+	Sat, 14 Nov 2026 01:18:19 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <daeho43@gmail.com>) id 1xS2Op-0000000026v-1gL5
+ (envelope-from <daeho43@gmail.com>) id 1xS2PK-000000002pa-0ZNq
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 14 Nov 2026 01:17:47 +0000
+ Sat, 14 Nov 2026 01:18:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6UTFVXkWgy98qyxzLDJCgKeEPxYMOKuPd/fVMWkBbdI=; b=GhOPGBZ1+MrTmp14azRSx4EfOf
- V0l42PLmRupi7kZQEjClVCFoqxrnvf2rQPo0IN3dFq9E/Ey/l7o6YGZNae7zYcQabWdM9bTm5EuCh
- w3cvDQ7/ct1LHAp8moM/HCZTGoBPrIvTJXA6HXb5mfd4WgDnICyqNLYuy37ieQS2t/hw=;
+ bh=/NJq1tNVgAxL0JcudyOin08tnS8RNWNKJF+n6CZo2GE=; b=KngSgI9ZHMH8SmVdeicVMjOuWS
+ KRnLBs+9wUaXtyukp6FweOl5NnGYygAbQqHwUUnvTyxisoAMP0Zw02TdYKvpLVPRUOx126IO5OOtm
+ GWwFnReqDMVV3vfvCiFAwEhfHHHlezX5jXsn54887379Z1vW11w5xaZAUP90sAA8oAC4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
@@ -44,77 +44,77 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6UTFVXkWgy98qyxzLDJCgKeEPxYMOKuPd/fVMWkBbdI=; b=Hiuzhr7qoMwUMU3auSszoBRjhz
- yvjrMiE24whZj4iymzTaOYXj4xJKsC1p1rEAjQIpP/pGSR62REKhyUZxC4xZf94WqqZIXAzhfSMYz
- zBKVleWXLZXysqGMQU2NmURu578CVaEKl5+Z1cAlcC7Ipf3wrW5YMWP167F9E7Km+AsM=;
-Received: from mail-pl1-f174.google.com ([209.85.214.174])
+ bh=/NJq1tNVgAxL0JcudyOin08tnS8RNWNKJF+n6CZo2GE=; b=EAGnCsb3xD4V40zWaY8b9NrnZN
+ 5OYMfbFA3+BcnxZxjOwvdFMWtFahzEq4ozEt1K5YZunS6lEl3TaOmVk9GZMm1+yzGOvjc/9jAzJl0
+ +DSBbU2WqM7iu2wPj3kDu78H+t3c6m+Q0khL9wPQGd3YlR6Yp0CnDua8OryMhpMl0JtM=;
+Received: from mail-pf1-f176.google.com ([209.85.210.176])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xS2Oo-000000000w7-3Ncx
+ id 1xS2PI-000000000wQ-3etv
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 14 Nov 2026 01:17:47 +0000
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2e9e53d011eso19126625ad.1
+ Sat, 14 Nov 2026 01:18:17 +0000
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-8b600fae14dso907712b3a.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 13 Nov 2026 17:17:46 -0800 (PST)
+ Fri, 13 Nov 2026 17:18:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794619061; x=1795223861; darn=lists.sourceforge.net;
+ d=gmail.com; s=20260707; t=1794619091; x=1795223891; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=6UTFVXkWgy98qyxzLDJCgKeEPxYMOKuPd/fVMWkBbdI=;
- b=Sqn19WJwhdx9FH+sefwZ5xslDyuk5I0p03xwHAic2XO2MetcEVxqnAOjsCy85TZ9FY
- x3++L0sKajlneQSu5wkjHtocRCtQ7E2SeVG1dr2G8aVuXbn5PC+sJFtDgZaWWmOAINMz
- hu0M4HVcvuHMRfyhvhwk8JxxbiBhJrXVEagw723hE7SLVuo7HFUVQSFqMXXXVgv+ou2s
- ZQ3ClhF8Ug9iacHYVPc+c0Djtj5hok3UCzX9jLwo4sVN1BUy6lRnb/QgcBvPgCEU8PTU
- Y15kHz0cQrV0AbsdbyYxggM0bOMrcQ8IuTsEae2HQDbs6jsICttnYfuZ4ZhkT1OgDjCK
- Jb0g==
+ bh=/NJq1tNVgAxL0JcudyOin08tnS8RNWNKJF+n6CZo2GE=;
+ b=IvwEiiRKHQ0OYXTjWxBI5A6IWrj2D1ZZ43hLrKyn4vsjrtE9a+cAN202H4ZT2XawZd
+ EODrxy7xWViaif5MCTn7xTsVsm0Gy9vgLihK0zW3P7mDkAjAg+L3I+t+LTei7JL5Lde6
+ AlVjIoJAjYF9Bb4eBRPxZ5A3oOgB6iZE8YiCS8eSeyILHsVGP0eIEkpSfy9QEKnX242O
+ /kdcy4DmGR+/YWq18VUwRkP59PvHRHP2hoH70tTFSetvkg1zWHFKngLwhL2T1eCp+Ahf
+ 2knjWReI9BAuNhoJoWrAQp68BGwN3XKt3h/HeHltPtaIKKHsKjrToJZAIG0MDFy8Lbaa
+ OdpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794619061; x=1795223861;
+ d=1e100.net; s=20260707; t=1794619091; x=1795223891;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=6UTFVXkWgy98qyxzLDJCgKeEPxYMOKuPd/fVMWkBbdI=;
- b=EmBj/1kKEBDg4ZFPIKPI4l2md5YiRTWxk20ZMScAmR/9PZhCODNwLQE2UlkOlHuLR2
- R2rCPELxJTl0h+cNvQgzJTgwh7k85spSqd5th5AAhcxej/k3rlfAfUBLVakFRBtUvmpG
- HKV0wvdEq2T+9b9306m16incJl58+2+rqKjIlj7Sc9WohuLTzkYmHi2Hp/7qO7j7F/uh
- mV1BifFxw67JtrSn5Fr4a4N3PLQYjaQ92SfOuwJ/3st1P8D1In8hHLKPtZNNcbSjGoZw
- ZWgzGo935DdlMwVfSH510t3DQ/T9AM0tOI1VwiBsEKJrLsYFJPjHEbMg104eO6G6cbi7
- 9GpQ==
+ bh=/NJq1tNVgAxL0JcudyOin08tnS8RNWNKJF+n6CZo2GE=;
+ b=l1wefFzeuZ5AxigM5R04h8jV4nAmG07agvc/mDWV6Fkvc+X11q3ONc10LvOH8tmI/W
+ C6zxZqrTxI5IsjpttZ+lb5KXx1Sv19mBH1tQuDFvYb97c870eYLwcce6Gs5bbbuvETQT
+ BV/BorvqC2mg9hLWXuT0tkItXT0J/GJmwQp+/FG2DLvDrwZ6ojiFUAz/+4ujSGCNCfE7
+ qNVRN5emAcb+zmrpmpL6vyOuXqreHgwL6D67PFzOeIYWj2PEQvwJDG6BFeGj7NyGkREu
+ sbavLj5vnjBKxj32KiGWnkhbXiQH/Lypz3+CxQ41AWDqAPqTteJMn9+5slQfEdPrV0wS
+ uMtQ==
 X-Forwarded-Encrypted: i=1;
- AL+hErF0b+c8w7iyylWKONIZsxyrmpmvj1coDX/KrhadONoaABmAaNLHxgFlzaSbG7HOuNiZ3DxFBsP/80/woI8i3t4W@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z+Xm1VKrgya/+YmYbBGSQcbG09zGjeMyDI5eb4l7JewZMRMyBh0
- AVH94NUFNAQ+TfGZcm8i2yjkxgQwTM7B9QpDvLb9+x22Q/1bncWEwO1n
-X-Gm-Gg: AYBFou07ATci+9G0jTiVJc6MsQksNh7S4EJ7gqbDSsRqCkLS+HcxAyYAZZAaW25UIwD
- 7Lt5OZ/w02LpYEroYxfOyx29stkesmm9ba6O6UBFQZi4LeMHM29Rn/Ft95tRS6Fholtmb6UxCdj
- czrgxAGEDjq1eMGEeNVoxGROEvaQkJqAs7f3Pj+AL+eIvi8AhXRQJmYD0ifWBDQGh8GxZpsQMHh
- yYv+Nod9vMgSox9jS2ovEyKYujSSsIDJNkMsKttg5T2grwU9cKTjTQsuhphTzYZuAde5CBU0YL6
- IYNpPFVlZPhwNCeV/39L6wCBp/Nxw9elZP0Ad6ErimGVVGyg7ZzaKiL/fpxL609rPBTOZZlgGCh
- x6SfPOqLQ9MIvqtbsJ/AV0qS9bpdpstFf4kY+P5Sl3pvM6E3DP1WhsTNp6r7JhmjqJyUUjouTNU
- GsBl1nCiSFPiai/KW0XdSgmtH0TrQ+ufg7QmaR3NnOYFoKNz4/nJut7aBSu2b+205m8+i7QgbMh
- h7J3xM0TQHxKO1JHatnX8VkvsHezSqfEDZcbWxg+dSsF37VGDvD3lsszPOotxs74+5wbxt0IS7q
- KbgLl5NWZkijnDG5KN6wkJCIMJsotyT/1cMErwXfhiUizUaxbNYcPFvnR0WYnX0V5S5lfru2749
- tlyEPPPqoq3StaG6eSN4oOfVTQ0f/mdz8M5471pOeriDhG/M=
-X-Received: by 2002:a17:903:41c4:b0:2ed:cab:e977 with SMTP id
- d9443c01a7336-2ee0da966e7mr44417145ad.12.1794619060990; 
- Fri, 13 Nov 2026 17:17:40 -0800 (PST)
+ AL+hErHcCxAED4Y/72noonNNhx/dabNXwvVXm+/fXRzNSK6vR8AuZa4KmAP6YO1edrR95I97SpQjU/2H2pe73/RurEGe@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z+SMs7Nce1Cb89cbA00+olc6zISQhH8OqakiHG9Rx5ZK0l3Tvba
+ ivJeRsXNI3cexj8ll+IBsoh5BWyH+x0mAIajPdaeDMV3ZOCESZNoCq2A
+X-Gm-Gg: AYBFou25qRQZ0OIpMuKzoCRaXKU5ubXZiTBO+eIWBRy+nzsaJB69wtolvqMVkiJ0eRk
+ b2TbtEttJPLGicVTBbhDweH06HPUqT45aK7PsC/4r/UTiLAkYNwqUAk8TSs94rMnZ8K9P65hD5N
+ 1By6YYiXpExP051T2rf4gMpMJVKpYXNUzBri9Yx+DuRQLSY4xNIX8OrYwkEzkIY4Zcu0m7GCAJ7
+ mOU2A7uwqG6Bn0N+1G5wASoISoryix2Y7YAzhT9OWx/F6UgQ9ApA6bUi+syJAKa3vTEYF5XQO+c
+ 1hfOn2Kr726qVhDIOqLOBGPCipVakEp8b14gzR3ITAMf5aVA0MA1fePWYco7cFgNWX5UMeLkNAI
+ J9akGQKlbfNb2oKl2xA8H8TPukeI05DgUnvyGpn9uh6tWZMhou+nj1cGo++yA5bCiwAW9DbztUS
+ I20kjH7T3Z2UR4t4XF/5OZ1fkDzBOUHViV0hAJCp8alNZqTh4c3mFhh365DjbASQuvKFoWY5XuE
+ RCkraPWUnhSizNNQYMdXYc3muaMplNOtwnvuBDqynaBJQCXJVunQwRJZwK6KGFaHq5zhwFnxxnV
+ Ur0+0c2SpsThL+xV53BkeSM8eCR9IwRs6gCtEKuVB0CXF+RWuiF/eyC+DvcWeqFPw3C/luh8H1z
+ mnDsHJoOD5xScx1iplZalFyePmMmQ9s1fU4tnGA99IX34sY8=
+X-Received: by 2002:a17:903:3d10:b0:2e9:401f:f0f8 with SMTP id
+ d9443c01a7336-2ee0dd2c33emr40369315ad.53.1794619091051; 
+ Fri, 13 Nov 2026 17:18:11 -0800 (PST)
 Received: from f2fs-test.c.googlers.com.com
  (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2ee0f4acd77sm16792445ad.3.2026.11.13.17.17.38
+ d9443c01a7336-2ee228b2581sm7755715ad.63.2026.11.13.17.18.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Nov 2026 17:17:40 -0800 (PST)
+ Fri, 13 Nov 2026 17:18:10 -0800 (PST)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Fri, 13 Nov 2026 17:17:34 -0800
-Message-ID: <20261114011734.3806377-1-daeho43@gmail.com>
+Date: Fri, 13 Nov 2026 17:18:07 -0800
+Message-ID: <20261114011807.3811774-1-daeho43@gmail.com>
 X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: 1.1 (+)
-X-Headers-End: 1xS2Oo-000000000w7-3Ncx
-Subject: [f2fs-dev] [PATCH] f2fs: avoid underflow in
- get_available_block_count()
+X-Headers-End: 1xS2PI-000000000wQ-3etv
+Subject: [f2fs-dev] [PATCH v3] f2fs: reserve space to be shrunk during
+ resize_fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,7 +124,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, stable@vger.kernel.org
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
@@ -137,84 +137,248 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Daeho Jeong <daehojeong@google.com>
 
-get_available_block_count() subtracts current_reserved_blocks,
-alias_reserved_blocks and root_reserved_blocks from user_block_count
-without checking the result. Only unusable_block_count is handled so
-that the result does not go below 0.
+f2fs_resize_fs() drops gc_lock and the cp lock between the free space
+check and freeze_super(). In that window, others can allocate the free
+space, so the second check after freeze_super() fails with -ENOSPC.
+This is easy to hit on a busy filesystem, e.g. at OTA install time.
 
-f2fs_ioc_reserve_dev_alias() checks the free space with the root
-reserved blocks allowed when root calls it, so alias_reserved_blocks can
-overlap with the root reserved blocks until the reservation is turned
-into valid blocks. For example, with
+Reserve the space to be shrunk via resize_reserved_blocks once the
+first check passes, and deduct it in __get_available_block_count() like
+alias_reserved_blocks. Release it on success or on error.
 
-  user_block_count = 1000, root_reserved_blocks = 100, valid blocks = 30
+With the reservation, the second check should not fail anymore, so:
+- allow root reserved blocks, which root may use in the meantime,
+- recheck DISABLE_CHECKPOINT, which remount may set in the meantime,
+  since freeze_super() fails only when the fs is still dirty,
+- keep the check only as a WARN_ON_ONCE() safety net.
 
-reserving an alias device of 950 blocks passes the check, since
-30 + 950 <= 1000, and sets alias_reserved_blocks to 950. Then, for a
-user who cannot use the root reserved blocks, the available block count
-is 1000 - 950 - 100, which wraps around to a huge value, so the check in
-inc_valid_block_count() does not stop such a user until the reservation
-is done.
+Also exclude the alias/resize reservations when updating
+current_reserved_blocks via sysfs. Otherwise, the reserved blocks can
+take the space which is already reserved, and the second check fails.
 
-current_reserved_blocks can make it wrap in the same way, for root as
-well, when reserved_blocks is written through sysfs in the meantime,
-since it is set without considering alias_reserved_blocks.
-
-Sum up all the reservations and return 0 if they do not fit in
-user_block_count, as was done for unusable_block_count only.
-
-Fixes: eae3faf210bd ("f2fs: support dynamic reserve/release for device aliasing")
-Cc: stable@vger.kernel.org
+Suggested-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
-This was discussed in the review of "[PATCH v2] f2fs: reserve space to be
-shrunk during resize_fs" [1]. v3 of that patch is sent separately on top
-of this one.
+This patch depends on "f2fs: avoid underflow in
+get_available_block_count()", which is sent separately.
 
-[1] https://lore.kernel.org/linux-f2fs-devel/20261022165526.1539629-1-daeho43@gmail.com/
+v2: https://lore.kernel.org/linux-f2fs-devel/20261022165526.1539629-1-daeho43@gmail.com/
 
- fs/f2fs/f2fs.h | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+Changes in v3:
+- Rebase on top of the patch above. In the case from the v2 review
+  (user_block_count = 1000, root_reserved_blocks = 100, valid = 30, resize
+  reserves 500, then 500 is written to reserved_blocks),
+  current_reserved_blocks becomes 470. The reservations add up to 1070 for
+  a user who cannot use the root reserved blocks, so that user gets 0
+  instead of a wrapped value. Root gets 30, which equals the valid blocks,
+  so the second check still passes.
+- Update the comment in the sysfs hunk: the reservations are excluded so
+  that the second check does not fail, not to avoid the underflow.
+- Rebase onto the latest dev-test.
+
+Changes in v2:
+- Exclude alias/resize reservations from current_reserved_blocks.
+- Allow root reserved blocks in the second check, with WARN_ON_ONCE().
+- Recheck DISABLE_CHECKPOINT after freeze_super().
+
+ fs/f2fs/f2fs.h  | 19 +++++++++++++----
+ fs/f2fs/gc.c    | 54 ++++++++++++++++++++++++++++++++++++++-----------
+ fs/f2fs/super.c |  1 +
+ fs/f2fs/sysfs.c | 11 +++++++++-
+ 4 files changed, 68 insertions(+), 17 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 50a5f845176d..59bc3c2fb70a 100644
+index 59bc3c2fb70a..d9cf2d4fae21 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -2710,23 +2710,20 @@ static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
- static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
- 						struct inode *inode, bool cap)
- {
--	block_t avail_user_block_count;
--
--	avail_user_block_count = sbi->user_block_count -
--					sbi->current_reserved_blocks -
-+	u64 reserved = (u64)sbi->current_reserved_blocks +
- 					sbi->alias_reserved_blocks;
+@@ -1920,6 +1920,7 @@ struct f2fs_sb_info {
+ 	block_t reserved_blocks;		/* configurable reserved blocks */
+ 	block_t current_reserved_blocks;	/* current reserved blocks */
+ 	block_t alias_reserved_blocks;		/* reserved blocks for device alias */
++	block_t resize_reserved_blocks;		/* reserved blocks for resize_fs */
  
- 	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, inode, cap))
--		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
-+		reserved += F2FS_OPTION(sbi).root_reserved_blocks;
- 
--	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
--		if (avail_user_block_count > sbi->unusable_block_count)
--			avail_user_block_count -= sbi->unusable_block_count;
--		else
--			avail_user_block_count = 0;
--	}
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
-+		reserved += sbi->unusable_block_count;
-+
-+	/* the reservations can overlap each other, so do not wrap around */
-+	if (unlikely(reserved >= sbi->user_block_count))
-+		return 0;
- 
--	return avail_user_block_count;
-+	return sbi->user_block_count - reserved;
+ 	/* Additional tracking for no checkpoint mode */
+ 	block_t unusable_block_count;		/* # of blocks saved by last cp */
+@@ -2707,13 +2708,14 @@ static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
+ 	return false;
  }
  
+-static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+-						struct inode *inode, bool cap)
++static inline unsigned int __get_available_block_count(struct f2fs_sb_info *sbi,
++						       bool allow_root)
+ {
+ 	u64 reserved = (u64)sbi->current_reserved_blocks +
+-					sbi->alias_reserved_blocks;
++					sbi->alias_reserved_blocks +
++					sbi->resize_reserved_blocks;
+ 
+-	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, inode, cap))
++	if (test_opt(sbi, RESERVE_ROOT) && !allow_root)
+ 		reserved += F2FS_OPTION(sbi).root_reserved_blocks;
+ 
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+@@ -2726,6 +2728,15 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+ 	return sbi->user_block_count - reserved;
+ }
+ 
++static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
++						     struct inode *inode,
++						     bool cap)
++{
++	bool allow_root = __allow_reserved_root(sbi, inode, cap);
++
++	return __get_available_block_count(sbi, allow_root);
++}
++
  static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
+ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 				 struct inode *inode, blkcnt_t *count,
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 337ecf4df945..7609c23ec27b 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -2420,6 +2420,7 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ 	struct f2fs_lock_context glc;
+ 	struct f2fs_lock_context clc;
+ 	unsigned int secs, old_tail;
++	bool reserved = false;
+ 	int err = 0;
+ 	__u32 rem;
+ 
+@@ -2471,10 +2472,17 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ 	f2fs_lock_op(sbi, &lc);
+ 
+ 	spin_lock(&sbi->stat_lock);
+-	if (shrunk_blocks + valid_user_blocks(sbi) +
+-		sbi->current_reserved_blocks + sbi->unusable_block_count +
+-		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
++	if (shrunk_blocks + valid_user_blocks(sbi) >
++			__get_available_block_count(sbi, false)) {
+ 		err = -ENOSPC;
++	} else {
++		/*
++		 * Reserve the space to be shrunk so that no one, including
++		 * root, can allocate it until the shrink is done.
++		 */
++		sbi->resize_reserved_blocks += shrunk_blocks;
++		reserved = true;
++	}
+ 	spin_unlock(&sbi->stat_lock);
+ 
+ 	if (err)
+@@ -2488,29 +2496,45 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ out_drop_write:
+ 	mnt_drop_write_file(filp);
+ 	if (err)
+-		return err;
++		goto out_release;
+ 
+ 	err = freeze_super(sbi->sb, FREEZE_HOLDER_KERNEL, NULL);
+ 	if (err)
+-		return err;
++		goto out_release;
+ 
+ 	if (f2fs_readonly(sbi->sb)) {
+ 		err = thaw_super(sbi->sb, FREEZE_HOLDER_KERNEL, NULL);
+-		if (err)
+-			return err;
+-		return -EROFS;
++		if (!err)
++			err = -EROFS;
++		goto out_release;
++	}
++
++	/* checkpoint can be disabled by remount before freeze_super() */
++	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
++		f2fs_err(sbi, "Checkpoint should be enabled.");
++		err = thaw_super(sbi->sb, FREEZE_HOLDER_KERNEL, NULL);
++		if (!err)
++			err = -EINVAL;
++		goto out_release;
+ 	}
+ 
+ 	f2fs_down_write_trace(&sbi->gc_lock, &glc);
+ 	f2fs_down_write_trace(&sbi->cp_global_sem, &clc);
+ 
+ 	spin_lock(&sbi->stat_lock);
+-	if (shrunk_blocks + valid_user_blocks(sbi) +
+-		sbi->current_reserved_blocks + sbi->unusable_block_count +
+-		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
++	/*
++	 * shrunk_blocks is already accounted in resize_reserved_blocks, so
++	 * this should not fail. Allow root reserved blocks here since root
++	 * may have used them after the first check, regardless of resize.
++	 */
++	if (WARN_ON_ONCE(valid_user_blocks(sbi) >
++			__get_available_block_count(sbi, true))) {
+ 		err = -ENOSPC;
+-	else
++	} else {
+ 		sbi->user_block_count -= shrunk_blocks;
++		sbi->resize_reserved_blocks -= shrunk_blocks;
++		reserved = false;
++	}
+ 	spin_unlock(&sbi->stat_lock);
+ 	if (err)
+ 		goto out_err;
+@@ -2559,5 +2583,11 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
+ 	f2fs_up_write_trace(&sbi->cp_global_sem, &clc);
+ 	f2fs_up_write_trace(&sbi->gc_lock, &glc);
+ 	thaw_super(sbi->sb, FREEZE_HOLDER_KERNEL, NULL);
++out_release:
++	if (reserved) {
++		spin_lock(&sbi->stat_lock);
++		sbi->resize_reserved_blocks -= shrunk_blocks;
++		spin_unlock(&sbi->stat_lock);
++	}
+ 	return err;
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 78dbf1e92285..f5966ae2d11b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -5414,6 +5414,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->reserved_blocks = 0;
+ 	sbi->current_reserved_blocks = 0;
+ 	sbi->alias_reserved_blocks = 0;
++	sbi->resize_reserved_blocks = 0;
+ 	limit_reserve_root(sbi);
+ 	adjust_unusable_cap_perc(sbi);
+ 
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 430356e500af..8ab9a5098f1c 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -594,6 +594,8 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 	}
+ #endif
+ 	if (a->struct_type == RESERVED_BLOCKS) {
++		block_t avail, valid;
++
+ 		spin_lock(&sbi->stat_lock);
+ 		if (t > (unsigned long)(sbi->user_block_count -
+ 				F2FS_OPTION(sbi).root_reserved_blocks)) {
+@@ -601,8 +603,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 			return -EINVAL;
+ 		}
+ 		*ui = t;
++		/*
++		 * Exclude the space reserved for device aliasing and resize_fs,
++		 * otherwise the reserved blocks can take it and make them fail.
++		 */
++		avail = sbi->user_block_count - sbi->alias_reserved_blocks -
++					sbi->resize_reserved_blocks;
++		valid = valid_user_blocks(sbi);
+ 		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+-				sbi->user_block_count - valid_user_blocks(sbi));
++				avail > valid ? avail - valid : 0);
+ 		spin_unlock(&sbi->stat_lock);
+ 		return count;
+ 	}
 
 base-commit: b9d7379d10d43386b59082da8c9a0b111e054781
+prerequisite-patch-id: 5b947a4267506336d2083e4b20686c7c39a4233e
 -- 
 2.56.0.611.g1030f0b940-goog
 
