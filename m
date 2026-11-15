@@ -1,128 +1,120 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F16606A31A
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 15 Nov 2026 16:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06BC606A32C
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 15 Nov 2026 21:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=H9PBpKKf;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=dnqD8Y5I;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Ph/OmUAs;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GoWFHZsl
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=O1OzWkXH;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=esni9OTE;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=akZni/+r;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=d/XZ3hCC
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=YpJP68wd/5LKqaGSUHWRgMZDZXRCEhzucfpTu9eXMAc=; b=H9PBpKKfAji/bU
-	3Nvj7Wyw0/znRjzYqJhONkunRL++UwrSMHptUXxXugRSNPYDKBbyzbctvCiOSwiTpozN7pt3LCokM
-	JNJGoT1war+/CVpIARltWndDGJyD5NVrQy34LM70qBclaNdBi4Ip8jiR8yCAGvfijJgejJSzqB95T
-	1t4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
+	bh=Dt50jz3Yxsfx3G5AZoucq/PQQEVXzkSsZx1n3EDXzbU=; b=O1OzWkXH41sMm1gqc+ww6tYbtQ
+	v/PNwOBWV2ut8u1fYBaFinzbzV9qT2sowzAUBvVN/W3ytbb5pLgeilbZ6sE+AdmSbx7T2BpUcZR6C
+	xNtDTWECYatUo1mc9ADnMczTKb7WG3qvvJLwl+9ZStOVGUsXGgCEY2FCFW61IS7sXTH0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xSdZL-000000003p9-0Pb0;
-	Sun, 15 Nov 2026 16:59:07 +0000
+	id 1xShtE-000000001kl-2V1V;
+	Sun, 15 Nov 2026 21:35:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <david@kernel.org>) id 1xSdZH-000000003oy-2Un1;
- Sun, 15 Nov 2026 16:59:03 +0000
+ (envelope-from <daeho43@gmail.com>) id 1xShtB-000000001kN-2e1p
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 15 Nov 2026 21:35:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7icfoIT+Mng+FLAG3S5PMcuwQv7cbo7W5CDYKdjKwU4=; b=dnqD8Y5Iyv9w+BQ4cye6i/xNkD
- SgvrobfsOQbZZ5B/inMuQsg33/5A1RjjRte5XDeCXy/JzD8Cn2tnlNXOsPJppd09jJf4HMu5sDWbT
- HKQHSUC6d0AnxDDCBj1NV47AgeAph9iEvwdx0He1DzRmDQhv4zp8Vqv20V8MKYWV/R8M=;
+ bh=v+bEaKhMDCZtV/jlBILoWtbmCL9qsyLUohE1CagS/qY=; b=esni9OTEUoVzC/K33sCacGDA+J
+ ywXNAYSomumipzElLGSidUvgzgLEienbAvmjTa+COqJdkamXad8KoEJB7PIhRoMkNMb1L2hpOaOPC
+ +uR0rER+EETjPaFLb41rqYoMJAM2qJpJgRDvPnU5gmkFY4AgEECj3m6GT3rdaMrcL+Ow=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7icfoIT+Mng+FLAG3S5PMcuwQv7cbo7W5CDYKdjKwU4=; b=Ph/OmUAsOK12j9OULOBIP7VoRK
- 5MU1jX5AyZSypvxZ8c9ziQSJEPmj7djnQ/dZ0U1drujAhmsILooSg+qbFu6QdjPqWTaonmv6rr+rh
- 3t+sPIV43VfG2ZWsojBgJt8rzmtmkqnO72AZzOxeZvY08KB+5uJldRmiErtypGO9rlpA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xSdZH-0000000051s-0ciS; Sun, 15 Nov 2026 16:59:03 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id AD40542351;
- Sun, 15 Nov 2026 16:58:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC631F000C4;
- Sun, 15 Nov 2026 16:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1794761937;
- bh=7icfoIT+Mng+FLAG3S5PMcuwQv7cbo7W5CDYKdjKwU4=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To;
- b=GoWFHZslNnHYuGjrh/bx7l/8F07iyWDyej/GltR19PHb0krwpgQZnzQ/w29MU9yvY
- 9N/ydZSw/qY2tK5FaOYCK1ORBjMwxhvWBnuouItS4XKDkbn9gWaeGjF+XgXMKjfDRb
- yRjP08VgPpWhb821Sp+uoP9Td3foxZ3vOKkFT2wkHSIOuMW3DhfBOncL7YGvQAJ7mS
- moyJ26SpKW7UvwaxAzqtXI2cUraP21SQ9Ax6dJRbxzUvfCguVEowEmmIQeonLglFpU
- MQxnJgWY8X4ntDgBifkx9ExXqmq/oX+Iv0Gpat2G+lyO4H7GjhcZ2VGKcIIaDnB2Ev
- itbJF0Q8f6G0Q==
-Message-ID: <f37ccd71-8e1d-4dd4-b11a-e22b9e617dea@kernel.org>
-Date: Sun, 15 Nov 2026 17:58:23 +0100
+ bh=v+bEaKhMDCZtV/jlBILoWtbmCL9qsyLUohE1CagS/qY=; b=akZni/+rfoccMFxa9bvugaUjIB
+ JIq8vzyq6BSkGCVS7guo13EpAlS0U+SVGwTl5PdlSaYZE+Hhrg4sGsUnYnpbefshNPIHN9NFr09pD
+ Zg9RK4LeAZ6XrCUkFECSoMMclpeaGK6MyUPZ+5QrO42mX+rTJbCUk8S4ncL1cB0jHQzU=;
+Received: from mail-pg1-f172.google.com ([209.85.215.172])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xShtA-000000000Ex-4C1H
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 15 Nov 2026 21:35:53 +0000
+Received: by mail-pg1-f172.google.com with SMTP id
+ 41be03b00d2f7-cc4aa18f9afso995954a12.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 15 Nov 2026 13:35:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794778547; x=1795383347; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=v+bEaKhMDCZtV/jlBILoWtbmCL9qsyLUohE1CagS/qY=;
+ b=d/XZ3hCC1jw7ILBpTJjwr1KyB6sgigzU5MpjfqU4G0o5JfzX8TmoR33lTzRUsnrKkY
+ BtwBh7DQcRXUL4CgCZOgQAstzX7FHlXbZfladnrny2dqbsSx7LguoZlQhXu84xaE9dZz
+ UYMAS6JzKkdeNKq2KxFn267PH7uxLsfrZmYMdbj2CqbtCW5j2ZoMRY5Oj+eYd1JKZ+xK
+ iIDiD27KxljGJNOBPrS4/mTEt+tGQnsNFdYBVr+moEr1Qj/a+tfx23b5tVVUVXwwg3wL
+ LeHM7oZK/ojF1UkmJD0TUizjFwH02cLrhmGrmx+UAyuXRys7e5ssnuzjtpXO/4TmFjTC
+ UtVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794778547; x=1795383347;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=v+bEaKhMDCZtV/jlBILoWtbmCL9qsyLUohE1CagS/qY=;
+ b=PZKkeHAda3Lm72XDiqI81dO8ofotUW/pAQPRPJrMks960ScZCiisw/7+8hgrQrz/x7
+ AEsizDQYJ6d2YD7sg4k0iwplceBDobOKwPZmVX4bllnoA2s5J1L0WLRr4Ml5/mX8IxKf
+ 5QCXPxw/KbQiTk91zM1q7SGMcmxqsCYhPsravhWcDROCXXZwSyWiipNDIvKMW6F1rVtZ
+ uhu9ZsPRsbt19GhHlNfor1x96QejoiIEW5h52WBwDM8dVa82JGBiGhlHow70qCi31Eqb
+ 5SbQka/3hMO3VsII0pp6K/1FZJ87JE+lIe4DIZRwDjlLS6uQu5UDG7+ajgQGZCJ8cotM
+ ivwQ==
+X-Forwarded-Encrypted: i=1;
+ AL+hErE93A0LItuolXFCLE4wO0nu7WkjfhD+z9MkWP8PU1hHlGpWPWLCs/+iDR7o7YsNM4+9EOxOy+UoM4s1ZWeXr9kR@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z9vlpzw4YzQqUa86ciJCbIkGh417wUbur34zhK/alChHhUHEG7W
+ mprqpX9hzKz1v5bqBUVrK34XN/mVeYdkkaOi2w1nn1cqxIgeLtfXBuL/RdcNPw==
+X-Gm-Gg: AYBFou1VtPW15RxpsrYieR8FKwOg7xHmZV1Ib0Z14e57j3swGUPMH5SokaNBYLoB7Oq
+ DAZcTX4ZeEPAyOjVpFNdsVcD5UqWyAt26PKf8TIBcQypTnYdTLfanA5Bh/sb7hC4jbcdC+wXw7+
+ /QQb8QtWxpfQo94JjKUI8pqWL0FUzVnmQYAUJr5ePvEcNeBSTkHUrGWJC+ajJ+XBgZeQlxmyEqA
+ 8rOxfGm631zti4Har5IDxm4tn129tNoB8XhMVgLjku+vT/JKPgntwCDnP285lmZwsje8Wro4FEe
+ ZXzrV0ORCUSpC6tyfMvScA4/AeFefNQ2boE37FAyuOxVU2WOMxzMJqwaPtxd8d/MkcwCfufVEGN
+ NetHP2RjIojo21tE8b69ejEhuHKqJ1hb0ADp2op8d4y7zflhzVVFGu25EB+PPWbbAqYSAfFF1op
+ mihrUS5mYhmcPWGEupR5ZoPCKsSMnONTdtNFzItfstDUBYBgZMw3VT0e7pXuPEQFwUIzQVO2+BP
+ PdXIoo3Pxhzi5+03BgtGylKFYr81UOciAJQ+JEDNJFJeHGA/OHgj2Kiat8LXc3gDJ1fWnHqwg7a
+ zeCnANaMWx2Mq/HhiLYbiRmdxkF++InP/2Yis5+9CSNQByPLFyqPit6rvudtr3e4Wr4vdWezC3R
+ 4BcIkgR5bY/GpqCQ2TJDLFhsD1BCMXZpkO8RpH4SBAanZ5XA=
+X-Received: by 2002:a17:90b:554e:b0:396:41d1:cbc7 with SMTP id
+ 98e67ed59e1d1-3b1b07ef11bmr8709233a91.3.1794778546907; 
+ Sun, 15 Nov 2026 13:35:46 -0800 (PST)
+Received: from f2fs-test.c.googlers.com.com
+ (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3b197ce556dsm18831394a91.6.2026.11.15.13.35.44
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 15 Nov 2026 13:35:45 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Sun, 15 Nov 2026 13:35:40 -0800
+Message-ID: <20261115213540.2100311-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-References: <20261114202653.3113381-1-rdunlap@infradead.org>
- <20261114202653.3113381-2-rdunlap@infradead.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20261114202653.3113381-2-rdunlap@infradead.org>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xSdZH-0000000051s-0ciS
-Subject: Re: [f2fs-dev] [PATCH 01/12] docs: ioctl-number: update MM entries
+X-Spam-Score: 1.1 (+)
+X-Headers-End: 1xShtA-000000000Ex-4C1H
+Subject: [f2fs-dev] [PATCH] f2fs: write a checkpoint in fsync after the warm
+ node log is moved
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -132,76 +124,114 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: "David Hildenbrand \(Arm\) via Linux-f2fs-devel"
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: "David Hildenbrand \(Arm\)" <david@kernel.org>
-Cc: linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>,
- Vignesh Raghavendra <vigneshr@ti.com>, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- linux-mm@kvack.org, linux-mtd@lists.infradead.org,
- Miquel Raynal <miquel.raynal@bootlin.com>, Benson Leung <bleung@chromium.org>,
- David Airlie <airlied@gmail.com>, Leon Romanovsky <leonro@nvidia.com>,
- Mike Marshall <hubcap@omnibond.com>, Simona Vetter <simona@ffwll.ch>,
- linux-cifs@vger.kernel.org, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org,
- linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Richard Weinberger <richard@nod.at>, Helge Deller <deller@gmx.de>,
- linux-atm-general@lists.sourceforge.net, amd-gfx@lists.freedesktop.org,
- Tvrtko Ursulin <tursulin@ursulin.net>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- MPT-FusionLinux.pdl@broadcom.com, Namjae Jeon <linkinjeon@kernel.org>,
- devel@lists.orangefs.org, Neill Kapron <nkapron@google.com>,
- Juergen Gross <jgross@suse.com>, Chas Williams <3chas3@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Marcel Holtmann <marcel@holtmann.org>,
- Sean Christopherson <seanjc@google.com>, virtualization@lists.linux.dev,
- linux-sound@vger.kernel.org, Jason Wang <jasowangio@gmail.com>,
- linux-block@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-rpi-kernel@lists.infradead.org,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- intel-xe@lists.freedesktop.org,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Martin K. Petersen" <mkp@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Andrey Konovalov <andreyknvl@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Matthew Brost <matthew.brost@intel.com>, linux-ext4@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>, oe-linux-nfc@lists.linux.dev,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Eric Dumazet <edumazet@kernel.org>, netdev@vger.kernel.org,
- linux-usb@vger.kernel.org, Paulo Alcantara <pc@manguebit.org>,
- Takashi Iwai <tiwai@suse.com>, David Heidelberg <david@ixit.cz>,
- linux-f2fs-devel@lists.sourceforge.net, linux-bluetooth@vger.kernel.org,
- "Michael S. Tsirkin" <mst@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- intel-gfx@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
- Hans de Goede <hansg@kernel.org>
+Cc: Daeho Jeong <daehojeong@google.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
-	SPF_HELO_PASS,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 11/14/26 21:26, Randy Dunlap wrote:
-> Add ioctl number entries for test_hmm_uapi and gup_test.
+From: Daeho Jeong <daehojeong@google.com>
 
-Just curious, why do we care about uapi for test interfaces that never see the
-light of day in production kernels and their sole purpose is to go a long a
-dedicated selftest?
+Roll-forward recovery finds fsynced node blocks by following the chain in
+the warm node log. It starts from the next free block of the log recorded
+in the last checkpoint, and each node block has the address of the next
+one in its footer. f2fs_allocate_data_block() fills the footer after it
+moves the log to a new segment, so the chain is kept when a segment is
+full.
 
+f2fs_allocate_segment_for_resize() moves the log out of the range to be
+removed in the middle of a segment. No node block is allocated there, so
+the last node block in the old segment still points to the next block of
+the old segment, and nothing points to the new one. The node blocks
+written after that cannot be found by recovery until the next checkpoint.
+
+For example, with F2FS_IOC_RESIZE_FS:
+
+  - fsync(A) writes a node block to segment X, which is in the range.
+  - resize moves the warm node log from segment X to segment Y.
+  - fsync(B) writes a node block to segment Y and returns 0.
+  - after a sudden power-off, recovery follows the chain in segment X,
+    recovers A and stops there. B is lost.
+
+Checkpoint is blocked during the first GC pass of resize, so this lasts
+until the pass is done. f2fs_ioc_reserve_dev_alias() moves the logs in
+the same way.
+
+Set SBI_NEED_CP when the warm node log is moved, so that fsync writes a
+checkpoint instead of relying on the chain. The next checkpoint clears
+the flag and starts a new chain from the new segment. Such an fsync waits
+for the first GC pass of resize, since checkpoint is blocked until then.
+
+An fsync which has already passed need_do_checkpoint() can still write
+its node blocks after the log is moved. So check the flag again after
+the node blocks are written, and write a checkpoint in that case, too.
+
+Test: four tasks create and fsync files while F2FS_IOC_RESIZE_FS shrinks
+the filesystem, and the machine is rebooted by sysrq-b 1.5 seconds after
+the log is moved. Without this patch, all the files whose fsync returned
+after the move were lost (454 and 437 files in two runs). With this
+patch, no fsync returned in that window and no file with a returned
+fsync was lost. The second check was tested with a debug patch which
+delays an fsync between need_do_checkpoint() and its node writes.
+
+Fixes: b4b10061ef98 ("f2fs: refactor resize_fs to avoid meta updates in progress")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/file.c    |  8 ++++++++
+ fs/f2fs/segment.c | 10 +++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 05061254c3b2..61ed0ad5d29d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -466,6 +466,14 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		goto sync_nodes;
+ 	}
+ 
++	/*
++	 * The warm node log can be moved after need_do_checkpoint() above.
++	 * Then the node blocks written here are out of the chain, so write
++	 * a checkpoint.
++	 */
++	if (unlikely(is_sbi_flag_set(sbi, SBI_NEED_CP)))
++		goto go_write;
++
+ 	/*
+ 	 * If it's atomic_write, it's just fine to keep write ordering. So
+ 	 * here we don't need to wait for node write completion, since we use
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 31ac93a93021..e77a01376288 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3488,9 +3488,17 @@ int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
+ unlock:
+ 	up_write(&SIT_I(sbi)->sentry_lock);
+ 
+-	if (segno != curseg->segno)
++	if (segno != curseg->segno) {
+ 		f2fs_notice(sbi, "For resize: curseg of type %d: %u ==> %u",
+ 			    type, segno, curseg->segno);
++		/*
++		 * The chain of fsynced node blocks is cut here, so roll-forward
++		 * recovery cannot find what is fsynced from now on. Let fsync
++		 * write a checkpoint until the next checkpoint is done.
++		 */
++		if (type == CURSEG_WARM_NODE)
++			set_sbi_flag(sbi, SBI_NEED_CP);
++	}
+ 
+ 	mutex_unlock(&curseg->curseg_mutex);
+ 	f2fs_up_read(&SM_I(sbi)->curseg_lock);
 -- 
-Cheers,
+2.56.0.611.g1030f0b940-goog
 
-David
 
 
 _______________________________________________
