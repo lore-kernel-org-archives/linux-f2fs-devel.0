@@ -1,208 +1,118 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94933606A329
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 15 Nov 2026 01:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4BF606A31D
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 15 Nov 2026 09:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=YOn1qd+q;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=RbVc7pdY;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=lv+0Y5WN;
-	dkim=neutral header.d=sakamocchi.jp header.i=@sakamocchi.jp header.a=rsa-sha256 header.s=fm3 header.b=pjuVmr/L;
-	dkim=neutral header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=syy3aDEc
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=CJYgXCui;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=DSU6zL8c;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=R0bPeQoD;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lA3135oR
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=umM/UlaTxLrLRuPQUS+ipjvgYy8p+E2BVAr5u3j8hlQ=; b=YOn1qd+q73rh5nB8TE+5l9fSox
-	cLBsXmwcQIDVOaTp2HLhqyhy/XKn6caXrn406zIdsRx7qW8jkZvv6ZUkKbIy6oRuXX1mIdbTL+Mwb
-	3Y4Q3bvj00YCHnePg4vUqdUYfzxGHaXxeIz4jQK+1lO2kOJJ9n6kl0sFRh3Rv7GAIpmA=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
+	bh=D88fgSc9NS/AaBVjxKUejjphLNawv8ehCFSKz2tO2Ro=; b=CJYgXCuir4XO7f2kQht+Ufv+vJ
+	T8zLZO9TYMw8LoirAmuO3iJQKt7UwZp63QWvGbMO3Ak6MN4326IWY4O3e+gEp9am4hJ102YPBTjg8
+	S94RuF/bq9whsiZZgEB79k84EFfrcdYR4OpSh/D5GDQjcl9VUWaQe6PAa76+E4qI57HU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xSOup-000000004Zi-4BnG;
-	Sun, 15 Nov 2026 01:20:20 +0000
+	id 1xSWdi-000000007hX-3tVQ;
+	Sun, 15 Nov 2026 09:35:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <o-takashi@sakamocchi.jp>) id 1xSOuo-000000004ZZ-0ZS5
+ (envelope-from <jsjlee1020@gmail.com>) id 1xSWdh-000000007hK-37KK
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 15 Nov 2026 01:20:18 +0000
+ Sun, 15 Nov 2026 09:35:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QIES4zNTDxRjCnYHiHcWq6p6uX7fK/EWYh7I/zXroHQ=; b=RbVc7pdYesf35fYXV/CiUN+SDb
- 4ainmTVOFWlqeZaFzsmbaMPAGyvfetkP2C93JHQfh7s9TQk9MjTb/3GmPmvxOkwxBy/6wUgjp9UZf
- p8yMHDriE8u8z04P6GTvwhyAq2NqXyq7riHq0OQUkf2I4cGb9+LKwssEUJEaTGoqYE6o=;
+ bh=8qOsEVx0lNcqncRsI92WD8XITRb8ty6XS3PW5jLkLOA=; b=DSU6zL8csZ2KrVO9mxGybISOGt
+ qSZK8YbcRdFRm3sfF8v1ydRSxw1qFvIOShGwOrZRTQCYMZv6jL5jKt9noOhkfCzON3lPrnAVZVRD6
+ gZzqW+hHqP8lfBba0BSJcJErxoklFkE7dS6DL8yy+a66YyD5IVcEbqowfjT118AKKPW4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QIES4zNTDxRjCnYHiHcWq6p6uX7fK/EWYh7I/zXroHQ=; b=lv+0Y5WN0ZOKtpkj50kHx9PhZI
- 2e7fChwpWIOI5dtXqPxlwRjc3NpD7bhU454+PkiptAS+6hAumlLDHLpe/cXR3rwARlgd+vHIdt5Qj
- H7lTU9VFcO3yqSyOX5dJU47M8uw15apD0h1yK4/OcO5rzHuVv7VG6DsoQ7ke8V6GigFo=;
-Received: from flow-a8-smtp.messagingengine.com ([103.168.172.143])
+ bh=8qOsEVx0lNcqncRsI92WD8XITRb8ty6XS3PW5jLkLOA=; b=R0bPeQoDDJ4Z4GoYZ/GehmPumU
+ aczEeX+Jp2GRlAgTq6mTmwRwJmF39b0Tbp6EPsalgg4vnHSrh5dN+wUDf7VHla8YyCaS6hIDbrMHJ
+ xJ9z620ib/7D4oTRvBWuXp1Tf4M2i8T+a64/AhsUWK8Z+geknqZc2Im9+1om1STMrQ4o=;
+Received: from mail-dy1-f182.google.com ([74.125.82.182])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xSOul-000000001XI-2t8c
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xSWdh-000000005I0-0Ys1
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 15 Nov 2026 01:20:18 +0000
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailflow.phl.internal (Postfix) with ESMTP id CAB1C1381D6B
+ Sun, 15 Nov 2026 09:35:09 +0000
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-36eb1cb7aabso3033833eec.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 14 Nov 2026 20:20:09 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Sat, 14 Nov 2026 20:20:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
- h=cc:cc:content-type:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1794705609; x=
- 1794712809; bh=QIES4zNTDxRjCnYHiHcWq6p6uX7fK/EWYh7I/zXroHQ=; b=p
- juVmr/LC7nCJ0SQ2rWUhRQGDMnlVGg/71zflyfizaeCefqOj8Wyp1bv5cUdTgRb8
- 7XUxKSQFA4h5chwE1lADu0vrwg8OhHP6GoQHRhO7+gqlPzaI30gfxszAJ8iBZnAq
- w6LhtavpJKSJHCgIMJ9jaiAQhtgloSfAXiebl32YH12R4n49k4Dhf+Y8W3pLV4v+
- Lk6DFTk8SpQ9jSXzpScexBSvyhdEJDbrQwMC0927YExgznJjfLZe0flh8fHQL7IO
- vj78LH6slSiU2T+/dLzxP/iDcsVNxx1fb6S0NI/BKneEKfRIjGfp58LmRDVhLSom
- qjpjx4Q11TfgHJQJAHUUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-type:content-type:date:date
- :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
- :message-id:mime-version:references:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1794705609; x=1794712809; bh=QIES4zNTDxRjCnYHiHcWq6p6uX7fK/EWYh7
- I/zXroHQ=; b=syy3aDEccFqwMWi7OqQgN+5WtM3ZAfMLRFvK6Ty6zA65HPirgvN
- ilcYb0Q1wBWUsxvkCfegkY1pzVtpHUOC6WAP6pTtbZPWcSU2JRmZq5bj3XtaI5mJ
- 5KZK4MCZjfikGyCw8udPD79DzKX657SNeo8VKm+NBs1zDN72HR3ZemlLBm38jus1
- WDdVI20E7k3nTziG5v/jPkof/xTKUHTBh7LLvCto0jlE2c4pmQs/fxRRAq0SyBeZ
- lruY2Ddh8f3CbRk7/EsENeVrGkeN2qYTfTHHssLqQwRRARUN/edAoqWV9ygwuEYm
- jIS3U35+DcIoM5H/MAq31DLvDAGEUQlNvVA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=sign d=sakamocchi.jp a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794705609; d=sakamocchi.jp;
- mf=PG8tdGFrYXNoaUBzYWthbW9jY2hpLmpwPg==;
- rt=PGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Pg==;
- s=fm3:rsa-sha256:MMXL7gIROLJ2rfVHWnz+remrPmZo+fMplqSOXdDqLJnC3xA
- YD4sK3Z6w2DZlqL1uokHi8m/Ej3lbj1jckN0Aw7uyFzXnOiAjM0vLIfpK4QbGpS3
- hqz4hFYkHy8O8kUPgIOrmmQrwJGD3HWRKVnzm+eq05CXYlr786HJtiyU2PFKDOXW
- KcrRuKAVC5qVLnhpK1tE9ofbf70hTpCSROzNXi9r1HxAWR4U6g7bJv80Av6tRa4a
- niV5bBGmW4Y3p8ZA9/339HZcVYlGCOAHDcXU4xbpaXhhm/XLi8mkW9bgKMr163kz
- o/WJiTGRhxcOBO2jngfWZ9oKUuB7mJc28kEEDrQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=mi-m=1; hc=13;
- hn=cc,content-disposition,content-type,date,feedback-id,from,
- in-reply-to,mail-followup-to,message-id,mime-version,references,
- subject,to;
-Message-Instance: m=1;
- h=sha256:ntV32t7KOIfGMot6swX3CNi9IkfeqivW9U6qBDwCqc8=:4RP5xhIBVdE4nHZvdVXdOxDGDwEwdGMsIHWUj8/gqfI=;
-X-ME-Sender: <xms:xQj5aiop4gg9dsJ6_Vn6u45zXMYueatHm6sTqNkrPjF6p_uliIn0fA>
- <xme:xQj5ao-c0CruU-TGxTE7NFYZSaEuQncLSSmM997vVUnXnDFfvxt3Mt5vMRNmSfmhf
- 34fKN--fbmH87piFvayMBFAxnjq6WHAkHe46t3SFxeylFtFg6aPnx9A>
-X-ME-Received: <xmr:xQj5atXGMWjP8faJlCtXj9RrVZeBW-gqDucCpC0ZXa191cT5jnWReGYw_Z8rYiOMsAtlcaNqIM8bDcRsKH9aHiPzWCfQ_w>
-X-ME-Proxy-Cause: dmFkZTGQstm6GOmXFdPQXDqZqAYG7aQouPeZUHJ4IBXrRYWFH6lFNnMWIuGsSOCFSsBuXW
- LbDJxfVrfV3cl+wc1JM2qA4EvGILGxXqZILW7GfZPYDe6vWDeehuWas6PsFLq2rp3ZCMLK
- vb2ZkQs61G65smsTsr3W8fx/U8N5II0Wva1plTCgHg5UpMnhi5PWu1EQKVr47yDlfh1UvS
- LYKjU/U9x7MTbsMHbdhB5rWUTX8pbvj9eAIRg5DGXYvFzZokg4/nvH5yq0IUoDc8xEYNrb
- hSXdXqov4GW1obuCd3P9CA8Y5vszeSouSKwogVvelkFQGttmZKq/NF5ipA4vDPXyrU1Xrm
- Zrz3WElYlhVCDcPNRnAGrD/gNAj1b7M9bHXUiJrCqgmTebsAx0cfPWnZGZ3/j9Ea2UWcPj
- qqJZ67js4v5NriJFPwSb5fBisbBQrZL2hM4YjWQCJ9uoloExIgLFI0L7sZA853RBWP4ncp
- DBuj0o8Fkgdi7cJEPrTBBMdPRnMErqVngCb+aWeUA0zKt+uaR6UB1bg9ZicNV0ayYa37yt
- I8T18lqRGBzHHbPK9Mrtu/1JSrYmpYKqgKJaY1owBZ4nprZ++3QPl5fwcLNIPsiGvSmzop
- Zbr1xrRPLyP5mMh+v5LgBzIwywaOGj2L4LIDZM+0lWqxfhjtWj2WgxvXglrg
-X-ME-Proxy: <xmx:xQj5avAwgflb4ksIG5XRwHT6xxt96MMxRO3omUvuEt-3k_ppqJzgYw>
- <xmx:xQj5aka9rFrx7_oeihBM0qdilVdSsLFNvKaV60FpVwOaq7EoVM3bNQ>
- <xmx:xQj5ak3AzNFqwOx2mTfPhYibu1bQ_UDkW9NgFtUhfBWBcyXvs0uL4A>
- <xmx:xQj5aoGo_8KYcqvEjpNAxM_sotiXZsyQPcuJ_BoRuwGjdfls4pLNfg>
- <xmx:yQj5amBDENmX5NhRabHbZy5mqP0Iv6_jzPBpOZyadDNP-V1uD_qCKZw->
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Nov 2026 20:19:47 -0500 (EST)
-Date: Sun, 15 Nov 2026 10:19:45 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <20261115011945.GA238787@sakamocchi.jp>
-Mail-Followup-To: Randy Dunlap <rdunlap@infradead.org>,
- linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org,
- David Hildenbrand <david@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jason Gunthorpe <jgg@nvidia.com>,
- Leon Romanovsky <leonro@nvidia.com>, linux-mm@kvack.org,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Jason Wang <jasowangio@gmail.com>, David Heidelberg <david@ixit.cz>,
- oe-linux-nfc@lists.linux.dev, Chas Williams <3chas3@gmail.com>,
- linux-atm-general@lists.sourceforge.net,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, Helge Deller <deller@gmx.de>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- MPT-FusionLinux.pdl@broadcom.com,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <mkp@kernel.org>, linux-scsi@vger.kernel.org,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>,
- Zhihao Cheng <chengzhihao1@huawei.com>,
- linux-mtd@lists.infradead.org, Neill Kapron <nkapron@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-usb@vger.kernel.org, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- xen-devel@lists.xenproject.org, Hans de Goede <hansg@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- virtualization@lists.linux.dev, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
- linux-ext4@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>,
- devel@lists.orangefs.org, Paulo Alcantara <pc@manguebit.org>,
- Namjae Jeon <linkinjeon@kernel.org>, linux-cifs@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- Tzung-Bi Shih <tzungbi@kernel.org>,
- Benson Leung <bleung@chromium.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Alex Deucher <alexander.deucher@amd.com>,
- Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
- amd-gfx@lists.freedesktop.org,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>,
- intel-gfx@lists.freedesktop.org,
- Matthew Brost <matthew.brost@intel.com>,
- Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
- intel-xe@lists.freedesktop.org
-References: <20261114202653.3113381-1-rdunlap@infradead.org>
- <20261114202653.3113381-3-rdunlap@infradead.org>
+ Sun, 15 Nov 2026 01:35:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794735303; x=1795340103; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=8qOsEVx0lNcqncRsI92WD8XITRb8ty6XS3PW5jLkLOA=;
+ b=lA3135oRQv+lEUimrqtdvypoRB20rJDOjr3d9TH/Dv3wPymAGah/tatHln4CubTvFm
+ DePh+9PUyR41sqCw2zzNdwSkwy7g1UryHLmmulSLxAS/RltIsLujp3/pLV5kdzyKCTTF
+ eKuV6PhpC01ZQffmXN/AIITQOYQPVWSOy2xk/QY16uQxc/2ifSJwk8AkuynoYCOx+sTg
+ tzcxAx/ukiv/Uk68JrwzaZTufG0SByw2uUt3ISpigc0qIaCbCyUhh183TEbnnAZhKVJy
+ s722IIms85K3G1VUdwnsHGTA3K4+JCJVP8FO17ImkVwSqrY22gIeyiBtcyab50uM2OoP
+ az6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794735303; x=1795340103;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=8qOsEVx0lNcqncRsI92WD8XITRb8ty6XS3PW5jLkLOA=;
+ b=iXkNRpc58GLAr3SLqrIHE+p9dnmWj7c7ax4yPkuaiZrOh9qIj8Gau8RfV50rWoHI6J
+ 6sVF6rYGoafTMKF6yibxq/TAtI3e33ZJU0SZ2i8FSVJ6Gn6ks5102xLjcrqj/AVtq+9T
+ phJfbwtCd4G2o6lKhOfxacsPxdrZw58JHMyapyM1tuNp2LF+G+d8Exw9r+hWx/WYlXMJ
+ SQEdG57+k1Jd5sOzhBNO0w78untC9j7Nj4tpRqYdaOSOlskaEf7csw+Az51Sycf1gGAz
+ XNFs/2EzIZC9OSLe4O1xi3ZaT92dtBdkccvRxjqJNQNEkWZqQc329iwHWhTQTxQoDDAO
+ EAhw==
+X-Gm-Message-State: APuU4Z+hBOU4gHSYcFf0Z53MPQzFlj2rwwsLIX7p0he/TOxlsI4HWpQ3
+ gq3SDMu5JNZuRTQa5dISoR4S1rZgYpMZsscWBZ5OEVE3Fa/SVGdTQHIE
+X-Gm-Gg: AYBFou2YX/9PnjkzletxexuDmyJi2AgryQstY7APd+BALSiNzNnaHnbIq4/i/JNXE0b
+ lOOf4qE3sh8k7U+KaZ6BSaRZ4wQUKqE2TB1yJ4kcjldAHUpoGSHAjwl/ATRPg0IVSE/pm+x3hpU
+ dyCxHW8QXJzg3xuFd79pIeroe5qhey77hpZ1f6q2shNxMJczY6NDc2z31q2tQqeZvXbukgzVJvs
+ a1LA4rcbBS1125zbd3c3gNvhynOmAnQcwCSo5Snkl5KXXwCNKJ94BkPUkDrUc9FpvkCwuxnU8GW
+ CVHzIPuZFCFI6jUl6oK787683kHu7Q9mpHJJVG4HHhzlpwFBYUrsuDAlSABfpSFcFLkCFffBjSB
+ 5+bzUaEkIsJ3nh2wrf2CWedjkj8+KFA81NJcaqzV+pPTYXv7V+0VGoUkbYeXg7L9UzD2feoF8z2
+ FtbQeylM5f707S5N1zHK/qlc+3wizDbHO6RfTt7j4jWcVE4h9GJd8VAcIoHQBheTXb0GaTTqn1Y
+ Ze6I7lJtpyAKrk7ZN1p7MLs5XGox568BcINw5uyKBaDehwotheArHqWgOpIvYtUrhUXPvx2qzmL
+ Rw9vObL/hX2fF3oozL3W3QGOahi9b+1CXpbHlK/rOl6ibgnLpB8W8J4DBRAVOvlaT/2zp8Y1+YI
+ mQD0Nvl2lBr2Kd+56a6q+GyTP9Pi+
+X-Received: by 2002:a05:7300:c01c:20b0:36e:b05e:9a74 with SMTP id
+ 5a478bee46e88-37967dd6078mr7137823eec.30.1794735302432; 
+ Sun, 15 Nov 2026 01:35:02 -0800 (PST)
+Received: from
+ codespaces-2362ac.m2fxbej512jepnsor2itp05j3d.ix.internal.cloudapp.net
+ ([207.46.224.87]) by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-379565d3e37sm26298603eec.24.2026.11.15.01.35.00
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 15 Nov 2026 01:35:01 -0800 (PST)
+From: Seongjae Jeong <jsjlee1020@gmail.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Sun, 15 Nov 2026 09:34:13 +0000
+Message-ID: <20261115093413.118399-1-jsjlee1020@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20261114202653.3113381-3-rdunlap@infradead.org>
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xSOul-000000001XI-2t8c
-Subject: Re: [f2fs-dev] [PATCH 02/12] docs: ioctl-number: update sound
- entries
+X-Spam-Score: 0.1 (/)
+X-Headers-End: 1xSWdh-000000005I0-0Ys1
+Subject: [f2fs-dev] [PATCH] f2fs: fix to use atomic write for strict fsync
+ on the inode update path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -212,113 +122,103 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Paulo Alcantara <pc@manguebit.org>, dri-devel@lists.freedesktop.org,
- Jaroslav Kysela <perex@perex.cz>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Leon Romanovsky <leonro@nvidia.com>, Mike Marshall <hubcap@omnibond.com>,
- Matthew Brost <matthew.brost@intel.com>,
- linux-atm-general@lists.sourceforge.net, Tvrtko Ursulin <tursulin@ursulin.net>,
- xen-devel@lists.xenproject.org, devel@lists.orangefs.org,
- Neill Kapron <nkapron@google.com>, Chas Williams <3chas3@gmail.com>,
- linux-sound@vger.kernel.org, Jason Wang <jasowangio@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>, David Hildenbrand <david@kernel.org>,
- Andrey Konovalov <andreyknvl@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fbdev@vger.kernel.org,
- linux-doc@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Simona Vetter <simona@ffwll.ch>, linux-cifs@vger.kernel.org,
- Stefano Stabellini <sstabellini@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Helge Deller <deller@gmx.de>,
- Jason Gunthorpe <jgg@nvidia.com>, Namjae Jeon <linkinjeon@kernel.org>,
- Jani Nikula <jani.nikula@linux.intel.com>, linux-fsdevel@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-arm-kernel@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>,
- oe-linux-nfc@lists.linux.dev, Sean Christopherson <seanjc@google.com>,
- David Heidelberg <david@ixit.cz>, linux-f2fs-devel@lists.sourceforge.net,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Eric Dumazet <edumazet@kernel.org>, linux-mtd@lists.infradead.org,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, amd-gfx@lists.freedesktop.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Paolo Abeni <pabeni@redhat.com>, MPT-FusionLinux.pdl@broadcom.com,
- Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
- Marcel Holtmann <marcel@holtmann.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Benson Leung <bleung@chromium.org>, "Martin K. Petersen" <mkp@kernel.org>,
- linux-ext4@vger.kernel.org,
- Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
- Hans de Goede <hansg@kernel.org>, Jan Kara <jack@suse.cz>,
- Vignesh Raghavendra <vigneshr@ti.com>, kvm@vger.kernel.org,
- "Michael S. Tsirkin" <mst@redhat.com>, linux-mm@kvack.org,
- David Airlie <airlied@gmail.com>, linux-scsi@vger.kernel.org,
- Richard Weinberger <richard@nod.at>,
- Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, intel-gfx@lists.freedesktop.org,
- Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
- virtualization@lists.linux.dev, linux-block@vger.kernel.org,
- Tzung-Bi Shih <tzungbi@kernel.org>, intel-xe@lists.freedesktop.org,
- Juergen Gross <jgross@suse.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, netdev@vger.kernel.org,
- Takashi Iwai <tiwai@suse.com>, linux-bluetooth@vger.kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>
+Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi,
+In strict fsync mode, f2fs_do_sync_file() uses atomic node writes
+for OPU to preserve ordering between data and node writes and
+prevent data corruption after a sudden power loss.
 
-On Sat, Nov 14, 2026 at 12:26:40PM -0800, Randy Dunlap wrote:
-> Update the list of files where sound ioctls are defined and update
-> the ranges of function numbers that are used.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> [Since having multiple maintainers trying to merge these would
-> cause some conflicts, it would be more manageable for Jon to
-> take all of these through the docs-next tree.]
-> 
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Cc: linux-doc@vger.kernel.org
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.com>
-> Cc: linux-sound@vger.kernel.org
-> 
->  Documentation/userspace-api/ioctl/ioctl-number.rst |   12 +++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> --- linux-next-20261111.orig/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ linux-next-20261111/Documentation/userspace-api/ioctl/ioctl-number.rst
-> ...(snip)...
-> @@ -168,7 +174,7 @@ Code  Seq#    Include File
->  'H'   C0-DF  net/bluetooth/cmtp/cmtp.h                                 conflict!
->  'H'   C0-DF  net/bluetooth/bnep/bnep.h                                 conflict!
->  'H'   F1     linux/hid-roccat.h                                        <mailto:erazor_de@users.sourceforge.net>
-> -'H'   F8-FA  sound/firewire.h
-> +'H'   F8-FE  sound/firewire.h                                          conflict!
-> ...(snip)...
+When an inode update is needed, f2fs_do_sync_file() calls
+f2fs_write_inode() and jumps to go_write, bypassing the check that
+sets atomic. This can lead to non-atomic node writes even after an OPU
+in strict fsync mode.
 
-I overlooked this entry when inserting the additional ioctl commands in
-the following commits:
+Move the OPU and strict fsync checks before the inode update branch
+so that atomic mode is enabled before the jump to go_write.
 
-* 90e8ac5c9d446 ("ALSA: firewire-tascam: add new hwdep ioctl command to get state image")
-* 58b62ab702591 ("ALSA: firewire-motu: add ioctl command to read cached hardware meter")
-* ca15a09ccc5bd ("ALSA: firewire-motu: add ioctl command to read cached parameters in register DSP model")
+Cc: stable@kernel.org
+Fixes: 278799151646 ("f2fs: fix to force keeping write barrier for strict fsync mode")
+Signed-off-by: Seongjae Jeong <jsjlee1020@gmail.com>
+---
+ fs/f2fs/file.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-Thank you for catching and correcting this.
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 05061254c3b2..3b51d84177e0 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -372,6 +372,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	int ret = 0;
+ 	enum cp_reason_type cp_reason = 0;
+ 	unsigned int seq_id = 0;
++	bool has_append;
+ 
+ 	if (unlikely(f2fs_readonly(inode->i_sb)))
+ 		return 0;
+@@ -392,6 +393,21 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		return ret;
+ 	}
+ 
++	has_append = is_inode_flag_set(inode, FI_APPEND_WRITE) ||
++		     f2fs_exist_written_data(sbi, ino, APPEND_INO);
++
++	/*
++	 * for OPU case, during fsync(), node can be persisted before
++	 * data when lower device doesn't support write barrier, result
++	 * in data corruption after SPO.
++	 * So for strict fsync mode, force to use atomic write semantics
++	 * to keep write order in between data/node and last node to
++	 * avoid potential data corruption.
++	 */
++	if (!atomic && has_append &&
++	    F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
++		atomic = true;
++
+ 	/* if the inode is dirty, let's recover all the time */
+ 	if (!f2fs_skip_inode_update(inode, datasync)) {
+ 		f2fs_write_inode(inode, NULL);
+@@ -401,8 +417,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	/*
+ 	 * if there is no written data, don't waste time to write recovery info.
+ 	 */
+-	if (!is_inode_flag_set(inode, FI_APPEND_WRITE) &&
+-			!f2fs_exist_written_data(sbi, ino, APPEND_INO)) {
++	if (!has_append) {
+ 
+ 		/* it may call write_inode just prior to fsync */
+ 		if (need_inode_page_update(sbi, ino))
+@@ -412,18 +427,6 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 				f2fs_exist_written_data(sbi, ino, UPDATE_INO))
+ 			goto flush_out;
+ 		goto out;
+-	} else {
+-		/*
+-		 * for OPU case, during fsync(), node can be persisted before
+-		 * data when lower device doesn't support write barrier, result
+-		 * in data corruption after SPO.
+-		 * So for strict fsync mode, force to use atomic write semantics
+-		 * to keep write order in between data/node and last node to
+-		 * avoid potential data corruption.
+-		 */
+-		if (F2FS_OPTION(sbi).fsync_mode ==
+-				FSYNC_MODE_STRICT && !atomic)
+-			atomic = true;
+ 	}
+ go_write:
+ 	/*
+-- 
+2.53.0
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-
-
-Thanks
-
-Takashi Sakamoto
 
 
 _______________________________________________
