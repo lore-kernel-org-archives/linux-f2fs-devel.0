@@ -1,96 +1,101 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6CF606A31C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 20:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD11606A339
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 20:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=EKHFiCmo;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Y1pFkNSF;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=QjfGTM74;
-	dkim=neutral header.d=krisman.be header.i=@krisman.be header.a=rsa-sha256 header.s=MBO0001 header.b=h/B9EEoZ
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=WamUjgJZ;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=lk2Lbt/X;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=MSMGmIDR;
+	dkim=neutral header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IKpTrJfS
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:References:In-Reply-To:To:From:Sender:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=upUR5s7EZUYX+rAbYdpUMD+mVa9kbQxFFJHKpYyNPEE=; b=EKHFiCmoW7jH826JRv2cXxTsWY
-	tahb9c+9pGeQBq2dpvK8p1HEJ1LKBIt7wp+Lw3vnHnSyStJQABeG4xBq/vjYzDD1kFhBXC+xHaYxv
-	FNnFYkLLC4539Ah4SZTCwPoeZqC6AVn3PPifNIRQojLUQL24ZrX84cxDD29l2oMFkWkc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=Qe4jNcIOPSjlJ6ykPrW8gQNViyORQFLy5oCiPvbX1Vs=; b=WamUjgJZsyHyBBHoGrCh/yG1f9
+	p/B5Ev2l2SLLfP8o9sL1bvQrYMcDM8UNyGJsYkiXE8vfjXOtxJ58Zu5RgXbVXG5BpIwNGjPPAWEOT
+	CHsahSt9ymKiX/mBnBpp1Hr5Kf4pB5rjWHMi4LvGy6sotgUQv4BhMSbLtRA0psX+xBSM=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xT3Qa-000000008BN-081d;
-	Mon, 16 Nov 2026 20:35:48 +0000
+	id 1xT3fQ-000000001yE-1fAP;
+	Mon, 16 Nov 2026 20:51:08 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <gabriel@krisman.be>) id 1xT3QW-000000008B4-1VM1
+ (envelope-from <lkp@intel.com>) id 1xT3fO-000000001y7-2uff
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 20:35:45 +0000
+ Mon, 16 Nov 2026 20:51:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
- References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KA1DiuFm9cFLOOwb5cT6/nPwPW+KUR82vQTkyGv9uNg=; b=Y
- 1pFkNSFp3fHAn9aZr80oA39EfxbKBsGXLU0b/vV++FlsUefJzyCdwKr16Ui8pN+hDRcpWNglNf+sZ
- v7H3eP5vMQ3aFbiSsPLeBssnzTXvvAm5g8GgZwOQdbU/+JPwpM9H0Bzobq4WOJQKmu7x8JnAAeVui
- 9QkeRVBVV0mnSafA=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=mF+5LJPny8StaD39CFoDqff04cfc3UL1BENucKw5erQ=; b=lk2Lbt/XbJC/gFuYzDMrrMMYAD
+ kFYo39Ei0bKmI2o9DMK8glO2W1Sfz8tPKN/LPSSS9KZnKKmj3sbjr4JEHD91NcT1Mm+wNcxz4pcJL
+ gnbmHUZGoE05wB7FnGjBXJ2JqsnXLtl4CFIHoZrT2yp4Y4WmVnS+IRO+TlAIedEXMgjw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KA1DiuFm9cFLOOwb5cT6/nPwPW+KUR82vQTkyGv9uNg=; b=QjfGTM74OmUNsUaFmtmD4Hi3R6
- Xgh9YmnSJQfEepFVBzw+I9a8QDSM9fhpo3si1MPzbVQ65KZjkDqKD+8igBGqHkHr4wmmancjNmFNt
- 7gl7NIlD2qfbjvQ8rFrmBKzX6gf3Y6YXO4dKduxWv7P9P6bCmvf46orCF/40K7hgrUAs=;
-Received: from mout-p-202.mailbox.org ([80.241.56.172])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=mF+5LJPny8StaD39CFoDqff04cfc3UL1BENucKw5erQ=; b=MSMGmIDRnPH9yz/CaK9Nl7RXk7
+ j2zI71ESHZ8WfwENQb8ClZaKaLrYyFnOQwWplnBL2x7yI5o9l1L/AbL4jlP68UaqIa5IIUDxowUow
+ d0hQRmgON9G77nr1cLUVVYGPd4ySvIJSSlsEZhr8XxwzBjOa4dTrmIz5QSJA9A2uHF9s=;
+Received: from [198.175.65.17] (helo=mgamail.intel.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xT3QU-000000005uD-25V8
+ id 1xT3fL-000000000lY-1xR0
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 20:35:44 +0000
-Received: from smtp102.mailbox.org (smtp102.mailbox.org
- [IPv6:2001:67c:2050:b231:465::102])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest
- SHA256) (No client certificate requested)
- by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4jSzgV1bNczMlgs;
- Mon, 16 Nov 2026 21:17:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=MBO0001; 
- t=1794860262;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=KA1DiuFm9cFLOOwb5cT6/nPwPW+KUR82vQTkyGv9uNg=;
- b=h/B9EEoZDO62fbuuaIdNx+TktwDc2CTr0cHXesXGMM1BCbPdUFIhsDg1z3G60HsU5bknwL
- LoyyVqOQZ8xVlww1e2QKpZBhr8dlz8NbL05sgwZjcxLiDkBtcYd+ZodPkRDEB4gJ/WCK+v
- RR0hviDWV34L9kpo3A3Bz9vON13jAuq2r2Is0CiU6VaxK/eSmW1kAb7KrudNBHeaD48Qoi
- tPCune9l23JkLJOycIXRxJBVQD1k79K1eH/XTqCX5e0J50TR9MWsGUfuJJn2NhntlSCX1m
- gP6HBFKxIZZ0Hv/IRmEy802TK4Ke/VIffo8jrqdx+B+cvNQ2E2f3QSsF59Ib9g==
-Authentication-Results: outgoing_mbo_mout; dkim=none;
- spf=pass (outgoing_mbo_mout: domain of gabriel@krisman.be designates
- 2001:67c:2050:b231:465::102 as permitted sender)
- smtp.mailfrom=gabriel@krisman.be
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Eric Biggers <ebiggers@kernel.org>, Zhan Xusheng
- <zhanxusheng1024@gmail.com>
-In-Reply-To: <20261116194845.GC229817@google.com>
-References: <20261103030712.1514800-1-zhanxusheng1024@gmail.com>
- <20261116194845.GC229817@google.com>
-Date: Mon, 16 Nov 2026 15:17:37 -0500
-Message-ID: <874idgwmxq.fsf@cartola>
+ Mon, 16 Nov 2026 20:51:06 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1794862263; x=1826398263;
+ h=date:from:to:cc:subject:message-id:references:
+ mime-version:in-reply-to;
+ bh=NGPITMRExA4k1FsoRlFIhpMvIupdLuYZuYltGtidHuE=;
+ b=IKpTrJfSGUL+xgEVfVZDWFxJasNy8RVzo2i5zLgvYsKxylph+W2r8WKb
+ tFvT+co67DR/kd+qmgUterv+wC5decVKMsZq8UWsuCnEJXqI8ibDuuB9n
+ dDJuLqCEr2FIjHv9l7kX/xBzgTOGIdf/SnwuFd/sK0Ok/oii0rfjhOL57
+ 6awlKctQZB3710rrDXsOknzb8skNA0lvzrj1jxDkl4SnSZL7PKk57RjUp
+ n7FWDWZZACg74YOynfGdGweyIEYIHIzU2nARUl7z6m63+VPGeM1EtK35r
+ V6YLJt1PSKHpTCSZcz5isbyEhKFT1inWcfxWK7ip0ABQUXL4hkpq1LDOU Q==;
+X-CSE-ConnectionGUID: kyyUNHFkQmC4el4EqvkXsg==
+X-CSE-MsgGUID: PFsHLBFDQQig9YuOlJ043w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11968"; a="3627626"
+X-IronPort-AV: E=Sophos;i="6.27,217,1787036400"; 
+   d="scan'208";a="3627626"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Nov 2026 12:50:58 -0800
+X-CSE-ConnectionGUID: 3br2HG2yQbaqG5uDAy28jQ==
+X-CSE-MsgGUID: 7pnb/xcOSci17EykFV5phg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,217,1787036400"; 
+   d="scan'208";a="9660346"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+ by orviesa002.jf.intel.com with ESMTP; 16 Nov 2026 12:50:56 -0800
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+ (envelope-from <lkp@intel.com>) id 1xT3fB-000000019PN-24hQ;
+ Mon, 16 Nov 2026 20:50:53 +0000
+Date: Tue, 17 Nov 2026 04:50:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: huang zheng <huangzheng9869@gmail.com>, jaegeuk@kernel.org, chao@kernel.org
+Message-ID: <202611170426.9bqr9xq4-lkp@intel.com>
+References: <20261116095011.2868219-1-huangzheng9869@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 4jSzgV1bNczMlgs
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xT3QU-000000005uD-25V8
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: fold casefolded names of
- F2FS_NAME_LEN bytes
+Content-Disposition: inline
+In-Reply-To: <20261116095011.2868219-1-huangzheng9869@gmail.com>
+X-Spam-Score: 1.1 (+)
+X-Headers-End: 1xT3fL-000000000lY-1xR0
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add checkpoint step timing
+ statistics to debugfs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,102 +105,83 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: zhanxusheng@xiaomi.com, andrealmeid@igalia.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- jaegeuk@kernel.org
+Cc: Huang Zheng <huangzheng9869@gmail.com>, llvm@lists.linux.dev,
+ huangzheng1@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, oe-kbuild-all@lists.linux.dev
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_PASS,SPF_PASS
 	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Hi huang,
 
-> [ +Cc Gabriel, who maintains fs/unicode/ ]
->
-> On Tue, Nov 03, 2026 at 11:07:12AM +0800, Zhan Xusheng wrote:
->> From: Zhan Xusheng <zhanxusheng@xiaomi.com>
->> 
->> utf8_casefold() needs room for the terminating NUL, but
->> f2fs_init_casefolded_name() gives it only F2FS_NAME_LEN bytes, so a
->> name that folds to exactly 255 bytes is not folded. In a casefolded
->> directory, creating 'A' x 255 fails with EINVAL under utf8:strict.
->> Without strict, after creating 'A' x 255, stat of 'a' x 255 returns
->> ENOENT and creating it adds a second entry.
->> 
->> Fold into F2FS_NAME_LEN + 1 bytes. Existing entries for these names
->> are hashed by the name as given, so on a miss also try that hash.
->> 
->> Fixes: 43c780ba2624 ("f2fs: rework filename handling")
->> Signed-off-by: Zhan Xusheng <zhanxusheng@xiaomi.com>
->> ---
->> RFC because new entries for these names get a different hash on disk.
->> Results in a VM, with dentries dropped before each stat:
->> 
->>                                  'A'x255  'a'x255  'C'x255  'c'x255
->>   current kernel creates 'A'        ok    ENOENT
->>   this patch creates 'C', 'c'       ok    ENOENT     ok       ok
->>                                     (one 'c' entry)
->>   back on the current kernel        ok    ENOENT   ENOENT   ENOENT
->>   strict, current kernel        create 'S' x 255: EINVAL
->>   strict, this patch            create ok, found in both cases
->> 
->> Each fsck.f2fs version matches only one side. 1.16 folds into PATH_MAX
->> and rewrote 'A' to the folded hash, after which the current kernel
->> cannot find it. The dev branch rewrote 'C' to the raw hash, after
->> which this patch finds it only as 'C'. fsck would need to accept both
->> hashes for these names. Encrypted directories are not tested.
->> 
->> Is the second lookup acceptable? The alternative is to keep hashing
->> these names as given, which fixes the EINVAL but leaves them
->> case-sensitive.
->
-> Sorry about this bug!
->
-> I think it's actually worse than you say, and this commit doesn't fix it
-> entirely.  A filename can "casefold" (really NFD canonical decomposition
-> + Default_Ignorable_Code_Point stripping + full casefolding) to much
-> more than F2FS_NAME_LEN bytes.  The decomposition stage in particular
-> can result in significant expansion, up to 3 * F2FS_NAME_LEN.
+kernel test robot noticed the following build errors:
 
-This was a known limitation, the actual limit for casefolded names is
-much less than 255, it is actually the size of the folded version of the
-string.  I still suspect this limit is hardly a real problem in
-practice.  The bug is the inconsistency in creating a casefolded dentry
-and then failing to hash the same dentry. That's a bug in the
-implementation.
+[auto build test ERROR on jaegeuk-f2fs/dev-test]
+[also build test ERROR on jaegeuk-f2fs/dev linus/master v7.4-rc3 next-20261113]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> For ASCII though it is indeed as you say: they cannot expand, and only
-> max-length filenames are affected due to the off-by-one caused by
-> utf8_casefold() unexpectedly including a NUL terminator.
->
-> I think this shows that the 'casefold' feature` isn't really used for
-> anything other than ASCII in practice, and all the complexity of Unicode
-> normalization wasn't needed in the first place...
+url:    https://github.com/intel-lab-lkp/linux/commits/huang-zheng/f2fs-add-checkpoint-step-timing-statistics-to-debugfs/20261116-175011
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+patch link:    https://lore.kernel.org/r/20261116095011.2868219-1-huangzheng9869%40gmail.com
+patch subject: [PATCH v2] f2fs: add checkpoint step timing statistics to debugfs
+config: i386-randconfig-1010-20261116 (https://download.01.org/0day-ci/archive/20261117/202611170426.9bqr9xq4-lkp@intel.com/config)
+compiler: clang version 22.1.8 (https://github.com/llvm/llvm-project ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261117/202611170426.9bqr9xq4-lkp@intel.com/reproduce)
 
-I wish. We can debate whether it is a "good" usecase or not all day, but
-from prior bug reports it is clear people are using casefolding way
-beyond ASCII or even accented characters.  For an extreme example, see
-the variant selectors mess from when we tried to change the casefolding
-of ignorable code-points a couple years ago.  Clearly there were
-mistakes in supporting the entire unicode map, but ASCII if far from
-enough for anyone who speaks !english.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202611170426.9bqr9xq4-lkp@intel.com/
 
-> But I suppose this should be fixed anyway.  The approach of this patch
-> should generally be okay if you increase the buffer to the required
-> '3 * F2FS_NAME_LEN + 1'.
->
-> However, please check the Sashiko comments
-> https://sashiko.dev/#/patchset/20261103030712.1514800-1-zhanxusheng1024%40gmail.com
-> as some issues were found with the implementation.
->
-> - Eric
+All errors (new ones prefixed by >>):
+
+>> fs/f2fs/checkpoint.c:1744:3: error: call to undeclared function 'update_cp_stats'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1744 |                 update_cp_stats(sbi, cpc);
+         |                 ^
+   fs/f2fs/checkpoint.c:1744:3: note: did you mean 'update_ckpt_flags'?
+   fs/f2fs/checkpoint.c:1616:13: note: 'update_ckpt_flags' declared here
+    1616 | static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+         |             ^
+   1 error generated.
+
+
+vim +/update_cp_stats +1744 fs/f2fs/checkpoint.c
+
+  1732	
+  1733	static inline void check_cp_time(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+  1734	{
+  1735		unsigned long long sb_diff, cur_diff;
+  1736		enum cp_time ct;
+  1737	
+  1738		sb_diff = (u64)ktime_ms_delta(sbi->cp_stats.times[CP_TIME_END],
+  1739						sbi->cp_stats.times[CP_TIME_START]);
+  1740		cur_diff = (u64)ktime_ms_delta(cpc->stats.times[CP_TIME_END],
+  1741						cpc->stats.times[CP_TIME_START]);
+  1742	
+  1743		if (cur_diff > sb_diff) {
+> 1744			update_cp_stats(sbi, cpc);
+  1745			if (cur_diff < CP_LONG_LATENCY_THRESHOLD)
+  1746				return;
+  1747	
+  1748			f2fs_warn(sbi, "checkpoint was blocked for %llu ms", cur_diff);
+  1749			for (ct = CP_TIME_START; ct < CP_TIME_MAX - 1; ct++)
+  1750				f2fs_warn(sbi, "Step#%d: %llu ms", ct,
+  1751					(u64)ktime_ms_delta(cpc->stats.times[ct + 1],
+  1752							cpc->stats.times[ct]));
+  1753		}
+  1754	}
+  1755	
 
 -- 
-Gabriel Krisman Bertazi
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
 _______________________________________________
