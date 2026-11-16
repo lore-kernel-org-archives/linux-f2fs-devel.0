@@ -1,120 +1,123 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3C4606A339
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4BB606A897
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=UvuwRSXe;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=debnpDdw;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Osd8BYZ1;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=t3M1CouK
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=PMQeXgKV;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=PyZuTfUf;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=GAbGS7AQ;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=FxobociM
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=hK4NunOV+2ki7WY9CWTlxfpwjlWMqkK8Lmq7ZMA1pNY=; b=UvuwRSXegm4O0fAw6oh4xoknkg
-	vfROBrLT7juutPneMrxzrAv2Qx/JY3AGeOBLhIJsqvEocqC898rsnpbJbM6374JNFaay2CT0By4vb
-	2+GdvZFReLyt9EHRey838mlPB4nQPu5skTRvrCb+BqFrIoa52xqkNnBGRoN1B/R0Eeos=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=vR4yp3vTtW1VrQrUY5d5rcHUqUjblsWQGtgA/Q4IjJA=; b=PMQeXgKVUKY4ZshMNLymbRYp37
+	vWNGyOu8O3HOCTrfmrFDBkXHEUPkLs5rnFR4lmHCZ/7h7mcMxq315O2W4GiJ2y+ajZR9LOZFYBY0+
+	S/xfkzxWMb/zRS1N3oCnonCt4Uoi4Zr3jsIB/xLCfZrKlIod9hr+kaOYkE1KfREujN0Q=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xSo1q-000000001Fn-0Qf7;
-	Mon, 16 Nov 2026 04:09:14 +0000
+	id 1xSo1u-000000007rC-2doS;
+	Mon, 16 Nov 2026 04:09:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <daeho43@gmail.com>) id 1xSo1i-000000001FZ-0Dt8
+ (envelope-from <daeho43@gmail.com>) id 1xSo1s-000000007qz-1uak
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:06 +0000
+ Mon, 16 Nov 2026 04:09:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7RSTviWjtfe6XxNDFOAlD9904SKRkGSAvfsq7xFNryA=; b=debnpDdwRm1JG049gmkbxNlXGO
- QiqrxTOcPDhjbTHrEYBjx9513LnXK4yi3E6/o1IY1CLwwOiDayJRw4jZtPvzbXwMJNLompWusiQI5
- X+Q5Nld7i1lW+eug/XMcqeOu6xp8DCupPkYf/UCSEJZmXmwZwHd5hx1V2CJqVgDN1wII=;
+ bh=TVesT5WTeyuZfbJVWZqEGh6jf17QAW5DDHWc+a+BLbM=; b=PyZuTfUfxCwSOBwfnDbaSS4+Zj
+ p4ZLcB9TwI6bvOtujGspLHy3oRnIDbfqKT6sm3qjdjuEEhZtnGMFkGDBwl9U7HmTKCPYO0Q0Jbkw2
+ AntnSkH7NHO6Wh4J0VlAj7bHY9ZoUgZ6RTMIS6q7ockQOXzwJ09I7+HYhTExuWZHnrJU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7RSTviWjtfe6XxNDFOAlD9904SKRkGSAvfsq7xFNryA=; b=Osd8BYZ1iGMSwLPXP8orAl/44/
- qMV9GrYPSIUbv3UzgMx5CIJJUrkH4SCkmXcDcqofWzWwx5U5OAsg4q5Ini81YsBzAgYk373QQ2Wxh
- vuovrXmysQSFAK9edE0EW6fLJmNFke30lZqfFkOuFqyDwBirbyFtGsE8PJMsF34/ehvc=;
-Received: from mail-pj1-f46.google.com ([209.85.216.46])
+ bh=TVesT5WTeyuZfbJVWZqEGh6jf17QAW5DDHWc+a+BLbM=; b=GAbGS7AQqlKlQeobyDtZd1PbuN
+ VPRcklFsYfyWIa5Xvhkp28VWVwTf4TgxPrWcF/zGiiJia+Ya8EgXHpmrOx7X6F547c6S5j9DP8Vp7
+ uVAvom9wcNmUYKVQLuaAmEYTsILLEOuYtzStzveY6ecIA+eeEquMuotZaVk5fFVL/pZM=;
+Received: from mail-pj1-f43.google.com ([209.85.216.43])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xSo1g-000000007bp-2hNJ
+ id 1xSo1r-000000007c3-0Og7
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:05 +0000
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-3b0ae87069dso1731895a91.2
+ Mon, 16 Nov 2026 04:09:16 +0000
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-3b16896b8ceso1330308a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 15 Nov 2026 20:09:04 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794802139; x=1795406939; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=7RSTviWjtfe6XxNDFOAlD9904SKRkGSAvfsq7xFNryA=;
- b=t3M1CouKo8HK+uJPgexhdJfK0AljAU3ymV6JzvsMgmBcIh3/M6ocWT66I49/YVDGes
- fGmoJx36CB6wBmgFvyJkh6JAlvqREkx88O1pzrWYZnDSDyKksPeKduf+ugbtUKw6U++A
- zSJMRt9ff4hNEwcWtBiXbGurx1jk1t0qWuhhgWB+toWC6g2PW85SdOKQq9MUltnNUZfK
- MpxaRGIHncpKVJNkrnJeGfifGLKqEyvP3kbMDigTp4dPAcYKvZ2ULLqRu798Ceba1JLW
- 0TN3AH6CvV5t+7ZJFM6K2iqX/o+nxeRzAOm+lZN4WfueEHNpQ/S2ONfgNjKmIg51zhCj
- vncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794802139; x=1795406939;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20260707; t=1794802149; x=1795406949; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=7RSTviWjtfe6XxNDFOAlD9904SKRkGSAvfsq7xFNryA=;
- b=fHyA2yFi9jKwTgRd6+jVBp7es3aRK/m1M8/uv+nG702FHK22+I6WpdRurnJGmfQFPy
- nszeyQzFdZIWbxBRmF/fiwk4DAkTE7/M0upikI7BLxDrvFFB2utW0598PT37WbWJ0N6l
- DnkaUaLxYhm3QSFDdLeoAmHfpPjWjAKhbRTdFPpS6CYk/NQEjKtwYJCYFDDKHWjBUDUu
- fkx3wwicZH/Xt0ugKCieRgOqY15bIVpqqcN11DXianmgYfTd1pjqlIa3Qkcsk6v4aa4p
- TF0oRrVa9Ooo00FH1C0pJ9ozeWyjFAX7kTXxtcLIhwEmbN6IQSaoxItDs8N9yxdzachb
- 48WQ==
+ bh=TVesT5WTeyuZfbJVWZqEGh6jf17QAW5DDHWc+a+BLbM=;
+ b=FxobociMa3ADbnp/DBKDjcrekQoxbW/vDsGSX22+MzSYwAPzhWVucF73WmfWU5zn2I
+ mgO80TxqH5QNiBjsm2hz1huIA8akZh4NT572FT7KJydCm3hVNTF20a1oHlYWCfhOoaWd
+ wv9JxL29/fqo+5npmCXoGmB3tuZWYefmEiegAMAvcUjm2WZMaTVlZC5VVQFlg5VvkX2t
+ ZciXST032f8AgbINjDqUjiCVSroNu3MTI13J/fGkwSwL1+UJ7sHEf2QK3foMJ1z906o8
+ JaFnLKE/Ojr0kCAE+Mtp7/SV1wJFPVHRtcN1xFOjEYfiowWDpd5Gw+m0n37YhLxcR/1M
+ AXxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794802149; x=1795406949;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=TVesT5WTeyuZfbJVWZqEGh6jf17QAW5DDHWc+a+BLbM=;
+ b=kn7Gwl5FfJj9xS3M8vaauexM9c9Xfq9MIv4FgGLnZoKow+BfNWwTH2P1yqZfe5zOtp
+ mQXOE1p9Vxue0m86cvowQznEZtsSkxwrAPiCRdLlv/0fqWpjVpZGn1kFJCs1elUA13GL
+ MA5tRv2S8UtDyUIT++OCwVy7BQhcIt7+sJjgVZB1w8/0K8M5h0CDunUvUrxD/e1DRIBa
+ X0yCp6t6IH79fLhq412hqhc5JRRnMPOJoySeqftt7E+4So80fNt1CLir2Eaz2lcOu8bx
+ G0jPAZDJ1SGGSyoKrR01OpgKQmlrTpaCjqx5UMbcewSnB/hEszf9wU7FF4PRw8fpx4D6
+ ulvA==
 X-Forwarded-Encrypted: i=1;
- AL+hErFtH+iuadejNk8taLhEbfh4S9lsVCQ5PD1WVo5quwj4SnGFft21GCWL93VZqWU2Rb+GOyv1PuTebBTj/lA6g37S@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z+Gswo6XZVi7PIAUckjANKAzxJLGVDVQc/lG0Dq/pskAgfwIihg
- hOLsmieqa9yHeLqIFR8nnfHykfqenziUvhY02m9GtInk3ofW3EFu/j9t
-X-Gm-Gg: AYBFou1zKVD3UQJ7jG64A8hN5roe4afulaJq9UBL7ypueeV/uOpAFqkRd2NZzJOp5TZ
- eWQa3/v9NIkHmZuVai1xbrSZ9Oh3C4Fa7xS/8TJKcdJWc5Mx7RIULXSkwEe8KKgEH/h5d/qmOJO
- gceRu4yyiU96DFigCVdsyrwTs9Q1OUUwagMSXR1SydmFc0/5rMC3xkSAme0VPbQmdE+2g5Micsc
- cxLUkL64lX8U1IVJQku9C6IKyiDMzOoQomAcCJWDd/NAWSrNsb6GfsLIyOiNS5G95ABXxG1oeXB
- dqMQ+suvSuapcMGCl8Bi18iRL05mnkCfsuUH0OEFUjl/G42w4bAFEN0xsjLUB3kSEJfnyDXY3lL
- xbxbJF+ugfzS4Xpv4uQcM9g++iqSUwN9Z0O9V5zplLrwYZmhXOOy3T/pmpgnVyZgiFOrOEGLn5H
- RJyjWU8l1lJFFw2iQlgrRG5lD6WWnxjF4WV8NhqpAJoj2OvnTpXLanQLHXRRBXQZx3s8xAjq5Gj
- afYN5Toqw6pfq9gxtk/d6X9Ri19lEpXXKe5+ww5j16lKIShadE3ONqNjQcJTILLFt9OGcf8yQ7J
- Kv+1cjw6/0Vb6G2QSUxLXHnPdBylPxRN0qETJ9ulT37nXQymqisawoCbCx5sWuZt5hx73+aZIZX
- KBdySJEF+PqJEzcnydP62MrwnkaTJv6jTd1W5vvGBL2SHjGQ=
-X-Received: by 2002:a17:90b:4ec5:b0:3ad:b86d:dbad with SMTP id
- 98e67ed59e1d1-3b1b0a0dd02mr8036664a91.30.1794802138723; 
- Sun, 15 Nov 2026 20:08:58 -0800 (PST)
+ AL+hErHmbaYAYds8I/gNRMd0KH8+cN5196aU92/ZNBLvITnvA9cKNjCHTrfmhtVFsEPu2810dEE9hgqPbGYBJcS820gG@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z8RJBtHW1CuIuz1DjD8N/xWqBrOSCVlLlaa/BZPhDHQaTZZ1kGa
+ XTRVdX8u+9BC09Zdy2jRhPUXSl1WjYqhNi7OPofHFivVePKokxpT3oHgEjauZA==
+X-Gm-Gg: AYBFou3dtsPeUaiThXKoYbNkdXbtIKsjMNVjyg6bvLFITxpjek/HZ6lHuAEDFpvw17H
+ K5WZRxZXVvqLvDdXRnVdJPzNyhpROkATH8BawxapyQQD0RWpTZuYwDahH3oUSrUOKLFV3h1cgPB
+ SvRMUuaC2xwt975ul8JsgQPbqWL2AI7QmDogyqfMYclXc4lP+liWAJcNbFFxn7szHvTgN0USfoB
+ odXd4WVppcEBUyAcYxEAqV1EhdoXLiPob7KzWhh+g7uW41Y7GuxsvxLua8KTXXGIopG3tZjcmPi
+ NkgBUmpRryxj+KQJSJnr+/ZXr67CeMBaq0RHhd5IwmUHUGlYdkKHG6UvoqdUqoXHhHrrakFhYsr
+ zrATb+NnBM/Dy0Dw9lezic/o/EEbAAC5nZBJxGoOzGldu+zxRoTVmFQqj1Z9Xs2lIL8z7n4uEdZ
+ 0zBoZ9rBt+VfrS2l2L+Zxks2vsI0CLpuoY08gF1FsTWMluxN2HT7UrmAHqGkv6HfJlVNLh0HeKF
+ 9+wGUoH0d/dJJnzazrlUcG0CeII9pBbN0/dlM8FQYhCk6ZwNOvBwTzjnnA+UlLRKlgvM5AZyqkG
+ KLmNanix1kutvEF/ff9VLM6j+wdFSA7Ln+TTZVLj9pmFnShaa2jOoleHmtrbVwaa62ikY04Xst3
+ GBYerqNSqbbF8Hyl5G4723ZxdmW3gIq3QD+X3AIKhD6iDp7j2hUd811Idp+yD3GqvGecdow==
+X-Received: by 2002:a17:90b:4f85:b0:3b0:91ce:6720 with SMTP id
+ 98e67ed59e1d1-3b1b0a1ef3emr8572099a91.30.1794802149076; 
+ Sun, 15 Nov 2026 20:09:09 -0800 (PST)
 Received: from f2fs-test.c.googlers.com.com
  (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.08.57
+ 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Nov 2026 20:08:57 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:08 -0800 (PST)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Sun, 15 Nov 2026 20:08:31 -0800
-Message-ID: <20261116040851.2849696-1-daeho43@gmail.com>
+Date: Sun, 15 Nov 2026 20:08:36 -0800
+Message-ID: <20261116040851.2849696-6-daeho43@gmail.com>
 X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
+In-Reply-To: <20261116040851.2849696-1-daeho43@gmail.com>
+References: <20261116040851.2849696-1-daeho43@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: 1.1 (+)
-X-Headers-End: 1xSo1g-000000007bp-2hNJ
-Subject: [f2fs-dev] [PATCH v2 00/20] f2fs: support block size smaller than
- PAGE_SIZE
+X-Headers-End: 1xSo1r-000000007c3-0Og7
+Subject: [f2fs-dev] [PATCH v2 05/20] f2fs: convert inode dirty page counters
+ to dirty block counters
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,257 +130,308 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 From: Daeho Jeong <daehojeong@google.com>
 
-F2FS has required the filesystem block size to equal PAGE_SIZE. On a
-kernel with 16KB pages, this means an existing F2FS image with 4KB
-blocks cannot be mounted, e.g. the userdata partition of an Android
-device that moves from a 4KB page kernel to a 16KB page kernel.
+The per-inode dirty counter is compared against block based thresholds
+such as min_fsync_blocks and BLKS_PER_SEG, and it already holds blocks:
+its helpers take page counts and convert them. Rename it to
+dirty_blocks and make the helpers take block counts, and convert to
+pages where a counter is compared with page based values. The
+conversions are no-ops when the block size equals PAGE_SIZE.
 
-This series lets F2FS mount and use a filesystem whose block size is
-smaller than PAGE_SIZE, such as 4KB blocks on a 16KB page kernel. The
-on-disk format does not change.
+The callers that account one block for a folio are left as they are,
+which is still correct when the block size equals PAGE_SIZE. Later
+patches convert them.
 
-With subpage blocks, even an order-0 folio holds several blocks, so
-the series builds on the large folio support from Nanzhe Zhao [1] and
-tracks uptodate and dirty state per block in f2fs_folio_state for any
-folio that holds more than one block. Most paths then work in blocks
-instead of pages:
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/checkpoint.c |  4 ++--
+ fs/f2fs/data.c       | 13 +++++++------
+ fs/f2fs/f2fs.h       | 36 +++++++++++++++++-------------------
+ fs/f2fs/file.c       | 16 ++++++++--------
+ fs/f2fs/inode.c      |  2 +-
+ fs/f2fs/node.c       |  3 ++-
+ fs/f2fs/super.c      |  2 +-
+ 7 files changed, 38 insertions(+), 38 deletions(-)
 
-- Patches 1-2 convert more page based index and size calculations to
-  block based ones, and add the superblock and mount infrastructure.
-  Subpage block sizes are still rejected at this point.
-- Patch 3 extends f2fs_folio_state with per-block state, identified by
-  a magic number, and allocates it on demand with __GFP_NOFAIL.
-- Patches 4-7 handle directories, the per-inode dirty counters, the
-  read path and GC, and the write path and writeback per block.
-- Patches 8-19 adapt the remaining features: range operations and
-  mmap, pinned files, collapse/insert range, move range,
-  defragmentation, swapfile, fs-verity, atomic writes, inline data,
-  online resize and compression, and remove the -EOPNOTSUPP checks
-  that patch 2 added for the features that need them.
-- Patch 20 stops rejecting subpage block sizes.
-
-When the block size equals PAGE_SIZE, the behavior does not change,
-except for the fixes noted in the individual patches. The following
-are not limited to subpage blocks or large folios:
-
-- Patch 1: __complete_revoke_list() and __clone_blkaddrs() compute
-  offsets in 64 bits on 32-bit architectures.
-- Patch 8: an extending direct write updates i_size in ->end_io(),
-  before iomap invalidates the page cache of the written range.
-- Patch 10: collapse and insert range hold i_gc_rwsem[WRITE] and
-  invalidate_lock until the moved blocks are written back and the page
-  cache is dropped.
-- Patch 11: move range zeroes the cached data past the old EOF of the
-  destination before extending it, and drops the source blocks from
-  the page cache also after an exchange that failed part way.
-- Patch 12: defragmentation reads compressed files through
-  ->read_folio(). A block of a compressed cluster that was not in the
-  page cache was read without decompression and written back as file
-  data.
-- Patch 15: aborting atomic writes holds i_gc_rwsem[WRITE] and
-  invalidate_lock.
-
-A few of the patches adjust code from the large folio series [1]:
-
-- f2fs_folio_has_ffs() checks the folio state magic instead of
-  requiring a large folio, since order-0 multi-block folios also carry
-  a folio state, and the page private flags can legitimately be set
-  before a state is attached.
-- f2fs_ffs_find_or_alloc() cannot fail with __GFP_NOFAIL, so the
-  allocation failure handling of its callers is removed.
-- The inode dirty blocks are counted from the dirty bits of the folio
-  state, and ->dirty_folio() marks the uptodate blocks of a folio
-  dirty, since mm does not tell which blocks were modified.
-- Defragmentation and swapfile activation mark only the target block
-  dirty instead of the whole page.
-
-Changes in v2:
-
-Addressed the review comments from Chao Yu and Nanzhe Zhao, the
-warning reported by the kernel test robot, and the findings of the
-Sashiko review. v1 is at [2].
-
-- Patch 1 (block based calculations): rename the subject ("in more
-  paths"). Use F2FS_BLK_ALIGN() in dir_blocks(). Compute the new
-  i_size in __clone_blkaddrs() in 64 bits.
-- Patch 2 (superblock and mount): probe the 2nd superblock from the
-  smallest block size and stop at the first one found, so that a stale
-  superblock of a larger block size is not picked, and return its
-  error instead of the error of the last probe. Bound log_sectorsize
-  by log_blocksize and remove F2FS_MAX_LOG_SECTOR_SIZE. Check the
-  requested inline_xattr_size in f2fs_check_opt_consistency(). Do not
-  set *recovery when no valid superblock is found. Report a failed
-  read of a superblock again.
-- Patch 3 (folio state): remove the unused variable in
-  prepare_large_folio_write_begin(). Count the submitted blocks in
-  nwritten also on error. Do not clear the uptodate flag of the folio
-  of an inline inode in f2fs_invalidate_folio(). Explain the use of
-  __GFP_NOFAIL in the commit message.
-- Patch 4 (directories): read the name length in f2fs_delete_entry()
-  under the folio lock. Clear the gcing flag of the folio when its
-  last dirty block is freed. Simplify f2fs_dentry_to_lblk() and use
-  f2fs_folio_lblk_address().
-- Patch 5 (dirty counters): commit message only.
-- Patch 6 (read path and GC): keep the folio state of a folio that is
-  not fully uptodate in ->release_folio while the folio has other
-  users. Read the block again in f2fs_get_read_data_folio() and
-  f2fs_find_data_folio() when the folio state was released while the
-  folio was unlocked, instead of failing. Do not map the blocks past
-  EOF in f2fs_read_data_large_folio(). Read under memalloc_nofs in
-  ra_data_block(), where GC locks are held. Rename
-  f2fs_submit_page_read_sync() to f2fs_submit_block_read_sync().
-- Patch 7 (write path and writeback): count the inode dirty blocks
-  from the dirty bits of the folio state instead of per folio. Make
-  ->dirty_folio() mark the uptodate blocks within EOF dirty, and add
-  f2fs_folio_mark_dirty() for the updates made by f2fs, which mark
-  only the blocks they modify. Keep f2fs_balance_fs_folio_locked() in
-  write_begin instead of balancing after the folio is unlocked. Drop
-  the pending write that a failed submission leaves behind in
-  f2fs_convert_inline_folio(). Keep the folio dirty and accounted when
-  flush_inline_data() fails.
-- Patch 8 (range operations and mmap): update i_size of an extending
-  direct write in ->end_io(). In page_mkwrite, reserve blocks only
-  where it may allocate, i.e. not for a pinned file or a compressed
-  cluster, do not balance with the folio locked, and read the blocks
-  that are not uptodate after a partial invalidation. Check the dirty
-  state of a reserved block only for SEEK_DATA.
-- Patch 9 (pinned files): keep failing page_mkwrite on a device
-  aliasing file with -EIO.
-- Patch 10 (collapse and insert range): hold i_gc_rwsem[WRITE] and
-  invalidate_lock from before the first writeback until the moved
-  blocks are written back and the page cache is dropped.
-- Patch 11 (move range): zero the cached data past the old EOF of the
-  destination with f2fs_zero_post_eof_page() before the move. Drop the
-  source blocks from the page cache also after an exchange that failed
-  part way. Call pagecache_isize_extended() for the gap between the
-  old EOF and the moved data.
-- Patch 12 (defragmentation): read compressed files through
-  ->read_folio() as well, and lock and redirty the folio that was read
-  instead of looking it up again (f2fs_get_defrag_folio()).
-- Patch 13 (swapfile): use f2fs_folio_mark_dirty().
-- Patch 14 (fs-verity): stop the data reads of a verity file at i_size
-  in f2fs_read_data_large_folio(). Do not zero the blocks past i_size
-  on read while verity is being enabled.
-- Patch 15 (atomic writes): hold i_gc_rwsem[WRITE] and invalidate_lock
-  while aborting atomic writes, except at eviction.
-- Patch 16 (inline data): redirty the folio and stop on any error of
-  the inline writeback in f2fs_write_cache_folios(). Note the effect
-  on inline inodes with large folios in the commit message.
-- Patch 18 (compression): raise the minimum cluster size only when a
-  page has more than four blocks, reject a smaller compress_log_size
-  in the mount option and in F2FS_IOC_SET_COMPRESS_OPTION, fail the
-  open of a file that already has a smaller cluster with -EOPNOTSUPP
-  instead of failing its inode sanity check, and document it. Dirty
-  every block of a partially dirty compressed cluster before it is
-  rewritten. Attach a folio state to the multi-block folios of a
-  rewritten cluster before they are dirtied. Count a read folio of a
-  compressed file once in the iostat. Do not cut the range that
-  redirty_blocks() dirties at EOF. Remove inode_inc_dirty_block() and
-  inode_dec_dirty_block().
-- Patches 17, 19 and 20: no change.
-- The patches also use the F2FS_BLK_* helpers in more places, as
-  suggested in the review.
-
-Testing:
-
-Built every patch for x86_64, arm64 (16KB pages), arm and i386.
-
-Ran the xfstests auto group (excluding the clone, dedupe and thin
-groups) on arm64 QEMU with mount options "discard,fsync_mode=strict"
-in these combinations of page size / block size:
-
-- 16KB/4KB:  default, compression (lz4, zstd, lz4hc, lzo-rle with
-             64KB clusters and checksum), compression+encryption,
-             encryption+verity, mode=lfs, atgc
-- 4KB/4KB:   default, compression, encryption+verity,
-             compression+encryption, mode=lfs
-- 16KB/16KB: default, compression, encryption+verity,
-             compression+encryption, mode=lfs
-
-plus generic/019, 521, 522 and 780 for each combination, and a 24 hour
-power-off recovery test with fsstress for each of the three
-combinations.
-
-There were no crashes or hangs, and the power-off recovery tests found
-no corruption. Two failures are worth a note, and neither depends on
-this series:
-
-- generic/455 failed once on 16KB/4KB with encryption+verity, because
-  fsync() returned before its node block was written. [3] fixes it.
-- generic/551 was killed by the OOM killer in three of the compression
-  runs. It is killed the same way without this series.
-
-Also ran:
-
-- The xfstests quick group with lockdep (PROVE_LOCKING and
-  DEBUG_ATOMIC_SLEEP) on 16KB/4KB, default and compression. The only
-  reports were in generic/574 with compression, where
-  f2fs_decompress_cluster() may sleep in the read completion. This
-  happens without this series as well, and [4] fixes it.
-- 16 processes writing through mmap at the same time until the
-  filesystem is full, on a 1GB image with 16KB pages and 4KB blocks,
-  with and without large folios and with and without mode=lfs, as
-  asked in the review of v1. They got SIGBUS only after the free
-  space ran out, the data read back was correct, and fsck found no
-  error.
-- A 32-bit ARM kernel (4KB pages) with files beyond 4GB.
-
-[1] https://lore.kernel.org/linux-f2fs-devel/20261028154407.1601430-1-nzzhao.sigma@gmail.com/
-[2] https://lore.kernel.org/linux-f2fs-devel/20261102193952.3002018-1-daeho43@gmail.com/
-[3] https://lore.kernel.org/linux-f2fs-devel/20261103101208.4550-1-seungbum.ju@gmail.com/
-[4] https://lore.kernel.org/linux-f2fs-devel/20261112143355.2923939-2-jprusakowski@google.com/
-
-Daeho Jeong (20):
-  f2fs: use block-based index and size calculations in more paths
-  f2fs: support subpage block size superblock and mount
-  f2fs: extend f2fs_folio_state for subpage blocks
-  f2fs: support subpage blocks in directory operations
-  f2fs: convert inode dirty page counters to dirty block counters
-  f2fs: support subpage blocks in data read path and GC
-  f2fs: support subpage blocks in data write path and writeback
-  f2fs: adapt range operations and mmap for subpage blocks
-  f2fs: support subpage blocks in pinned files
-  f2fs: support subpage blocks in collapse and insert range
-  f2fs: support subpage blocks in move range
-  f2fs: support subpage blocks in defragmentation
-  f2fs: support subpage blocks in swapfile activation
-  f2fs: support subpage blocks in fs-verity enablement
-  f2fs: support subpage blocks in atomic writes
-  f2fs: preserve inline data in subpage block mode
-  f2fs: support subpage blocks in online resize
-  f2fs: support subpage blocks in compression
-  f2fs: count compress cache entries in pages for its memory limit
-  f2fs: enable subpage block size support
-
- Documentation/filesystems/f2fs.rst |    7 +-
- fs/f2fs/checkpoint.c               |   67 +-
- fs/f2fs/compress.c                 |  569 ++++++---
- fs/f2fs/data.c                     | 1725 ++++++++++++++++++----------
- fs/f2fs/dir.c                      |  126 +-
- fs/f2fs/f2fs.h                     |  237 ++--
- fs/f2fs/file.c                     |  716 ++++++++----
- fs/f2fs/gc.c                       |  103 +-
- fs/f2fs/inline.c                   |   23 +-
- fs/f2fs/inode.c                    |    3 +-
- fs/f2fs/node.c                     |   26 +-
- fs/f2fs/segment.c                  |   14 +-
- fs/f2fs/super.c                    |  180 ++-
- fs/f2fs/verity.c                   |    5 -
- include/linux/f2fs_fs.h            |    2 +-
- 15 files changed, 2494 insertions(+), 1309 deletions(-)
-
-
-base-commit: b9d7379d10d43386b59082da8c9a0b111e054781
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 158d97fc349a..1060ee651756 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1316,7 +1316,7 @@ static void __remove_dirty_inode(struct inode *inode, enum inode_type type)
+ {
+ 	int flag = (type == DIR_INODE) ? FI_DIRTY_DIR : FI_DIRTY_FILE;
+ 
+-	if (get_dirty_pages(inode) || !is_inode_flag_set(inode, flag))
++	if (get_dirty_blocks(inode) || !is_inode_flag_set(inode, flag))
+ 		return;
+ 
+ 	list_del_init(&F2FS_I(inode)->dirty_list);
+@@ -1325,7 +1325,7 @@ static void __remove_dirty_inode(struct inode *inode, enum inode_type type)
+ }
+ 
+ /*
+- * Account @nr dirty pages (negative when dirtiness is cleared) for @inode.
++ * Account @nr dirty blocks (negative when dirtiness is cleared) for @inode.
+  */
+ void f2fs_account_dirty_blocks(struct inode *inode, int nr)
+ {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b913d53e96e7..ffa2233d66f2 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -4279,7 +4279,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 
+ 	folio_batch_init(&fbatch);
+ 
+-	if (get_dirty_pages(mapping->host) <=
++	if (get_dirty_blocks(mapping->host) <=
+ 				SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
+ 		set_inode_flag(mapping->host, FI_HOT_DATA);
+ 	else
+@@ -4524,7 +4524,7 @@ static int f2fs_write_cache_folios(struct address_space *mapping,
+ 	bool op_locked = false;
+ 	bool retry = false;
+ 
+-	if (get_dirty_pages(inode) <= SM_I(sbi)->min_hot_blocks)
++	if (get_dirty_blocks(inode) <= SM_I(sbi)->min_hot_blocks)
+ 		set_inode_flag(inode, FI_HOT_DATA);
+ 	else
+ 		clear_inode_flag(inode, FI_HOT_DATA);
+@@ -4788,7 +4788,7 @@ static inline bool __should_serialize_io(struct inode *inode,
+ 		return true;
+ 	if (wbc->sync_mode != WB_SYNC_ALL)
+ 		return true;
+-	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
++	if (get_dirty_blocks(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+ 		return true;
+ 	return false;
+ }
+@@ -4827,7 +4827,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	bool locked = false;
+ 
+ 	/* skip writing if there is no dirty page in this inode */
+-	if (!get_dirty_pages(inode) && wbc->sync_mode == WB_SYNC_NONE)
++	if (!get_dirty_blocks(inode) && wbc->sync_mode == WB_SYNC_NONE)
+ 		return 0;
+ 
+ 	/* during POR, we don't need to trigger writepage at all. */
+@@ -4836,7 +4836,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 
+ 	if ((S_ISDIR(inode->i_mode) || IS_NOQUOTA(inode)) &&
+ 			wbc->sync_mode == WB_SYNC_NONE &&
+-			get_dirty_pages(inode) < nr_caches_to_skip(sbi, DATA) &&
++			get_dirty_blocks(inode) < nr_caches_to_skip(sbi, DATA) &&
+ 			f2fs_available_free_memory(sbi, DIRTY_DENTS))
+ 		goto skip_write;
+ 
+@@ -4895,7 +4895,8 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	return ret;
+ 
+ skip_write:
+-	wbc->pages_skipped += get_dirty_pages(inode);
++	wbc->pages_skipped += get_dirty_blocks(inode) >>
++					F2FS_LOG_BLKS_PER_PAGE(sbi);
+ 	update_skipped_write(sbi, wbc);
+ 	trace_f2fs_writepages(mapping->host, wbc, DATA);
+ 	return 0;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 876407cbdbb5..9cf9583a4428 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -957,7 +957,7 @@ struct f2fs_inode_info {
+ 	unsigned long flags[BITS_TO_LONGS(FI_MAX)];	/* use to pass per-file flags */
+ 	unsigned int ioprio_hint;	/* hint for IO priority */
+ 	struct f2fs_rwsem i_sem;	/* protect fi info */
+-	atomic_t dirty_pages;		/* # of dirty pages */
++	atomic_t dirty_blocks;		/* # of dirty blocks */
+ 	f2fs_hash_t chash;		/* hash value of given file name */
+ 	unsigned int clevel;		/* maximum level of given file name */
+ 	struct task_struct *task;	/* lookup and create consistency */
+@@ -2336,6 +2336,8 @@ static inline unsigned int f2fs_blocks_per_folio(struct f2fs_sb_info *sbi,
+ 	return F2FS_BYTES_TO_BLK(sbi, folio_size(folio));
+ }
+ 
++#define F2FS_LOG_BLKS_PER_PAGE(sbi)	(PAGE_SHIFT - (sbi)->log_blocksize)
++
+ static inline bool f2fs_has_subpage_blocks(struct f2fs_sb_info *sbi)
+ {
+ 	return F2FS_BLKSIZE(sbi) < PAGE_SIZE;
+@@ -2979,40 +2981,36 @@ static inline void dec_cache_count(struct f2fs_sb_info *sbi, int count_type)
+ 	sub_cache_counts(sbi, count_type, 1);
+ }
+ 
+-/*
+- * Account @nr dirty pages for @inode; one page is
+- * (PAGE_SIZE >> log_blocksize) filesystem blocks.
+- */
+-static inline void inode_add_dirty_blocks(struct inode *inode, int nr)
++static inline void inode_add_dirty_blocks(struct inode *inode,
++					  unsigned int nr_blocks)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int blocks = nr * (PAGE_SIZE >> sbi->log_blocksize);
+ 
+-	atomic_add(blocks, &F2FS_I(inode)->dirty_pages);
++	atomic_add(nr_blocks, &F2FS_I(inode)->dirty_blocks);
+ 	if (S_ISDIR(inode->i_mode))
+-		add_cache_counts(sbi, F2FS_DIRTY_DENTS, blocks);
++		add_cache_counts(sbi, F2FS_DIRTY_DENTS, nr_blocks);
+ 	else
+-		add_cache_counts(sbi, F2FS_DIRTY_DATA, blocks);
++		add_cache_counts(sbi, F2FS_DIRTY_DATA, nr_blocks);
+ 	if (IS_NOQUOTA(inode))
+-		add_cache_counts(sbi, F2FS_DIRTY_QDATA, blocks);
++		add_cache_counts(sbi, F2FS_DIRTY_QDATA, nr_blocks);
+ }
+ 
+-static inline void inode_sub_dirty_blocks(struct inode *inode, int nr)
++static inline void inode_sub_dirty_blocks(struct inode *inode,
++					  unsigned int nr_blocks)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int blocks = nr * (PAGE_SIZE >> sbi->log_blocksize);
+ 
+ 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
+ 			!S_ISLNK(inode->i_mode))
+ 		return;
+ 
+-	atomic_sub(blocks, &F2FS_I(inode)->dirty_pages);
++	atomic_sub(nr_blocks, &F2FS_I(inode)->dirty_blocks);
+ 	if (S_ISDIR(inode->i_mode))
+-		sub_cache_counts(sbi, F2FS_DIRTY_DENTS, blocks);
++		sub_cache_counts(sbi, F2FS_DIRTY_DENTS, nr_blocks);
+ 	else
+-		sub_cache_counts(sbi, F2FS_DIRTY_DATA, blocks);
++		sub_cache_counts(sbi, F2FS_DIRTY_DATA, nr_blocks);
+ 	if (IS_NOQUOTA(inode))
+-		sub_cache_counts(sbi, F2FS_DIRTY_QDATA, blocks);
++		sub_cache_counts(sbi, F2FS_DIRTY_QDATA, nr_blocks);
+ }
+ 
+ static inline void inode_inc_dirty_block(struct inode *inode)
+@@ -3052,9 +3050,9 @@ static inline s64 get_nr_caches(struct f2fs_sb_info *sbi, int count_type)
+ 	return atomic_read(&sbi->nr_caches[count_type]);
+ }
+ 
+-static inline int get_dirty_pages(struct inode *inode)
++static inline int get_dirty_blocks(struct inode *inode)
+ {
+-	return atomic_read(&F2FS_I(inode)->dirty_pages);
++	return atomic_read(&F2FS_I(inode)->dirty_blocks);
+ }
+ 
+ static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 28fccc735a39..e0d246397ad0 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -376,7 +376,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		goto go_write;
+ 
+ 	/* if fdatasync is triggered, let's do in-place-update */
+-	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
++	if (datasync || get_dirty_blocks(inode) <= SM_I(sbi)->min_fsync_blocks)
+ 		set_inode_flag(inode, FI_NEED_IPU);
+ 	ret = file_write_and_wait_range(file, start, end);
+ 	clear_inode_flag(inode, FI_NEED_IPU);
+@@ -2495,9 +2495,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+ 	 * Should wait end_io to count F2FS_WB_CP_DATA correctly by
+ 	 * f2fs_is_atomic_file.
+ 	 */
+-	if (get_dirty_pages(inode))
+-		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%llu, npages=%u",
+-			  inode->i_ino, get_dirty_pages(inode));
++	if (get_dirty_blocks(inode))
++		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%llu, nblocks=%u",
++			  inode->i_ino, get_dirty_blocks(inode));
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+ 	if (ret)
+ 		goto out_unlock;
+@@ -2519,7 +2519,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+ 		F2FS_I(fi->cow_inode)->atomic_inode = inode;
+ 	} else {
+ 		/* Reuse the already created COW inode */
+-		f2fs_bug_on(sbi, get_dirty_pages(fi->cow_inode));
++		f2fs_bug_on(sbi, get_dirty_blocks(fi->cow_inode));
+ 
+ 		invalidate_mapping_pages(fi->cow_inode->i_mapping, 0, -1);
+ 
+@@ -4877,7 +4877,7 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
+ 		goto out;
+ 	}
+ 
+-	if (f2fs_is_mmap_file(inode) || get_dirty_pages(inode)) {
++	if (f2fs_is_mmap_file(inode) || get_dirty_blocks(inode)) {
+ 		ret = -EBUSY;
+ 		goto out;
+ 	}
+@@ -5033,7 +5033,7 @@ static int f2fs_ioc_decompress_file(struct file *filp)
+ 		if (ret < 0)
+ 			break;
+ 
+-		if (get_dirty_pages(inode) >= BLKS_PER_SEG(sbi)) {
++		if (get_dirty_blocks(inode) >= BLKS_PER_SEG(sbi)) {
+ 			ret = filemap_fdatawrite(inode->i_mapping);
+ 			if (ret < 0)
+ 				break;
+@@ -5123,7 +5123,7 @@ static int f2fs_ioc_compress_file(struct file *filp)
+ 		if (ret < 0)
+ 			break;
+ 
+-		if (get_dirty_pages(inode) >= BLKS_PER_SEG(sbi)) {
++		if (get_dirty_blocks(inode) >= BLKS_PER_SEG(sbi)) {
+ 			ret = filemap_fdatawrite(inode->i_mapping);
+ 			if (ret < 0)
+ 				break;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index f5a4dac98ef2..5c6a64b31b05 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -872,7 +872,7 @@ static void f2fs_pre_evict_inode(struct inode *inode)
+ 	    test_opt(sbi, COMPRESS_CACHE) && f2fs_compressed_file(inode))
+ 		f2fs_invalidate_compress_pages(sbi, inode->i_ino);
+ 
+-	f2fs_bug_on(sbi, get_dirty_pages(inode));
++	f2fs_bug_on(sbi, get_dirty_blocks(inode));
+ 	f2fs_remove_dirty_inode(inode);
+ 	f2fs_remove_donate_inode(inode);
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index e53871f32c35..cb8affb2c1e0 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -85,7 +85,8 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
+ 	} else if (type == DIRTY_DENTS) {
+ 		if (bdi_wb_dirty_exceeded(sbi->sb->s_bdi))
+ 			return false;
+-		mem_size = get_nr_caches(sbi, F2FS_DIRTY_DENTS);
++		mem_size = get_nr_caches(sbi, F2FS_DIRTY_DENTS) >>
++					F2FS_LOG_BLKS_PER_PAGE(sbi);
+ 		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
+ 	} else if (type == INO_ENTRIES) {
+ 		int i;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f17bae198fe5..9b01ead00edc 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1855,7 +1855,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	init_once((void *) fi);
+ 
+ 	/* Initialize f2fs-specific inode info */
+-	atomic_set(&fi->dirty_pages, 0);
++	atomic_set(&fi->dirty_blocks, 0);
+ 	atomic_set(&fi->i_compr_blocks, 0);
+ 	atomic_set(&fi->open_count, 0);
+ 	atomic_set(&fi->writeback, 0);
 -- 
 2.56.0.611.g1030f0b940-goog
 
