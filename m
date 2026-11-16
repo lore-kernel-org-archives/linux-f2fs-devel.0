@@ -1,42 +1,42 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2E2606A32A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F71606A88F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=SlTmDhL7;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=JkrsrqJk;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=fjjJzwNl;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AFQF5ZQr
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=bQBNEj6/;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=bniMuHvq;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=U9L3gNPy;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kZZdl2A0
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=JlWt57QMw1AzWVOKCZmunFUgl6ahaGuKd+8PyqvVbSo=; b=SlTmDhL7uSfjP+KhR7cpku3e2C
-	os9844FIF9/wy5kdYj5AMD07j3xKbdEeUrqhpX0pH4/H/QmI9ooo55gRof4SVViFIcKvCXcLoMOr6
-	AjlE2dQK60V7wC4jPwR7QoyhcQjaC1j8kkm1DP2hQAJZTpNXG/oB3ZxwxoBC9pvtoVGs=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=Cp2o2/X+Y4b03EOktA4t+o5ZLIh6u1dxaDobTHwgPAE=; b=bQBNEj6/tc7gNjZypAgXy2oLvM
+	rzi92jWwXCOJ+jzDLDuc90LgGSvr4qlvk+Nx7+A9jssBOhJrNgvUbWV6ak45QkUYTdivntOM16ylt
+	kyxtcn30JEwtzuQ0NZQCkmbwhI/XqaertSoLSXjV2vRBRfHsEz01FAAaSYExYRMuPSvQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xSo2A-000000005C2-0w9q;
-	Mon, 16 Nov 2026 04:09:34 +0000
+	id 1xSo2C-000000001K2-485E;
+	Mon, 16 Nov 2026 04:09:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <daeho43@gmail.com>) id 1xSo28-000000005Bj-3qkQ
+ (envelope-from <daeho43@gmail.com>) id 1xSo2B-000000001Jm-34rf
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:32 +0000
+ Mon, 16 Nov 2026 04:09:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zFy7dE+9TYlqdjzVOGIle0ydaLPC/hfnQSo/dWdrLPs=; b=JkrsrqJkDsKwbCqHcLx9nawx9v
- Bffmd6Nyj+RrmnjN6PaPRC9vNfBbAA4Zzj21qi/AsXvocNs4H4B2XT31mFXiH3YLiaeuAbOJTT6q9
- C2ep24zOLYaroW/aCA2S0haYEPaNg0mZfhr74S7/rSygFGZ8VtX8+Uy2IDD4uM+Z4JbM=;
+ bh=jTVVyfonP/unKYGJ3+1FS2r8XOwbDzqwSJPNB4V2nCw=; b=bniMuHvqQs2ZEU4QVoUoyZeRwn
+ mnhF1A/Rp+c8BvF45GYz4trFP2HAOqqtOhYqz5eACEL0BdiBOBLRMEXwsIXL7FfAVvDVEq6khk1U3
+ N/nlB8pN5WlZor7Us/02tYo96NDhtDgpjH6sL7vg/jkEmd7LdALIPhhtur8bBtbTDkOc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -44,80 +44,80 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zFy7dE+9TYlqdjzVOGIle0ydaLPC/hfnQSo/dWdrLPs=; b=fjjJzwNl1r77eRN48cCt55aYhj
- mZi+sYyqdRpx7FCjwqsN/XdybOGyfblpLIckOQTldzv5FekMFV2dJ+QS65xeLgQ9Z/sEzvxx3/4tz
- j0poW9cGS5fn1PwykJfh5SJzcjsK8vAofEbOfHZ/p3hEiMK2xlWXoNtz5qHlTaFcu2z0=;
-Received: from mail-pj1-f54.google.com ([209.85.216.54])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=jTVVyfonP/unKYGJ3+1FS2r8XOwbDzqwSJPNB4V2nCw=; b=U9L3gNPyLHNqcRdTpql6w5kEOb
+ v3QblqjWgi4mPIfIUyQG+bjbhUeO8VUL6Ok725Ph6qh4c1xVvTkH4out4zRUgkOQ/IF+Qz5TCdt2Y
+ Oj4rXOMH+iGC4zHkDSnUgspKPcG6Z+Rr+WXifdcGD5YJYPTUnOfwaxMG2At8cDRYKN3A=;
+Received: from mail-pg1-f177.google.com ([209.85.215.177])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xSo28-000000007ce-1Ms2
+ id 1xSo2B-000000005gq-0J7g
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:32 +0000
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-3b179528d56so1336326a91.3
+ Mon, 16 Nov 2026 04:09:35 +0000
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-cd60c5da24cso2383029a12.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 15 Nov 2026 20:09:32 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794802166; x=1795406966; darn=lists.sourceforge.net;
+ d=gmail.com; s=20260707; t=1794802169; x=1795406969; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=zFy7dE+9TYlqdjzVOGIle0ydaLPC/hfnQSo/dWdrLPs=;
- b=AFQF5ZQrfmVjLwItCUEYp6jpHeZP2kfIVf+yXbs1o9eKQ+PnUAU41LxCH46ROxfbQx
- 7osYICfilou/GpfMZqycVyyc3+3J/6LQP0aqs6+BX6g+cFwVguUvyPauFe5eg6juBZ7e
- 65GRtLQU78aYXVA51smbecvP5ajh4DOS7uoqG4HEUrwDCBfnyEbqP9hjJ/eKrjUPvQDz
- VQkeeaDdTvgktlavOmu1rcLOKVh9VJZ2CwBPLlnitWSFJ28CxBvVpI37+lGDMCwqTcVj
- 30Ta70rmv1fhmpLSc1vhwRKeSBcvKmm5bXvYu1ysfotANCWHztklvVoW0qC2Pj2D3ibz
- e3lw==
+ bh=jTVVyfonP/unKYGJ3+1FS2r8XOwbDzqwSJPNB4V2nCw=;
+ b=kZZdl2A0/n8hcDt2T+QBLW5uua0Kyiu/gw+vUHdcaMrtRPCCzV6tf9Kx+LXVCGs+lU
+ +zn7AARKoCqNsGzm/WLkiAh0ZTa9s2/RY4jQ5JK3lgvHaf83RL/QmX7CXP94XYtBmSns
+ 581+DGFywkuGQ11w3R74+NLPw7chllLqIvbtsUmjEhM7ryyawBxAN8Y6iOqm6ObB0Bug
+ 9IKp5gJe7qqvcQd48dVmLKD0NhRlf/szYPsnNylbruHyaKg4oU26V7+UATV3SB4otqRt
+ Do1LKGfZB86F/lnXELBp3ifz2SlljAjJD1ulkuLuqLV9h4DUukOYbHhkhBVUkKj1+pqZ
+ wFGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794802166; x=1795406966;
+ d=1e100.net; s=20260707; t=1794802169; x=1795406969;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=zFy7dE+9TYlqdjzVOGIle0ydaLPC/hfnQSo/dWdrLPs=;
- b=N7m6sWGvvz2iAId0ou6XAzu6ddDiH9BVF9WbU880RW+i4t3cij1nlQzMyHB+bvt2uQ
- gq+oJwr9kocjYG9aKEF0GAIMsdAzJZEVWD0jhKVxWDGU8NGPKe9W7EOCLLqLQXKO3aZj
- es3q/EzdThEFdKIl/k8J0gXy+ooD6Z++0gfxbcGDiKtWHQ3P79Hq5QvW0IDfCkdZ5jUb
- wKbvjuEVvfqgpKZA4hXHp5KHLqpmk7NvybiBxMoVTi98ezW7k6QxN+3H2FU2vrsNQrVz
- Z9mXdccC2/KKXQAvK0DdRoaE9K4fCgq7qlGXyNwgSsOilzgG+DtBZpsXjhhCNiXffdTL
- FcIA==
+ bh=jTVVyfonP/unKYGJ3+1FS2r8XOwbDzqwSJPNB4V2nCw=;
+ b=VAyysZtNpAiZ1QBh/1zAjeWoAwi9MLJ0VEjAFEwSqcPr+e4q4l4OaJKrNH9TypVLDi
+ 4p4QMupQRlHrGNdwA++RuTuakYkYwdhw4h7g+XxZ57IPZozTV6Jv6Pq07FLRE/L5nBkX
+ tkIVFlI4eNG1kxaoA1cJkT8b4zr27nKxBNSt4VTbs193PuTcSNNAdY862Nw/K3ttjfTc
+ 1Q2M2NiK/g/dKd/N/3twDFDikl3RffP6AiWMMqmK4R01GI3jPDkRJHei4pPIsMb3CjMV
+ zF9U4L2+z+VhG+R29isAvxA13NV21MNaxN70284HDzB3glOqzwl5emAAnohgMuFvcMHd
+ vQcw==
 X-Forwarded-Encrypted: i=1;
- AL+hErG/g3nUGZ8AwsOdS/leNHws+z6Bpj7N7Uqe9lPYNwqv0KyGS1kElqPm5woUyqD1aRJhwldFMQs59EXVIkgNXGUH@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z/+g7pxmmMZQjmvfiDX5caQKjLwcdiyGtxWbjNRkDfJsiI2peIK
- 7JvMp2L189TjmLA4I23pcz1oqf4LlWm7MVR01+OatBGj8iV3PJTdZOy2
-X-Gm-Gg: AYBFou12UDKJ8Sif6s+rP4hWdEydjlQKT0jjjLA8Ned4e6xovv57aKGw4p75bP432M+
- JFgJxAcLLoCCfV9i9CWhSbbuBp7K12HO9NL4tp4obHi7NX0p6TLBkw8/KBq4mm3xXcuQOpAobFm
- NlqJlEgAbDCkWgt95wtBCcecnljfajr+dEkoj4pJIjKzK8HLFiFkVuDY7qaXUXTr7v5OHmQq7Q9
- tEqE57Udd27pYwaz7S5QGSG48Y0Mfx328hiq5uCUbAMiRxa/99dM0hPxDw3rVdqQKu0tITDrHk+
- QQT90e3POg4uqDBMrqrR5T3sZIvG0WK/RvG9u1ixw9EGEmEdgZOP1IZyU+geypJg/WwgBXnDieG
- pGTTOHbbqL7rYf/y2CMfyf+BURcMzEuAzpyU65N300JRre2TNJuhGug2Jl9Sto0VaY1xSaymjrY
- Hn5MzlxEjj5gYSU/x59VTXslS0eBwEhZ+j9OqabNDrxA2UlOIFpyTpMaxBvBKHP1jrUsKcJuzYo
- 7cXZVpZ5Mv5ry8ZnfNFuO3j7xJO+OJulTbdtpUQFh4CUoP/tJ0DI+X7AQ8Ab/+l+gIufx4bndW5
- K6ca5ttvH/bRQ3psSneHD0IIgKNBiGx7rN15gF4wXSCSEtbFisvLvI1L3MQsLKQIRiWYgp2lp6V
- c9JhuLpl6feOg9ZwH1KA5GORorwZ1QRqiHC4uEdh4QbjhSpY=
-X-Received: by 2002:a17:90b:2d88:b0:3b0:9e2c:9b60 with SMTP id
- 98e67ed59e1d1-3b1b09facb7mr8472507a91.21.1794802166505; 
- Sun, 15 Nov 2026 20:09:26 -0800 (PST)
+ AL+hErEGWTBlcXXzp51E6JE0PZrjIOTC5w5I2419tK5HvqnfYirFqhkEvY9kL5Xlt9WFewDajNHZuJdledrDeAz95WGa@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z+ngLUINERp1AQL3VNk70dvg8B5c3sH36bVKege1olaA8NK9wyc
+ piJYpQz1OC8UpEDjjXnVH/68UdCVb3cHJuTM/Ae5yx5MdwewegHteXfR
+X-Gm-Gg: AYBFou2kLVd7z+AnCM/ntzLH5XE9MQT2qiy9RvQ8So9suxnsWPHQ44deQxtRXJcHqji
+ 1jYNXfrEP/Y7v/gKjeYUSybF4gFgVSl4kg5Yi7qDQfu86k4vJVTJTmxZLlgHj1ZsIv0FpQ669rQ
+ mN4F6ekplWLly1ZP7GIVam1z0+mdfX/p+zoNdmukWfL5N4L4Qk/5yGBfJuXlf/BHuVzoy/w26Iq
+ fotGTEb8dhgnhfESVmP45VPLVSpNznRfPVdJEYAgxGkfRvJV4cAZZxicQDXDUVQ9xpqKn4xXHOP
+ YYA+qDL+CgPdInk5iQcgYHK4qZIoW3Lv2IaqPTNx5zqQHCmmIVcOrvaH8kX3Vma7SX1voVbV4/4
+ SRStrUfUt4XwP5Y+Hsfcgp2IdlM6WgxZ56H6OasHg0f6j+CsLAJbNH4WEVds+5tVsDLAiTwO7Eb
+ RiIGPLf86/CRbD9nyojxJ07CSocxPyppqVwiAwEZSqGFAx7rjDOP8UchUtOF2DYLrolTP4s49XG
+ izlFQCa1xG46gWWTnP6hottwO0lDJLstJ6dkz9JDiEUpa/TGj2zdC9+DKQ41A7OZKTItq6GvvQV
+ xeq6rZSM//t8V46zIY0kfKYq+MvR+cHlkW01rlFRpLNu2o9E4QmN1GFt/F5EJIkONR1e6ZpvF0h
+ Ms1zvsqP8jBVtOoUhZFoplSNTAjFpOXEEllg5Eq8IP4gx9gag
+X-Received: by 2002:a17:90b:4acb:b0:3a4:f75d:d194 with SMTP id
+ 98e67ed59e1d1-3b1b0a20d40mr10265125a91.36.1794802169283; 
+ Sun, 15 Nov 2026 20:09:29 -0800 (PST)
 Received: from f2fs-test.c.googlers.com.com
  (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.24
+ 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Nov 2026 20:09:24 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:27 -0800 (PST)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Sun, 15 Nov 2026 20:08:45 -0800
-Message-ID: <20261116040851.2849696-15-daeho43@gmail.com>
+Date: Sun, 15 Nov 2026 20:08:46 -0800
+Message-ID: <20261116040851.2849696-16-daeho43@gmail.com>
 X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
 In-Reply-To: <20261116040851.2849696-1-daeho43@gmail.com>
 References: <20261116040851.2849696-1-daeho43@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: 1.1 (+)
-X-Headers-End: 1xSo28-000000007ce-1Ms2
-Subject: [f2fs-dev] [PATCH v2 14/20] f2fs: support subpage blocks in
- fs-verity enablement
+X-Headers-End: 1xSo2B-000000005gq-0J7g
+Subject: [f2fs-dev] [PATCH v2 15/20] f2fs: support subpage blocks in atomic
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,167 +140,214 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Check verity per block. While enabling verity, dirty and write back
-only the data blocks below i_size in the folios before the verity
-metadata. Do not zero the blocks past i_size on read while enabling
-verity, since GC can read a folio of the verity metadata that is already
-written. Remove the -EOPNOTSUPP checks. The changes for enabling
-verity also apply to large folios when the block size equals PAGE_SIZE.
+Writeback already writes dirty blocks to the COW inode per block. Make
+write_begin of atomic files reserve and read COW blocks per block as
+well, and remove the -EOPNOTSUPP checks. Skipping the read of the
+blocks that a write fully covers also applies to large folios when the
+block size equals PAGE_SIZE.
 
-Stop the data reads of a verity file at i_size in
-f2fs_read_data_large_folio(), so that the blocks past EOF in the folio
-that spans EOF are zeroed instead of read. A pinned file can have such
-blocks allocated without being zeroed, and fs-verity rejects non-zero
-data past EOF. The reads of the verity metadata still go past i_size.
+Aborting atomic writes drops the page cache and restores i_size without
+i_gc_rwsem[WRITE] and invalidate_lock. With subpage blocks, a page fault
+in between can make a folio writable with only the blocks within the
+smaller i_size prepared, and a read can zero-fill the blocks beyond it
+and mark them uptodate, while they are inside the restored i_size. GC
+reads through the page cache as well once FI_ATOMIC_FILE is cleared, and
+then moves the zeroes. Hold both locks across it as
+f2fs_ioc_start_atomic_write() does, except at eviction, where no one
+else uses the inode.
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/data.c   | 29 +++++++++++++++++++++--------
- fs/f2fs/f2fs.h   |  5 +++++
- fs/f2fs/file.c   |  3 ---
- fs/f2fs/verity.c |  8 --------
- 4 files changed, 26 insertions(+), 19 deletions(-)
+ fs/f2fs/data.c    | 24 ++++++++++++++++--------
+ fs/f2fs/file.c    | 30 ++++++++++++++++++++++--------
+ fs/f2fs/inode.c   |  1 +
+ fs/f2fs/segment.c |  7 +++++++
+ 4 files changed, 46 insertions(+), 16 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f23f29d45763..9f7f8214d10e 100644
+index 9f7f8214d10e..b4f16afccc51 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1671,7 +1671,7 @@ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
- static inline struct fsverity_info *f2fs_need_verity(const struct inode *inode,
- 						     pgoff_t idx)
- {
--	if (idx < DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
-+	if (idx < F2FS_BLK_ALIGN(F2FS_SB(inode->i_sb), inode->i_size))
- 		return fsverity_get_info(inode);
- 	return NULL;
- }
-@@ -2619,7 +2619,12 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 
- static inline loff_t f2fs_readpage_limit(struct inode *inode)
- {
--	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
-+	/*
-+	 * The verity metadata is past i_size. GC can read it while verity is
-+	 * being enabled, so do not zero it.
-+	 */
-+	if (IS_ENABLED(CONFIG_FS_VERITY) &&
-+	    (IS_VERITY(inode) || f2fs_verity_in_progress(inode)))
- 		return F2FS_BLK_TO_BYTES(F2FS_I_SB(inode),
- 				max_file_blocks(F2FS_I_SB(inode), inode));
- 
-@@ -2913,10 +2918,10 @@ static unsigned int f2fs_folio_valid_blocks(struct inode *inode,
- 	pgoff_t last_lblk = F2FS_BLK_ALIGN(sbi, i_size_read(inode));
- 	pgoff_t first_lblk = f2fs_folio_lblk(sbi, folio);
- 
--	if (f2fs_verity_in_progress(inode))
--		return nr_blocks;
- 	if (first_lblk < last_lblk)
- 		return min_t(pgoff_t, nr_blocks, last_lblk - first_lblk);
-+	if (f2fs_verity_in_progress(inode))
-+		return nr_blocks;
- 	return 0;
- }
- 
-@@ -3409,7 +3414,14 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 	index = f2fs_folio_lblk(sbi, folio);
- 	offset = 0;
- 	nr_blocks = f2fs_blocks_per_folio(sbi, folio);
--	last_block_in_file = F2FS_BLK_ALIGN(sbi, f2fs_readpage_limit(inode));
-+	/*
-+	 * A data read of a verity file, which has vi, stops at i_size. A
-+	 * pinned file can have blocks past EOF that were allocated without
-+	 * being zeroed, and fs-verity rejects non-zero data past EOF. Only
-+	 * the reads of the verity metadata, which have no vi, go past i_size.
-+	 */
-+	last_block_in_file = F2FS_BLK_ALIGN(sbi, vi ? i_size_read(inode) :
-+					    f2fs_readpage_limit(inode));
- 
- 	for (; nr_blocks;
- 	     nr_blocks -= len_blks, max_nr_blocks -= len_blks,
-@@ -3719,7 +3731,7 @@ static int f2fs_read_data_folio(struct file *file, struct folio *folio)
- 			return ret;
- 	}
- 
--	vi = f2fs_need_verity(inode, folio->index);
-+	vi = f2fs_need_verity(inode, f2fs_folio_lblk(F2FS_I_SB(inode), folio));
- 	if (vi)
- 		fsverity_readahead(vi, folio->index, folio_nr_pages(folio));
- 	return f2fs_mpage_readpages(inode, vi, NULL, folio);
-@@ -3739,7 +3751,8 @@ static void f2fs_readahead(struct readahead_control *rac)
- 	if (f2fs_has_inline_data(inode))
- 		return;
- 
--	vi = f2fs_need_verity(inode, readahead_index(rac));
-+	vi = f2fs_need_verity(inode, F2FS_BYTES_TO_BLK(F2FS_I_SB(inode),
-+						      readahead_pos(rac)));
- 	if (vi)
- 		fsverity_readahead(vi, readahead_index(rac),
- 				   readahead_count(rac));
-@@ -4777,7 +4790,7 @@ static int f2fs_write_cache_folios(struct address_space *mapping,
- 			op_locked = true;
+@@ -4698,7 +4698,7 @@ static int f2fs_write_cache_folios(struct address_space *mapping,
  		}
  
--		if (!verity_in_progress) {
-+		if (!verity_in_progress || end_pos <= f2fs_verity_metadata_pos(inode)) {
- 			poff = offset_in_folio(folio, isize);
- 			end_index = isize >> PAGE_SHIFT;
+ 		if (f2fs_has_subpage_blocks(sbi) &&
+-		    (f2fs_compressed_file(inode) || f2fs_is_atomic_file(inode))) {
++		    f2fs_compressed_file(inode)) {
+ 			WARN_ON_ONCE(1);
+ 			mapping_set_error(mapping, -EOPNOTSUPP);
+ 			folio_clear_dirty_for_io(folio);
+@@ -5325,7 +5325,7 @@ static int prepare_large_folio_write_begin(struct inode *inode,
+ 	int err = 0;
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f588603dd1d0..f84d6f4cd1eb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -5349,6 +5349,11 @@ static inline bool f2fs_allow_multi_device_dio(struct f2fs_sb_info *sbi,
- 	return sbi->aligned_blksize;
- }
+ 	if (f2fs_has_subpage_blocks(sbi) &&
+-	    (f2fs_compressed_file(inode) || f2fs_is_atomic_file(inode)))
++	    f2fs_compressed_file(inode))
+ 		return -EOPNOTSUPP;
  
-+static inline loff_t f2fs_verity_metadata_pos(const struct inode *inode)
-+{
-+	return round_up(i_size_read(inode), 65536);
-+}
+ 	/*
+@@ -5441,13 +5441,16 @@ static int prepare_large_folio_atomic_write_begin(struct inode *inode,
+ 	/* Inline data must have been converted before reaching here. */
+ 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+ 
+-	start = folio->index + (ori_off >> PAGE_SHIFT);
+-	end = folio->index + ((ori_off + len - 1) >> PAGE_SHIFT);
++	start = f2fs_folio_lblk(sbi, folio) + F2FS_BYTES_TO_BLK(sbi, ori_off);
++	end = f2fs_folio_lblk(sbi, folio) +
++		F2FS_BYTES_TO_BLK(sbi, ori_off + len - 1);
+ 
+ 	for (index = start; index <= end; index++) {
++		loff_t block_start = F2FS_BLK_TO_BYTES(sbi, index);
++		loff_t block_end = block_start + F2FS_BLKSIZE(sbi);
+ 		block_t blkaddr = NULL_ADDR;
+ 		bool node_changed = false;
+-		size_t off = (index - folio->index) << PAGE_SHIFT;
++		size_t off = f2fs_folio_byte_offset(sbi, folio, index);
+ 
+ 		err = prepare_atomic_write_begin(sbi, inode, index,
+ 						&blkaddr, &node_changed,
+@@ -5455,12 +5458,17 @@ static int prepare_large_folio_atomic_write_begin(struct inode *inode,
+ 		if (err)
+ 			return err;
+ 
++		/* Skip read if the write covers the entire block. */
++		if (pos <= block_start && pos + len >= block_end)
++			goto balance;
 +
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- extern int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
- 					unsigned long type, enum fault_option fo);
+ 		if (f2fs_ffs_test_blk_uptodate(folio, index))
+ 			goto balance;
+ 
+ 		if (blkaddr == NEW_ADDR) {
+-			folio_zero_segment(folio, off, off + PAGE_SIZE);
+-			f2fs_ffs_mark_subrange_uptodate(folio, off, PAGE_SIZE);
++			folio_zero_segment(folio, off, off + F2FS_BLKSIZE(sbi));
++			f2fs_ffs_mark_subrange_uptodate(folio, off,
++							F2FS_BLKSIZE(sbi));
+ 			goto balance;
+ 		}
+ 
+@@ -5517,7 +5525,7 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	}
+ 
+ 	if (f2fs_has_subpage_blocks(sbi) &&
+-	    (f2fs_compressed_file(inode) || f2fs_is_atomic_file(inode))) {
++	    f2fs_compressed_file(inode)) {
+ 		err = -EOPNOTSUPP;
+ 		goto fail;
+ 	}
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 26dd06961389..8540613e3b22 100644
+index 8540613e3b22..d6304b705e06 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -4331,9 +4331,6 @@ static int f2fs_ioc_enable_verity(struct file *filp, unsigned long arg)
+@@ -2314,7 +2314,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+ 	}
+ 
+ 	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode))) {
+-		if (f2fs_is_atomic_file(inode) || f2fs_compressed_file(inode)) {
++		if (f2fs_compressed_file(inode)) {
+ 			ret = -EOPNOTSUPP;
+ 			goto out;
+ 		}
+@@ -2358,6 +2358,23 @@ static long f2fs_fallocate(struct file *file, int mode,
+ 	return ret;
+ }
+ 
++/*
++ * Abort atomic writes with inode_lock held. Until i_size is restored, GC,
++ * page faults and reads would see the i_size of the aborted writes, so keep
++ * them away as f2fs_ioc_start_atomic_write() does.
++ */
++static void f2fs_abort_atomic_write_locked(struct inode *inode, bool clean)
++{
++	if (!f2fs_is_atomic_file(inode))
++		return;
++
++	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++	filemap_invalidate_lock(inode->i_mapping);
++	f2fs_abort_atomic_write(inode, clean);
++	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++}
++
+ static int f2fs_release_file(struct inode *inode, struct file *filp)
  {
- 	struct inode *inode = file_inode(filp);
+ 	if (atomic_dec_and_test(&F2FS_I(inode)->open_count))
+@@ -2372,7 +2389,7 @@ static int f2fs_release_file(struct inode *inode, struct file *filp)
+ 		return 0;
  
--	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode)))
+ 	inode_lock(inode);
+-	f2fs_abort_atomic_write(inode, true);
++	f2fs_abort_atomic_write_locked(inode, true);
+ 	inode_unlock(inode);
+ 
+ 	return 0;
+@@ -2391,7 +2408,7 @@ static int f2fs_file_flush(struct file *file, fl_owner_t id)
+ 	if (F2FS_I(inode)->atomic_write_task == current &&
+ 				(current->flags & PF_EXITING)) {
+ 		inode_lock(inode);
+-		f2fs_abort_atomic_write(inode, true);
++		f2fs_abort_atomic_write_locked(inode, true);
+ 		inode_unlock(inode);
+ 	}
+ 
+@@ -2568,9 +2585,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+ 	loff_t isize;
+ 	int ret;
+ 
+-	if (f2fs_has_subpage_blocks(sbi))
 -		return -EOPNOTSUPP;
 -
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 	if (!(filp->f_mode & FMODE_WRITE))
+ 		return -EBADF;
  
- 	if (!f2fs_sb_has_verity(F2FS_I_SB(inode))) {
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index af1b7f21c1d8..5f579d0b917b 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -32,11 +32,6 @@
+@@ -2702,7 +2716,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 		if (!ret)
+ 			ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
  
- #define F2FS_VERIFY_VER	(1)
+-		f2fs_abort_atomic_write(inode, ret);
++		f2fs_abort_atomic_write_locked(inode, ret);
+ 	} else {
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+ 	}
+@@ -2730,7 +2744,7 @@ static int f2fs_ioc_abort_atomic_write(struct file *filp)
  
--static inline loff_t f2fs_verity_metadata_pos(const struct inode *inode)
--{
--	return round_up(inode->i_size, 65536);
--}
--
- /*
-  * Write some verity metadata to the inode for FS_IOC_ENABLE_VERITY.
-  * kernel_write() can't be used because the file descriptor is readonly.
-@@ -94,9 +89,6 @@ static int f2fs_begin_enable_verity(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	int err;
+ 	inode_lock(inode);
  
--	if (f2fs_has_subpage_blocks(F2FS_I_SB(inode)))
--		return -EOPNOTSUPP;
--
- 	if (f2fs_verity_in_progress(inode))
- 		return -EBUSY;
+-	f2fs_abort_atomic_write(inode, true);
++	f2fs_abort_atomic_write_locked(inode, true);
  
+ 	inode_unlock(inode);
+ 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 5c6a64b31b05..2bc15fa192be 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -851,6 +851,7 @@ static void f2fs_pre_evict_inode(struct inode *inode)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 
++	/* No one else uses the inode now, so the locks are not needed. */
+ 	f2fs_abort_atomic_write(inode, true);
+ 
+ 	if (fi->cow_inode && f2fs_is_cow_file(fi->cow_inode)) {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 93f165151c0f..5bff57723e2d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -186,6 +186,13 @@ bool f2fs_need_SSR(struct f2fs_sb_info *sbi)
+ 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+ }
+ 
++/*
++ * The callers hold i_gc_rwsem[WRITE] and invalidate_lock as
++ * f2fs_ioc_start_atomic_write() does, so that no page is read, by GC either,
++ * or made writable between dropping the page cache and restoring i_size, i.e.
++ * with the i_size of the aborted writes. Only the eviction does not, as no one
++ * else uses the inode then.
++ */
+ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
 -- 
 2.56.0.611.g1030f0b940-goog
 
