@@ -1,42 +1,42 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D788606A32C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F50606A33E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=hgoXr3zv;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=bTTHtJS8;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Ry6fRppu;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=e4FTD8ig
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=TX/QBret;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=m3aH5XHK;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=YaW8oN38;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=svw5JqHU
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=/zKmVIfzxeLsyqDQ7I2EiDIGn3ELAALXnctAecQsTho=; b=hgoXr3zv9Pc+/1Q9RZGLoaExRf
-	B/6f0u1eNE1PScnbjDHaCRuv/6vYIYMEb4MN2GD7U3why75JUf6nAHAon/mTEEO//kRn4xD1uFs/b
-	yX9PtCYy9ef6L0i4I4wkEqvh8Oj8Pb7u80eGnDoq9Ub4acU6VjKeACEsMMjENHBbWAxM=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=IrNo2LZVFgZG4hFSzCT9CWzLVSi6q2NzCYrfMRJPBrE=; b=TX/QBret+x1kzKsFgeMcVJXZdw
+	6IvVKn7MNIj5vxLdd4SaAKmsjYKy16EexaCAMRkxed7L+0BL9i17osPmvGz32T4Gin+/zNdOR1zkR
+	XvmOfjzj27NKYMgMMyPNFBw0FfrYzQyE41kbYct1CA61yG8Wc2C6UOKzPB8Jj6BEHLcI=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xSo27-000000006eR-0DGM;
-	Mon, 16 Nov 2026 04:09:31 +0000
+	id 1xSo28-000000007uU-0qed;
+	Mon, 16 Nov 2026 04:09:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <daeho43@gmail.com>) id 1xSo25-000000006dj-2YEH
+ (envelope-from <daeho43@gmail.com>) id 1xSo27-000000007uF-0Deh
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:29 +0000
+ Mon, 16 Nov 2026 04:09:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=itS1+HEShLEFlben7inBoCVV+t3onLIzDTpOeg1Xvu0=; b=bTTHtJS8g0hOWdfc1HTsA+E+T7
- zu/DVuKt5ekZNrz7dipJFnIDQJZPXFZjuQtOednzrNoTfSIoa7zeTCQsiSgv7F4k5d7IqMAn2TT5A
- welxx7Olvvvo+DCMDYl+GB0on+IP1Mwx2b2g1sWZvNeoA7aBnZr6rxBb3fDDRSb4Udt8=;
+ bh=133HbCo60K4Fb2CifrvokXMCTgGuA8mmVi7WhyYrJ4M=; b=m3aH5XHKfZSrC9MRgBgXL8BupD
+ rl8uvKUBzg49eARsCXYNArpcwk5mFv9F7akqmbJ4yKeyjpalFsacPXbHC/f8M/VI7KbtlpDp20tRC
+ S3WUwcyv2s597qAkGI4k2T3oIO120bop//tbpy2jIHVhvHvAeLq3+9pE7uw5k6eqxVvk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -44,80 +44,80 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=itS1+HEShLEFlben7inBoCVV+t3onLIzDTpOeg1Xvu0=; b=Ry6fRppuaNVl+qmnRMzXuQ1KO7
- IpWeYAJ5J4rKgiKugurj0gXU5hXw+S0P338e5bfMIsAMnjbbjJDLK1BfCxUdzBo2yuOrEZtVJBuQy
- YG5ysJxrKcwurPnyo7dImAXRRXf69qKmRqLHYR3T3Ou95IWhBVowQ1GXswOXj7+Rs9OY=;
-Received: from mail-pg1-f182.google.com ([209.85.215.182])
+ bh=133HbCo60K4Fb2CifrvokXMCTgGuA8mmVi7WhyYrJ4M=; b=YaW8oN38P2WqMl9G4Uhq6nCGLU
+ FCUZswqGZ6IgMIsd7wdH6Uyv1dasg1YD+BpyOasggHLwHv3IktWJJl/I3VgK5MQMX1dNBr298SXqp
+ q2jepX/oz3t2ADfDyzvU/QgvbpxC9VdcHUeK4KE/fUf35JoFUKIb+2pOUlE5/f7K78D4=;
+Received: from mail-pj1-f49.google.com ([209.85.216.49])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xSo24-000000007cY-0yG8
+ id 1xSo25-000000007cc-2nWK
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:29 +0000
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-cdd9d0c9bbdso2483427a12.1
+ Mon, 16 Nov 2026 04:09:30 +0000
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-3b0d09df973so3596820a91.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 15 Nov 2026 20:09:28 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794802162; x=1795406962; darn=lists.sourceforge.net;
+ d=gmail.com; s=20260707; t=1794802164; x=1795406964; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=itS1+HEShLEFlben7inBoCVV+t3onLIzDTpOeg1Xvu0=;
- b=e4FTD8igFv6KinEpOpztiWjioq+t+vlTqWmKP28UKqkNupzEYcu/QTVqpz4M20GGk3
- MHM+1SyyXinoCFw2dUtHVAad6Ia5j5Lle9qfG92S2YrGDJn3FIk0Cpv+OMpRO7eAC0Qp
- jul57QSVTHZBmauY+4loUQfDa+HacWzPwunG7CVZFBh/0ZPL7TeNZTZc/Bpz1PNVOozS
- bA/gBmgSjw8VSyFc6zXCsyMA58Zil9seyluCJ5VpIMzRkNb0Y9mAIkudq+oo8XJjL/Yw
- VKQU4HeHilG70ZUMgjvIytTnlLyWzIMhUbq2HaamNVD2rtIDErE5cGR9/eSY7XLPzZI9
- yWkg==
+ bh=133HbCo60K4Fb2CifrvokXMCTgGuA8mmVi7WhyYrJ4M=;
+ b=svw5JqHUhEwFNRxxF+jqUP2vnwZMGhP9EpZu4cz+wo3TnAYNtLb2AF6Exxpt3mpuef
+ /BrlrpsQqVWUNnLzbMt96EnZcuvGfx+YsyBtAFMA+BMnxenRNEnTeQd1TxHRVwQAVf7U
+ CbOrws5uJzYKnrJzsVXUGuRbEqxY8arGriSlazNajIuwwyBny6nfvIv/UhWEx0czKCiM
+ nMSpHP/Ccl8+k/EP6HQjrnSdf61Br4s7HxEGA3Aadg68IWm7pM8ZBhukTzhD7PxihkQI
+ 0XFODHepwm77cNtjjVZmvlU9DQZ3g5HjW3DMRnzyIclfaIgI7oczCTuNFwMKdGaQ277b
+ wv9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794802162; x=1795406962;
+ d=1e100.net; s=20260707; t=1794802164; x=1795406964;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=itS1+HEShLEFlben7inBoCVV+t3onLIzDTpOeg1Xvu0=;
- b=IJParQW32TQtcHKIzEX1egn3HoWGXrD3Fsg1Eu8DZ+HCQuIyg8XpPNbBgYiybldP/N
- 6AsCutiDCbsALtDOIFcgnJNUjarrGPwKvLeEdhI/oDLl4jcWgYd3YU3VQah5E1z+30a8
- xBS2h6328aZEbr3gGFa6wERaAB1MEDUt1srTZw5pFIe41gAAvKcSNUFV3fmS/W1UeDgF
- kQJSNlnzh4dekQ7V1MZ3sYFgTPOdZTh84AkAK9fzfLxoFSolusNKtWflciQy5PzjullX
- IpOyDoWOkVpctjPMJRPATo6ceBa+5uILVz+9T1lXZVv69dZDNtqfD7RJ+iCshITx33Zm
- OwJg==
+ bh=133HbCo60K4Fb2CifrvokXMCTgGuA8mmVi7WhyYrJ4M=;
+ b=PyxvzQe4dOoRCb19coqMEd96zHm8GJWUNBUrDKsCwm0uHE30BZ+PpYhehj2odNAESu
+ DFp/YRVQ2qXJUUs1g8G9887tSdfYpezUyxPxbBrZHVZ5BYW2FMdYqdh/ethZGKuyharB
+ WqB7gBh/N2ai0+l5GHIyjNXPuW9sZ+N/hIwCBb9/uZCM4NZEkDLYlnVt8SgnRX7Kbo2q
+ Cto2Er2j2/Go6Npy4JJnML7mQn47ZzDWcjd43CyREvDCc6P8yd84gIAUzRa9r93OXMbz
+ VvqoExE1lnt59ZYuHwQHJRCK05Jt3d88rLq+kWcWZkWwX0DVBQRw7X9bnJR6byY76Qe3
+ ALYQ==
 X-Forwarded-Encrypted: i=1;
- AL+hErHHKnAgNmjxY+guKwnK7ZRANfgnmYyQRBBCQswLWHmZ5i+b8j+PaRTSG6F0FS0krXrif4M45cWxZzs23W+DdFqW@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z+Gje8ssZ0whkHzjxrRm0F6JFlIcCrmWxebNMYvVgHiRuzm8rPt
- eqgv3BXeY9gt+59fi9mmGjwcDJ8eJZqo6z56QecHe7DT2fsN3V7CgWiI
-X-Gm-Gg: AYBFou2kluhPSQA88QpJ1GC6mGY2zIClg5B8tQ0bOAwvuLpaXtE2GHdxM/qSBN7F8uP
- b/3zYyMPJ7EJIYmI2MV6LuU8ccWSiijY538Od/6xX4jIx8dsqCzFchrGQbom6ZiMZRLY4MGsdrE
- ehiikpwLP11M1i/GrHkqFoBp/2b8X1lr/CLnW1/31VkwKYfLm7F9hVnh+eDtJM/DnZeRr9bLyie
- 3JUVhLJ0pEt3v2Wm1QZKkrHYKnWB08520IjL0o1TO/U+sGaRSuXuzxcs4mKQAUcKc/eKR6/RcgP
- T6F0my44kuL02fzA5kvuXY6fZyGxzOiT3F41uMq9R2Kia4yOCmUWT+tjDovhqOMydAw+lkMkhBp
- u+LBG86Pa7bhttwPyIB1YJX2sxTM29Sd7DCux8oujwdJgVA27vHvUlqrPtedM0n7hEp77VM2t+m
- QLsA9SmXAkovK1b4wwOQTWJ5wS/nYyhkA3fPw4oB6pQi6Txxiu/YDcZxD3dHcSFE8I9OcHr/9K+
- 7QPFmBGuQKTuMLhn/xC68XwcJe2MJ1WNOQJOcEe+ousHu4P2DqMMp1icUZeSYNY4AxRRZ2vDL4E
- vuMAPutkIy0xU7X842p6FWNzo5kVG8IDpitfyEWQjcetNvA1TOu9WmuZjKfRCnaplphbiOqg1WK
- JJgUv1b7aiugps5s2qVoAC/mTRL8V38YVXt4f5wzhg5x0ueg=
-X-Received: by 2002:a17:90b:2247:b0:3ae:2969:9031 with SMTP id
- 98e67ed59e1d1-3b1b0d08f2cmr9878273a91.54.1794802162415; 
- Sun, 15 Nov 2026 20:09:22 -0800 (PST)
+ AL+hErEhGtnoyRt2l1DugclhtVQXzVLAgeZT4JelE2pS6VSFWdzkmSsLCcQx9Q23x/DPPfwl6eOUkT+bo7UME2ln3hlp@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z9AEqar2fqpb6sO7MXV3mP4TqkZHjqPDppKY8AMVRfNSy8tW8R4
+ tbIAnfmB8IA8I602jY7fs/JDA5SmTUYKPC41onsSIf8dMj+T5eUUsoZSqiDarQ==
+X-Gm-Gg: AYBFou0U+T/XmuOM2NeiFSOQixmWwl8oCkR/aj0epI3nJnp9gPnC5NC5383w8/1I7b1
+ eNDbJk6uS3A4U+aCbosYmTWbJnS0KvS2qaJSKgm+Zwgw2bLPQ4bJrQjdzSju6CIJ3HdQziS3zo6
+ ewFbN5Bt6K8MqLXfHd2O6uiWSehuLDXO5a8QOXARGz8K7PDrGZr53VVKosY6ptqx03sDyq0jFqJ
+ oyDNLVY61OJCi/z+U+0HHuOhS5ag8c4FvRyc8Lo3QgtfRQKnrBy7fy4M85W4Fv/xqC5jRAEJdXN
+ 2FA9lSHXn4smr5e2seSd/SGY16Ll00ECLy659u2WOLrItvo0/d6rk9yCoT3Z+Dsj0cj04hjyDtb
+ 6Ad2oAQsl1PEUMWfzG9ge8N4sHpz5IxG9XUo+PobVg3u44YoKL698ovFy/9l7pxik9WrNG6zfPQ
+ qvlU2d93YAxyFDhZJsxr9T5bsQq1pS0I0zqCKcmrgKxZCWyACyjbpaoaJ7fG7ex/bB31yzcfAvR
+ ZeD5L1oJhZrgaBYTWHDbTeBU/VxMdy39/ZcaB222rMHVaaFH1/nF9TwA6h845x522nxiuYGYNy9
+ MnFbjBlhvooE3l3+0qdbH7SF3p+mOY7vrrxjbZ8vtbv7FU725JPFeNxu4geluidl1HshCWydpbe
+ Mz3MupjsZfI8TH94VAIUkXxVk4E8dUt1fOnsB31/Y21Ol/fY=
+X-Received: by 2002:a17:90b:1cce:b0:3ad:13fe:41ba with SMTP id
+ 98e67ed59e1d1-3b1b0a4a16amr9226007a91.52.1794802164013; 
+ Sun, 15 Nov 2026 20:09:24 -0800 (PST)
 Received: from f2fs-test.c.googlers.com.com
  (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.20
+ 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Nov 2026 20:09:21 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:22 -0800 (PST)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Sun, 15 Nov 2026 20:08:43 -0800
-Message-ID: <20261116040851.2849696-13-daeho43@gmail.com>
+Date: Sun, 15 Nov 2026 20:08:44 -0800
+Message-ID: <20261116040851.2849696-14-daeho43@gmail.com>
 X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
 In-Reply-To: <20261116040851.2849696-1-daeho43@gmail.com>
 References: <20261116040851.2849696-1-daeho43@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: 1.1 (+)
-X-Headers-End: 1xSo24-000000007cY-0yG8
-Subject: [f2fs-dev] [PATCH v2 12/20] f2fs: support subpage blocks in
- defragmentation
+X-Headers-End: 1xSo25-000000007cc-2nWK
+Subject: [f2fs-dev] [PATCH v2 13/20] f2fs: support subpage blocks in
+ swapfile activation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,101 +140,115 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Mark only the target block, not its whole page, dirty when redirtying
-data for defragmentation. Remove the -EOPNOTSUPP check.
-
-Read a multi-block folio once through ->read_folio() instead of each
-block synchronously, and redirty the folio that was read after locking
-it. This also applies to large folios when the block size equals
-PAGE_SIZE.
-
-Read compressed files through ->read_folio() as well, with any block
-size. f2fs_get_lock_data_folio() reads the mapped block as it is, so a
-block of a compressed cluster that was not in the page cache was read
-without decompression, and defragmentation wrote the compressed data
-back as file data.
+The swap subsystem works in PAGE_SIZE units. Ignore a partial tail
+page, require PAGE_SIZE aligned extents, and convert block counts and
+addresses to pages for swap. When migrating blocks, mark only the
+migrated block, not its whole page, dirty in the folio state.
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/file.c | 44 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 38 insertions(+), 6 deletions(-)
+ fs/f2fs/data.c | 43 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 15 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 4499a461be86..26dd06961389 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3202,6 +3202,41 @@ static int f2fs_ioc_write_checkpoint(struct file *filp)
- 	return ret;
- }
- 
-+/*
-+ * Return the locked folio of a block to redirty it for defragmentation.
-+ *
-+ * A compressed file is read through ->read_folio(), which decompresses the
-+ * cluster: f2fs_get_lock_data_folio() would read the mapped block as it is
-+ * and leave compressed data in the page cache. A multi-block folio is read
-+ * the same way, in one I/O instead of one synchronous read per block.
-+ */
-+static struct folio *f2fs_get_defrag_folio(struct file *filp, pgoff_t bidx)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct address_space *mapping = inode->i_mapping;
-+	pgoff_t index = f2fs_lblk_to_folio_index(F2FS_I_SB(inode), bidx);
-+	struct folio *folio;
-+
-+	if (!f2fs_compressed_file(inode) && !f2fs_has_multiblock_folios(inode))
-+		return f2fs_get_lock_data_folio(inode, bidx, true);
-+
-+repeat:
-+	folio = read_mapping_folio(mapping, index, filp);
-+	if (IS_ERR(folio))
-+		return folio;
-+
-+	folio_lock(folio);
-+	if (unlikely(folio->mapping != mapping)) {
-+		f2fs_folio_put(folio, true);
-+		goto repeat;
-+	}
-+	if (unlikely(!folio_test_uptodate(folio))) {
-+		f2fs_folio_put(folio, true);
-+		return ERR_PTR(-EIO);
-+	}
-+	return folio;
-+}
-+
- static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 					struct file *filp,
- 					struct f2fs_defragment *range)
-@@ -3327,7 +3362,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 						cnt < BLKS_PER_SEG(sbi)) {
- 			struct folio *folio;
- 
--			folio = f2fs_get_lock_data_folio(inode, idx, true);
-+			folio = f2fs_get_defrag_folio(filp, idx);
- 			if (IS_ERR(folio)) {
- 				err = PTR_ERR(folio);
- 				goto clear_out;
-@@ -3336,8 +3371,8 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 			f2fs_folio_wait_writeback(folio, true, true);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 98ceea49e426..f23f29d45763 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -6007,8 +6007,8 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
+ 			}
  
  			f2fs_ffs_mark_subrange_dirty(folio,
--				offset_in_folio(folio, (loff_t)idx << PAGE_SHIFT),
+-				offset_in_folio(folio, (loff_t)blkidx << PAGE_SHIFT),
 -				PAGE_SIZE);
-+				f2fs_folio_byte_offset(sbi, folio, idx),
++				f2fs_folio_byte_offset(sbi, folio, blkidx),
 +				F2FS_BLKSIZE(sbi));
  			f2fs_folio_mark_dirty(folio);
- 			folio_set_f2fs_gcing(folio);
  			f2fs_folio_put(folio, true);
-@@ -3378,9 +3413,6 @@ static int f2fs_ioc_defragment(struct file *filp, unsigned long arg)
- 	struct f2fs_defragment range;
- 	int err;
+ 		}
+@@ -6040,8 +6040,10 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 	struct address_space *mapping = swap_file->f_mapping;
+ 	struct inode *inode = mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	unsigned int blks_per_page = F2FS_BLKS_PER_PAGE(sbi);
+ 	block_t cur_lblock;
+ 	block_t last_lblock;
++	block_t max_lblock;
+ 	block_t pblock;
+ 	block_t lowest_pblock = -1;
+ 	block_t highest_pblock = 0;
+@@ -6056,9 +6058,12 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 	 * to be very smart.
+ 	 */
+ 	cur_lblock = 0;
+-	last_lblock = F2FS_BYTES_TO_BLK(sbi, i_size_read(inode));
++	/* swap uses whole pages only; ignore a partial tail page */
++	last_lblock = round_down(F2FS_BYTES_TO_BLK(sbi, i_size_read(inode)),
++				 blks_per_page);
++	max_lblock = min_t(u64, last_lblock, (u64)sis->max * blks_per_page);
  
--	if (f2fs_has_subpage_blocks(sbi))
--		return -EOPNOTSUPP;
--
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
+-	while (cur_lblock < last_lblock && cur_lblock < sis->max) {
++	while (cur_lblock < max_lblock) {
+ 		struct f2fs_map_blocks map;
+ 		bool last_extent = false;
+ retry:
+@@ -6093,7 +6098,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 			not_aligned++;
  
+ 			nr_pblocks = roundup(nr_pblocks, blks_per_sec);
+-			if (cur_lblock + nr_pblocks > sis->max)
++			if (cur_lblock + nr_pblocks > max_lblock)
+ 				nr_pblocks -= blks_per_sec;
+ 
+ 			/* this extent is last one */
+@@ -6114,20 +6119,28 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 			goto retry;
+ 		}
+ 
+-		if (cur_lblock + nr_pblocks >= sis->max)
+-			nr_pblocks = sis->max - cur_lblock;
++		if (cur_lblock + nr_pblocks >= max_lblock)
++			nr_pblocks = max_lblock - cur_lblock;
++
++		if (pblock % blks_per_page || nr_pblocks % blks_per_page) {
++			f2fs_err(sbi, "Swapfile extent is not aligned to PAGE_SIZE");
++			ret = -EINVAL;
++			goto out;
++		}
+ 
+ 		if (cur_lblock) {	/* exclude the header page */
+-			if (pblock < lowest_pblock)
+-				lowest_pblock = pblock;
+-			if (pblock + nr_pblocks - 1 > highest_pblock)
+-				highest_pblock = pblock + nr_pblocks - 1;
++			if (pblock / blks_per_page < lowest_pblock)
++				lowest_pblock = pblock / blks_per_page;
++			if ((pblock + nr_pblocks) / blks_per_page - 1 > highest_pblock)
++				highest_pblock = (pblock + nr_pblocks) / blks_per_page - 1;
+ 		}
+ 
+ 		/*
+ 		 * We found a PAGE_SIZE-length, PAGE_SIZE-aligned run of blocks
+ 		 */
+-		ret = add_swap_extent(sis, cur_lblock, nr_pblocks, pblock);
++		ret = add_swap_extent(sis, cur_lblock / blks_per_page,
++				      nr_pblocks / blks_per_page,
++				      pblock / blks_per_page);
+ 		if (ret < 0)
+ 			goto out;
+ 		nr_extents += ret;
+@@ -6136,9 +6149,9 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 	ret = nr_extents;
+ 	*span = 1 + highest_pblock - lowest_pblock;
+ 	if (cur_lblock == 0)
+-		cur_lblock = 1;	/* force Empty message */
+-	sis->max = cur_lblock;
+-	sis->pages = cur_lblock - 1;
++		cur_lblock = blks_per_page;	/* force Empty message */
++	sis->max = cur_lblock / blks_per_page;
++	sis->pages = sis->max - 1;
+ out:
+ 	if (not_aligned)
+ 		f2fs_warn(sbi, "Swapfile (%u) is not align to section: 1) creat(), 2) ioctl(F2FS_IOC_SET_PIN_FILE), 3) fallocate(%lu * N)",
 -- 
 2.56.0.611.g1030f0b940-goog
 
