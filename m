@@ -1,42 +1,42 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D49606A335
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1380606A888
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Nov 2026 04:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=EqlCKp9V;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Q8Br65YL;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=DIj+gwT8;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wYsi+Jr9
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=LEfapwwT;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=JPNAycHn;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=fSDz8Zsu;
+	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LWhxZPOa
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=cOryQI3PsDxN5eBBiHtAJZtBeC6DosUjXKh0pbKlsoI=; b=EqlCKp9V97pJDp13S9hz0NE7ao
-	WRvdTMB6Ae9qc5LnzsRNW3lVCSZ8Bx1Z5+F+olqfYH23t9OOjXC2GLzYjg4LB+OpDGQa84t3Ac1BI
-	9s8t2o4mJsFxxSssUZX6v8R+1yg9iUDReBlzqJ0ERzy1IFHtJ34hfuUcW3Ktt0j5sRxo=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=FtbasWoLI6H8/2MiuFQzt/erhnM530qOsPYIN0cQd8Y=; b=LEfapwwT/Uf6Wzbyohm5OqadyB
+	D3fN1wd6PjPxIJ+ZEebYingfBQOxWIBty28CmJiUyJAFRYuP0hhc77A2q6/O9fIDDqysEYhrsw8kE
+	DQaUP7sCuAEsdc45AEwI0ZK9hFpPrxxMbbJp9Z9HRS3hdd/vxNOpGIrxLcC3qUVnCZ2w=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xSo2H-000000007x0-1u1Z;
-	Mon, 16 Nov 2026 04:09:41 +0000
+	id 1xSo2N-000000005Es-1ay6;
+	Mon, 16 Nov 2026 04:09:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <daeho43@gmail.com>) id 1xSo2G-000000007wo-1oYU
+ (envelope-from <daeho43@gmail.com>) id 1xSo2L-000000005Ej-34oR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:40 +0000
+ Mon, 16 Nov 2026 04:09:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sKcclmgJVhnLMVPLneFBpTL8LFfEdvb8QzwcAhBl0MQ=; b=Q8Br65YLx3N0xAbF/AmWl++oOA
- sA5KUXRXjcKAln3p3yl32X6REKSMHBUb+qi1l46aM+xi0wo5lsNfMTKD00Pt+f6+x21k208Emnq/V
- q5Odj+r5Jpa3DWKysd9HJ5JQ0OU5hAlbV+JSpMiZHxYL9XKEi14L+rNEniHgI6QJClJk=;
+ bh=CQYaNjdcGQv9Uj6dMxhoXtev65GzOguk0tG1Y60v4H0=; b=JPNAycHnCXJuhVuCaznz+yFVeT
+ Ajs1EPDDpxjKhL9WZGVMbaJFKmtOdHX3TDec2tzvCXeAGHrYbnN8hTnGiioDzRkILrHJu6o3tMFfp
+ HNGOpv9oyzRaxN5PzHJ98nxWuTCaCttGvozyKavNypnixRxn2mUlxk66fnXBv0T9R+qU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -44,80 +44,80 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sKcclmgJVhnLMVPLneFBpTL8LFfEdvb8QzwcAhBl0MQ=; b=DIj+gwT8dkc4YzCPyamXVrKtC8
- nCJKpcNrCj0K51+DShQTSCQpXj0IP+MPGI4+KW0nyDCbOxm1B4rGavtHakzEXiVpilvrRkyUFKQzd
- 5HeHGQ3QH6co0MmeKuF6xuI/hn0H5ECJUtesbcbIab1dttghDDoHKbN1OjjTsKomW5tA=;
-Received: from mail-pj1-f47.google.com ([209.85.216.47])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=CQYaNjdcGQv9Uj6dMxhoXtev65GzOguk0tG1Y60v4H0=; b=fSDz8ZsuVVOP0zxr67gU+uxAPc
+ NL/Ly+lRDyBL9xoje+fupiPvJtwZWIn+dLcq4GL8o0wyw+cVKriVsmls/oWrHnsB3agDpaHoTrLyX
+ UmVmtCGWTQa7/am1i7C3f6tf6AVmb7KLc3yLr5lVpsdIjJk2FrIaBmw3A5GuPM4LzJoc=;
+Received: from mail-pl1-f177.google.com ([209.85.214.177])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xSo2G-000000007d0-07kZ
+ id 1xSo2K-000000005hr-28NK
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Nov 2026 04:09:40 +0000
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-3ac9f49b984so1528476a91.1
+ Mon, 16 Nov 2026 04:09:45 +0000
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-2ed06b725fdso26805805ad.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 15 Nov 2026 20:09:39 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794802174; x=1795406974; darn=lists.sourceforge.net;
+ d=gmail.com; s=20260707; t=1794802179; x=1795406979; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=sKcclmgJVhnLMVPLneFBpTL8LFfEdvb8QzwcAhBl0MQ=;
- b=wYsi+Jr9k9FM/TeyE5Lo7dYxZ/MeGcsj1e2yv35OZTuHBYsqtmaRRqBhs246XJsGpH
- +nS3Ps+97VdY1xSThXuudI9soQuf3CDbDg5lRNx3k+9DHbYOjnPcb9u9c5A8bURRSAc9
- amhH0MXFUrYtFKubFIUYvwFmkjIhQe7NbNc7g4q/KvJFFrDWlm1TEtW9Ur4Ozm7CZOzP
- LbH4EF1buV+kq2rJRLmkNkUAfxzmvq6OO9hcjEsPbLj8WOwJJLCNdNrfdqX9DWr/gPmW
- Gfz2gxP9zXjVZUtRfTpIUu6YcNL252s3vALiRxMtVwnYF0W3aQz4nuunzYCxVr73Brlf
- nSNQ==
+ bh=CQYaNjdcGQv9Uj6dMxhoXtev65GzOguk0tG1Y60v4H0=;
+ b=LWhxZPOayd2cXIbn+Zp/4PpFJf9y5t0I7n+doYPzbWqZ9slIeokVt12HD9/Vg/zGd9
+ /BbIQHNyYIAm3oYI40pcZPcFtAQteGXM5MQhII6IZ260rEQC/91s0MCc61jnY4fYSb3p
+ y7c6M90FjQb2Ck++MQ8qmkfmE011trq1uIyN3hMmg+W9NMbbEI7zOhm08QGFe8J/6bOj
+ NqTKjb6Qyd2YQJDZp9FEsTGNgmyBhJIB9VoK7Q6ft+uuuKxtHWQjC74EJA4YHlVj1zbJ
+ 36IA7nEnS7bngPME/aTAcQZEFDmM4eCt0xy/du49XuIx+eRmcLS6Ml8NIw6l5QgqWps9
+ 6u+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794802174; x=1795406974;
+ d=1e100.net; s=20260707; t=1794802179; x=1795406979;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=sKcclmgJVhnLMVPLneFBpTL8LFfEdvb8QzwcAhBl0MQ=;
- b=Ns+cnjTenUSFNDro6wYP7WQwPPkgfN0buhUkgoDEGp2MSkrkvI7LRJFfihZWVCm5QS
- mDlsE23vG3PkZxbLFZFhpmmLHUqSilT06E5IK2qKFMFT7ruM7tTOyG+NSX4iLKBA9mow
- LSKfx92DBpIiuRdMEY2xRsGeHKMAi3GjCJRFn+IW/0pyI5kc3AdJfuCG41GchbbweRiG
- NwAg2R15cJP0RjxVyWQhqt/av0d3NkWMpasAwz/FA1NjbEX89UzRrqsg8qTBbdVdEQpt
- q5AzFrFhBHL7keweZL0VnN98dUs+8ZSKGzUaRgTU2D1CYzkHXIobiPv+ZNOX/iiaEDE5
- 9BPA==
+ bh=CQYaNjdcGQv9Uj6dMxhoXtev65GzOguk0tG1Y60v4H0=;
+ b=L9FraqQLwZDqQwQmmOfMEpt82BdmiCdEOfqSbCrTFTYrto987f+595WYiVpPFGTSb/
+ Y18RExnQEX9VHeZqYg/+LMGIZpUB5A+iPesOnxicyPmAap/sRpyAn0wD8FcZ9u6gouUi
+ XhlOt587P2JJwLBOqf9oEqoy9AXYbPC6nJxTSMH4e8r3Aeawvl7b0a9Ct4hLm5sqGIgk
+ f0hROJShObk4Ji6YPdEh+hv56xhQk8Oj1Y7or+NoAt9n+2NqTTeLKtWFW0Z30JSZJwbc
+ VTTfRk7ygoRU/LTyyZegsTnkxQGt9NFtsdzRA7qE1oNEqKMxxAWafdm8mwrHbkSdRdRP
+ UXJw==
 X-Forwarded-Encrypted: i=1;
- AL+hErFvLvCYVyaD6cY/eykngQZu/aiAl9uKy6vLB/mmdcwDJrKTZp3mXqCcY1RyLUUa9CjMWu1OhIF9BYq1cbHXZAqi@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z9+Kq2INElpad9szWfu7+cOZVGpRk/VsaTf6FdPJIPQ+9/P48Dv
- gvhuw2kFm8aaMPa2WmVCeM4GIucHj08iujMJdvdia7rk1H7T2u9FvqjMLdTSBA==
-X-Gm-Gg: AYBFou3cSID2vYfvTkw2Xlb6mqd+AAHlAkeP72t07zbUSVa/bkHZUjlFKHmqVQuGMlP
- cpp5D9Uu+drxmxlcAp45gCzC2Ep4Gaml1SIiYj6RgqjJjOqq5REIu8QtiujKtoUdVNTv7l7zFmW
- kXaXnExnB4BR6kcDtQ7Arl51s1anPtnldrz4ZlXiHZpwkP3zp72BJYDfUs3WEyLtC/Gx30cP/p/
- Aw1i64vjk2xz/TSVqPigaKUloFdCaCwgH28T/FdkzCep7TLTGlxpqkn5sFTLDjZBuNIKlQIb8+J
- aExeclw14TefYBTdT5ijZct3XWXw3gNci2Jszp7QbbWckQ1tBirkaTHS0grabQPt/uMWuz2o7J3
- teckbCvy0SA6KYf4t+40Ld4/tHlZPI8QAqvqcIpEjJflz6ndeLKcOyQP3TZV20RVob6BsNZC5Qf
- 6wOHCoi+awF1bxNXsjtVzHpqMXDV1nryAfRcLyVH5zUGWtCWV07DbZq2Kp49W1f9re/7+HhIltW
- Qj/fWhzC/j08Si23ARzihYIXCZMCKUOcCEjF9tHHKfIeGgVs1ppOH6TDsaMmjFkQS1GC0sDA6wF
- Jb3pUBJWQz3/Mh6EHC1xMDF6/Yl0JDx61vYXUuzdRNq+CY+taLpUbNNXLsiSzJ48iscsUr1zP17
- C1xFdKfQmgkgNpX+qtIubqkf2ofA31/uDtBGl+X9Mt0zdsF9g2xmqg4iH/ojywSxAbYan
-X-Received: by 2002:a17:90b:4ec5:b0:3b1:6689:a016 with SMTP id
- 98e67ed59e1d1-3b1b0b8f9cfmr5536642a91.16.1794802174329; 
- Sun, 15 Nov 2026 20:09:34 -0800 (PST)
+ AL+hErGB7cYaLwPesOS4RsZc21CMLz6J8ncm5eQB+mh120bse7bY7jDlFS8KIzGwlrq54/YLBR0q/QHlQFUuM3PvuHdc@lists.sourceforge.net
+X-Gm-Message-State: APuU4Z8DvyZD/leDrmMqqFTh6ewOyAOST7v8cbmUOFh/xp0Gzkb6S0iw
+ sEW2t4jHJYd3rvEXrJOMAI6HEjqkMO0papeYhsdUEF372l8oczBaubmU
+X-Gm-Gg: AYBFou2WhOpa5k7Aw3jKS5OoN7VfCkIcXnesy33AId4ChaZ00X8PLYqV0sBUCWF7G5G
+ U4wObdNBcNkLGzeMYpxQxO6Pt2MH4SkU/rVxP1JDJwJGLViCRRV+Z23zvFEHn9mcqsevntCTi4l
+ kRB1AR4OjSQWyu8i/rH3f3U1qSIoO+ScGGtwomuEAqc5FxYx+dlHdGpM8w5/PiJk9hQrBdSrR3u
+ D+0GyVp7jfueU2DVMoeuJxEp05QMba6NrMYPu0LE0zFYdw6RFOmhulDWD9ApyXvs3rW37qGFS5y
+ bT66AGQQgu0cm1m+X6s6JZVKJ3Or4/aI1ymQY1u1l12+aXatWruIcDMMU25VhEzm72kDBA75nnJ
+ Tl14iJqzAsp9TJ/4SdrcFHkVv4UZVdV3n3bMxwOAwTAAZjeIWgEzQil2HvHwJeIAwzdoKcxt3WN
+ 5CKBfFbp9hgJeqlrZ9lZYAzl/713jkinSg8dRRMBd6z5djawgiSEDTMaM/WCZBcX2DMAtN4CgnR
+ dOm0zjw3Q6r/unC1tGbQv7E3j6q62VobVGgILS/47DmAkSkT/KEPVbA8YJ3CkN5auLa/wUYrCd0
+ kBuCNQ5vKsM0Scwlja64+mZeEdzr11qW8NajhFckrwDUGWrIVo7xRxUiHko25huSA0Nj3Doxijm
+ D0TB5eKjsUSFfDLWBHvWBQOCysID7Rt5hLicIGVPzQ5O1zcI=
+X-Received: by 2002:a17:90b:3ec9:b0:3a7:a3c8:8f4a with SMTP id
+ 98e67ed59e1d1-3b1b0b9207fmr6746777a91.18.1794802178829; 
+ Sun, 15 Nov 2026 20:09:38 -0800 (PST)
 Received: from f2fs-test.c.googlers.com.com
  (193.67.125.34.bc.googleusercontent.com. [34.125.67.193])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.32
+ 98e67ed59e1d1-3b1b3f09b92sm7191989a91.4.2026.11.15.20.09.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Nov 2026 20:09:33 -0800 (PST)
+ Sun, 15 Nov 2026 20:09:37 -0800 (PST)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Sun, 15 Nov 2026 20:08:48 -0800
-Message-ID: <20261116040851.2849696-18-daeho43@gmail.com>
+Date: Sun, 15 Nov 2026 20:08:50 -0800
+Message-ID: <20261116040851.2849696-20-daeho43@gmail.com>
 X-Mailer: git-send-email 2.56.0.611.g1030f0b940-goog
 In-Reply-To: <20261116040851.2849696-1-daeho43@gmail.com>
 References: <20261116040851.2849696-1-daeho43@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: 1.1 (+)
-X-Headers-End: 1xSo2G-000000007d0-07kZ
-Subject: [f2fs-dev] [PATCH v2 17/20] f2fs: support subpage blocks in online
- resize
+X-Headers-End: 1xSo2K-000000005hr-28NK
+Subject: [f2fs-dev] [PATCH v2 19/20] f2fs: count compress cache entries in
+ pages for its memory limit
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,28 +140,39 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Resize works in blocks, segments and sections, independent of
-PAGE_SIZE, so remove the -EOPNOTSUPP check.
+The compress cache holds one filesystem block per entry, but
+f2fs_available_free_memory() compares the number of entries with a
+percentage of free memory counted in pages. With subpage blocks, this
+limits the compress cache to a fraction (block size / PAGE_SIZE) of
+the memory that compress_percent allows. Convert the entry count to
+pages before the comparison.
+
+No functional change when the block size equals PAGE_SIZE.
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/file.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/f2fs/node.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d6304b705e06..64c91827a5f4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4325,9 +4325,6 @@ static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
- 	__u64 block_count;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f1eae132c4d3..c83a5d79f2f3 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -116,10 +116,12 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
  
--	if (f2fs_has_subpage_blocks(sbi))
--		return -EOPNOTSUPP;
--
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
+ 		/*
+ 		 * free memory is lower than watermark or cached page count
+-		 * exceed threshold, deny caching compress page.
++		 * exceed threshold, deny caching compress page. A cache
++		 * entry holds one block, so convert the entry count to pages.
+ 		 */
+ 		res = (free_ram > avail_ram * sbi->compress_watermark / 100) &&
+-			(COMPRESS_CACHE(sbi)->num_entries <
++			((COMPRESS_CACHE(sbi)->num_entries >>
++			  F2FS_LOG_BLKS_PER_PAGE(sbi)) <
+ 			 free_ram * sbi->compress_percent / 100);
+ #else
+ 		res = false;
 -- 
 2.56.0.611.g1030f0b940-goog
 
