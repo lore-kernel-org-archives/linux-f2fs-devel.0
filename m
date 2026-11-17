@@ -1,113 +1,117 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DE3606A32F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2026 02:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE10606A323
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2026 03:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=FDt854hu;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=AHlK3OKq;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=bRIJ6lEh;
-	dkim=neutral header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=gA2XPuGA
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=JI2cpqJq;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=CjPkofGG;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=X4fJH0/z;
+	dkim=neutral header.d=cs.unc.edu header.i=@cs.unc.edu header.a=rsa-sha256 header.s=google header.b=gsAwXELb
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:References:Mime-Version:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
 	List-Unsubscribe-Post:List-Owner;
-	bh=ymsShAr0W+PWPK4vAwIn7fxmrsT5q5EPWKQeC0a24Zw=; b=FDt854huolGh83n6KN+5APXXB5
-	cQVfOCM5hflDtQOPoFfXYRkVK4dI0glWvO6SuK3gwZHOAmOmzm3su+oXuvYgqCiNMH/LiKKQ1rI/A
-	CXfcuk/OU44g8V/w+7KAzJqsgqANZ43yecF1B+Kf2voQRsPZba6S/VoYVADCByf5Vkx4=;
+	bh=D6LrOcgfPIjUcBe36bssECB379BA56ebbSoQnqoOLtA=; b=JI2cpqJqzCAz1/yXPldXsJPeHW
+	pvNeg4DCkJ15knRuPxOIds7FFHWmlAjIxeDx8K2xiGFTQ956rXkFgw7VfsiB5QXJN/oG+g39H5Rf2
+	RlApcbPlBWwGDhGasRrGSRgnSqgbgxd2weNUIeYXzF56y6b/KAJ46NPt1fAkHicHXNwM=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xT9Js-000000006jG-2hQd;
-	Tue, 17 Nov 2026 02:53:16 +0000
+	id 1xT9bq-000000008A6-1HUY;
+	Tue, 17 Nov 2026 03:11:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1) (envelope-from
- <3qr_7ag4KAHcnVmocVffpfmZodbjjbgZ.Xjh@flex--sarthakkukreti.bounces.google.com>)
- id 1xT9Jr-000000006jA-2a7F
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
+ (envelope-from <hengyul@cs.unc.edu>) id 1xT9bn-000000008A0-3rkM
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Nov 2026 02:53:15 +0000
+ Tue, 17 Nov 2026 03:11:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=yJ0z/cTDVgrB07z6XnWmnCa5Nm3W6f3XldUZrdDkL14=; b=A
- HlK3OKqRnqFCClSiI/+eilQQ2idM/YboPY2VM6Q+TctfN1DqzuoZicPKKDHrnteFxVZosEmSgk/0B
- ChcXDbTpDYSWk4my3egKnn/CcbeiK+gI4ZytXzCjpjj5mo2azAysbZSetjc3Wv81JPgQ4WJG8pGLc
- jh5x2mU+lS9svCMo=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=VU3RfTLNpfs/n3MAsR8jkSfjakNJoajlPmMOjTMtrf0=; b=CjPkofGGttRcTs6rKycsFiqaxa
+ aUyJI3MSTFdmp8Oebj/TQB7DlmJydwmZoJQg0tT0Obml9JKFgNonyXf1sSHs6A+rWEWjrtm5DcJPK
+ ZK+FJPz83ckdeOWL3dvRBcQh4I2e4ybKOA7fgBDU1rda7VJGmXqS5Af+qTw+hd+QhPtA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yJ0z/cTDVgrB07z6XnWmnCa5Nm3W6f3XldUZrdDkL14=; b=bRIJ6lEhtey5pihrNzP3HQKDTT
- twhTm2TrSht96bcIZtlqW1oK7tlxRo7zSJlthJOm1qG+ID5FfFqeJy2owpEJKjuBBar5LPgLqBf9b
- 1ETjOhwegynIs5aK7ef+DDFN5hFt9ZJ5oxaJk4SfAIubwAqvzvkbJxCdGvPaNp/wSmRw=;
-Received: from mail-qk1-f199.google.com ([209.85.222.199])
+ bh=VU3RfTLNpfs/n3MAsR8jkSfjakNJoajlPmMOjTMtrf0=; b=X4fJH0/zaTQ5md3xfZwIwur70m
+ 3EH6vQTUoWYDvs7hVHFd97Plrzk1syYQOjgLbqh3SNGQvjWUr067xZ58FoFVqV5y09PGlmOqLkYFY
+ nVJn3iZWDit6asvOc9UgRAZIDREIVDllVrThV721r3/sn71RnoscPFPkakFgbZSuszFg=;
+Received: from mail-pg1-f181.google.com ([209.85.215.181])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xT9Jq-000000003s6-0IRo
+ id 1xT9bm-000000004Ap-1PRh
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Nov 2026 02:53:15 +0000
-Received: by mail-qk1-f199.google.com with SMTP id
- af79cd13be357-93f32050e72so1158150185a.1
+ Tue, 17 Nov 2026 03:11:47 +0000
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-cde1479f76fso104094a12.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 16 Nov 2026 18:53:13 -0800 (PST)
+ Mon, 16 Nov 2026 19:11:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1794883988; x=1795488788;
- darn=lists.sourceforge.net; 
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=yJ0z/cTDVgrB07z6XnWmnCa5Nm3W6f3XldUZrdDkL14=;
- b=gA2XPuGAK9aGSyTdK7KtLIRHLCmX4dTPyMN2lZ8bhDBic07mI8E7XrUrOgwOSkge+V
- gsm83r7rNPQaNEzSSkDEqjviLWZSoOONtJuYYRtFU0ElkZXFAUW34H9pNh1kJBsruLWi
- iE99guv6DA2MP8dBtQOkQ+tQxxKZ/HvI1arq29vpT7QAl2sWNAfDj4F5ljLsvoDvl/M/
- AkSPmppeK+uO4bZ2ZiHudUKnN8I/ytTHIqtEcj64sZDa+GuoxEdeqCknBkrQRDD/PFkn
- 150bK2Wtf8dmuSeTpLCQjdNomFJLw1Jq7AITtHYaCnzHFW9zQgxvm94qzGI7ndzwUvoa
- lIgw==
+ d=cs.unc.edu; s=google; t=1794885100; x=1795489900; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=VU3RfTLNpfs/n3MAsR8jkSfjakNJoajlPmMOjTMtrf0=;
+ b=gsAwXELbzQJav0+QzR02Rwt6kgFlpNTzSVh4+C2Gjn5+6gWA2+Y9a3uJXNSr18b5Dw
+ X+M6tsQzBQURuWpoz+VYNP9y+1nfBdGsbhAVVAJXO/f2Q3XMl75U8vN+fnXeAE8KHLtw
+ YGLoYdw9mtxRTXPProLzZpYJZ+MO3AkfqrpOTDGcy1BUmPq6HjxVc4f4/33sPdg+hFFo
+ wfkumZyf/TPf3MGPbK00njr3XrUEwO/eXiteDua3S7hGrK2aaRxakMpbLd8U2xQRZmdA
+ uDLWERhmy13GBYlR05Hgm2v0Kid/IGGVJ8fzcB930yp6MKEDsW9bE9zEqrUdk4jV2HKx
+ o2rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794883988; x=1795488788;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20260707; t=1794885100; x=1795489900;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=yJ0z/cTDVgrB07z6XnWmnCa5Nm3W6f3XldUZrdDkL14=;
- b=xbGW9W+gTgtmcAVjHOz1zKDD6tjUmG2IEIDLGr+goZIksoQ5vmqs2YHiQBrfeCCfq2
- CfXfS+MeOZ5K6zkWBI5Rzi7TlhalRfQpaWesEmuXP670pqOiEf7lyFIYR3qugDmO8WSP
- Ms4HmzyEbkF2elInHffHHTKvTvrAWTN0uyVXyGri0PTgoy/6Qw3R8aeTZ43cjKfSs/Kc
- 7681Dp7ToMIVvQDSn7fzs0sH57NOYzsRLd/I8nY+krR2JosZpthJYGLC+NptZKXMC5mz
- Sd1cm8kydbVojBiLGwiyy9yDPvaNr5zOPvT6PkJi8/gZoPGJecLBwe55vYLG/ff7csPL
- vwKw==
-X-Forwarded-Encrypted: i=1;
- AL+hErG2aya8r12w4pF41kzppO+8q/JVgJpbcGCn7TSq3ocNBaDmYQjRbCrfLSArtOyBgpBLUvEcLvRSH3dQFZ6QE3SI@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z+9YdkzXnGRqV6SmO6/bBAW7RvfAd3URORVruhNz7b5pvuknbrz
- PNGtzDunc2+b3wtUEefpJJPB+K9nSIYFC9BhNo9uOpr6EMsiT9yNI3A5Ie+G2zV5W7tQDl3CYdV
- LAk4M/P4IHTOzwk61o3ND2eBKZmDvqJoTrJhjSA==
-X-Received: from dlbqq13.prod.google.com ([2002:a05:7022:ed0d:b0:1a7:44f:3bc7])
- (user=sarthakkukreti job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:701b:4594:20b0:1b2:4871:b1f7 with SMTP id
- a92af1059eb24-1b50313a743mr10766037c88.39.1794883498730; 
- Mon, 16 Nov 2026 18:44:58 -0800 (PST)
-Date: Mon, 16 Nov 2026 18:44:44 -0800
-In-Reply-To: <878q2swoxp.fsf@cartola>
+ bh=VU3RfTLNpfs/n3MAsR8jkSfjakNJoajlPmMOjTMtrf0=;
+ b=qaFf/+ZA8V2a1zMMNB9oxyXCjMz/mFH4GdHsjAMxMCGJXiwvCHS5PQQXQtBA1Ks4em
+ 49WacPDcvxw8Fm0XkYivOMdzn7073emt+1YsllXRBaD+9InzQHEww3148iUVpvSdDL+m
+ EgrFEXDvGJvmskA6xuaf9oMDMkfdx1taQXOng9L9ac3ABBUT8VE+/qnoepK5qfN3+H7+
+ DafFLAYPfha2omn4lZarXoZldKliFJEsHdkCaUIXFSkyHz++5xV/9RGXbqQ/DjBy81vd
+ KOuugFXYe+LGvE3MWLcxocxSK7N6Xo7GMb5Yl1VOxBgNz+vUhD967T3oGH3y2pcpkCHD
+ STWw==
+X-Gm-Message-State: APuU4Z/MwlAqrMQqSpkg5iXqywlgedT1CtVcwab0W3ZzuXMeLwrPMto+
+ fQrdhuo6IOVm1lHcN+WdsuaVJEm9B0cmRy3zxk3wzpznPOx0rnA8G1QGuOCc4vTT/Ps0jBf8P8h
+ hey5rIHwu
+X-Gm-Gg: AYBFou2+Z0J2cjoeh1XMJRtgJKMF6JkLjtiBzk8d3wiIjisMYbm4LCD7q2YcfOlOGyI
+ d0z/nvIphN9Gehh+s+lneEtczDV2JMUO58c3BNigvn1cgpDJxE2QeuGyhkXaJJ7R4Neo63YL6nI
+ B0loGXAYr76v1J83AgFJPHBiLKeCgYlaw40gmNkOIsqninjqZqc5cf/EjGOoh1rqJHe2WIj2mne
+ lSQ03c0HrwBNUEIGV2MR/lP0+Hem8fJZ61Kdwcb7vxU4Lzl8RQE6M/VclOlCzh2C2+waPyVsJz/
+ GimiDJS1PCP/6+80X0DMdOMXjusJPwl1xMY0LbQ9FVDW1MMlHgJ8DvzmWO4J0uOKjhh/Q+OXW2B
+ 6yLSxymFXCiyVZAMK+UoGDhLOl7qYY6imzD+UftkHnEznOqyzJADpN4cOUiGz24VeJyFUe4oX0O
+ GoXEXoOts8Gr0duVNUdT4GSQGwDDQW/UgoyW7cLacUl93eU+zj0nLtRJOajKOuanaIcLM3ApfHJ
+ DECjYn5TUjI6Zi5aCvRlDX5hh70ZbtYaLrtvLRppULGPd2+TY+l3g8T5LHMruVHHTpVgIkcAROF
+ G4jAmsAYAwoI0lCPFXFw5EsVoGy4+kd4BAwduh67/dZX316tB1ho
+X-Received: by 2002:a05:690c:e08a:b0:8b4:d882:4a14 with SMTP id
+ 00721157ae682-8b4d882572bmr17276377b3.5.1794883161880; 
+ Mon, 16 Nov 2026 18:39:21 -0800 (PST)
+Received: from cobra01.cs.unc.edu (cobra01.cs.unc.edu. [152.2.130.143])
+ by smtp.gmail.com with ESMTPSA id
+ 00721157ae682-8b4ec46a9d2sm13822747b3.45.2026.11.16.18.39.21
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 16 Nov 2026 18:39:21 -0800 (PST)
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Mon, 16 Nov 2026 21:39:17 -0500
+Message-ID: <20261117023917.1583819-1-hengyul@cs.unc.edu>
+X-Mailer: git-send-email 2.53.0
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-References: <20261113065332.929085-1-sarthakkukreti@google.com>
- <20261113065332.929085-2-sarthakkukreti@google.com> <878q2swoxp.fsf@cartola>
-X-Mailer: git-send-email 2.56.0.679.gc527c65306-goog
-Message-ID: <20261117024444.2653745-1-sarthakkukreti@google.com>
-To: Gabriel Krisman Bertazi <krisman@suse.de>, "Theodore Ts'o" <tytso@mit.edu>,
- Eric Biggers <ebiggers@kernel.org>
-X-Spam-Score: -7.6 (-------)
-X-Headers-End: 1xT9Jq-000000003s6-0IRo
-Subject: Re: [f2fs-dev] [PATCH 1/3] libfs: reject casefolded names that fold
- to ".", "..", or empty
+MIME-Version: 1.0
+X-Spam-Score: -0.2 (/)
+X-Headers-End: 1xT9bm-000000004Ap-1PRh
+Subject: [f2fs-dev] [PATCH] f2fs: fix data loss when zeroing post-EOF data
+ of a compressed file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,101 +121,116 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Sarthak Kukreti via Linux-f2fs-devel
+From: Hengyu Liang via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Sarthak Kukreti <sarthakkukreti@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
- Sarthak Kukreti <sarthakkukreti@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net,
- Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- Dmitry Torokhov <dtor@google.com>
+Reply-To: Hengyu Liang <hengyul@cs.unc.edu>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MAILING_LIST_MULTI,
-	SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=4.0.1
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, Nov 16, 2026 at 02:34:26PM -0500, Gabriel Krisman Bertazi wrote:
-> Ugh. I agree this is a problem, but I'm also trying to understand first
-> the real impact beyond filesystem complaints during lookup, if any:
->
->   1. Looking up ".\u202e" folds to "." and matches the on-disk "." entry
->      (de->inode == dir->i_ino) in generic_ci_match(), triggering
->      EXT4_ERROR_INODE ("linked to parent dir") in ext4_lookup().
->   2. Looking up "..\u202e" folds to ".." and matches the on-disk ".."
->      entry, returning -ELOOP via d_splice_alias() (or triggering
->      EXT4_ERROR_INODE on the root directory).
->
-> These two look like a "do stupid things, get stupid prizes" with no
-> further repercussions beyond the error message.  Sure, we can fix them
-> to throw EINVAL, but are there bigger repercussions I'm missing?
+Commit 5eced87b7d19 ("f2fs: fix to zero post-EOF data when extending
+file size") made do_zero_post_eof_page() zero the rest of the last
+page with fill_zero() and write the page back when a file is extended.
 
-In addition to what Eric mentioned re: side-effects due to
-errors=remount-ro and errors=panic, encountering EXT4_ERROR_INODE marks
-the superblock with an error flag which can trigger a full fsck pass on
-the next boot.
+However, fill_zero() does not decompress. When the page belongs to a
+compressed cluster and is not in the page cache, it gets a page of
+zeros, and the cluster is written back with that page. As of now,
+extending a compressed file with write(), truncate() or fallocate()
+replaces the data from the start of its last page to the old end of
+the file with zeros.
 
->   3. Filenames consisting solely of ignorable characters fold to "" (0
->      bytes), causing distinct ignorable-only filenames to hash and compare
->      equal and creating entries that e2fsck flags as corruption.
->
-> This seems concerning. Do we actually writes multiple files to the disk?
-> shouldn't they all be folded into the same empty string and rejected or
-> at least written as a single file?  I'm not sure how it'd be writing
-> multiple files to the disk, that seems like a bigger problem.
+The issue can be reproduced with:
 
-Sorry, that should have been specifically for f2fs: ext4 will only write
-the first ignorable-only file to disk and subsequent files fail with
--EEXIST. On f2fs, f2fs_init_casefolded_name() treats `len <= 0` as a
-fallback to raw bytewise hashing/matching, which allows multiple
-ignorable-only files to be written to disk (which fsck.f2fs then flags
-with hash mismatches).
+    mkfs.f2fs -q -f -O extra_attr,compression /dev/vda
+    mount -o compress_extension=txt,fsync_mode=strict /dev/vda /mnt
+    yes | head -c 16000 > /mnt/a.txt
+    sync; echo 3 > /proc/sys/vm/drop_caches
+    echo end >> /mnt/a.txt
+    sync; echo 3 > /proc/sys/vm/drop_caches
+    tr -d 'y\n' < /mnt/a.txt | wc -c
 
-> > Fixes: c843843e714c ("fs: Add standard casefolding support")
->
-> This bug was just made generic by c843843e714c, but the issue was
-> introduced by b886ee3e778e in ext4 and the equivalent f2fs support.
+Before commit 5eced87b7d19 ("f2fs: fix to zero post-EOF data when
+extending file size"), the result is 3, the length of "end".
 
-Ack, I will update the Fixes tags in v2.
+After that commit, the result is 3715. The file has 3712 zero bytes
+before "end".
 
-> > +	if (name_is_dot_dotdot(str, len) ||
-> > +	    name_is_dot_dotdot(name->name, name->len))
-> > +		return 1;
->
-> This is checking for strictly encoded '.' and '..'.  But I'm not sure
-> that happens? Do we really reach the dcache for '.' and '..' instead of
-> the name of the parent or cwd?
->
-> > +	um = dentry->d_sb->s_encoding;
-> > +	cf_len = utf8_casefold(um, name, buf, sizeof(buf));
-> > +	if (cf_len == 0 || (cf_len > 0 && name_is_dot_dotdot(buf, cf_len)))
-> > +		return 1;
->
-> I think this is a bit too late in the lookup to detect these
-> code-points.  I'd much rather we fail the lookup outright instead of
-> attempting to treat them as different spellings of . and .. . But isn't
-> this dead code because we are rejecting those strings in d_hash through
-> your hunk below?  Is there a way we get here without the -EINVAL in
-> d_hash first?
+This patch will prepare the cluster as a write to it does, which
+decompresses it, then zero the rest of the page and write the cluster
+back.
 
-Ah right - let me get rid of this for v2.
+Fixes: 5eced87b7d19 ("f2fs: fix to zero post-EOF data when extending file size")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hengyu Liang <hengyul@cs.unc.edu>
+---
+Commit fda0c0dcefc2 ("f2fs: do f2fs_zero_post_eof_page for all the
+time") in the dev branch drops the fsync_mode=strict condition. With
+it, the commands above give the same result without that option.
 
-> But the way I'd suggest be handled is by rejecting the ignorable code
-> points lookup (all, but variant selectors for the reasons above), early
-> in the lookup path for case-insensitive directories so they never even
-> get to the filesystem.  Wdyt?
+Application impact (Ubuntu 26.04 user space): rsyslog 8.2512.0 appends
+to syslog.log on a volume mounted with compress_extension=log,
+fsync_mode=strict. It is started 16 times and gets 400 messages each
+time; the volume is unmounted and mounted again in between. On v7.2,
+the file has all 6400 messages. On v7.3, it has 6327 of them and 9620
+zero bytes.
 
-As Eric pointed out, since variation selectors are also
-Default_Ignorable_Code_Point and stripped to 0 bytes by utf8_casefold(),
-allowing variation selectors means names like ".\ufe00", "..\ufe00", and
-"\ufe00" still fold to ".", "..", and "" and hit the exact same bug.
+Tested on the dev branch with and without fsync_mode=strict: files
+extended by write, truncate and fallocate keep their data, and rsyslog
+keeps all 6400 messages.
 
-Thanks,
-Sarthak
+ fs/f2fs/file.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 05061254c3b2..59480c3ba2e8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -63,6 +63,33 @@ static int do_zero_post_eof_page(struct inode *inode, loff_t new_size)
+ 			return err;
+ 	}
+ 
++#ifdef CONFIG_F2FS_FS_COMPRESSION
++	if (f2fs_compressed_file(inode)) {
++		int log_cluster_size = F2FS_I(inode)->i_log_cluster_size;
++		void *fsdata = NULL;
++		struct folio *folio;
++		struct page *page;
++		loff_t start;
++
++		/* a page of a compressed cluster must be decompressed first */
++		err = f2fs_prepare_compress_overwrite(inode, &page, index,
++						      &fsdata);
++		if (err < 0)
++			return err;
++		if (err) {
++			folio = page_folio(page);
++			folio_zero_range(folio,
++					 offset_in_folio(folio, old_size), len);
++			f2fs_compress_write_end(inode, fsdata, index, true);
++			start = round_down(old_size,
++					   1 << log_cluster_size << PAGE_SHIFT);
++			return filemap_write_and_wait_range(inode->i_mapping,
++							    start,
++							    old_size + len - 1);
++		}
++	}
++#endif
++
+ 	err = fill_zero(inode, index, offset, len);
+ 	if (err)
+ 		return err;
+
+base-commit: 9b12299b437e0cc3ebf402e7b36a89cc69151238
+-- 
+2.53.0
+
 
 
 _______________________________________________
