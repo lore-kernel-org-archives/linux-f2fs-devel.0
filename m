@@ -1,43 +1,43 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FABB606A323
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2026 10:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CA606A31C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2026 11:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=clET/wsu;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=hLx3CWhA;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=cEnDQ343;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CH6YGOtG
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=Z+m4FJvZ;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=A95eTx13;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=j9idAexb;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oFzUemGl
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=gs6j/X3fMnZBaL39OOD/4OVq4oiNfdFUNvRl8ERxui0=; b=clET/wsuttEK2i
-	IzZ+I8Z8hlegs61Q9pJZvsQk31e1IXEodo9usMTC/1aKsBcLOy4JGeTJnhG88frQ2OpDLcGZip1Im
-	lBlP4OicgmkpZQ+jZkBDiu6YfpAg853pzbMhZtUieKsqd0XIutr4b84NnhNDcZ+7L37RSpU/hIq2h
-	Qp4=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Owner; bh=HnwPOtErDxTzZ0YZuMmfHnGRs4bRb9EJGXgXVI4/4/8=; b=Z+m4FJvZHRrDPo
+	daMGUtQ23/Ji9Qanmph5I++wAjtfw/gnn6wGEwwHqNVftru32ViHpv48/mVy1XsTXkhc1P0DHkLfM
+	oebgWOoX7JVfZCc6IoVlpbNqnS6e/6H7Zu/A7fF0MYMSdX9O0qQD1POVgz+yFUV4c3jIrCrMao6Ys
+	OG8=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xTGfD-000000007G9-2aTn;
-	Tue, 17 Nov 2026 10:43:47 +0000
+	id 1xTH05-000000006No-0hq2;
+	Tue, 17 Nov 2026 11:05:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xTGfC-000000007G2-3PaK
+ (envelope-from <chao@kernel.org>) id 1xTGzu-000000006Na-38tp
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Nov 2026 10:43:46 +0000
+ Tue, 17 Nov 2026 11:05:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oya8J1CPElef6oZeFlm2b0Uh/NkwyFXzThuDchjvEIY=; b=hLx3CWhAb2Q3cR6WZdmeGgokyx
- ru1RoyK3bcajtb8wIj1Kf9SxrzLSUeqQ7moddoP9UyT1+VcRx5o3xGGBHTaF4StkRaJkL0Ado4oa9
- dLbnVcVQPzU+h0Hyig7OBhtnuTegxlG3wE+ETGdRZEwHAGaI+muerlhhOtbwxDIUEidk=;
+ bh=0aeLPSDDDFeW1BLMOTbObFuLTDcOldTAMyOYwl0JEB8=; b=A95eTx13eXb3GGNP+q0o8JCTvF
+ 6M5Lxooi1DWA5cWdFdxKkArvtr2IHIcmvpjzvCq/TK2A9zUOm+r4alU4UzdV3BgbCdNRVic1jrz2V
+ hrph1ALyyxSJo1KrK3t3gxyy5oCWMSZQs8GtyCU2b0Dm54UX0up0ZlOXf29+u+sxsVFk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -45,45 +45,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oya8J1CPElef6oZeFlm2b0Uh/NkwyFXzThuDchjvEIY=; b=cEnDQ343803HyMavsSrwSEDY7U
- VKsUpY7s5cXwUBYB4yQmW6Es5UqgPmKOk7vXLQyJopfjP7qkMicVqCGkvGJTfhczOCAvsQkYJfeDi
- X+tEUAKh20YCKulg1IhMT4fKsoddTdFUWPgix3Tx+4FZIMqa5ykS6iuTtk8V44OlC7VQ=;
+ bh=0aeLPSDDDFeW1BLMOTbObFuLTDcOldTAMyOYwl0JEB8=; b=j9idAexba/0AGCeK+GaUnrybAT
+ U/nYocoLnkFR9J7/6SYhFRhgxy/TLNTieyJcKlo7imiPRtY7G7JN8YVzHc3S+0kFWMrHVSxTsVQuW
+ G6GVCpYyG65I92cR5NuQTrHWIEaEw3hnTixhKwkfi2Mw/z+1wc3cZcf19iHLmh66swGw=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xTGfC-000000002N2-1NKI
+ id 1xTGzt-000000002tL-1Ryv
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Nov 2026 10:43:46 +0000
+ Tue, 17 Nov 2026 11:05:10 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id EDC1C402E4;
- Tue, 17 Nov 2026 10:43:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BECC11F000C5;
- Tue, 17 Nov 2026 10:43:39 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id F3AAC40804;
+ Tue, 17 Nov 2026 11:05:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADC51F000C4;
+ Tue, 17 Nov 2026 11:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1794912220;
- bh=oya8J1CPElef6oZeFlm2b0Uh/NkwyFXzThuDchjvEIY=;
+ s=k20260515; t=1794913503;
+ bh=0aeLPSDDDFeW1BLMOTbObFuLTDcOldTAMyOYwl0JEB8=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=CH6YGOtGI5PPL+fkA3FlQdXSmGq9++wtuZWDQdPqqimFHBPd++Ux03OgqN5vEmvWY
- 8dfYmRZuWyU7qtcv4OKNi6B4RulSluSJvXH+gZTzL0Cw1ju968YWL24aoedD0KNoRj
- fGWb6Y4jJpHt6r9KLrCGsKUBNCftWhM2u5iCdaW+s0ttoN+oyKbMElzywjPXM7ApG4
- xGcOkur1KQQ5vNzaIqaVGkad0rm+n8rfcTXWS2v78VNmZTYxyyw/c02QBWVy7urqt2
- FWOeW6jvlyW/pLk9UB//ld3OfyVl0hBapBtE0jhhYdMrf1rLf+ZDqTYMoM9XtCPhsR
- JK6IA7swwYzwA==
-Message-ID: <6733d2b6-e41c-4f9e-9ccd-80a704c5307a@kernel.org>
-Date: Tue, 17 Nov 2026 18:43:38 +0800
+ b=oFzUemGlpJZqX5lszMojpcUV/qvVrTIYEwiEaGIbfRxml3yFEy5bygJ+dfbJU/cct
+ SgDwRQNfpiPChQ3dwpZyOrfRQZeKPq78FFMWrqN6DsFZZ4ocwX68GkcOOeB/24s+fn
+ EwY6DtUSkAXBkk47b9VqEelBaWVqiPmwseJCS3ejqePFUN7VnerhKNLILGiI5gAzzL
+ gQzCqbXU4JFpA7S1ZiwZ67hIHuxD6gFgofEI9Kpwu7EWuvyKg7ltBpqz8iNfd5tE0q
+ p5hLa3jO/Cma4sTl90Kl9k640UhHcCCtMgVXSg3BnmsZOL4aMs+NwjaG1g9bKzXUdh
+ 3CMs2rABRHTpg==
+Message-ID: <aefcfd01-62b1-4e03-b1eb-bc46cd4b54fb@kernel.org>
+Date: Tue, 17 Nov 2026 19:05:01 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
 References: <20261116040851.2849696-1-daeho43@gmail.com>
- <20261116040851.2849696-8-daeho43@gmail.com>
+ <20261116040851.2849696-9-daeho43@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20261116040851.2849696-8-daeho43@gmail.com>
+In-Reply-To: <20261116040851.2849696-9-daeho43@gmail.com>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xTGfC-000000002N2-1NKI
-Subject: Re: [f2fs-dev] [PATCH v2 07/20] f2fs: support subpage blocks in
- data write path and writeback
+X-Headers-End: 1xTGzt-000000002tL-1Ryv
+Subject: Re: [f2fs-dev] [PATCH v2 08/20] f2fs: adapt range operations and
+ mmap for subpage blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,43 +108,30 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 On 11/16/26 12:08, Daeho Jeong wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> With blocks smaller than PAGE_SIZE, a folio holds several blocks, so
-> write_begin, write_end and writeback have to handle individual blocks
-> instead of the whole folio.
+> - A writable PTE covers the whole folio, so page_mkwrite prepares
+>   every block of the folio up to EOF and dirties only those blocks. It
+>   reserves them only where it may allocate, i.e. not for a pinned file
+>   or a compressed cluster.
+> - Align zero range, punch hole, preallocation and truncation to the
+>   block size instead of PAGE_SIZE. When i_size grows, write-protect the
+>   folio straddling the old EOF so that stores to its new blocks fault
+>   into page_mkwrite.
+> - Update i_size of an extending direct write in ->end_io(), before
+>   iomap invalidates the page cache of the written range, as ext4 does.
+>   Otherwise, a read in between zero-fills the blocks beyond the old
+>   i_size in the folio straddling it and marks them uptodate, which hides
+>   the data just written.
+> - Unmap every base page overlapping a punched or zeroed range, and
+>   truncate the page cache without truncate_pagecache_range(), whose
+>   unmap underflows for a range ending in the first page.
+> - For SEEK_DATA, treat a NEW_ADDR block as data only if the block
+>   itself is dirty.
+> - When truncation zeroes the tail of a page, mark only the block
+>   holding the new EOF dirty, not the blocks after it.
 > 
-> - Read, zero and reserve the blocks touched by a write per block in
->   write_begin, and mark only the written blocks dirty in write_end.
-> - Write back only the dirty blocks of a multi-block folio and complete
->   write I/O per block. In subpage mode every inode is written back by
->   f2fs_write_cache_folios(), which now handles dentry and quota folios
->   and checkpoint errors as f2fs_write_single_data_page() does. Both use
->   the new f2fs_cp_controlled_inode() and f2fs_wb_folio_action() helpers
->   for these rules.
->   It also resets the error for each folio, so that the remaining folios
->   are still written back after an error, as writeback_iter() expects
->   for integrity writeback, instead of redirtying them.
->   f2fs_write_folio_dirty_range() cleans up each block where it is
->   written or skipped, and advances last_disk_size only up to the last
->   block it submitted. On an error, it clears the dirty state of the
->   blocks before the failed one, so that only the failed block and the
->   ones after it are written again.
-> - Count inode dirty blocks from the dirty bits of the folio state, and
->   count every block of a folio dirtied without one, e.g. after a read
->   of the whole folio or through folio_mark_dirty(). Attaching a folio
->   state to a dirty folio converts its count to the dirty bits, so the
->   counter stays balanced.
-> - ->dirty_folio() does not know which blocks were modified, so it marks
->   the uptodate blocks of the folio within EOF dirty. Otherwise, a folio
->   dirtied by mm after writeback cleared its dirty bits, e.g. through a
->   pinned page, is cleaned without being written. The updates made by
->   f2fs mark only the blocks they modify and dirty the folio with
->   f2fs_folio_mark_dirty(), which keeps the other blocks clean.
-> - Compressed and atomic files are not supported yet in subpage mode:
->   write_begin returns -EOPNOTSUPP for them. Inline data is converted
->   first.
-> 
-> Some of these changes also apply to large folios when the block size
-> equals PAGE_SIZE.
+> The SEEK_DATA change also applies to large folios when the block size
+> equals PAGE_SIZE. The direct write change applies to any block size, so
+> i_size is also updated before the sync of an O_DSYNC direct write.
 > 
 > Signed-off-by: Daeho Jeong <daehojeong@google.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
