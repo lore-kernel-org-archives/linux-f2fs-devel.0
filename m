@@ -1,82 +1,83 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4772606A6CB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Nov 2026 05:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F3D606A6F3
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Nov 2026 05:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=N6LGrcWF;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=WPOez3P+;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=dfGUB7SF;
-	dkim=neutral header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=Dl/IZb7Z
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=Z6k0a9Ut;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=iPdmzwTH;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=EHSkImhv;
+	dkim=neutral header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=OpuUmN9M
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=DF6hhI9hauO54UUZb/w+ckSdEP3bdReNWYH2VAhFsVE=; b=N6LGrcWFS6D3KgaCUWYgJVSAhf
-	NSqnIkvbmPAVGhnbtAbDDY8Qi/epnQ+7aqigIvGaehbv7bZSkYGJ5kt53em/5x3IzVpR0kZ/VWlgn
-	PGDn1hej9CU4uUkLKZO+E3Z6M2DA/4GQGZzn45zqZcJU79NWi1krxQqlicFEHA+KMXvU=;
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=tFuqquHDTbYXH9O0lPl4GCk89qNjci1Svnjn+JkxBb4=; b=Z6k0a9Ut+u+YmjP1OcosrVu+Wm
+	rAxrx7UZ1f9BYcAr4GfraRoUWy03slRBbC2U/sRF0P6u0YGurDAGDPSrDSm7WNnwvncr2m7Bxlj2/
+	uyluZkMj0FKj/+5tdvYTngcAl+4o1XLh1QSOvmb5S/7154EVyTp8/uiZSvCJobFA1VZQ=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xTuoN-0000000067d-2VWW;
-	Thu, 19 Nov 2026 05:35:55 +0000
+	id 1xTuoP-0000000068J-3Aue;
+	Thu, 19 Nov 2026 05:35:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <rdunlap@infradead.org>) id 1xTuoH-0000000067T-3ksF
+ (envelope-from <rdunlap@infradead.org>) id 1xTuoN-0000000067f-2hCv
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Nov 2026 05:35:49 +0000
+ Thu, 19 Nov 2026 05:35:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wI8CfhdJeg04jWEb1L4OD1/9oeLf+JacfAtLza0pzdI=; b=WPOez3P+nZdPoCU6TZRErAjQh1
- Iryo/H//HNtm/7xpFZia3GFPiVem/DR92PWKo7r+qRSztYNQs6atz9vpwWP7lUeOXoZ2Fz94TU2Dj
- Ok23hlfZuOcsUBAp6nbhLyrSGQsQiEeZCnG3qp4hgDhsNKAKlkfsCpwUEDt7V1b7Exso=;
+ bh=1eLXwX2TTOtzzg4YJJJIqHeDrys/MbfPMcbT+8ekHvM=; b=iPdmzwTHAadOQ5gbeXCfleEgDO
+ fUVSYyhhC+RThg4vXGsCfFB5icjAzqR+DFX+pP9gZW8ei5eVv8Kg/oL/CUoN3pDJkVA3KMstGPxyf
+ n1FfyGMuH5uZmYNZVFzaumCxwerHU9H/NRGgzzyFpffovMX9O8Kz7jnQfz2SXr5E5CB8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wI8CfhdJeg04jWEb1L4OD1/9oeLf+JacfAtLza0pzdI=; b=dfGUB7SFTtyGQO5LA84tmf/guq
- pn9UYWmfUtICdPV1whnENLoa2Exr44eUgsXghorGi87D44tLHHSl4mTKjJa48+BULmB/Yg4lQSXb2
- 08oGZ3aGRXHgpzmxSPqCQaCLZZoBlhdqHH8RBEivO4B0PZWFZRJSJlydM6mDDazmetPI=;
+ bh=1eLXwX2TTOtzzg4YJJJIqHeDrys/MbfPMcbT+8ekHvM=; b=EHSkImhvGFMRjQlmIytlkdLwA7
+ u/CpkOYPLUZQGLIKFJ+mcRtTskXAZVbPabCYGzsH0FOdQk2doSMgX0UgsWy0g4CAp7U1YdiT0iMDo
+ g7VznLKpc0f9eK+QR0LRXPeziHdS4kwSTj16fQuIWpvlsTvUv0CLM0daZd25hHEfOZtQ=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xTuoF-0000000048a-03hH
+ id 1xTuoM-0000000048m-0J3n
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Nov 2026 05:35:49 +0000
+ Thu, 19 Nov 2026 05:35:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:In-Reply-To:References;
- bh=wI8CfhdJeg04jWEb1L4OD1/9oeLf+JacfAtLza0pzdI=; b=Dl/IZb7ZirAh4LO2ebf/j6bdQJ
- u/4ZQxUclJ2CI5g988zCrigVZ1hcfxds6UT4gZnz+vh/lZ0RL7QWAEVSZWiGy+9RwmxWO5wx0ZDs6
- kPW8F2oxgjkoGe72bbIdZi1w7XQICElbyp/YFGOUx6u8+zbEWXrHMGCPrRpuV6CQHf85fwvAUdsVT
- LVivE2X9BfGwEOvFwKjIvDqZoNzIHMDLP3fKUyqP1Lvw5bG74GAojv+3SBV1aOoswkbf+RLtCyN9m
- Eho4rd1Q5Yiwc2ujQXqfD0A4FNzXday04jFRsdcGQ5G3SlDriiaO+79gGOqMOjRL8GgzEM+EV34Ts
- w/ifmTnw==;
+ MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=1eLXwX2TTOtzzg4YJJJIqHeDrys/MbfPMcbT+8ekHvM=; b=OpuUmN9M/PuTEsleB8z73KAhYB
+ 6+41wOrHRt5z6SatuQ64ymowhFaEXYc5L618pirSee1ENCa0OBYoiC00s6C1VMqIr+ebqH0QZMno1
+ OZ1dl22Kk884kpQC0bIADoUUPVeGMKiBvv0ewb3uWjjz2dKfCx4Ywrr7W/Ra0GdpeF7VgSsL0PnRU
+ lWwpd02qeDuiSFEUagbdUD/nj/hBqD/yTIfoE1lnakL9a4Gasf8APAWVp1B0IdzH4OMxGb4+An5dK
+ SHXVIGxtRIzfh1HpmSOBBIqOTxTNMlh1HK28QW0VJ5zXvTpKPuKbkxuSRZhDSHI6diIAMcxtdltkl
+ 1jPBN0ug==;
 Received: from [50.53.43.113] (helo=bombadil.infradead.org)
  by bombadil.infradead.org with esmtpsa (Exim 4.100.1 #2 (Red Hat Linux))
- id 1xTunn-0000000Aufu-0t5B; Thu, 19 Nov 2026 05:35:19 +0000
+ id 1xTuo6-0000000Aufu-3YNY; Thu, 19 Nov 2026 05:35:38 +0000
 From: Randy Dunlap <rdunlap@infradead.org>
 To: linux-kernel@vger.kernel.org
-Date: Wed, 18 Nov 2026 21:35:01 -0800
-Message-ID: <20261119053514.255348-1-rdunlap@infradead.org>
+Date: Wed, 18 Nov 2026 21:35:08 -0800
+Message-ID: <20261119053514.255348-8-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.56.1
+In-Reply-To: <20261119053514.255348-1-rdunlap@infradead.org>
+References: <20261119053514.255348-1-rdunlap@infradead.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xTuoF-0000000048a-03hH
-Subject: [f2fs-dev] [PATCH v2 00/12 RESEND] docs: ioctl-number: update
- entries
+X-Headers-End: 1xTuoM-0000000048m-0J3n
+Subject: [f2fs-dev] [PATCH v2 07/12] docs: ioctl-number: update MTD entries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -132,98 +133,73 @@ Cc: linux-fbdev@vger.kernel.org, linux-usb@vger.kernel.org,
  Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
  intel-gfx@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
  Hans de Goede <hansg@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-VXBkYXRlIGZpbGUgbmFtZXMgdGhhdCBkZWZpbmUgaW9jdGxzIGFuZCB1cGRhdGUgdGhlIHJhbmdl
-IG9mCmlvY3RsIGZ1bmN0aW9uIG51bWJlcnMgdGhhdCBhcmUgdXNlZCB3aGVyZSB0aGV5IGhhdmUg
-Y2hhbmdlZC4KCltTaW5jZSBoYXZpbmcgbXVsdGlwbGUgbWFpbnRhaW5lcnMgdHJ5aW5nIHRvIG1l
-cmdlIHRoZXNlIHdvdWxkCmNhdXNlIHNvbWUgY29uZmxpY3RzLCBpdCB3b3VsZCBiZSBtb3JlIG1h
-bmFnZWFibGUgZm9yIEpvbiB0bwp0YWtlIGFsbCBvZiB0aGVzZSB0aHJvdWdoIHRoZSBkb2NzLW5l
-eHQgdHJlZS5dCgogW1BBVENIIDAxLzEyIHYyXSBkb2NzOiBpb2N0bC1udW1iZXI6IHVwZGF0ZSBN
-TSBlbnRyaWVzCiBbUEFUQ0ggMDIvMTIgdjJdIGRvY3M6IGlvY3RsLW51bWJlcjogdXBkYXRlIHNv
-dW5kIGVudHJpZXMKIFtQQVRDSCAwMy8xMiB2Ml0gZG9jczogaW9jdGwtbnVtYmVyOiB1cGRhdGUg
-YmxvY2sgZW50cmllcwogW1BBVENIIDA0LzEyIHYyXSBkb2NzOiBpb2N0bC1udW1iZXI6IHVwZGF0
-ZSBuZXR3b3JraW5nIGVudHJpZXMKIFtQQVRDSCAwNS8xMiB2Ml0gZG9jczogaW9jdGwtbnVtYmVy
-OiB1cGRhdGUgdmlkZW8vZmJkZXYgZW50cmllcwogW1BBVENIIDA2LzEyIHYyXSBkb2NzOiBpb2N0
-bC1udW1iZXI6IHVwZGF0ZSBTQ1NJIGVudHJpZXMKIFtQQVRDSCAwNy8xMiB2Ml0gZG9jczogaW9j
-dGwtbnVtYmVyOiB1cGRhdGUgTVREIGVudHJpZXMKIFtQQVRDSCAwOC8xMiB2Ml0gZG9jczogaW9j
-dGwtbnVtYmVyOiB1cGRhdGUgVVNCIGVudHJpZXMKIFtQQVRDSCAwOS8xMiB2Ml0gZG9jczogaW9j
-dGwtbnVtYmVyOiB1cGRhdGUgdmlydHVhbGl6YXRpb24gZW50cmllcwogW1BBVENIIDEwLzEyIHYy
-XSBkb2NzOiBpb2N0bC1udW1iZXI6IHVwZGF0ZSBGUyBlbnRyaWVzCiBbUEFUQ0ggMTEvMTIgdjJd
-IGRvY3M6IGlvY3RsLW51bWJlcjogdXBkYXRlIHBsYXRmb3JtIGVudHJpZXMKIFtQQVRDSCAxMi8x
-MiB2Ml0gZG9jczogaW9jdGwtbnVtYmVyOiB1cGRhdGUgRFJNIGVudHJpZXMKCiBEb2N1bWVudGF0
-aW9uL3VzZXJzcGFjZS1hcGkvaW9jdGwvaW9jdGwtbnVtYmVyLnJzdCB8ICAgOTEgKysrKysrKyst
-LS0KIDEgZmlsZSBjaGFuZ2VkLCA3MiBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkKCnYy
-IGNoYW5nZXM6Ci0gYWRkcmVzcyBzYXNoaWtvIHJldmlldyBjb21tZW50cwotIGRyb3AgYWRkaXRp
-b24gb2YgYXJjaC94ODYva3ZtL3g4Ni5jIChTZWFuIENocmlzdG9waGVyc29uKQotIGRyb3AgbW9k
-ZXJhdGVkIG1haWxpbmcgbGlzdHMKCihSRVNFTkQ6IEkgdHJpZWQgdXNpbmcgLS1zdXBwcmVzcy1j
-Yz1hdXRvIGJ1dCB0aGVuIG5vIG9uZSB3YXMgQ2MtZWQuCkkgd2FudGVkIHRvIHVzZSBvbmx5IHRo
-ZSBleHBsaWNpdCBDYzpzIGluIGVhY2ggZW1haWwgaW5zdGVhZApvZiBzZW5kaW5nIGFsbCBwYXRj
-aGVzIHRvIGV2ZXJ5b25lLikKCkNjOiBKb25hdGhhbiBDb3JiZXQgPGNvcmJldEBsd24ubmV0PgpD
-YzogU2h1YWggS2hhbiA8c2toYW5AbGludXhmb3VuZGF0aW9uLm9yZz4KQ2M6IGxpbnV4LWRvY0B2
-Z2VyLmtlcm5lbC5vcmcKQ2M6IERhdmlkIEhpbGRlbmJyYW5kIDxkYXZpZEBrZXJuZWwub3JnPgpD
-YzogQW5kcmV3IE1vcnRvbiA8YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4KQ2M6IEphc29uIEd1
-bnRob3JwZSA8amdnQG52aWRpYS5jb20+CkNjOiBMZW9uIFJvbWFub3Zza3kgPGxlb25yb0Budmlk
-aWEuY29tPgpDYzogbGludXgtbW1Aa3ZhY2sub3JnCkNjOiBKYXJvc2xhdiBLeXNlbGEgPHBlcmV4
-QHBlcmV4LmN6PgpDYzogVGFrYXNoaSBJd2FpIDx0aXdhaUBzdXNlLmNvbT4KQ2M6IGxpbnV4LXNv
-dW5kQHZnZXIua2VybmVsLm9yZwpDYzogSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRrPgpDYzog
-bGludXgtYmxvY2tAdmdlci5rZXJuZWwub3JnCkNjOiBNYXJjZWwgSG9sdG1hbm4gPG1hcmNlbEBo
-b2x0bWFubi5vcmc+CkNjOiBMdWl6IEF1Z3VzdG8gdm9uIERlbnR6IDxsdWl6LmRlbnR6QGdtYWls
-LmNvbT4KQ2M6IGxpbnV4LWJsdWV0b290aEB2Z2VyLmtlcm5lbC5vcmcKQ2M6IFdpbGxlbSBkZSBC
-cnVpam4gPHdpbGxlbWRlYnJ1aWpuLmtlcm5lbEBnbWFpbC5jb20+CkNjOiBKYXNvbiBXYW5nIDxq
-YXNvd2FuZ2lvQGdtYWlsLmNvbT4KQ2M6IERhdmlkIEhlaWRlbGJlcmcgPGRhdmlkQGl4aXQuY3o+
-CkNjOiBvZS1saW51eC1uZmNAbGlzdHMubGludXguZGV2CkNjOiBDaGFzIFdpbGxpYW1zIDwzY2hh
-czNAZ21haWwuY29tPgpDYzogIkRhdmlkIFMuIE1pbGxlciIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+
-CkNjOiBFcmljIER1bWF6ZXQgPGVkdW1hemV0QGtlcm5lbC5vcmc+CkNjOiBKYWt1YiBLaWNpbnNr
-aSA8a3ViYUBrZXJuZWwub3JnPgpDYzogUGFvbG8gQWJlbmkgPHBhYmVuaUByZWRoYXQuY29tPgpD
-YzogbmV0ZGV2QHZnZXIua2VybmVsLm9yZwpDYzogSGVsZ2UgRGVsbGVyIDxkZWxsZXJAZ214LmRl
-PgpDYzogbGludXgtZmJkZXZAdmdlci5rZXJuZWwub3JnCkNjOiBkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCkNjOiBNUFQtRnVzaW9uTGludXgucGRsQGJyb2FkY29tLmNvbQpDYzogIkph
-bWVzIEUuSi4gQm90dG9tbGV5IiA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNv
-bT4KQ2M6ICJNYXJ0aW4gSy4gUGV0ZXJzZW4iIDxta3BAa2VybmVsLm9yZz4KQ2M6IGxpbnV4LXNj
-c2lAdmdlci5rZXJuZWwub3JnCkNjOiBNaXF1ZWwgUmF5bmFsIDxtaXF1ZWwucmF5bmFsQGJvb3Rs
-aW4uY29tPgpDYzogUmljaGFyZCBXZWluYmVyZ2VyIDxyaWNoYXJkQG5vZC5hdD4KQ2M6IFZpZ25l
-c2ggUmFnaGF2ZW5kcmEgPHZpZ25lc2hyQHRpLmNvbT4KQ2M6IFpoaWhhbyBDaGVuZyA8Y2hlbmd6
-aGloYW8xQGh1YXdlaS5jb20+CkNjOiBsaW51eC1tdGRAbGlzdHMuaW5mcmFkZWFkLm9yZwpDYzog
-TmVpbGwgS2Fwcm9uIDxua2Fwcm9uQGdvb2dsZS5jb20+CkNjOiBBbmRyZXkgS29ub3ZhbG92IDxh
-bmRyZXlrbnZsQGdtYWlsLmNvbT4KQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4
-Zm91bmRhdGlvbi5vcmc+CkNjOiBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnCkNjOiBKdWVyZ2Vu
-IEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+CkNjOiBTdGVmYW5vIFN0YWJlbGxpbmkgPHNzdGFiZWxs
-aW5pQGtlcm5lbC5vcmc+CkNjOiB4ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmcKQ2M6IEhh
-bnMgZGUgR29lZGUgPGhhbnNnQGtlcm5lbC5vcmc+CkNjOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFy
-bmRiLmRlPgpDYzogIk1pY2hhZWwgUy4gVHNpcmtpbiIgPG1zdEByZWRoYXQuY29tPgpDYzogRXVn
-ZW5pbyBQw6lyZXogPGVwZXJlem1hQHJlZGhhdC5jb20+CkNjOiBTZWFuIENocmlzdG9waGVyc29u
-IDxzZWFuamNAZ29vZ2xlLmNvbT4KQ2M6IFBhb2xvIEJvbnppbmkgPHBib256aW5pQHJlZGhhdC5j
-b20+CkNjOiBrdm1Admdlci5rZXJuZWwub3JnCkNjOiB2aXJ0dWFsaXphdGlvbkBsaXN0cy5saW51
-eC5kZXYKQ2M6IEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+CkNjOiBsaW51eC1mc2RldmVsQHZnZXIu
-a2VybmVsLm9yZwpDYzogIlRoZW9kb3JlIFRzJ28iIDx0eXRzb0BtaXQuZWR1PgpDYzogbGludXgt
-ZXh0NEB2Z2VyLmtlcm5lbC5vcmcKQ2M6IE1pa2UgTWFyc2hhbGwgPGh1YmNhcEBvbW5pYm9uZC5j
-b20+CkNjOiBkZXZlbEBsaXN0cy5vcmFuZ2Vmcy5vcmcKQ2M6IFBhdWxvIEFsY2FudGFyYSA8cGNA
-bWFuZ3VlYml0Lm9yZz4KQ2M6IE5hbWphZSBKZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+CkNj
-OiBsaW51eC1jaWZzQHZnZXIua2VybmVsLm9yZwpDYzogSmFlZ2V1ayBLaW0gPGphZWdldWtAa2Vy
-bmVsLm9yZz4KQ2M6IENoYW8gWXUgPGNoYW9Aa2VybmVsLm9yZz4KQ2M6IGxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0CkNjOiBGbG9yaWFuIEZhaW5lbGxpIDxmbG9yaWFuLmZh
-aW5lbGxpQGJyb2FkY29tLmNvbT4KQ2M6IEJyb2FkY29tIGludGVybmFsIGtlcm5lbCByZXZpZXcg
-bGlzdCA8YmNtLWtlcm5lbC1mZWVkYmFjay1saXN0QGJyb2FkY29tLmNvbT4KQ2M6IFR6dW5nLUJp
-IFNoaWggPHR6dW5nYmlAa2VybmVsLm9yZz4KQ2M6IEJlbnNvbiBMZXVuZyA8YmxldW5nQGNocm9t
-aXVtLm9yZz4KQ2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+CkNjOiBTaW1vbmEg
-VmV0dGVyIDxzaW1vbmFAZmZ3bGwuY2g+CkNjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCkNjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVyQGFtZC5jb20+CkNjOiBDaHJp
-c3RpYW4gS8O2bmlnIDxjaHJpc3RpYW4ua29lbmlnQGFtZC5jb20+CkNjOiBhbWQtZ2Z4QGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpDYzogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxpbnV4LmludGVs
-LmNvbT4KQ2M6IEpvb25hcyBMYWh0aW5lbiA8am9vbmFzLmxhaHRpbmVuQGxpbnV4LmludGVsLmNv
-bT4KQ2M6IFJvZHJpZ28gVml2aSA8cm9kcmlnby52aXZpQGludGVsLmNvbT4KQ2M6IFR2cnRrbyBV
-cnN1bGluIDx0dXJzdWxpbkB1cnN1bGluLm5ldD4KQ2M6IGludGVsLWdmeEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKQ2M6IE1hdHRoZXcgQnJvc3QgPG1hdHRoZXcuYnJvc3RAaW50ZWwuY29tPgpDYzog
-VGhvbWFzIEhlbGxzdHLDtm0gPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPgpDYzog
-aW50ZWwteGVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCgoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
-b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Update the list of files where MTD ioctls are defined and update
+the ranges of function numbers that are used.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+v2: address sashiko review comments (missing update of 'O' range
+    for mtd/ubi-user.h)
+
+[Since having multiple maintainers trying to merge these would
+cause some conflicts, it would be more manageable for Jon to
+take all of these through the docs-next tree.]
+
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-doc@vger.kernel.org
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: linux-mtd@lists.infradead.org
+
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- linux-next-20261116.orig/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ linux-next-20261116/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -193,8 +193,8 @@ Code  Seq#    Include File
+ 'L'   35-38  arch/m68k/include/asm/fbio.h
+ 'L'   35-38  arch/sparc/include/asm/fbio.h
+ 'M'   all    linux/soundcard.h                                         conflict!
+-'M'   01-16  mtd/mtd-abi.h                                             conflict!
+-      and    drivers/mtd/mtdchar.c
++'M'   01-1A  mtd/mtd-abi.h                                             conflict!
++'M'   03-04  drivers/mtd/mtdchar.c
+ 'M'   01-03  drivers/scsi/megaraid/megaraid_sas.h
+ 'M'   00-03  drivers/video/fbdev/mb862xx/mb862xxfb.h
+ 'M'   00-0F  drivers/video/fsl-diu-fb.h                                conflict!
+@@ -203,7 +203,7 @@ Code  Seq#    Include File
+ 'N'   80-83  uapi/linux/ntsync.h and uapi/linux/nvme_ioctl.h           conflict!
+ 'N'   84-8F  uapi/linux/ntsync.h                                       NT synchronization primitives
+                                                                        <mailto:wine-devel@winehq.org>
+-'O'   00-06  mtd/ubi-user.h                                            UBI
++'O'   00-08  mtd/ubi-user.h                                            UBI
+ 'O'   1F-3F  linux/omapfb.h
+ 'P'   all    linux/soundcard.h                                         conflict!
+ 'P'   60-6F  sound/sscape_ioctl.h                                      conflict!
+@@ -305,7 +305,7 @@ Code  Seq#    Include File
+ 'n'   E0-FF  linux/matroxfb.h                                          matroxfb
+ 'n'   F8-FA  video/sisfb.h                                             sisfb
+ 'o'   00-1F  fs/ocfs2/ocfs2_fs.h                                       OCFS2
+-'o'   00-03  mtd/ubi-user.h                                            conflict! (OCFS2 and UBI overlaps)
++'o'   00-06  mtd/ubi-user.h                                            conflict! (OCFS2 and UBI overlap)
+ 'o'   40-41  mtd/ubi-user.h                                            UBI
+ 'o'   01-A1  `linux/dvb/*.h`                                           DVB
+ 'p'   00-0F  linux/phantom.h                                           conflict! (OpenHaptics needs this)
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
