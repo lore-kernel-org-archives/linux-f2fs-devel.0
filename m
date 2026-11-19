@@ -1,84 +1,83 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C830360A6F6B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Nov 2026 05:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27BE606A326
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Nov 2026 05:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=QWg1mzPr;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=kHe5UDtl;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=VM5z1OZb;
-	dkim=neutral header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=oPKecQNT
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=lxkFl8Lc;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Vdavn4z0;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=AQumH5mn;
+	dkim=neutral header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=gtc+5H4v
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=catchIezre06J2P/U+Nvc7K1DW4kfz1LQHNfxPo5wHI=; b=QWg1mzPrASLYMqkfvrZonMTF7t
-	OB4Z0KXO5qCBz9XcwXPTEny+wNoyg4vQgb4o+HWixuKxivjNdOoY76ut6/4aSS6EN6eWlvMl0/oc9
-	VAy+u8c12J8ZU6CkA/bVAmCisvCJXdoI4bAdifDn9FARpDEv88Ipcejwt/J6+L/JU+qQ=;
+	bh=T2FJuyTEhHlulTkCKbKAsnulOtFj93fQZBdREWFIf7A=; b=lxkFl8LcNu0nx2ohEgDHU1K57J
+	q/Br4yz0YfdcHZC8Ix/c1+8w5uFYm6s9Bb9tpcX8O7Ae9d5McZ+IO54L+gQIG6k1C++759p1mgAIP
+	1KYv3TWeGksO+TNLE12wNxAEX6/YqkhroiVQSpz7XPEPTaq3DIS7WwayA0KHb5Efhnvk=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xTuoU-000000006jx-29Nx;
-	Thu, 19 Nov 2026 05:36:02 +0000
+	id 1xTuoX-000000006lI-2vV5;
+	Thu, 19 Nov 2026 05:36:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <rdunlap@infradead.org>) id 1xTuoS-000000006jB-0S0C
+ (envelope-from <rdunlap@infradead.org>) id 1xTuoV-000000006ke-2Jbx
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Nov 2026 05:36:00 +0000
+ Thu, 19 Nov 2026 05:36:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ELh5lc2aPOWRUhM5D4IHCHtXzMf4oMgv7S6UUVSFuJE=; b=kHe5UDtlkL3BEmP5ZDAG5sRza8
- EHbCD7z0mHW3eEGxo025z66Wx0PCnel1WRPXnztQ02+yJV1kxgCuR6hK848mZpJ0Q986zY5A1gTqJ
- dw0g3xl8Bq0RSf5DsCrBO4zp4qSQPKzr69mavkiTVQMxHgbXJDGUnioB/RfhZzdNj4yc=;
+ bh=ZuZZE/Cj353sLaHKMo9GpZj59G0w2nJ8ZNrbV6CJF+E=; b=Vdavn4z0MEh4ndWk1wFvBEueAv
+ lw96efOxckpxFuiplvK04Yzf6KDAvHfn0CFmJUDX5lkMLq7gBB9Bjn7Af62yYljt5QxD+ODZ8Iqm2
+ jDSgrO4ak6q4cQd8GiMEZltNL9O1Lu8rka0El8U+BV/lLCJrGhJiEhgPjgvD1P9EZ5D0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ELh5lc2aPOWRUhM5D4IHCHtXzMf4oMgv7S6UUVSFuJE=; b=VM5z1OZbHGqpwcBuTjkzEisQTX
- lOvMhThzbGQ3Tej0dvjA6ra0D0Q3kqXN+/YkhlgmSZRE4ZgiIuf+qxMUhWw+r5974dAOv37ubldn6
- A2bKeuvGhFGK5kByt791d7ZeT+Vg+U63NIlgDw60bIAEqnDsI4nFkzfR/m4JhZeU68Qc=;
+ bh=ZuZZE/Cj353sLaHKMo9GpZj59G0w2nJ8ZNrbV6CJF+E=; b=AQumH5mnXIwsdARfoIh7ToaktM
+ R6M4zpLpy7eyxuh6KOOVzhzydt1Zd6JAH1psAtdHLn3oIAGp1H1FBQ+8et+oNNiBdPzcEgwmtz7zl
+ 5KYTKrINtArYTNCXes005ZApwWV0Gzr6TQ1rboK2dKz72BGujaDi+7CXZDPwc4+S83C4=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xTuoR-000000003CE-2REm
+ id 1xTuoU-000000003CH-09PY
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Nov 2026 05:36:00 +0000
+ Thu, 19 Nov 2026 05:36:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
- To:From:Sender:Reply-To:Content-ID:Content-Description;
- bh=ELh5lc2aPOWRUhM5D4IHCHtXzMf4oMgv7S6UUVSFuJE=; b=oPKecQNTYubY0Dp8vcR5jIBDM2
- 3Go3aVyKAU8FdmIpJi0naXVl32KClQXNvqJdTYxwmyxklmJW1MrA7JPp/pE6mBxz2VslXr2LvZSl+
- AsGoZqPUrizrPpY6noR/PEqIyZBoLu8l8FRiHTaAyMwQOskhrXcfXawpj9H2ly2y9+K2mcen5J5Di
- Ll7sBPow7Tfn5dKijG8+yV7rRHysHc8oY+2/SqopSy+k/yed8FxbJcCx/nEhEQ43n7Bgb2Nd7MSgh
- h1tzWKOF5S/oRaOnw2K7+kpqzYEXYQ9BLusF1w+9yCNworNuHqSQVRF0wWahdtCddIrUJPapoQNHk
- wSYPaUjg==;
+ MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=ZuZZE/Cj353sLaHKMo9GpZj59G0w2nJ8ZNrbV6CJF+E=; b=gtc+5H4vdXyFU3qU5Duvifa7ky
+ InKyXCzbLFZPDermXy3rctqSOxXlVD1xhaqgaam3o7dXL+dT1Zn4X6wKOoEgKwIMl/q3ii/4OE4Pj
+ dD0/qIcPCOwrOsHurPjU5DuVLdgKUQVnbNOsgBDux7NNSuius0piP8K/4MVBRsbOy+Wj68w4MoEQV
+ /yC6Yd5GetCjVDa4xZMHsOHzcxle7zKJPDj+ugtM3NXeqkNIslDkyVkcFfX10ZJT9o8fsAdX+iu3R
+ qGfKSoWF06eIb33qIg9Z83bTojP/bNXJ1y/jnaz3znGe2T3I1Qni4iZwIQSmr5aLyhvr6uLH/rVHu
+ EMPOBZ5w==;
 Received: from [50.53.43.113] (helo=bombadil.infradead.org)
  by bombadil.infradead.org with esmtpsa (Exim 4.100.1 #2 (Red Hat Linux))
- id 1xTuoB-0000000Aufu-26GP; Thu, 19 Nov 2026 05:35:43 +0000
+ id 1xTuoE-0000000Aufu-0eli; Thu, 19 Nov 2026 05:35:46 +0000
 From: Randy Dunlap <rdunlap@infradead.org>
 To: linux-kernel@vger.kernel.org
-Date: Wed, 18 Nov 2026 21:35:10 -0800
-Message-ID: <20261119053514.255348-10-rdunlap@infradead.org>
+Date: Wed, 18 Nov 2026 21:35:11 -0800
+Message-ID: <20261119053514.255348-11-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261119053514.255348-1-rdunlap@infradead.org>
 References: <20261119053514.255348-1-rdunlap@infradead.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xTuoR-000000003CE-2REm
-Subject: [f2fs-dev] [PATCH v2 09/12] docs: ioctl-number: update
- virtualization entries
+X-Headers-End: 1xTuoU-000000003CH-09PY
+Subject: [f2fs-dev] [PATCH v2 10/12] docs: ioctl-number: update FS entries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -134,8 +133,8 @@ Cc: linux-fbdev@vger.kernel.org, linux-usb@vger.kernel.org,
  Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
  intel-gfx@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
  Hans de Goede <hansg@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
@@ -143,67 +142,93 @@ X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-VXBkYXRlIHRoZSBsaXN0IG9mIGZpbGVzIHdoZXJlIHZpcnR1YWxpemF0aW9uIGlvY3RscyBhcmUg
-ZGVmaW5lZC4KClNpZ25lZC1vZmYtYnk6IFJhbmR5IER1bmxhcCA8cmR1bmxhcEBpbmZyYWRlYWQu
-b3JnPgotLS0KdjI6IGRyb3AgMHhBRSwgQzYsIGFyY2gveDg2L2t2bS94ODYuYyAoY292ZXJlZCBi
-eSBsaW5lIGFib3ZlOwogICAgU2VhbiBDaHJpc3RvcGhlcnNvbikKCltTaW5jZSBoYXZpbmcgbXVs
-dGlwbGUgbWFpbnRhaW5lcnMgdHJ5aW5nIHRvIG1lcmdlIHRoZXNlIHdvdWxkCmNhdXNlIHNvbWUg
-Y29uZmxpY3RzLCBpdCB3b3VsZCBiZSBtb3JlIG1hbmFnZWFibGUgZm9yIEpvbiB0bwp0YWtlIGFs
-bCBvZiB0aGVzZSB0aHJvdWdoIHRoZSBkb2NzLW5leHQgdHJlZS5dCgpDYzogSm9uYXRoYW4gQ29y
-YmV0IDxjb3JiZXRAbHduLm5ldD4KQ2M6IFNodWFoIEtoYW4gPHNraGFuQGxpbnV4Zm91bmRhdGlv
-bi5vcmc+CkNjOiBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnCkNjOiBKdWVyZ2VuIEdyb3NzIDxq
-Z3Jvc3NAc3VzZS5jb20+CkNjOiBTdGVmYW5vIFN0YWJlbGxpbmkgPHNzdGFiZWxsaW5pQGtlcm5l
-bC5vcmc+CkNjOiB4ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmcKQ2M6IEhhbnMgZGUgR29l
-ZGUgPGhhbnNnQGtlcm5lbC5vcmc+CkNjOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgpD
-YzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4KQ2M6ICJN
-aWNoYWVsIFMuIFRzaXJraW4iIDxtc3RAcmVkaGF0LmNvbT4KQ2M6IEphc29uIFdhbmcgPGphc293
-YW5naW9AZ21haWwuY29tPgpDYzogRXVnZW5pbyBQw6lyZXogPGVwZXJlem1hQHJlZGhhdC5jb20+
-CkNjOiBTZWFuIENocmlzdG9waGVyc29uIDxzZWFuamNAZ29vZ2xlLmNvbT4KQ2M6IFBhb2xvIEJv
-bnppbmkgPHBib256aW5pQHJlZGhhdC5jb20+CkNjOiBrdm1Admdlci5rZXJuZWwub3JnCkNjOiB2
-aXJ0dWFsaXphdGlvbkBsaXN0cy5saW51eC5kZXYKCiBEb2N1bWVudGF0aW9uL3VzZXJzcGFjZS1h
-cGkvaW9jdGwvaW9jdGwtbnVtYmVyLnJzdCB8ICAgIDUgKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA1
-IGluc2VydGlvbnMoKykKCi0tLSBsaW51eC1uZXh0LTIwMjYxMTE2Lm9yaWcvRG9jdW1lbnRhdGlv
-bi91c2Vyc3BhY2UtYXBpL2lvY3RsL2lvY3RsLW51bWJlci5yc3QKKysrIGxpbnV4LW5leHQtMjAy
-NjExMTYvRG9jdW1lbnRhdGlvbi91c2Vyc3BhY2UtYXBpL2lvY3RsL2lvY3RsLW51bWJlci5yc3QK
-QEAgLTE5OCw2ICsxOTgsNyBAQCBDb2RlICBTZXEjICAgIEluY2x1ZGUgRmlsZQogJ00nICAgMDEt
-MDMgIGRyaXZlcnMvc2NzaS9tZWdhcmFpZC9tZWdhcmFpZF9zYXMuaAogJ00nICAgMDAtMDMgIGRy
-aXZlcnMvdmlkZW8vZmJkZXYvbWI4NjJ4eC9tYjg2Mnh4ZmIuaAogJ00nICAgMDAtMEYgIGRyaXZl
-cnMvdmlkZW8vZnNsLWRpdS1mYi5oICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25m
-bGljdCEKKydNJyAgIDAxLTAzICB4ZW4vaW50ZXJmYWNlL3hlbi1tY2EuaCAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgY29uZmxpY3QhCiAnTicgICAwMC0xRiAgZHJpdmVycy91c2Iv
-c2Nhbm5lci5oCiAnTicgICA0MC03RiAgdWFwaS9saW51eC9udm1lX2lvY3RsLmgKICdOJyAgIDgw
-LTgzICB1YXBpL2xpbnV4L250c3luYy5oIGFuZCB1YXBpL2xpbnV4L252bWVfaW9jdGwuaCAgICAg
-ICAgICAgY29uZmxpY3QhCkBAIC0yMzgsNiArMjM5LDcgQEAgQ29kZSAgU2VxIyAgICBJbmNsdWRl
-IEZpbGUKICdVJyAgIDY0ICAgICBkcml2ZXJzL3VzYi9taXNjL3VzYnRlc3QuYyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgY29uZmxpY3QhCiAnVicgICBhbGwgICAgbGludXgvdnQuaCAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbmZsaWN0IQog
-J1YnICAgYWxsICAgIGxpbnV4L3ZpZGVvZGV2Mi5oICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBjb25mbGljdCEKKydWJyAgIDAwLTFGICBsaW51eC92Ym94Z3Vlc3QuaCAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uZmxpY3QhCiAnVicgICBD
-MCAgICAgbGludXgvaXZ0dmZiLmggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIGNvbmZsaWN0IQogJ1YnICAgQzAgICAgIGxpbnV4L2l2dHYuaCAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25mbGljdCEKICdWJyAgIEMwICAgICBt
-ZWRpYS9zaTQ3MTMuaCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-Y29uZmxpY3QhCkBAIC0zNTYsNiArMzU4LDcgQEAgQ29kZSAgU2VxIyAgICBJbmNsdWRlIEZpbGUK
-ICd8JyAgIDgwLTlGICBzYW1wbGVzLyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgQW55IHNhbXBsZSBhbmQgZXhhbXBsZSBkcml2ZXJzCiAweDgwICAwMC0x
-RiAgbGludXgvZmIuaAogMHg4MSAgMDAtMUYgIGxpbnV4L3ZkdXNlLmgKKyAgICAgICAgICAgICBk
-cml2ZXJzL3ZkcGEvdmRwYV91c2VyL3ZkdXNlX2Rldi5jCiAweDg5ICAwMC0wNyAgYXNtLWdlbmVy
-aWMvc29ja2lvcy5oCiAweDg5ICAwNi0wNyAgbGludXgvc29ja2lvcy5oCiAweDg5ICAwQi1ERiAg
-bGludXgvc29ja2lvcy5oCkBAIC0zOTksNiArNDAyLDggQEAgQ29kZSAgU2VxIyAgICBJbmNsdWRl
-IEZpbGUKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgPG1haWx0bzprdm1Admdlci5rZXJuZWwub3JnPgogMHhBRSAg
-MjAtM0YgIGxpbnV4L25pdHJvX2VuY2xhdmVzLmggICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBOaXRybyBFbmNsYXZlcwogMHhBRiAgMDAtMUYgIGxpbnV4L2ZzbF9oeXBlcnZpc29y
-LmggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBGcmVlc2NhbGUgaHlwZXJ2aXNv
-cgorMHhBRiAgMDAtOEYgIGxpbnV4L3Zob3N0LmggICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBjb25mbGljdCEKKzB4QUYgIDMxLTMyICBkcml2ZXJzL3Zob3N0L3Rl
-c3QuaCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uZmxpY3QhCiAweEIw
-ICBhbGwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIFJBVElPIGRldmljZXMgaW4gZGV2ZWxvcG1lbnQ6CiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxt
-YWlsdG86dmdvQHJhdGlvLmRlPgogMHhCMSAgMDAtMUYgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQUFBvWAoKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Update the list of files where filesystem ioctls are defined and update
+the ranges of function numbers that are used.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+v2: address sashiko review comment (ext4 00-2F range referred to
+    the wrong file name)
+
+[Since having multiple maintainers trying to merge these would
+cause some conflicts, it would be more manageable for Jon to
+take all of these through the docs-next tree.]
+
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-doc@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: linux-ext4@vger.kernel.org
+Cc: Mike Marshall <hubcap@omnibond.com>
+Cc: devel@lists.orangefs.org
+Cc: Paulo Alcantara <pc@manguebit.org>
+Cc: Namjae Jeon <linkinjeon@kernel.org>
+Cc: linux-cifs@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+--- linux-next-20261116.orig/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ linux-next-20261116/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -185,6 +185,7 @@ Code  Seq#    Include File
+ 'I'   all    linux/isdn.h                                              conflict!
+ 'I'   00-0F  drivers/isdn/divert/isdn_divert.h                         conflict!
+ 'I'   40-4F  linux/mISDNif.h                                           conflict!
++'I'   00     linux/inotify.h
+ 'K'   all    linux/kd.h
+ 'L'   00-1F  linux/loop.h                                              conflict!
+ 'L'   10-21  drivers/scsi/mpt3sas/mpt3sas_ctl.h                        conflict!
+@@ -274,7 +275,7 @@ Code  Seq#    Include File
+ 'f'   00-1F  linux/ext2_fs.h                                           conflict!
+ 'f'   00-1F  linux/ext3_fs.h                                           conflict!
+ 'f'   00-0F  fs/jfs/jfs_dinode.h                                       conflict!
+-'f'   00-0F  fs/ext4/ext4.h                                            conflict!
++'f'   00-2F  fs/ext4/ext4.h, uapi/linux/ext4.h                         conflict!
+ 'f'   00-0F  linux/fs.h                                                conflict!
+ 'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                       conflict!
+ 'f'   13-27  linux/fscrypt.h
+@@ -299,6 +300,7 @@ Code  Seq#    Include File
+ 'k'   00-0F  linux/spi/spidev.h                                        conflict!
+ 'k'   00-05  video/kyro.h                                              conflict!
+ 'k'   10-17  linux/hsi/hsi_char.h                                      HSI character device
++'k'   01-0F  fs/orangefs/protocol.h                                    <mailto:devel@lists.orangefs.org>
+ 'l'   00-3F  linux/tcfs_fs.h                                           transparent cryptographic file system
+                                                                        <http://web.archive.org/web/%2A/http://mikonos.dia.unisa.it/tcfs>
+ 'l'   40-7F  linux/udf_fs_i.h                                          in development:
+@@ -372,7 +374,7 @@ Code  Seq#    Include File
+ 0x92  00-0F  drivers/usb/mon/mon_bin.c
+ 0x93  60-7F  linux/auto_fs.h
+ 0x94  all    fs/btrfs/ioctl.h                                          Btrfs filesystem
+-             and linux/fs.h                                            some lifted to vfs/generic
++0x94  all    linux/fs.h                                                some lifted from Btrfs to vfs/generic
+ 0x97  00-7F  fs/ceph/ioctl.h                                           Ceph file system
+ 0x99  00-0F                                                            537-Addinboard driver
+                                                                        <mailto:buk@buks.ipn.de>
+@@ -440,7 +442,7 @@ Code  Seq#    Include File
+ 0xCC  00-0F  drivers/misc/ibmvmc.h                                     pseries VMC driver
+ 0xCD  01     linux/reiserfs_fs.h                                       Dead since 6.13
+ 0xCE  01-02  uapi/linux/cxl_mem.h                                      Compute Express Link Memory Devices
+-0xCF  02     fs/smb/client/cifs_ioctl.h
++0xCF  01-0F  fs/smb/client/cifs_ioctl.h                                <mailto:linux-cifs@vger.kernel.org>
+ 0xDD  00-3F                                                            ZFCP device driver see drivers/s390/scsi/
+                                                                        <mailto:aherrman@de.ibm.com>
+ 0xE5  00-3F  linux/fuse.h
+@@ -449,6 +451,7 @@ Code  Seq#    Include File
+ 0xEF  00-0F  uapi/linux/ntfs.h                                         NTFS
+ 0xF3  00-3F  drivers/usb/misc/sisusbvga/sisusb.h                       sisfb
+ 0xF3  00-3F  video/sisfb.h                                             <mailto:thomas@winischhofer.net>
++0xF5  01-1F  uapi/linux/f2fs.h                                         <mailto:linux-f2fs-devel@lists.sourceforge.net>
+ 0xF6  all                                                              LTTng Linux Trace Toolkit Next Generation
+                                                                        <mailto:mathieu.desnoyers@efficios.com>
+ 0xF8  all    arch/x86/include/uapi/asm/amd_hsmp.h                      AMD HSMP EPYC system management interface driver
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
