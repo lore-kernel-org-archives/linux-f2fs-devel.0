@@ -1,13 +1,13 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9776B606CC5C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Nov 2026 20:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C74606A337
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Nov 2026 20:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=BUsM+1i6;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=H8zRiaYw;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=jAxEBKKG;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ue9J5/vX
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=OIZVRune;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=dBegyZip;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=FEDgq54Y;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XUsuVD2N
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
@@ -15,29 +15,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=4xAAuTvpe4VxtNOkN1MvEjbnqBQzEYzemhdWIFDsTb8=; b=BUsM+1i6gjC5WKr0eU+NfI/OWq
-	lxXsl5MEJVuksFu/MQ7NP2Az89fBSuQ2yD9XMAxwPr4OX6/Zf3Tv+W0KujLrpj18g9VX6iktqoMHZ
-	EY/VfjJP1U5JsyEcyOpNmK2VWC/Aqk8YAsPCZcY4ySlwHYW8mp+WQnkfH4CrMmgE4vu0=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=Jm5Rbpy7nrwQZEpJ47u2BNi/dYmtHcRRERQlimh4Q0g=; b=OIZVRune3FUbfTjyyN+NpYnvOt
+	Li58U3bz+l8NatcZK4X+TOs7GnWc8fjWT1g3d/7vX0i9Ny7EUA8f0oAp3FTUS9ECXu01A9QbCJoMF
+	NVkCCsRMVuIFC/CKLTjlf/TIJACTJILP3ZuLZ3GZYjRGZh8rVk2wj/Ag14M8yG7jiHV0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xU93h-000000000YC-0Ttk;
-	Thu, 19 Nov 2026 20:48:41 +0000
+	id 1xU94w-000000000X4-2TAL;
+	Thu, 19 Nov 2026 20:49:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <brauner@kernel.org>) id 1xU93g-000000000Y4-0W2n
+ (envelope-from <brauner@kernel.org>) id 1xU94q-000000000Wq-0bwV
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Nov 2026 20:48:40 +0000
+ Thu, 19 Nov 2026 20:49:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3PGVJVSc8QkEj1hdnStWiMpyEZMIVB/RSu3VQkMSD4Q=; b=H8zRiaYwNnZwQN7t9a70cyv7Q8
- dwZOjux3RUFHl7XRk1N6Jl4wUlv/8CH0f3SeRV1jA2PYll/Cwd8xJI1m0ouORNEnO7T65j6kU2f3u
- DPjR4YLRqPDP1MKKVlwIhe+ksnQ7V6+VUFYy+CD/SjHxbQyutbUYD5TN7FSa6zTCQo0E=;
+ bh=6uUyYlgjM4gUdz5mj1dp5lYq0596fRi9TUMCukh9VpQ=; b=dBegyZipqJNZDBrtTySfRfeXHT
+ TU0MKuuSB2+pnVZ+k0fTBfLujIHrFSmxeS+GK5qiItzEJ+eUtf7L3R5gaVU5RTg2rxa1u8vLcPZqB
+ kmKamhlYPyV8xYW4qFWPdYoaZFctpATsbfdkVX2yEOSAEuapO6CUvfYXxZBmYwsiohuU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,33 +45,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3PGVJVSc8QkEj1hdnStWiMpyEZMIVB/RSu3VQkMSD4Q=; b=jAxEBKKGyX+Ak83fTm4QsXeyHI
- QJCRYFUaUiPGDZdlV2dClDekQCXwJbRRRdNtpfls9sZ60/Zs5BPflXQkxUAj/erN2GdHW0+dMlZtc
- +Xo4eQ/UNmUPhQpj5otskoT3J51WUq8kSDXgc3whad0VPQZMF/8qtPBtHfoyJlQQ6MME=;
+ bh=6uUyYlgjM4gUdz5mj1dp5lYq0596fRi9TUMCukh9VpQ=; b=FEDgq54Y8FFDKAxKTaE3jDRFS4
+ 0IL/xacf4S6Bz0bqx3kptTDBF96W0Iyv08iqwBi4OyibUBD+q9sxrR6BvWane+PA3DE/v8oc1fSpW
+ m6Cgt/qxQk03Wi9HEBaOZGM85sw+EhCT+FoXlDdDFgT8lyULuQo4PL5q4JG/Hkxb/Axk=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xU93e-000000003iW-2mOf
+ id 1xU94o-000000003jx-387v
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Nov 2026 20:48:40 +0000
+ Thu, 19 Nov 2026 20:49:52 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id ABCA2609F5;
- Thu, 19 Nov 2026 20:48:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5862C1F000CF;
- Thu, 19 Nov 2026 20:48:29 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1CAEA62290;
+ Thu, 19 Nov 2026 20:49:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C419A1F000C0;
+ Thu, 19 Nov 2026 20:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1795121312;
- bh=3PGVJVSc8QkEj1hdnStWiMpyEZMIVB/RSu3VQkMSD4Q=;
+ s=k20260515; t=1795121384;
+ bh=6uUyYlgjM4gUdz5mj1dp5lYq0596fRi9TUMCukh9VpQ=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=Ue9J5/vXQQKgXeGGR/gDKOdLIvkPt/OHBv/xbkrYdBe65rGDof+xnYjDqlFvqyqQV
- WTbiGm1jwXFq2goSCG+63YU564jbcVpEBNEmScsT4QFSJLA/xI1v8/xsoWqAW2f1Ul
- SSVRPr2dUv57zfJ2/9acK9mOwLLa5IYT21C8vqN0sSoybGDiMczqGgpVA1x2ScNPvR
- SwWELDPV/KKxRb1t95LVaGxquYOYMrfFU97lDXPBU8ZIkB06H6EscpbeR2xjQHhO+G
- EVtsDIFt5g8DJJmL063y3QX3nR44hpO1z/oLunHmPHWXkAYut8GVWPBGAVsr8yFtPi
- pVmjC2n2lsCcA==
-Date: Thu, 19 Nov 2026 21:48:27 +0100
+ b=XUsuVD2NP90/zfhUq9QbKDAGXZhdmG7O0dpAwPuMLXYuHA+VoVSq3LwTuzGNJ2xoy
+ pV7h6GlpNWJZdh+tQ7T8BoZICBsaA2neeIJsyeGJPjHbEd8sWe8qD312t0m4XYkqV/
+ LoSlP2csABz4sBDz1ttLmKZMKk3vQnxk3YuS21AsxlarQsWPozwmZMwptG4NWo0QR9
+ N1wVktid4Bxzu54Xfs2Jy80X4EjDqQKBN1ZyQpXn7zh7DxjSVlmxETqGvXpTodcoIJ
+ /PHgRfyNNNvlC/QJrm8d/c88bX+m/rrMjwyCSXG6XjQiLY63pymmDeSx+CM73mL4Pd
+ /Lts2Y92lgbmg==
+Date: Thu, 19 Nov 2026 21:49:39 +0100
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20261119-gefunden-beteiligen-epidemie-5a23ff160ef4@brauner>
+Message-ID: <20261119-geben-irren-erspielen-4456e4be9246@brauner>
 References: <20261105115532.613467-1-aalbersh@kernel.org>
  <20261105115532.613467-3-aalbersh@kernel.org>
 X-Archived-By: <archiver.kernel.org>
@@ -79,7 +79,7 @@ MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <20261105115532.613467-3-aalbersh@kernel.org>
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xU93e-000000003iW-2mOf
+X-Headers-End: 1xU94o-000000003jx-387v
 Subject: Re: [f2fs-dev] [PATCH v2 2/5] fsverity: add I_VERITY_BUILDING inode
  state flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -130,107 +130,10 @@ On Thu, Nov 05, 2026 at 12:55:27PM +0100, Andrey Albershteyn wrote:
 >  fs/verity/enable.c       | 22 +++++++++++++++++++---
 >  include/linux/fs.h       |  6 ++++++
 >  include/linux/fsverity.h | 21 +++++++++++++++++++++
->  3 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-> index fe8493280b77..65d3571c62b5 100644
-> --- a/fs/verity/enable.c
-> +++ b/fs/verity/enable.c
-> @@ -229,13 +229,23 @@ static int enable_verity(struct file *filp,
->  
->  	/*
->  	 * Start enabling verity on this file, serialized by the inode lock.
-> -	 * Fail if verity is already enabled or is already being enabled.
-> +	 * Fail if verity is already enabled or is already being enabled. Set
-> +	 * I_VERITY_BUILDING inode runtime flag which will be cleared when
-> +	 * enablement succeeded or rolled back.
->  	 */
->  	inode_lock(inode);
-> -	if (IS_VERITY(inode))
-> +	if (IS_VERITY(inode)) {
->  		err = -EEXIST;
-> -	else
-> +	} else if (inode_state_read_once(inode) & I_VERITY_BUILDING) {
-> +		err = -EBUSY;
-> +	} else {
->  		err = vops->begin_enable_verity(filp);
-> +		if (!err) {
-> +			spin_lock(&inode->i_lock);
-> +			inode_state_set(inode, I_VERITY_BUILDING);
-> +			spin_unlock(&inode->i_lock);
-> +		}
-> +	}
->  	inode_unlock(inode);
->  	if (err)
->  		goto out;
-> @@ -291,6 +301,9 @@ static int enable_verity(struct file *filp,
->  	 */
->  	inode_lock(inode);
->  	err = vops->end_enable_verity(filp, desc, desc_size, params.tree_size);
-> +	spin_lock(&inode->i_lock);
-> +	inode_state_clear(inode, I_VERITY_BUILDING);
-> +	spin_unlock(&inode->i_lock);
->  	inode_unlock(inode);
->  	if (err) {
->  		fsverity_err(inode, "%ps() failed with err %d",
-> @@ -317,6 +330,9 @@ static int enable_verity(struct file *filp,
->  rollback:
->  	inode_lock(inode);
->  	(void)vops->end_enable_verity(filp, NULL, 0, params.tree_size);
-> +	spin_lock(&inode->i_lock);
-> +	inode_state_clear(inode, I_VERITY_BUILDING);
-> +	spin_unlock(&inode->i_lock);
->  	inode_unlock(inode);
->  	goto out;
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 99caef43ff3c..7c90ce09f797 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -707,6 +707,11 @@ is_uncached_acl(struct posix_acl *acl)
->   * I_LRU_ISOLATING	Inode is pinned being isolated from LRU without holding
->   *			i_count.
->   *
-> + * I_VERITY_BUILDING	fs-verity is being enabled on the inode: the Merkle
-> + *			tree is under construction.  The file is effectively
-> + *			read-only to userspace; the only writes happening are
-> + *			for the fs-verity metadata.
-> + *
->   * Q: What is the difference between I_WILL_FREE and I_FREEING?
->   *
->   * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
-> @@ -741,6 +746,7 @@ enum inode_state_flags_enum {
->  	I_SYNC_QUEUED		= (1U << 17),
->  	I_PINNING_NETFS_WB	= (1U << 18),
->  	I_METADATA_WRITEBACK	= (1U << 19),
-> +	I_VERITY_BUILDING	= (1U << 20),
->  };
->  
->  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index 61fe96ccdff6..c72edec57e30 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -164,6 +164,22 @@ static inline bool fsverity_active(const struct inode *inode)
->  	return false;
->  }
->  
-> +/**
-> + * fsverity_is_building() - is fs-verity being enabled on the inode
-> + * @inode: inode to check
-> + *
-> + * This checks whether the inode's Merkle tree is currently being built.
-> + * While this is the case the file is read-only to userspace and the only writes
-> + * allowed are for the fs-verity metadata. This becomes false when fsverity
-> + * metadata is fully created and written to disk or building failed.
-> + *
-> + * Return: true if fs-verity is being enabled on the inode
-> + */
-> +static inline bool fsverity_is_building(const struct inode *inode)
-> +{
-> +	return inode_state_read_once((struct inode *)inode) & I_VERITY_BUILDING;
 
-Isn't the fix to make inode_state_read_once() take a const struct inode *?
+fs,fsverity:
+
+as prefix, please.
 
 
 _______________________________________________
