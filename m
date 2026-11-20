@@ -1,130 +1,91 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425E606A32C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Nov 2026 13:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C524F60A260C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Nov 2026 15:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=V464QoVc;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=j3Yx+6ZX;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=enKkEucQ;
-	dkim=neutral header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PUUxhvza
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=SwiHW6/+;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=ZYp3vpz8;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=e53Kcyc7;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DTWV4yfc
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Unsubscribe-Post:List-Owner;
-	bh=/ylR3kb5m0a+m66/LaPOZ7ekyQWsTL9YJZUkt+2wlVw=; b=V464QoVc/rirh4fkvb0P7VP9yA
-	QGTEbo1KLdhatNFzpBrnjfY5XKC988yeF0L6+x/gv9t9Pk88F4gr18l1UiVZ6ax/8r6bh3298oc5v
-	Zuga/M2q96+Wf0l2DOcwd57i9unfqkGMw3tyw+1eVRLNS3MezWxiDu0zZRe5ms8AlQ08=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Unsubscribe-Post:List-Owner;
+	bh=SDx0ZZrDB2hRnAUX5VGAyP5iBBtbBd8P4mj69FgDjcg=; b=SwiHW6/+c7cH74EwOAaBIdisds
+	08XLg0exC7hUoZIdYWjDcjQaAADsF3eYqVP9cQIjn1f2243oFGBU+mcc3UFcBU/YQFwkVdqHL+gvl
+	Ms1KbeakiBphYiwjaHSIOX1ST5SyDqM0a/h/gPnL7G0enCkcX7fppUxPex55ZqJheqa0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xUOSa-000000005tx-12ii;
-	Fri, 20 Nov 2026 13:15:24 +0000
+	id 1xUQvw-000000003ro-2yR5;
+	Fri, 20 Nov 2026 15:53:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <fengaojigui88@gmail.com>) id 1xUOSY-000000005tq-3uyt
+ (envelope-from <aalbersh@kernel.org>) id 1xUQvv-000000003rc-2M6D
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 20 Nov 2026 13:15:22 +0000
+ Fri, 20 Nov 2026 15:53:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EQiG04aeGhho2nX4ngIjEvlX8jJG32lCa/NIg3JNY4Y=; b=j3Yx+6ZXh4xVpymDe6xhTR9ydJ
- trgZoJo+ucQlq3waDjBIcID+uDvxLKjUClFcVmryRre+bg0su293jG6HUtLBIuTq5GBY57kzyk8oZ
- xfaPsJht0GOtXWRBYqMjPfu2QQOeoAXs03bN+/vVbi+rtsZtRH/K6qRzsLOj3TCRtygs=;
+ bh=v+LHSOGcYG6qwjHdgPt0+XZc2oJGKJ+L7kW/ZhoRQBc=; b=ZYp3vpz8z3b7m37oYgbE2VO93p
+ w9w7oPAif1ZHqsHPbIvdNj3sbaGMLoI9aEMRjU+MWURQkrQAlgZahdGd+7879iQEEtL70UghVxUPM
+ T3zko6cyRcZQgaAbF+rfUvs+Qq4rxDxmYS6nRI36gwekcJe29Ys8ticMrHrHpAq5kP4I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:MIME-Version:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EQiG04aeGhho2nX4ngIjEvlX8jJG32lCa/NIg3JNY4Y=; b=enKkEucQ6TS4OGI6dhBbu+Vpde
- RIV4Dk4anwwr9Zrju6wcbVGhR3hVSYmqzrDa+KM3bGKompJ0bwa9rSW29oPNUEPcFEz/VU4clJxkl
- d0YBzRs+yGAOE3C4ZPefUDH4EoXtAWeZlV+nqH5XP0FZgWcyRPb35A3pichabz8E3plE=;
-Received: from mail-lr2-f8.google.com ([74.125.230.72])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xUOSY-000000007Cq-0iB4
+ bh=v+LHSOGcYG6qwjHdgPt0+XZc2oJGKJ+L7kW/ZhoRQBc=; b=e53Kcyc73yQk35MrR/Ex5y1BW+
+ 6MIHVIHxQJC5R/9dyb9WNPasrC3XVxFTBjBL72h42WW1OjACr9USq6Y+PJF88fOyqeuiysjE/ss0f
+ dodqK/UifHVtlHVu+3nMPFK6ksP5ul2rnH9JSka00zCye4k28lvjS26fJOeXhIwWfbvo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
+ id 1xUQvt-000000003xW-4Acn
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 20 Nov 2026 13:15:22 +0000
-Received: by mail-lr2-f8.google.com with SMTP id
- 38308e7fff4ca-3adf2030cdbso3152541fa.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 20 Nov 2026 05:15:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795180515; cv=none;
- d=google.com; s=arc-20260327;
- b=qwbk1mmvWMSr4FfyyYd9oA8Iyiznw/RJpaqe99ZtPjR5D/vqgna2jJ9QirL8lvZ7hR
- rqdDXwhw7xDVtDkpm7KAUnJVYLh78ayeG0jTglh/J5RQStcKQfQHueWsptAxvpcv+dKi
- 3mkYcHv4NamRIMl0PPhc/QtWEpde5iYk8FR0wJwrUopJSyWtciKGAybbnf5uhgC8N8sF
- +O+6IYCNQlFkQx/1qbJCmsdzbVtpt44jepyNCbvUevL1P8WWXHJe5BQLrwJrA3kcsM6O
- hB8/oUWKa3LczaBoGBYvG+g7fjnBIdw8LV1BaXO2wshkwUvVfCMGq0DtdHS4eWFt6tze
- 5nHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
- bh=EQiG04aeGhho2nX4ngIjEvlX8jJG32lCa/NIg3JNY4Y=;
- fh=MFXDbWcncqVz4JcAoCnF5JH09b/VO2zfiSldUHGtOLQ=;
- b=NL5Zql9H5iDGO9tJq841YQ2LvIopq2zmcNY04FDUDy1nuUhC46D09GrRhE14FWNXjE
- VHaERPIvt4ctGbTeTYqZ/WPRcWsKHzILzgD0/O2EC2IQbgN6rvIhawVjvpirAXuBWF3p
- fUlipHl/w/7hddfYrSiWMeFj799bGClqxjqwYngtUu6lfR1WjArgXyDC2q/VOV+7NiWE
- qEcEtf+kXgZGdZqlnVjmKQkJiBB7/weRiiNQ2ITatIv/rmPAavHuSFgHWE6A2H9WbpQI
- LKnLsYB/tApySGOCPx+PmNQzA4NvsX9QfMmPafjOeOJQTCA97gMI3REaL+h2rzQfm8yd
- lPPA==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1795180515; x=1795785315; darn=lists.sourceforge.net;
- h=content-type:cc:to:subject:message-id:date:from:mime-version:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=EQiG04aeGhho2nX4ngIjEvlX8jJG32lCa/NIg3JNY4Y=;
- b=PUUxhvzaOwh1c1TAJIdEzf0+du2p1Vu22roPJW5VAk6TozaZMV7J5/7nAg1etkrooa
- doWCt/HmlmCHYcNwmYiqA71lVHNv1TYo4/bW8LNyEPPiklszsoUxnZaRwtVv8d1MogXz
- 9RfZJJm49gkVFES0OcqJPGh+tYitHwt2nbUItqENsd5yKN/HOJxu54PXTvGh7dIcIk3M
- OsH7xXQbx5/4yb0I0u0b5T96yScfdl9BcjZmAg6BukSTGnKjdNx+UZ1Rj2BaiMKeLMg0
- ezXtENXSRQG137IXzupWbwY9uaNaJht4L21KOm7VSfI2nxXfM1gORjKlGN7FsIDdRWiv
- hU6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1795180515; x=1795785315;
- h=content-type:cc:to:subject:message-id:date:from:mime-version
- :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to:content-type;
- bh=EQiG04aeGhho2nX4ngIjEvlX8jJG32lCa/NIg3JNY4Y=;
- b=Fmur2Pr3tIDoAvfJL5hSVzpsPf5yFf49si77Oafex3VkbYxNrC7tOclTn+6W9GZuEi
- KO4SX8lH26bWMjTvIsDbe1PB7pntvGWu4GKmss/0yj4IqfGv+FfqceqUR01QWL9P18pu
- ya7cUsWJK5wqSFIbv/G92J2mo8tDGD1Jw/+aKZz8se//bdGLgNCqUMoeW9yanawLN6Cs
- oIkh7ttsATBHKdSkat/X0vHsx7Q/vvx3xu0MSC8G1Bdcuj77QwK+jgFx/YYj51uOQcZZ
- YypfSFP//Q25qq7gFg5GGmQ7N0KbQdDJGsJIfx1RGJRipJ7+z8TF5AuFCkbmkHMV8nWL
- 2s6w==
-X-Forwarded-Encrypted: i=1;
- AL+hErEgj3M2J8wSuPiE0ahI/Ke6taxOU2Q3xmW2yUcvShIIQyrPmqGSfogf+cLdSFeHViL4m3NO7wW6mtfZPf0XLWbJ@lists.sourceforge.net
-X-Gm-Message-State: APuU4Z9u+RsuoATno6QwoqEvC86GDkcf6JJd8OSUcqwF3AIiALMtJBBr
- 0f6zsP33JHQmIN33vpTxu67yIABGGQ+Ks2Nxn/HUSENCnQnnJ0v/YqfDCmzQ7pbZEYrkFk2G2qg
- c5vI7hoE/MeZT9x8MvQXypbhoms5fRwKJdnaWOqQ3TfUa
-X-Gm-Gg: AZFdTZfDoFRN5ZP7rleT2+Rkwn9TouC4VUM+fxGWqTiSA5PcyG2FVKb6x/WyKL8E6BG
- SDP6X9VG4AfD33aWilMbrKaPcxLbxyRj+h6ptQxqXq0xr6erHg17y7N40PiDUzPFhTDHyFTuzEc
- HlHsyIFzMEXkxUf2a0iKs8mZEyRLrgUX0lliD7X5d8Vkgw4gHZRcsNDu84xofgEv3PXPeyfJFSO
- u2yF3ArRvj1dbKE3dVmruiUS9GwbzZto73Ahkn4GOKaY9pPSO1A06UD78MlR9fF70q/Z/xvPU+f
- zeQKai1oG7r8HAcSmetCCTlgn7y/Coa9HmM/wCCVFJJVLskEVPjevn/4nc6VP2RVGgNctTfMaJz
- Ngq9TW//XUQOAZowvwr52novax+Eit4X69IxzICRRjwa73/Pt9ILMzzlH63qbrQDdIU/O
-X-Received: by 2002:a05:6512:23a0:b0:5bc:ca83:1fc0 with SMTP id
- 2adb3069b0e04-5c1bc84e614mr893480e87.60.1795180515196; Fri, 20 Nov 2026
- 05:15:15 -0800 (PST)
+ Fri, 20 Nov 2026 15:53:51 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id A5581436A2;
+ Fri, 20 Nov 2026 15:53:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05D3D1F000D0;
+ Fri, 20 Nov 2026 15:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1795190024;
+ bh=v+LHSOGcYG6qwjHdgPt0+XZc2oJGKJ+L7kW/ZhoRQBc=;
+ h=From:To:Cc:Subject:Date;
+ b=DTWV4yfch6T4GKNBEDPtPRjXNy936zjSMDhrGuKJvN/8SwkSNSYDzrCPcYZwfLb3l
+ 1slRfaMzRiOXOxdJpAkxti4i6T2MFR3Nv3huXUy/H/jQBkb5ljZe7YtCK9rIE5qYap
+ mh+RxfXvSz5RVEtdOTN3PqKgv9/a9jykomEYe2TrmIIYxFhBg76PlhYbpiq3dSNTmc
+ oIOed94Q+baMMwrVDIjpZoS0xWYmt/adIw0ZFOzTAsJDDKTxlKbZY6XJOurL8F3r0/
+ PxVhTTSv2Nl8tJnJbGWy/yZHAalZgK5QGFuikwrI1iVwJiPw7Ido60UMggXtPTwffK
+ D+Vw5QInfdfcg==
+To: "fsdevel" <linux-fsdevel@vger.kernel.org>,
+ "fsverity" <fsverity@lists.linux.dev>,
+ "linux-ext4" <linux-ext4@vger.kernel.org>,
+ "linux-btrfs" <linux-btrfs@vger.kernel.org>,
+ "linux-f2fs" <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-xfs" <linux-xfs@vger.kernel.org>, dsterba@suse.com,
+ "Eric Biggers" <ebiggers@kernel.org>,
+ "Christian Brauner" <brauner@kernel.org>
+Date: Fri, 20 Nov 2026 16:50:22 +0100
+Message-ID: <20261120155032.187246-1-aalbersh@kernel.org>
+X-Mailer: git-send-email 2.54.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-From: Zheng Zheng <fengaojigui88@gmail.com>
-Date: Fri, 20 Nov 2026 21:15:00 +0800
-X-Gm-Features: Aa3M54o01QUrjwMOe7JbVZOC_U4U8JrBvLlJFLHGEXWyo1gmrd71mbHzknsbcAA
-Message-ID: <CAO-4RZ3D4PjuOopArwKVtt31KLKwPAqTu_w+jwJKhbTkKfBykA@mail.gmail.com>
-To: jaegeuk@kernel.org
-X-Spam-Score: 0.1 (/)
-X-Headers-End: 1xUOSY-000000007Cq-0iB4
-Subject: [f2fs-dev] [BUG] INFO: task hung in f2fs_balance_fs
- (fs/f2fs/segment.c:461, v7.4-rc3)
+X-Spam-Score: -0.2 (/)
+X-Headers-End: 1xUQvt-000000003xW-4Acn
+Subject: [f2fs-dev] [PATCH v3 0/7] fsverity: lift ioctl() input masking and
+ runtime inode flag to VFS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -134,123 +95,84 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: tytso@mit.edu, Andrey Albershteyn <aalbersh@kernel.org>,
+ viro@zeniv.linux.org.uk, jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_PASS,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi Jaegeuk, Chao,
+Hi folks,
 
-We found a reproducible F2FS hang on v7.4-rc3 with syzkaller. The supplied
-recipe reproduced on independent fresh VMs.
+This patchset lifts two things from filesystems to VFS level:
+- No-op'ing FS_VERITY_FL in FS_IOC_SETFLAGS ioctl()
+- Runtime fsverity construction flag on inode
 
-Repository and reproducer:
+The second patch fixes BTRFS get-modify-set loop with
+FS_IOC_GETFLAGS/SETFLAGS ioctl()s, as it does return fsverity flag but
+not mask it out.
 
-  https://github.com/Zheng-zheng-codes/f2fs-balance-fs-hang
+Testing, -g verity passes for all fs, except btrfs/277 and
+btrfs+generic/574.
 
-Hung-task report
-----------------
+The btrfs/277 seems to fail due to difference between what kernel
+and userspace versions support (btrfs-progs v7.1 doesn't seem to
+support latest streams v3).
 
-  INFO: task syz.3.29:17033 blocked for more than 143 seconds.
-  task:syz.3.29 state:D
-  Call Trace:
-   io_schedule
-   f2fs_balance_fs+0x5a2/0x9e0 fs/f2fs/segment.c:461
-   f2fs_map_blocks+0x2626/0x4d00 fs/f2fs/data.c:2160
-   f2fs_iomap_begin fs/f2fs/data.c:4798 [inline]
-   f2fs_iomap_next+0x3d9/0xc20 fs/f2fs/data.c:4856
-   iomap_iter
-   __iomap_dio_rw
-   f2fs_dio_write_iter fs/f2fs/file.c:5587 [inline]
-   f2fs_file_write_iter+0x1da1/0x2d10 fs/f2fs/file.c:5711
-   vfs_write
-   ksys_write
+The generic/574 on BTRFS fails only for 1024 block size no matter
+the change (fails on v7.3 too). I haven't checked why.
 
-The blocked task is a direct-I/O writer sleeping in the GC_MERGE branch
-of f2fs_balance_fs(), which hands the request to the background GC
-thread and waits:
+Based on v7.3-rc3.
 
-  if (test_opt(sbi, GC_MERGE) && sbi->gc_thread.f2fs_gc_task) {
-          prepare_to_wait(&sbi->gc_thread.fggc_wq, &wait, TASK_UNINTERRUPTIBLE);
-          wake_up(&sbi->gc_thread.gc_wait_queue_head);
-          io_schedule();
-          finish_wait(&sbi->gc_thread.fggc_wq, &wait);
-  }
+Changes in v3:
+- Add comment that I_VERITY_BUILDING is set over enable
+- Revert comment changes in ext4 and f2fs
+- Added I_VERITY_BUILDING to show_inode_state()
+- Updated comment in begin_enable; dropped -EBUSY
+- Added patch changing inode_state_read_once() to const
+- Use fsverity_is_building() around ->begin_enable() call
+- Use fsverity_is_building() in iomap
+Changes in v2:
+- Return ret in btrfs_begin_enable_verity()
+- Include linux-fsdevel
 
-While it sleeps, the writer holds:
+Andrey Albershteyn (7):
+  fs: constify inode argument of inode_state_read_once()
+  fs: strip FS_VERITY_FL from FS_IOC_SETFLAGS
+  fs,fsverity: add I_VERITY_BUILDING inode state flag
+  iomap: use fsverity_is_building() to check for fsverity IO
+  btrfs: use I_VERITY_BUILDING instead of private flags
+  ext4: use I_VERITY_BUILDING instead of private flags
+  f2fs: use I_VERITY_BUILDING instead of private flags
 
-  #0: (&f->f_pos_lock)              at: fdget_pos+0x2a5 fs/file.c:1413
-  #1: (sb_writers#15)               at: ksys_write+0x126 fs/read_write.c:719
-  #2: (&sb->s_type->i_mutex_key#29) at: f2fs_file_write_iter fs/f2fs/file.c:5675
-  #3: (&fi->i_gc_rwsem[1]) READ     at: f2fs_dio_write_iter fs/f2fs/file.c:5573
+ fs/btrfs/btrfs_inode.h           |  7 -------
+ fs/btrfs/verity.c                | 12 ++----------
+ fs/ext4/ext4.h                   |  7 -------
+ fs/ext4/file.c                   |  2 +-
+ fs/ext4/inode.c                  | 17 +++++++++--------
+ fs/ext4/ioctl.c                  |  3 +--
+ fs/ext4/verity.c                 | 19 ++++++-------------
+ fs/f2fs/data.c                   | 10 +++++-----
+ fs/f2fs/f2fs.h                   |  7 -------
+ fs/f2fs/verity.c                 | 12 +++---------
+ fs/file_attr.c                   | 10 ++++++++++
+ fs/iomap/buffered-io.c           |  2 +-
+ fs/verity/enable.c               | 22 +++++++++++++++++++---
+ include/linux/fs.h               |  8 +++++++-
+ include/linux/fsverity.h         | 26 ++++++++++++++++++++++++--
+ include/trace/events/writeback.h |  3 ++-
+ 16 files changed, 90 insertions(+), 77 deletions(-)
 
-The same report shows two collateral stalls caused by this sleeper: a
-second thread of the same process blocked in fdget_pos() on the held
-f_pos_lock, and a freeze_super() task waiting in sb_wait_write() for
-sb_writers to drain.
+-- 
+2.54.0
 
-Possible root cause
--------------------
-
-The writer waits for the background GC thread while holding
-fi->i_gc_rwsem[1] for reading.  If the GC thread selects this inode as
-a victim, it must take i_gc_rwsem for writing first and cannot proceed,
-which would make the wait in f2fs_balance_fs() unbounded.  The GC
-thread's stack is not captured in the report, so we could not confirm
-this mutual-wait explanation, nor what drove the filesystem low on free
-segments.  We would appreciate your analysis.
-
-This hang is distinct from the previously reported
-"INFO: task hung in f2fs_write_data_pages" (writeback path,
-sbi->writepages mutex, fs/f2fs/data.c:3834): different call chain and
-different blocking primitive, though both occur under segment
-allocation / GC pressure.
-
-Reproduction
-------------
-
-  git clone https://github.com/Zheng-zheng-codes/f2fs-balance-fs-hang
-  cd f2fs-balance-fs-hang
-
-  # boot v7.4-rc3 with the supplied kernel config
-  # using a Debian trixie x86_64 guest
-
-  # in the guest, as root:
-  syz-execprog -procs=1 -repeat=1 reproducer/repro.kernsight.prog
-
-Note: run with a single process.  With -procs=8 the recipe's
-state-building sequence is executed out of order and the crash does not
-reproduce.
-
-The recipe is a state-reconstruction sequence (107 replay programs plus
-one model-selected priming program, followed by the crashing testcase).
-The crash depends on the kernel state built by the recipe; the testcase
-alone is not sufficient.
-
-Verification:
-
-- five independent fresh-VM runs: 5/5 reproductions, 201-205 s to the
-  hung-task dump in every run (2026-11-20, external-verify/)
-- C reproducer: not generated; the syzkaller recipe is the primary
-  reproducer
-
-Kernel/guest details:
-
-  kernel: v7.4-rc3, bzImage sha256
-    0c16409f8aec508ac44a63e631c2bd352536401f3fd0856df1d839fb953a1882
-  guest: Debian trixie x86_64, 6 GiB RAM, 4 vCPU, QEMU/KVM
-  boot: oops=panic panic_on_warn=1 hung_task_panic=0
-  config: CONFIG_KASAN=y, CONFIG_PROVE_LOCKING=y, CONFIG_F2FS_FS=y
-
-Thanks,
-Zheng
 
 
 _______________________________________________
