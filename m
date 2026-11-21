@@ -1,100 +1,88 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D6606A320
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Nov 2026 08:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84A9606A320
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Nov 2026 20:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=bIArvaHO;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=FsMdRxq3;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Fiul/Yju;
-	dkim=neutral header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=pAWWG7IJ
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=XkoorT+/;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=auE8IhMV;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=AuHf1z5I;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=asgtto/P
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:References:In-Reply-To:MIME-Version:Date:To:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
-	List-Owner; bh=62zcvKZk3gnU+DwDWgpOsdaiYxBlw7lt9ScNaDXIrzk=; b=bIArvaHOfCF7sm
-	acwwz3ry8KgiGw558bz/OI2gVuutxMsWJ7z+j19aI2sGMFDBmBdQmtrLa3JXrd5aQDzmfdNA+u9f1
-	nu1UtUWvudnrDq7VoONa0hetd1rG7MdtZ4/K9jji/p7peK/sZMlDUJCHhUy5gUUWkF+nePzwH/NO5
-	cP4=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Unsubscribe-Post:List-Owner;
+	bh=ybTfvSP2uvcaPSmjMq0KmqCVu9qbO+jwvXjwqagHHGA=; b=XkoorT+/82q6q5aiekY456D7aT
+	1/sr9D2HlTSb7CMDFkRxjZ7phOMDbxatjuZ7pzw/wUmTDflIlRnMyweIKy2zh5kXQ6a6GLBcYvtPm
+	CatHHKYGqKbfWVHrmI/1mZuhACXidf93UJshsm5by7JMeNy4Jyl7lubRf1NRuaADGDJ4=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xUgNK-000000003rJ-09h4;
-	Sat, 21 Nov 2026 08:23:10 +0000
+	id 1xUrth-00000000763-2rgI;
+	Sat, 21 Nov 2026 20:41:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <yangguikun19@qq.com>) id 1xUgNI-000000003rC-0tzN
+ (envelope-from <aalbersh@kernel.org>) id 1xUrtg-0000000075w-1blo
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 21 Nov 2026 08:23:08 +0000
+ Sat, 21 Nov 2026 20:41:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:MIME-Version:Date:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fKGTplSFuZkys6Gs/DIwLD2p5FEp65r/thrub/uWGhA=; b=FsMdRxq3T0RiMKY28+QDF1twVR
- BCJ7y6RV4cOiozWGGLXP8TQYrYIDHn8SziHGYCIwolO8t8ci74PlIqGhlCYG/RT3777gV2UIqf0bP
- mltR/i06sR6U1TL1eHj9DjrLBnkMWwpc+9QZ116wEcBbCYn43HaXcexq4Pez/fJ6MbJQ=;
+ bh=hmRMq/jyaz6ubqP2Q/8QAmwoitBfjKyHf2qlq73z/v0=; b=auE8IhMV7WIPMWLwpDH8L9CU2c
+ TddMbGc7sXSq5a/2P04GLkeVeSSAAbypo3RIVElbHlxPpfX39GHJ04G7+Lzq8kH9rSAnCq++N4uVy
+ ztCYxVbCpXrH6oEPtyQsU+M7jJUlrbeUKlkfV2jCelV0qrmz7njb2T3SD/9g6V7FY8Wo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:References:In-Reply-To:
- MIME-Version:Date:Subject:Cc:To:From:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fKGTplSFuZkys6Gs/DIwLD2p5FEp65r/thrub/uWGhA=; b=Fiul/Yjux0DysiGbil0zqLpGmp
- R/tSlbx0zpHkA+aa/D0cN+NSVPlpTAk16hIe6d9o5owHaU6DPt4FlTR5rvDnK+7lcpld4ctZn6L9k
- VTqqf1dN0CoPFmtkX1a2PKNsVu+gU3dJeO5WkOrASdxMLB+Dgq2g17L41fHpz+FXzZQs=;
-Received: from xmbghk7.mail.qq.com ([43.163.128.52])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=hmRMq/jyaz6ubqP2Q/8QAmwoitBfjKyHf2qlq73z/v0=; b=AuHf1z5IzDZh1+3cEFHXE+xy2a
+ ihSWQ02jtnhO8Hhr8jJNl9PSq1wL7eYnLQ1WOKVGxJs7awDgT2Zb66mrq1By7fFQnAR/Skf3CR/qV
+ nsdDBLte1exPJPO7RIcuddG9DE0tYt5cX6F0h7ezWtdaObBiMU4A+At1tob/6MNPTk+s=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xUgND-000000007LG-3wqZ
+ id 1xUrtf-000000002Ib-3wCM
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 21 Nov 2026 08:23:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
- t=1795249375; bh=fKGTplSFuZkys6Gs/DIwLD2p5FEp65r/thrub/uWGhA=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=pAWWG7IJw3ooaTTZU9aZvSXfTjvcnsieB3EoQMrcdtRz+WE8DsHXWCY/3vCw1VsQr
- sqZFU4jUXtWEwfSjAsLG/YvH+BbblxrCnp7MOGFZnOLGpJKqOZzmUAExKj80jPxexo
- O7DrSTO+WGKGejvPhcHws76SYX3jhgj7kGEbTy0s=
-Received: from [172.18.4.77] ([202.113.185.209])
- by newxmesmtplogicsvrsza73-0.qq.com (NewEsmtp) with SMTP
- id 5B5A06F5; Sat, 21 Nov 2026 16:22:53 +0800
-X-QQ-mid: xmsmtpt1795249373tkdbr3ijf
-Message-ID: <tencent_BB8EEFED1178A776D3B5A8151FED28F55407@qq.com>
-X-QQ-XMAILINFO: MNnlw0eqe4ZE/SrzUrZCmkJAqD5g8jDXfNiRiQLEJUxqea48RP1KkA4gbys0kA
- mnOIs2tsxKPsAjr71CaXYGSc8+ghRsynrKbknElAtCXSiO4wwpcdQa52HjFN31K/0SCs3WD8LAtD
- zRz28uQIRJ8jrDT8k9Z6b/f6FLyUZ8wAJGAeEfWJmy3MYoVMGrJ3sWfnaC94hMtUgHhTUpfmBJW6
- jBY48R1aZV2Gu/uCViF6mPqvHZenWhoFNDifqa6yEtGiNG0y6EerrVAXUdaR5Xjrug5kNh83RNsI
- MApBIv8wZyhzyMi6iQK76F+YBDhC0TAp1TwO1wd9AUVj5XKaj8JAdDLFvNLN1e2nQiW76OeqqsuH
- hnueTItdhwkPLxX1zT3AnPfREtU1HIYdWLtvxxSGsOfSJ56seYyzc51sFlH99ZOrD1/kQXFGr4Un
- TuUpEDaHpY8nMA69bpMAKXygzslS0ZdIqR7UeZtDxxlQ6TG/uZ5zlzxUH+EbGYb1cA6BSRmHEIYg
- THTUL2jZhP9PMDit69yY7dElpB1l06R+ui5MUi5qafsHh8ubqtkRuB2Oq2cKTucJkKrXfglVe7gQ
- K4LeSaONMk71CRRwS9TigiN0v957YGEDqCeE+vc+uSnxm1whfLNF+anjRRvB96pGjG+ofAx8JcgY
- fenV3GtVQ767TlXhA8TrS5w6cNmAUnWYIWT9BOvNPedxde72jk/NBgt5CjUQl/Fjz9EpQYlEvEjP
- b8liqqA6MhpNyWGoCuB4Uy446nOoHLw+y73OWRGFZhmpjqNarCsM3uoQkXcKGf7wXMDPWeM1nr7B
- AF2fEhD/wBRyhdszlBkAna1T8heAFjSPQ6jopMcYIoI/Ub3Mh6LmgXLN2N6siawwxfl1XjVMaUnV
- y3XEBl2qtIFJWRymz3ZesrWiKOpbXY0T1cbHbKtwbwSNxdbEvWErx2JQEGdytsTk072b8m61GrwG
- iZbFrZtn5VbFCFlsjmhi9JI0MGRYqddgcjdqcCfQWmu/h86l91L19F3ILlcdN4XFctXRQl7xZfim
- c3yUH0ivCm9HRCxptEZdREFyiH8JPlR3rsdegJo9FB4oxUIUyXkk91seUJUEpKKZyNuwVlJTl+yR
- KnVyHwuOo/Fo0ihfoZ9G8Hdb5bxEso3NGf6ePoGL4YsOM/8rBEEhdCNjZRJPYHzir5Tlp8KyMHXt
- mHhB+s6me1mOasnw==
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 20 Nov 2026 22:00:00 +0800
+ Sat, 21 Nov 2026 20:41:20 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 4B7FA611B6;
+ Sat, 21 Nov 2026 20:41:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C82C1F000C0;
+ Sat, 21 Nov 2026 20:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1795293674;
+ bh=hmRMq/jyaz6ubqP2Q/8QAmwoitBfjKyHf2qlq73z/v0=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=asgtto/P/mqBPw1Axj+fEFZsvYqeSF/ZmIFH4PnCav4vjk1EbTjJ0mTk50wXzXd3A
+ 0oPFL4L3Soh2pKh6TNWZ0JSsVbLH0ArdhUWSpj9CqFwFPmMUVqG1r5h5vC44+KPoXl
+ IR2BtKSF+byzNkv20T34sbwoIxBfP2Au8bsE80sR6c0kF2VA8MPzCvevXGiZgqVo4c
+ Ih2S1i5XOt/camX8d7qFp4AF4rSFWnUSEIfOE7Bamymi/uFcvttZy8TP3iTO4po1sD
+ USsdPvR/w9Ks6xkidDC065RYjoqD8Vpq4iibvN1DrVToa1VhYtqvYCgR9ESKu7c95F
+ yRPPqnQHCa93w==
+Date: Sat, 21 Nov 2026 21:41:08 +0100
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <awFTapiR9KK9H6PC@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
+References: <20261120155032.187246-1-aalbersh@kernel.org>
+ <20261120155032.187246-5-aalbersh@kernel.org>
+ <20261120222302.GD3048696@google.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-OQ-MSGID: <f2fs-recover-dentry-warn-list-20261121@qq.com>
-In-Reply-To: <f2fs-recover-dentry-warn-20261120@qq.com>
-References: <f2fs-recover-dentry-warn-20261120@qq.com>
-X-Spam-Score: 0.9 (/)
-X-Headers-End: 1xUgND-000000007LG-3wqZ
-Subject: [f2fs-dev] f2fs: a same-name dirent whose target inode has no NAT
- entry hits WARN_ON(1) in recover_dentry() at mount - kernel panic with
- panic_on_warn
+Content-Disposition: inline
+In-Reply-To: <20261120222302.GD3048696@google.com>
+X-Spam-Score: -0.2 (/)
+X-Headers-End: 1xUrtf-000000002Ib-3wCM
+Subject: Re: [f2fs-dev] [PATCH v3 4/7] iomap: use fsverity_is_building() to
+ check for fsverity IO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,109 +92,68 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Guikun Yang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Guikun Yang <yangguikun19@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: fsverity <fsverity@lists.linux.dev>, Christian Brauner <brauner@kernel.org>,
+ tytso@mit.edu, linux-f2fs <linux-f2fs-devel@lists.sourceforge.net>,
+ linux-xfs <linux-xfs@vger.kernel.org>, dsterba@suse.com,
+ viro@zeniv.linux.org.uk, fsdevel <linux-fsdevel@vger.kernel.org>,
+ jaegeuk@kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.1 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-	FREEMAIL_REPLYTO_END_DIGIT,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS
-	autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-(Resending to the list: my previous mail used a nonexistent
-list address linux-f2fs-devel@lists.linux.dev and was rejected;
-the correct address from MAINTAINERS is lists.sourceforge.net.
-The report below is unchanged.)
+On 2026-11-20 22:23:02, Eric Biggers wrote:
+> On Fri, Nov 20, 2026 at 04:50:26PM +0100, Andrey Albershteyn wrote:
+> > As fsverity inodes are read-only, the only write IO happening
+> > during I_VERITY_BUILDING is fsverity metadata.
+> 
+> I think this is not accurate?  The inode is not a "fsverity inode" yet,
+> and it can still have dirty data in it that is undergoing writeback.
 
-Hi Jaegeuk, Chao,
+XFS flushes data folios in _begin_enable(). Make sense for me to
+have data stable on disk before starting the build, if any error
+happens in data writeback we won't spent time building the tree.
+That why the warning below.
 
-Mounting a crafted f2fs image with fsync data to recover ends in a
-WARN_ON(1) during mount-time recovery, before any syscall beyond
-mount(); with panic_on_warn the box panics at boot.
+But as I_VERITY_BUILDING exists now, I don't think there's
+requirement to sync data before starting the build, I will update
+the comment.
 
-  F2FS-fs (vda): f2fs_recover_fsync_data: recovery fsync data, check_only: 0
-  F2FS-fs (vda): recover_dentry: inode with [ino:xxx] has invalid encrypted name
-  ------------[ cut here ]------------
-  WARNING: fs/f2fs/recovery.c:223 at f2fs_recover_fsync_data+...
-  Kernel panic - not syncing: kernel: panic_on_warn set ...
+> 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 6d843b168d5f..0a176741e7b0 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1930,7 +1930,7 @@ static bool iomap_writeback_handle_eof(struct folio *folio,
+> >  	struct inode *inode = wpc->inode;
+> >  	u64 isize = i_size_read(inode);
+> >  
+> > -	if (wpc->iomap.flags & IOMAP_F_FSVERITY) {
+> > +	if (fsverity_is_building(inode)) {
+> >  		WARN_ON_ONCE(folio_pos(folio) < isize);
+> >  		return true;
+> >  	}
+> 
+> This function no longer needs the 'wpc' parameter: it can be passed
+> 'inode' directly instead.
 
-## The path
+Sure, I will update it.
 
-fs/f2fs/recovery.c, recover_dentry():
+> Sashiko also found an issue with this change.
 
-	de = __f2fs_find_entry(dir, &fname, &dentry_blk);
-	if (de && inode->i_ino == le32_to_cpu(de->ino))
-		goto out_put;
+That's related to my response above.
 
-	if (de) {
-		einode = f2fs_iget_retry(inode->i_sb, le32_to_cpu(de->ino));
-		if (IS_ERR(einode)) {
-			WARN_ON(1);                       /* :223 */
-			err = PTR_ERR(einode);
-			if (err == -ENOENT)
-				err = -EEXIST;
-			goto out_put;
-		}
 
-The recovered inode's filename is looked up in the parent directory.
-When a same-name dirent exists but points at a different ino whose NAT
-entry is missing (blk_addr == NULL_ADDR), f2fs_iget() returns -ENOENT
-and the function hits WARN_ON(1). Nothing on the way to the assertion
-checks that the dirent target exists: the name lookup and the inode
-lookup read two independent on-disk structures, and a corrupted or
-fuzzed image can leave them inconsistent.
-
-The mount is enough: no post-mount syscall is needed, the recovery
-walk reaches the entry as soon as the last checkpoint carries fsync
-data for the crafted dentry.
-
-## Related but distinct reports
-
-This is a third independent spot in the same recovery walk:
-
- - recover_orphan_inode() had f2fs_bug_on(PTR_ERR(inode) == -ENOENT)
-   for an orphan whose NAT entry is missing; fixed by treating the
-   missing inode as fs corruption (downgrade to f2fs_err +
-   SBI_NEED_FSCK) - that fix does not touch recover_dentry().
- - do_recover_data() cross-checks ni.ino against the node footer and
-   hits f2fs_bug_on at recovery.c:698 - reported separately.
-
-Same family: an ino read from one on-disk structure does not resolve
-through the NAT, and the recovery code asserts instead of treating it
-as corruption.
-
-## Reproducer
-
-A crafted image where the fsync dentry entry to recover names a file
-whose dirent in the parent block points at an ino with no NAT entry;
-mounting the image reproduces the WARNING (3/3 runs with
-panic_on_warn=0, panic at boot with panic_on_warn=1). A control image
-identical except that the dirent points at an existing inode mounts
-and recovers normally.
-
-The image builder and the run script are available on request.
-
-## Versions
-
-Reproduced on 7.3.0 (self-built, panic_on_warn=1 for the panic
-demonstration). The WARN_ON(1) at recovery.c:223 is unchanged in
-current mainline. No report found on the syzbot dashboard for
-recover_dentry/f2fs_iget_retry, and no list thread found for this
-assertion.
-
-## Possible fix direction
-
-Treat the missing dirent target like the orphan case: log f2fs_err,
-set SBI_NEED_FSCK, skip the dentry (the recovered inode keeps its
-name from the fsync entry) or fall back to -EEXIST handling, instead
-of WARN_ON(1).
-
-Thanks,
-Guikun Yang
-
+-- 
+- Andrey
 
 
 _______________________________________________
