@@ -1,87 +1,88 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3648606A335
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Nov 2026 01:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41CB606A31E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Nov 2026 02:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=DWlhlljD;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=i7lXuA9Z;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=XcrjjVXL;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m5brb9u8
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=QdfQEBDR;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=OFRdoqfx;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=DREVx9Vq;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ObsSb+Cv
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Unsubscribe-Post:List-Owner;
-	bh=GUMN0I6y1LM+Co0TDkTxOROZMruBoHUBi622wM8ptYU=; b=DWlhlljDm4GtS8MFIJJksRnrml
-	5n9FUt9AizHVLJ5bQzD4gdZ0AMwaprJSwsgB7BVRv9Of+1LFHigS28xDVhH4QwP0HJHL320nicW4b
-	BjJlc+ATfmT66jD3KZBzWBu/Br+DGyjJduPWqdarRquOa7wYfqqluU/LPTk4Vzp6PcgM=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:
+	List-Owner; bh=A8plPJ3OJb8q1/JEpscTf6PWUXe37J23FZxrcfOgVn4=; b=QdfQEBDR+cIhL4
+	J5HAXVhjTss2resp6dIDxXA5eZ2c+H+6PAORiG6IPMwkispCjBm9bGotYNszOlf8A2a9eU+ANie7x
+	yW9ruJCiwul+RTILQL0pScvupywUqTNnEBmoFpV6XeLpLwpO5yHLXYjkpMHgjqTqnP0sf3NbzlmAt
+	u5E=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xVIdS-000000001LM-1ur4;
-	Mon, 23 Nov 2026 01:14:22 +0000
+	id 1xVJN8-000000003qn-2Zz5;
+	Mon, 23 Nov 2026 02:01:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <tzungbi@kernel.org>) id 1xVIdQ-000000001KI-2HIZ
+ (envelope-from <asj@kernel.org>) id 1xVJMq-000000003pv-0Kkp
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Nov 2026 01:14:20 +0000
+ Mon, 23 Nov 2026 02:01:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1nAFz1rE2Zgq0kT2UJ5pKEhQqcU8lxqQXw2MrFx+Nfc=; b=i7lXuA9Z8LS5/mSPOneSxZl6XE
- yH8a8TR11N96vRnOmrS17e8HQ9kVMxlhSN6Mb/8FW/6YCF7iwTt4hHtsaJtQ04awnda9sorwkbr+T
- 4HeDjLCYQawlitB+ApOCyV+ib0tqYtZxcfRGDUL0uCuRwFfaoY3CmTmm04UPpSSSOKRo=;
+ bh=m+gc+znZc0DYq0MzYS52FeXlxJDAFGgMkyRwnibnHlM=; b=OFRdoqfxaDCGUn6NAIEj+aIWSW
+ eC8I6NVidU4miQq6uknyUvoW+wH1wWHvIf9wmj7gcYA+EJFFPSYZ+IxjCKDRFGsSec90ORPAhQTZo
+ fkktVofdiwftZX1P10724ow+IAbBMq0VLgzhQNZvDb2TwHyk6/h7ccwcxWBkFHTeam9s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1nAFz1rE2Zgq0kT2UJ5pKEhQqcU8lxqQXw2MrFx+Nfc=; b=XcrjjVXLOv2VxOZO4vjYq6ld5J
- XHAlEFt5auU6n8JWD/4FxzmbRloPyAg1yxYweLcdSuw7gRvobX3y4O+g0Mner0NQpMSAVczXIsAor
- lIQbatTnUYzFxW/Az2KR5J/J0aBcE2dKGBXVKeTjcIwFNjihxoQg7MHHuTMzjUa1r66k=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=m+gc+znZc0DYq0MzYS52FeXlxJDAFGgMkyRwnibnHlM=; b=DREVx9Vq34OIv25LuhP6K4kPBg
+ ikOvkM3FQoq71CTkMVlclFrZiM1mLv8vH15rAaEjar1fAcEZxWjBg4z4qaCJiywtGdKmzj4GTGLsn
+ 7fp+Oisz5IWfK/xwLe79+Sj3yz6nWIgJVyuGIAQarZx0shaOY9xZibiDJr//9NI4Oppc=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xVIdP-000000003SB-0dRo
+ id 1xVJMn-000000005Pk-1MEs
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Nov 2026 01:14:20 +0000
+ Mon, 23 Nov 2026 02:01:16 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id A90CD411F0;
- Mon, 23 Nov 2026 01:14:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C351F000C0;
- Mon, 23 Nov 2026 01:14:01 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id AA5C96122D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 23 Nov 2026 02:01:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E04E1F000C6;
+ Mon, 23 Nov 2026 02:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1795396453;
- bh=1nAFz1rE2Zgq0kT2UJ5pKEhQqcU8lxqQXw2MrFx+Nfc=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=m5brb9u8foWKbi7SrlcdW6nE2yWIS8IEGVU5QHSZYMih+9IEkmiqaNM0lLx2EYbPE
- Ene3Ka2hJ1BAvW2vOWqYEoxo49rMX/8KuHKgTHWJQeFE3NrlIrAf3xeYL6VLmMY+/l
- ekFXnTI29+zSfV1Cj1JiY8g0iM3LpoM2wMrgHM/4k71UbfvjD94MuJKD4cUZLqKZBp
- tapIlLzsw5cg25rKFRJ3Wy6OzHRx9WFNJ4Dy/E+S8IHUzJbf1ziPCMSD/LFgujVS+y
- I6gkNfNt8+7zFmlY0xlcmT0RV+dcWLazJhMGzWNLJfBLUPxJ9MdE0Cw4N9AumibzJ+
- +Zbi9zcgZuE0w==
-Date: Mon, 23 Nov 2026 01:13:59 +0000
-To: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <awOTV4kbshpi_cxp@google.com>
-References: <20261119053514.255348-1-rdunlap@infradead.org>
- <20261119053514.255348-12-rdunlap@infradead.org>
+ s=k20260515; t=1795399267;
+ bh=m+gc+znZc0DYq0MzYS52FeXlxJDAFGgMkyRwnibnHlM=;
+ h=Date:Subject:From:To:Cc:References:In-Reply-To;
+ b=ObsSb+CvUC53o2tazBghu01uT+J9yR3VLwZ7GmvcOhHzyytJOMGBcUGOrB4OFcZJq
+ ZkgqXr8f0jqSOAjLJpLZpjT1YBe8iRJNCelplysa/Ms4+s5NuN8yUUr5ZcASBPhHwU
+ oTOtousKWDJg2UuxResC1TSNneVFiF3TYcdTSxGiNnjVkbw2JplywdCMfXCGaPyWIn
+ CUegc3EfUoCaMnrKD4ctPfONutriIHzcBO9IvQK38Ri+qEFFvZfXuSdQ29EbeT5xSc
+ DMM9ST3EpwWicTrN20MgfifP9+e6B0g88x04Jv/aq1uT7UUDCJbocSM5mOXPhGIXlF
+ xoTGENrztTEOw==
+Message-ID: <768152d1-4215-4f27-a3ca-50252c5b5d9a@kernel.org>
+Date: Mon, 23 Nov 2026 10:01:03 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20261119053514.255348-12-rdunlap@infradead.org>
-X-Spam-Score: 0.8 (/)
-X-Headers-End: 1xVIdP-000000003SB-0dRo
-Subject: Re: [f2fs-dev] [PATCH v2 11/12] docs: ioctl-number: update platform
- entries
+User-Agent: Mozilla Thunderbird
+To: zlang@kernel.org
+References: <cover.1791272793.git.asj@kernel.org>
+Content-Language: en-US
+In-Reply-To: <cover.1791272793.git.asj@kernel.org>
+X-Spam-Score: -0.2 (/)
+X-Headers-End: 1xVJMn-000000005Pk-1MEs
+Subject: Re: [f2fs-dev] [PATCH 0/21] fstests: tests for cloned filesystem
+ validation and f_fsid
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,78 +92,163 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Tzung-Bi Shih via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>,
- Vignesh Raghavendra <vigneshr@ti.com>, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, intel-xe@lists.freedesktop.org,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- linux-mm@kvack.org, linux-mtd@lists.infradead.org,
- Miquel Raynal <miquel.raynal@bootlin.com>, Benson Leung <bleung@chromium.org>,
- David Airlie <airlied@gmail.com>, Leon Romanovsky <leonro@nvidia.com>,
- Mike Marshall <hubcap@omnibond.com>, Simona Vetter <simona@ffwll.ch>,
- linux-cifs@vger.kernel.org, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org,
- linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Richard Weinberger <richard@nod.at>, Helge Deller <deller@gmx.de>,
- "Michael S. Tsirkin" <mst@redhat.com>, amd-gfx@lists.freedesktop.org,
- Tvrtko Ursulin <tursulin@ursulin.net>,
- Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, MPT-FusionLinux.pdl@broadcom.com,
- Namjae Jeon <linkinjeon@kernel.org>, devel@lists.orangefs.org,
- Neill Kapron <nkapron@google.com>, Juergen Gross <jgross@suse.com>,
- Chas Williams <3chas3@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Marcel Holtmann <marcel@holtmann.org>, Sean Christopherson <seanjc@google.com>,
- virtualization@lists.linux.dev, linux-sound@vger.kernel.org,
- Jason Wang <jasowangio@gmail.com>, linux-block@vger.kernel.org,
- Alex Deucher <alexander.deucher@amd.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>, David Hildenbrand <david@kernel.org>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- "Martin K. Petersen" <mkp@kernel.org>,
- Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Matthew Brost <matthew.brost@intel.com>, linux-ext4@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>, oe-linux-nfc@lists.linux.dev,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Eric Dumazet <edumazet@kernel.org>, netdev@vger.kernel.org,
- linux-usb@vger.kernel.org, Paulo Alcantara <pc@manguebit.org>,
- Takashi Iwai <tiwai@suse.com>, David Heidelberg <david@ixit.cz>,
- linux-f2fs-devel@lists.sourceforge.net, linux-bluetooth@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- intel-gfx@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
- Hans de Goede <hansg@kernel.org>
+From: Anand Jain via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Anand Jain <asj@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, Nov 18, 2026 at 09:35:12PM -0800, Randy Dunlap wrote:
-> Update the list of platform/ files where ioctls are defined and update
-> the ranges of function numbers that are used.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> v2: no change
-> 
-> [Since having multiple maintainers trying to merge these would
-> cause some conflicts, it would be more manageable for Jon to
-> take all of these through the docs-next tree.]
+Zorro,
 
-Acked-by: Tzung-Bi Shih <tzungbi@kernel.org> # cros_ec
+ Could we merge the patches in stages? What's your plan?
+
+Regards, Anand
+
+
+On 6/10/26 16:55, Anand Jain wrote:
+> This series continues the work from the earlier "test coverage for cloned
+> filesystem ids" series (last posted as v8 [1]) and has been tested against
+> the major filesystems: Btrfs, XFS, ext4, and f2fs.
+> 
+> Although this version incorporates the review feedback received on v8, it
+> expands substantially with additional infrastructure helpers, an extra test
+> case to cover the recent regression report, and migration/cleanup of
+> existing generic/744. Because the patch count grew from 13 to 21 patches,
+> disrupting the previous patch numbering and scope, I have reset the
+> versioning and updated the subject line to better reflect the broader
+> validation coverage.
+> 
+> The core motivation remains identical: testing that mounting a block-level
+> cloned filesystem concurrently with the original filesystem behaves
+> correctly across filesystems and VFS subsystems (fanotify, statfs/f_fsid,
+> libblkid resolution, IMA measurement, exportfs file handles, and
+> metadata_uuid handling).
+> 
+> Summary of major changes since v8:
+> - Added 1 new regression test case to verify statfs f_fsid derivation against FS UUID.
+> - Dropped the test case verifying f_fsid persistence across mount cycles on
+>   cloned filesystems, as this assumption is no longer valid following the Btrfs kernel
+>   regression fix [2].
+> - Introduced common helpers:
+>   . _require_security_ima() and _require_metadata_uuid().
+>   . _scratch_mkfs_uuid() and helpers for f_fsid verification.
+> - Migrated generic/744 to utilize the new common clone helpers.
+> - Worked on the review comments.
+> 
+> Details of changes:
+> - _create_cloned_loop_devs():
+>   . Renamed from _loop_image_create_clone() to _create_cloned_loop_devs().
+>   . Relocated backing image files from "$TEST_DIR/${seq}.*" to a dedicated
+>     directory "$TEST_DIR/${seq}/*".
+>   . Added internal call to _require_clone_mount().
+>   . Switched from _create_loop_device() to _create_loop_device_like_bdev()
+>     to guarantee identical logical/physical sector sizes (512 vs 4096)
+>     between the original and cloned loop devices.
+>   . Used an intermediate local setup step to ensure consistent Direct I/O
+>     attributes across both loop devices (preventing the first device from
+>     enabling DIO while the cloned device fell back to buffered mode).
+>   . Added device geometry and DIO attribute dump to $seqres.full for debugging.
+>   . Renamed teardown helper _loop_image_destroy() to _destroy_cloned_loop_devs().
+> - _clone_mount_options():
+>   . Renamed from _clone_mount_option() to _clone_mount_options().
+> - _require_metadata_uuid():
+>   . Factored out prerequisite checks from _change_metadata_uuid() into a new
+>     dedicated helper _require_metadata_uuid() and invoked it accordingly.
+> - _require_clone_mount():
+>   . Introduced new helper to check kernel support for concurrent clone mounts.
+>   . Removed obsolete _require_duplicate_fsid() in favor of _require_clone_mount().
+> - _require_security_ima():
+>   . Introduced new helper to check securityfs and IMA policy availability.
+> - _create_loop_device_like_bdev():
+>   . Removed unused local variable 'dev'.
+> 
+> - Test Cases common update:
+>   - Adjusted test groups: replaced 'clone' with 'tempfsid'.
+>   - Standardized test exits: replaced open-coded "status=0; exit" with "_exit 0".
+>   - Dropped stale "_require_block_device $TEST_DEV" checks left over from before
+>     migrating tests to loop devices.
+>   - Percolated helper renames across all tests:
+>     . _loop_image_create_clone -> _create_cloned_loop_devs
+>     . _loop_image_destroy      -> _destroy_cloned_loop_devs
+>     . _clone_mount_option      -> _clone_mount_options
+>   - Added cleanup of "$TEST_DIR/$seq" in test exit/cleanup handlers.
+> 
+> - Test Cases Individual Updates:
+>   - generic/744:
+>     . Replaced _require_duplicate_fsid with _require_clone_mount().
+>     . Migrated to common _create_cloned_loop_devs() and _clone_mount_options().
+>   - generic/902:
+>     . New regression test case added to verify statfs f_fsid derivation against filesystem UUID.
+>   - generic/903:
+>     . Added --noheadings flag to findmnt queries for cleaner output parsing.
+>   - generic/904:
+>     . Dropped 'auto' and 'quick' from test groups due to runtime and policy requirements.
+>     . Updated referenced kernel commit IDs.
+> 
+> [1] https://lore.kernel.org/fstests/cover.1784949154.git.asj@kernel.org
+> [2] 72de4807ba84 ("btrfs: derive f_fsid with dev_t only when temp_fsid is active")
+> 
+> Anand Jain (21):
+>   fstests: introduce _require_clone_mount() helper
+>   fstests: introduce _create_cloned_loop_devs() helper
+>   fstests: add _clone_mount_options() helper
+>   fstests: add FSNOTIFYWAIT_PROG
+>   fstests: add _require_fanotify_function
+>   fstests: add _require_unique_f_fsid() helper
+>   fstests: add SEMANAGE_PROG
+>   fstests: verify fanotify isolation on cloned filesystems
+>   fstests: introduce helper _scratch_mkfs_uuid()
+>   fstests: add helpers to verify the expected f_fsid
+>   fstests: verify statfs f_fsid is derived from the filesystem UUID
+>   fstests: verify libblkid resolution of duplicate UUIDs
+>   fstests: introduce _require_security_ima() helper
+>   fstests: verify IMA isolation on cloned filesystems
+>   fstests: verify exportfs file handles on cloned filesystems
+>   fstests: introduce _require_metadata_uuid() helper
+>   fstests: add _change_metadata_uuid helper
+>   fstests: test UUID consistency for clones with metadata_uuid
+>   fstests: generic/744: use new helper _require_clone_mount()
+>   fstests: generic/744: migrate to _create_cloned_loop_devs()
+>   fstests: _create_loop_device_like_bdev() remove unused variable
+> 
+>  common/config         |   2 +
+>  common/rc             | 262 +++++++++++++++++++++++++++++++++++++++---
+>  tests/generic/744     |  72 +++++-------
+>  tests/generic/901     | 142 +++++++++++++++++++++++
+>  tests/generic/901.out |   7 ++
+>  tests/generic/902     |  38 ++++++
+>  tests/generic/902.out |   2 +
+>  tests/generic/903     |  71 ++++++++++++
+>  tests/generic/903.out |   6 +
+>  tests/generic/904     | 113 ++++++++++++++++++
+>  tests/generic/904.out |  10 ++
+>  tests/generic/905     |  79 +++++++++++++
+>  tests/generic/905.out |   2 +
+>  tests/generic/906     |  74 ++++++++++++
+>  tests/generic/906.out |   6 +
+>  15 files changed, 827 insertions(+), 59 deletions(-)
+>  create mode 100644 tests/generic/901
+>  create mode 100644 tests/generic/901.out
+>  create mode 100644 tests/generic/902
+>  create mode 100644 tests/generic/902.out
+>  create mode 100644 tests/generic/903
+>  create mode 100644 tests/generic/903.out
+>  create mode 100644 tests/generic/904
+>  create mode 100644 tests/generic/904.out
+>  create mode 100644 tests/generic/905
+>  create mode 100644 tests/generic/905.out
+>  create mode 100644 tests/generic/906
+>  create mode 100644 tests/generic/906.out
+> 
+
 
 
 _______________________________________________
