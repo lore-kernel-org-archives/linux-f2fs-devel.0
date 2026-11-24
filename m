@@ -1,46 +1,46 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B042606A331
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Nov 2026 19:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BBF606A321
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Nov 2026 19:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=DT87lSri;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=dRju36jq;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=geFiXGvc;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=wiT8Ya5/;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=dk5YjynB;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=h2LQ/IDI;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=Sa6ZruAS
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=Q8VND0+u;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Om3K693I;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=CABAGP+D;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=zYY69mhW;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=S7x7P8K2;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=gypI6d/V;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=5PnAQBSm
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:Message-ID:Date:References:In-Reply-To:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=Et0X8JE25fa5Krvj25T1ZI8dLYxQwWTV5pdkuuBXmgQ=; b=DT87lSriBd1PAuGs5qNmx3MDJv
-	atZPW6wGXXnZlt1XpRR4LgI5BfmPV86WySP4PUJMnrwobotNeBv9OdrK8Ejjxta8yoNPDHbPR5tpg
-	gJ63csCFX1KHnmIHEyCLpt3oEvp7dEUlgdgWvnBwTVBAqyUHpEQGhtVPYRmAjQ3mmJs4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=eJAuyjuyArFVQ1WNBjHkg/gd/F9D6aNtG+7VZgmLPnU=; b=Q8VND0+uq+PN8+WG2HsE6uZGRA
+	DsjceX9Xboxoyg9kg4Af6/BZKaG94c/v3cccMy848KG8KPla4Do7Ad6EK7wyy+Vl/5rpnE6mFpil9
+	Nx22zDx/TopSJ3LvGJt3aN0dSO1d5PwQYCo2SPQipQQIomVjYh5QPfLhQ6S/PyDploBY=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xVwJu-000000002XH-2SQv;
-	Tue, 24 Nov 2026 19:36:50 +0000
+	id 1xVwWM-0000000021K-0PAD;
+	Tue, 24 Nov 2026 19:49:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <krisman@suse.de>) id 1xVwJs-000000002XA-3BhX
+ (envelope-from <krisman@suse.de>) id 1xVwVr-0000000020x-11sM
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Nov 2026 19:36:48 +0000
+ Tue, 24 Nov 2026 19:49:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
  References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=; b=d
- Rju36jqI2DKs5ZQ5aOsJRTAzyf61yBQnW0yDwNLrJuBENp9col7c2EGcH8ilmaVUzsZQtW1VtUy0g
- FBfBY+VoaV+YiYi+2umu4mcBXfpE57J/1sFa2XZ4aIoAeh0mG5r9RTe238JZHFqYmorp/NgwicMLj
- mevKiSJsZcH4iiMc=;
+ List-Owner:List-Archive; bh=Txnj8npZv8ues6Q9E3gBrI6hVjJw+5y4gtc7DZoJxPM=; b=O
+ m3K693Iv8sTTRZE+Cc1MnUL0KiRIo0rDQupRceGhB4D0rJTyIxEbsJGj+g0RtPV6eC+EiB5AzJ7wL
+ OqZdRyPov6bv34SF5Hrv/p3bgHirHhonEpXxKYtq73CDX8slscYRLV9n+FAjPu0/PhN+xVQAv9Rjm
+ PShS7N9wKG7G29FI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
@@ -48,78 +48,77 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=; b=geFiXGvcExLOmvKlYqJZ/nh8Jm
- u9i6kVJwcaG8AM3SSglVWp32qPEx0B4CZY7qtrWdAimjj3/05VrWJnvhLzFtY2wT8XE73ukyp4SlZ
- zAUpmqe5aZy+Pca94QMjgJfh24DjONet4BvEaO7iSa+9ReTbnPikX9+3rtBJ6K0oOtRc=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Txnj8npZv8ues6Q9E3gBrI6hVjJw+5y4gtc7DZoJxPM=; b=CABAGP+DFTyqaY6WOZR3xgWgcy
+ C1q8GWGSO8Z+GK3WbVHDPocwy7POtR9+nlOemokJR59HFGKU7wkBqQ/u3cevkenxU38qVsAAotyl1
+ +cAf5RTVM9a1hxf/+ZzLMjI0j/qjLrifTSoQirgApLV7TfGEg15njR5aegilY1MWaVAU=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xVwJr-000000002yr-3TqE
+ id 1xVwVq-000000004lw-1fkn
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Nov 2026 19:36:48 +0000
+ Tue, 24 Nov 2026 19:49:11 +0000
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 478C6223AC;
- Tue, 24 Nov 2026 19:36:40 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id CB5D71F74B;
+ Tue, 24 Nov 2026 19:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1795549001; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1795549744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
- b=wiT8Ya5/HG/DD7Q5wA50FeGnqRAYEFpM2ufxuc+W83Q6gRGxfoIYZsDrPVVbICmn2yN0jR
- zFQD1oULjCblWWQrr4MdUF9IJU0wupvY9z9oPW49UQ8qXuHoODMBmcEwPuLzHxTUJJWuic
- k7io5RDNUB4iTiKm0l2npXMZ9qLa0po=
+ bh=Txnj8npZv8ues6Q9E3gBrI6hVjJw+5y4gtc7DZoJxPM=;
+ b=zYY69mhWGahHtc4rta8xtAR9I9Sms1hO1vd1yoRl9NcgG5w+DcMWzAkUd0kzoNszBW4MVL
+ V/gS09B+oOCopBk2j+RqYwkaN77ALHpJUdfniVfq4Mv9k4KPNSFbz5ilwUTOoHhDNx5hOK
+ JEmzuEnfTqO/Ww6My24evBrLkCkHCZs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1795549001;
+ s=susede2_ed25519; t=1795549744;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
- b=dk5YjynBJCrj49GitF84RZJ2dgPePHqam+YuV+QitmjE0rZOV8sppZVHzD3Btg3owvQ2To
- 8SM1E9W+dG+2yLDA==
-Authentication-Results: smtp-out1.suse.de;
+ bh=Txnj8npZv8ues6Q9E3gBrI6hVjJw+5y4gtc7DZoJxPM=;
+ b=S7x7P8K2VQ3r1jrchadebt4oVo40oonPl15EmEEptM8mE8NGJNOlxgSM5y4NmJ8QD7PqYk
+ CgigCZtB5B26NiCA==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1795549000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1795549742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
- b=h2LQ/IDI9VLQ3E7Tws5WfCPIkt0HGGmYoA6Xu62TnhdKBtRQ2fD/djQW0dwzL5JR2J9j1j
- pdDK/TBHwSkSZJ3/qN7t5zHtiihHkeJx8/b2AbVB0RzV7/090vvuDXmQMqGEA8QXYJQyqD
- 9NdTAtzQceGIwZ8JCBlpSqI3QJlb49Y=
+ bh=Txnj8npZv8ues6Q9E3gBrI6hVjJw+5y4gtc7DZoJxPM=;
+ b=gypI6d/VLiNgqpUDnAg2IdzGwqoG9GCLBUFb0SFT+/SyQpXuiX38yhAiWcrIn8JEhYSR9C
+ aLvZCUDHIaIEkoi7L5J7xUuzjQHK9Hh0t131BCauRrUzTwgU1vvebEbgcYn5GR48Ags71z
+ xpb0PKhKBX3tPhbcDhgV16XDXa9kdag=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1795549000;
+ s=susede2_ed25519; t=1795549742;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
- b=Sa6ZruAStbYSh68HiIXKLUc20jCF9BCiQzCoDpqGZbSNX4Y9yzhFNZQxtV9YnS6mNixIuB
- 86j1GlyndVGeVaCQ==
+ bh=Txnj8npZv8ues6Q9E3gBrI6hVjJw+5y4gtc7DZoJxPM=;
+ b=5PnAQBSmc70hsTm+07PWOG2TbOnH7SWN75B5bhpoC9uBO2ACT3jBWhezjW44cEd+aBudhi
+ aoKDunw42VxtMTDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE3181339F;
- Tue, 24 Nov 2026 19:36:39 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59C621339F;
+ Tue, 24 Nov 2026 19:49:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id VZNQJUfnBWs1aQAAD6G6ig
- (envelope-from <krisman@suse.de>); Tue, 24 Nov 2026 19:36:39 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id sYTnNy3qBWsNdgAAD6G6ig
+ (envelope-from <krisman@suse.de>); Tue, 24 Nov 2026 19:49:02 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: Sarthak Kukreti via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>, Theodore Ts'o <tytso@mit.edu>,
  Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, Al Viro
  <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-In-Reply-To: <20261119214944.1480596-2-sarthakkukreti@google.com>
+In-Reply-To: <20261119214944.1480596-3-sarthakkukreti@google.com>
 Organization: SUSE
 References: <20261119214944.1480596-1-sarthakkukreti@google.com>
- <20261119214944.1480596-2-sarthakkukreti@google.com>
-Date: Tue, 24 Nov 2026 14:36:38 -0500
-Message-ID: <87pkvuc989.fsf@cartola>
+ <20261119214944.1480596-3-sarthakkukreti@google.com>
+Date: Tue, 24 Nov 2026 14:48:56 -0500
+Message-ID: <87mrqyc8nr.fsf@cartola>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Spam-Level: 
 X-Spamd-Result: default: False [-12.80 / 50.00]; SUSE_INTERNAL_BYPASS(-9.00)[];
  BAYES_HAM(-3.00)[100.00%]; NEURAL_HAM_LONG(-1.00)[-1.000];
  MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
@@ -131,12 +130,12 @@ X-Spamd-Result: default: False [-12.80 / 50.00]; SUSE_INTERNAL_BYPASS(-9.00)[];
  FROM_HAS_DN(0.00)[]; TO_DN_SOME(0.00)[];
  FROM_EQ_ENVFROM(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
  RCVD_COUNT_TWO(0.00)[2];
- DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo, dirent.name:url,
- decrypted_name.name:url]
+ DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 X-Spam-Score: -12.80
+X-Spam-Level: 
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xVwJr-000000002yr-3TqE
-Subject: Re: [f2fs-dev] [PATCH v2 1/3] libfs: reject casefolded names that
+X-Headers-End: 1xVwVq-000000004lw-1fkn
+Subject: Re: [f2fs-dev] [PATCH v2 2/3] ext4: reject casefolded names that
  fold to ".", "..", or empty
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -153,171 +152,121 @@ Cc: Sarthak Kukreti <sarthakkukreti@google.com>, linux-kernel@vger.kernel.org,
  Dmitry Torokhov <dtor@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 Sarthak Kukreti via Linux-f2fs-devel
 <linux-f2fs-devel@lists.sourceforge.net> writes:
 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 46e0205154e7..77997f88e475 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1828,13 +1828,21 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
->  	const struct inode *dir = READ_ONCE(dentry->d_inode);
->  	struct super_block *sb = dentry->d_sb;
->  	const struct unicode_map *um = sb->s_encoding;
-> +	unsigned char buf[3];
->  	int ret;
->  
->  	if (!dir || !IS_CASEFOLDED(dir))
->  		return 0;
->  
->  	ret = utf8_casefold_hash(um, dentry, str);
-> -	if (ret < 0 && sb_has_strict_encoding(sb))
-> +	if (ret < 0) {
-> +		if (sb_has_strict_encoding(sb))
-> +			return -EINVAL;
-> +		return 0;
-> +	}
+> Filenames consisting solely of ignorable Unicode characters fold to
+> empty strings (causing the first such file to be created on disk and
+> subsequent distinct ignorable-only names to collide with it), while
+> names with leading dots and ignorable characters fold to "." or "..",
+> colliding with on-disk "." and ".." entries and triggering
+> EXT4_ERROR_INODE in ext4_lookup().
+>
+> Skip casefolding when the lookup name is literally "." or "..", reject
+> any non-dot names that fold to "", ".", or ".." in
+> ext4_fname_setup_ci_filename(), and fall back to opaque byte hashing in
+> ext4fs_dirhash() when utf8_casefold() yields "", ".", or "..".
+>
+> Fixes: b886ee3e778e ("ext4: Support case-insensitive file name lookups")
+> Co-developed-by: Dmitry Torokhov <dtor@google.com>
+> Signed-off-by: Dmitry Torokhov <dtor@google.com>
+> Signed-off-by: Sarthak Kukreti <sarthakkukreti@google.com>
+> ---
+>  fs/ext4/hash-test.c | 14 ++++++++++++++
+>  fs/ext4/hash.c      |  2 +-
+>  fs/ext4/namei.c     |  9 +++++++--
+>  3 files changed, 22 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ext4/hash-test.c b/fs/ext4/hash-test.c
+> index 49b0d874c833..a8b206a6d751 100644
+> --- a/fs/ext4/hash-test.c
+> +++ b/fs/ext4/hash-test.c
+> @@ -541,6 +541,20 @@ static void test_ext4fs_dirhash_casefold_fallback(struct kunit *test)
+>  	KUNIT_ASSERT_EQ(test, ret_plain, 0);
+>  	KUNIT_EXPECT_EQ(test, folded_dir.hash, plain.hash);
+>  	KUNIT_EXPECT_EQ(test, folded_dir.minor_hash, plain.minor_hash);
 > +
-> +	ret = utf8_casefold(um, str, buf, sizeof(buf));
-> +	if (ret == 0 || (ret > 0 && name_is_dot_dotdot(buf, ret)))
->  		return -EINVAL;
-
-I really dislike the idea of doing utf8_casefold here. even on a
-small substring.  We are walking down the trie a second time just to do it
-again in ->d_compare.
-
-Consider we don't have negative dentries for casefolded directories.  Is
-there a case where variants of '.' or '..' are ever cached if ->lookup
-rejects them?  I don't think so.  By rejecting the creation of
-'.<empty>' ..<empty> we can guarantee there aren't any variants either.
-
-Assuming these don't exist in the dcache, why not let utf8_casefold_hash
-hash to a non-existing dentry?  d_compare will not find it, go to
-->lookup and only the filesystem needs special handling to reject
-invalid names.  The vast majority of real lookups will hit the dcache
-and never pay the cost of this check.
-
-If we *must* check the dcache for some reason I miss, can we do it
-*only* in d_compare?  There, we are doing some kind of utf8_casefold
-anyway.  We can modify utf8_strncasecmp to return the casefolded string,
-which we can byte compare for dotdot, avoiding multiple walks over the
-trie.
-
->  	return 0;
+> +	ret_cf = ext4fs_dirhash(&ei->vfs_inode, ".\xe2\x80\xae", 4, &folded_dir);
+> +	ret_plain = ext4fs_dirhash(plain_dir, ".\xe2\x80\xae", 4, &plain);
+> +	KUNIT_ASSERT_EQ(test, ret_cf, 0);
+> +	KUNIT_ASSERT_EQ(test, ret_plain, 0);
+> +	KUNIT_EXPECT_EQ(test, folded_dir.hash, plain.hash);
+> +	KUNIT_EXPECT_EQ(test, folded_dir.minor_hash, plain.minor_hash);
+> +
+> +	ret_cf = ext4fs_dirhash(&ei->vfs_inode, "\xe2\x80\xae", 3, &folded_dir);
+> +	ret_plain = ext4fs_dirhash(plain_dir, "\xe2\x80\xae", 3, &plain);
+> +	KUNIT_ASSERT_EQ(test, ret_cf, 0);
+> +	KUNIT_ASSERT_EQ(test, ret_plain, 0);
+> +	KUNIT_EXPECT_EQ(test, folded_dir.hash, plain.hash);
+> +	KUNIT_EXPECT_EQ(test, folded_dir.minor_hash, plain.minor_hash);
 >  }
-> @@ -1907,10 +1915,28 @@ int generic_ci_match(const struct inode *parent,
->  	    !memcmp(name->name, dirent.name, dirent.len))
->  		goto out;
+>  #endif
 >  
-> -	if (folded_name->name)
-> +	if (name_is_dot_dotdot(dirent.name, dirent.len) ||
-> +	    name_is_dot_dotdot(name->name, name->len) ||
-> +	    (folded_name->name &&
-> +	     (!folded_name->len ||
-> +	      name_is_dot_dotdot(folded_name->name, folded_name->len))))
-> {
-
-Most of these checks seems unnecessary.
-
-First, if name_is_dot_dotdot(dirent.name) is true, which I'm not sure
-can really happen, it only matters if name_is_dot_dotdot(name->name) or
-name_is_dot_dotdot(folded_name->name) is also true, because then we have
-a match.  Otherwise, there's no match.  Checking both seems redundant.
-
-But also, if name_is_dot_dotdot(name->name) is true, that means we are
-doing an exact search for '.' or '..', which, IIUC, the VFS will handle
-specially and not call this code?
-
-I think the only thing you need to check here is:
-
-name_is_dot_dotdot(folded_name->name, folded_name->len)
-
-if folded_name exists.  If it doesn't, that's because the cached name
-initialization failed and you might need to do the utf8_casefold +
-name_is_dot_dotdot() dance you do in the hunk below:
-
-
-> +
-> +	if (folded_name->name) {
->  		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
-> -	else
-> +	} else {
-> +		unsigned char buf[3];
-> +		int cf_len = utf8_casefold(um, name, buf, sizeof(buf));
-> +
-> +		if (cf_len == 0 ||
-> +		    (cf_len > 0 && name_is_dot_dotdot(buf, cf_len))) {
-> +			res = 1;
-> +			goto out;
-> +		}
->  		res = utf8_strncasecmp(um, name, &dirent);
-> +	}
+> diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
+> index 978bd92da0ad..65019de4af93 100644
+> --- a/fs/ext4/hash.c
+> +++ b/fs/ext4/hash.c
+> @@ -327,7 +327,7 @@ int ext4fs_dirhash(const struct inode *dir, const char *name, int len,
+>  			return -ENOMEM;
 >  
->  out:
->  	kfree(decrypted_name.name);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 5b3a100aba77..22c411e046ce 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3368,28 +3368,26 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
->   * generic_ci_validate_strict_name - Check if a given name is suitable
->   * for a directory
->   *
-> - * This functions checks if the proposed filename is valid for the
-> - * parent directory. That means that only valid UTF-8 filenames will be
-> - * accepted for casefold directories from filesystems created with the
-> - * strict encoding flag.  That also means that any name will be
-> - * accepted for directories that doesn't have casefold enabled, or
-> - * aren't being strict with the encoding.
-> + * This function checks if the proposed filename is valid for the
-> + * parent directory. Names that casefold to "", ".", or ".." are
-> + * rejected for all casefolded directories. When the filesystem is
-> + * created with the strict encoding flag, only valid UTF-8 filenames
-> + * are accepted for casefolded directories.
->   *
->   * @dir: inode of the directory where the new file will be created
->   * @name: name of the new file
->   *
->   * Return:
-> - * * True: if the filename is suitable for this directory. It can be
-> - *   true if a given name is not suitable for a strict encoding
-> - *   directory, but the directory being used isn't strict
-> - * * False if the filename isn't suitable for this directory. This only
-> - *   happens when a directory is casefolded and the filesystem is strict
-> - *   about its encoding.
-> + * * True: if the filename is suitable for this directory.
-> + * * False: if the filename isn't suitable for this directory.
->   */
->  static inline bool generic_ci_validate_strict_name(struct inode *dir,
->  						   const struct qstr *name)
->  {
-> -	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
-> +	unsigned char buf[3];
-> +	int len;
-> +
-> +	if (!IS_CASEFOLDED(dir))
->  		return true;
+>  		dlen = utf8_casefold(um, &qstr, buff, PATH_MAX);
+> -		if (dlen < 0) {
+> +		if (dlen <= 0 || name_is_dot_dotdot(buff, dlen)) {
+>  			kfree(buff);
+>  			goto opaque_seq;
+>  		}
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index 354fc2d22df1..cd2c9b873cc6 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -1368,7 +1368,8 @@ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+>  	int len;
 >  
->  	/*
-> @@ -3399,6 +3397,13 @@ static inline bool generic_ci_validate_strict_name(struct inode *dir,
->  	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
->  		return true;
->  
-> +	len = utf8_casefold(dir->i_sb->s_encoding, name, buf, sizeof(buf));
-> +	if (len == 0 || (len > 0 && name_is_dot_dotdot(buf, len)))
-> +		return false;
-> +
+>  	if (!IS_CASEFOLDED(dir) ||
+> -	    (IS_ENCRYPTED(dir) && !fscrypt_has_encryption_key(dir))) {
+> +	    (IS_ENCRYPTED(dir) && !fscrypt_has_encryption_key(dir)) ||
+> +	    name_is_dot_dotdot(iname->name, iname->len)) {
 
-With this in place we should not be creating new files that turn into '.'
-and '..'.  If we also reject to create them during a lookup, I think it
-is enough to drop the dcache callback changes.
+if name_is_dot_dotdot(iname->name, iname->len) is true, isn't that a
+byte-exact match to dot or dotdot?  Do we actually get here for
+byte-exact matches?
+
+The rest of the patch looks good to me!
+
+>  		cf_name->name = NULL;
+>  		return 0;
+>  	}
+> @@ -1378,9 +1379,13 @@ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+>  		return -ENOMEM;
+>  
+>  	len = utf8_casefold(dir->i_sb->s_encoding, iname, buf, EXT4_NAME_LEN);
+> -	if (len <= 0) {
+> +	if (len < 0) {
+>  		kfree(buf);
+>  		buf = NULL;
+> +	} else if (len == 0 || name_is_dot_dotdot(buf, len)) {
+> +		kfree(buf);
+> +		cf_name->name = NULL;
+> +		return -EINVAL;
+>  	}
+>  	cf_name->name = buf;
+>  	cf_name->len = (unsigned) len;
+> -- 
+> 2.56.1.750.gf70dc682cf-goog
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 -- 
 Gabriel Krisman Bertazi
