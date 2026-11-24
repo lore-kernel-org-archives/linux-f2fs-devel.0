@@ -1,151 +1,86 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50699606A332
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Nov 2026 19:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A03606A326
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Nov 2026 23:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=R7kuId86;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=koppJGoi;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=euiBZ9eq;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=ABSW4SHs;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=eZhk8UbS;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=aqZ1v6OZ;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=qv1aY4/M
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=UzpVojuv;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=eCo49upl;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=XlbUrj2m;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W3y88tmj
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:References:In-Reply-To:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
-	bh=ENT8PsZlluwJL1g6aT+iy7ViVCUiEWiwIQ+Un5JtM9c=; b=R7kuId863PRaNxXkWWUCSTdBTn
-	XtBeekitV9Zh/xNB7qYU8xmW8TC/45i+MVhAN/JpnZKn4241nYtz2XKodBtxI7N9cBf7wnesKNuCd
-	phCuEn+l2dzAz0gLnDSyD8L4MdJIWy7B5zzw84c7QRb3Z6H8cBzYTYylZOBeMXikLhTA=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Unsubscribe-Post:List-Owner;
+	bh=j5M2sCDFfml8gO/8TNVNMX8o8h/7mMwZdyEo/QgokhA=; b=UzpVojuvymQ48G3elM1svb/s2x
+	CyLJiTp3rNH9qlZkZAxNKpkebg3jXlSLYQzyc1Kbq8+9rVI2D0zCi0KNwrWbs+cbW0rPqMqMICUHl
+	pmIq7UcCIVUK70PskVgwloiEAH2K9QNqXmnEcxNEFSpyEBoLqBjFa1VcRwTbtSI86keM=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xVwZA-000000002oo-0DIz;
-	Tue, 24 Nov 2026 19:52:36 +0000
+	id 1xVzgD-000000006xM-0dk7;
+	Tue, 24 Nov 2026 23:12:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <krisman@suse.de>) id 1xVwZ8-000000002oi-3QlX
+ (envelope-from <ebiggers@kernel.org>) id 1xVzgC-000000006xG-1znK
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Nov 2026 19:52:34 +0000
+ Tue, 24 Nov 2026 23:12:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
- References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=yS7O3rY1oGDr4IdzWC9LN89ek2gLw2iYbqf8+mjmRCg=; b=k
- oppJGoit9PDtRajFV8kQYVAHIV5PtJaf7E0FF9pPq5GbtTEGV8t1tOab++BdVrMBnL0+m94oRm/NR
- WXMT0qzcp/F++jAJxQAcoDhC1omBtoVHZEXUwc5h3cZ47EvPNYNt9fDnoNsgSdT8XESHrusqy3aDS
- rdAVVhr11iwueVyo=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=QXxayGQ5zDJmW5qRYFz3W+oneeyzIOwcisMq8eZ3yFw=; b=eCo49uplmSLo8Tr0EB2oN5I2Jn
+ IQo46GdKJL1jhPtBY6Vi4sEtmVRX2iW3M+IFh4WWd4t63zpibjeLnsLXf31x7awmu4P0CB7l4Ifjk
+ TsF6xBp7cbbRZRmOJDBdH6L/sMkiiAtKd/MOHVgMGX52kenPKmsF8F/9C36NIN8g5PWU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yS7O3rY1oGDr4IdzWC9LN89ek2gLw2iYbqf8+mjmRCg=; b=euiBZ9eqQS/oskCTU7JruniiCp
- hSWErcFMt3tdRnVVlHv1xx2LQ+Gj0baDp5m2PPsQmqn/xGQlR9PCwIZVjaLmipgWtim6sQXthI+0l
- rtRx9rhQZQBYhtMgyZb9poY5JRSCnxvoq68He5uNyEHCyQEmdWpTaekq1hGIbu7HVFPM=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
- id 1xVwZ6-000000003fr-0HRs
+ bh=QXxayGQ5zDJmW5qRYFz3W+oneeyzIOwcisMq8eZ3yFw=; b=XlbUrj2mt8ZK5REtfe3U5nKHVQ
+ pz4cHtQVQtBsq4RS48tCne1/rr2su2aN18fDg+hlXzKXdaFmNexnenUfXTWzN2vUZATfLsFx7adfN
+ Pa/mLRogFg1F/ELW07XeXsCZtmA96FElJxgYcdsPbxcRHQYE5ttrvbAfQxM9MJGj6EVQ=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
+ id 1xVzgA-000000000WX-3mRi
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Nov 2026 19:52:34 +0000
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
- [IPv6:2a07:de40:b281:104:10:150:64:97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 669D01F74A;
- Tue, 24 Nov 2026 19:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1795549945; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=yS7O3rY1oGDr4IdzWC9LN89ek2gLw2iYbqf8+mjmRCg=;
- b=ABSW4SHs1GfyhLVQ5cmQVHhbhYepMI1Px5Cu45+4wvB/xYKaHt/daGvGmP+LK/Q29aUD3d
- cpDaM7OzoXTzZIqdamxfZ/w+7qnK+0fXgOL9827YuAI0c7AsU3jPXmcPlwrsrH4IROvLBq
- PST3uD4/wREGzB7p1WjsuGckN3Ehce8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1795549945;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=yS7O3rY1oGDr4IdzWC9LN89ek2gLw2iYbqf8+mjmRCg=;
- b=eZhk8UbSU4nTa1ZVZOsfnPOLNd5gGACp1YNIWXPCyoNYdMRNwReGeS2p/rk+ZdOuojfYJT
- EGf6rEudpU1kp2AQ==
-Authentication-Results: smtp-out2.suse.de;
- dkim=pass header.d=suse.de header.s=susede2_rsa header.b=aqZ1v6OZ;
- dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="qv1aY4/M"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1795549944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=yS7O3rY1oGDr4IdzWC9LN89ek2gLw2iYbqf8+mjmRCg=;
- b=aqZ1v6OZZhD0L6t/OtkrvtdoUw+6bndbfupVFnsWrhQxlaJIYGmc0h/9wshnOsWoEEY20j
- Q3gurqN9ZGyW+mwh6g8TXyGnDltsqn5vJ6kIiTLOzsfAO3j9BTn3H+Yx9AYZR8GO6u8gbo
- UrW24EouDg4SAOqvg23eoRAMsXGT8kA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1795549944;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=yS7O3rY1oGDr4IdzWC9LN89ek2gLw2iYbqf8+mjmRCg=;
- b=qv1aY4/MYDiSFNBtI2kb9tahjtzyX0nEc93C13sUw/l8vQ2ivFVv06bCgYiMvSemkFFAAx
- dly2ZcRh11Lm+cDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE0DA1339F;
- Tue, 24 Nov 2026 19:52:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id oniJIffqBWsLeQAAD6G6ig
- (envelope-from <krisman@suse.de>); Tue, 24 Nov 2026 19:52:23 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Sarthak Kukreti via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>, Theodore Ts'o <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, Al Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-In-Reply-To: <20261119214944.1480596-4-sarthakkukreti@google.com>
-Organization: SUSE
-References: <20261119214944.1480596-1-sarthakkukreti@google.com>
- <20261119214944.1480596-4-sarthakkukreti@google.com>
-Date: Tue, 24 Nov 2026 14:52:18 -0500
-Message-ID: <87ik1mc8i5.fsf@cartola>
+ Tue, 24 Nov 2026 23:12:04 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 87ED843EA2;
+ Tue, 24 Nov 2026 23:11:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03D61F000C6;
+ Tue, 24 Nov 2026 23:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1795561917;
+ bh=QXxayGQ5zDJmW5qRYFz3W+oneeyzIOwcisMq8eZ3yFw=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=W3y88tmj+TqN3sWdK2x05TghZqa+qDv9MXmU3/QPFA2AT98lD6/qJZ3933xeNZZUL
+ mFbgAjZxP3YQfFNGN/E6aq6xHvwq3926/J7i7Ox/gvjyfKu/Jlr/F+6FE6JUy3P4Is
+ 6MdPs7dA0CFFOn8AwQK+1AsBSZLa2HZ0FGDt6VcRVLyFogg1MgzTckmIzazFX4Qe7P
+ iFc01fx5AJywo5WpZQFnkHf0EnpzryblgxonC0zrk1gaPk9SkFDRC8a32P1yoFcKpj
+ 7HJT1DGrf8SZho5WvdsGUF3oCPgBlo4X/7mshT91A9EhlmNM3yivKhK6IJrlXuYV1U
+ dUiEIUxoIk7dg==
+Date: Tue, 24 Nov 2026 15:11:55 -0800
+To: Thorsten Blum <blum@kernel.org>
+Message-ID: <20261124231155.GB2001@quark>
+References: <20261118002845.574426-6-blum@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-13.01 / 50.00]; SUSE_INTERNAL_BYPASS(-9.00)[];
- BAYES_HAM(-3.00)[100.00%]; NEURAL_HAM_LONG(-1.00)[-1.000];
- MID_RHS_NOT_FQDN(0.50)[];
- R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
- MX_GOOD(-0.01)[];
- DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- RCPT_COUNT_TWELVE(0.00)[13]; ARC_NA(0.00)[];
- MIME_TRACE(0.00)[0:+]; HAS_ORG_HEADER(0.00)[];
- FROM_HAS_DN(0.00)[]; TO_DN_SOME(0.00)[];
- RCVD_COUNT_TWO(0.00)[2]; FROM_EQ_ENVFROM(0.00)[];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; RCVD_VIA_SMTP_AUTH(0.00)[];
- DKIM_TRACE(0.00)[suse.de:+]; MISSING_XM_UA(0.00)[];
- RCVD_TLS_ALL(0.00)[];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email, suse.de:dkim,
- imap1.dmz-prg2.suse.org:rdns, imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -13.01
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 669D01F74A
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xVwZ6-000000003fr-0HRs
-Subject: Re: [f2fs-dev] [PATCH v2 3/3] f2fs: reject casefolded names that
- fold to ".", "..", or empty
+Content-Disposition: inline
+In-Reply-To: <20261118002845.574426-6-blum@kernel.org>
+X-Spam-Score: 0.8 (/)
+X-Headers-End: 1xVzgA-000000000WX-3mRi
+Subject: Re: [f2fs-dev] [PATCH 0/4] fscrypt: Add FSTR() helper macro and
+ convert initializers
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -155,44 +90,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sarthak Kukreti <sarthakkukreti@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- Dmitry Torokhov <dtor@google.com>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Richard Weinberger <richard@nod.at>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
+ Chris Mason <mason@kernel.org>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_PASS,SPF_PASS
 	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Sarthak Kukreti via Linux-f2fs-devel
-<linux-f2fs-devel@lists.sourceforge.net> writes:
+On Wed, Nov 18, 2026 at 01:28:46AM +0100, Thorsten Blum wrote:
+> Similar to QSTR(), add FSTR() to initialize struct fscrypt_str from a
+> NUL-terminated string without specifying its length.
+> 
+> Use the helper for 8 initializers in btrfs, F2FS, and UBIFS, replacing
+> hard-coded lengths and explicit strlen() calls.
+> 
+> Thorsten Blum (4):
+>   fscrypt: Add FSTR() helper macro
+>   btrfs: Use FSTR() for the "default" name
+>   f2fs: Use FSTR() in f2fs_do_make_empty_dir()
+>   ubifs: Use FSTR() in ubifs_xattr_{set,get,remove}()
+> 
+>  fs/btrfs/inode.c        | 3 +--
+>  fs/btrfs/ioctl.c        | 3 +--
+>  fs/btrfs/super.c        | 3 +--
+>  fs/f2fs/dir.c           | 7 ++-----
+>  fs/ubifs/xattr.c        | 6 +++---
+>  include/linux/fscrypt.h | 1 +
+>  6 files changed, 9 insertions(+), 14 deletions(-)
 
-> From: Dmitry Torokhov <dtor@google.com>
->
-> Filenames consisting only of ignorable Unicode characters fold to empty
-> strings, and names with leading dots and ignorable characters can fold
-> to "." or "..". Allowing such names in casefolded directories can corrupt
-> directory structure or cause confusion with special entries.
->
-> Reject any non-dot names that fold to empty, ".", or ".." during
-> casefolded name setup, while still allowing invalid UTF-8 sequences to
-> be handled as opaque byte sequences when strict mode is not enabled.
->
-> Fixes: 2c2eb7a300cd ("f2fs: Support case-insensitive file name lookups")
-> Signed-off-by: Dmitry Torokhov <dtor@google.com>
-> Signed-off-by: Sarthak Kukreti <sarthakkukreti@google.com>
+Applied to https://git.kernel.org/pub/scm/fs/fscrypt/linux.git/log/?h=for-next
 
-I don't have any comments on this one.  Fell free to add:
-
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
-
--- 
-Gabriel Krisman Bertazi
+- Eric
 
 
 _______________________________________________
