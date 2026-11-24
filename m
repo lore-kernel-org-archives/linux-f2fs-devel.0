@@ -1,91 +1,143 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9597606A321
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Nov 2026 19:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B042606A331
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Nov 2026 19:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=ji99c1Cx;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=JDAekE8Z;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=b6k9euVe;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PEMxZX2l
+	dkim=pass (1024-bit key, unprotected) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=DT87lSri;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=dRju36jq;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=geFiXGvc;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=wiT8Ya5/;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=dk5YjynB;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=h2LQ/IDI;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=Sa6ZruAS
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Unsubscribe-Post:List-Owner;
-	bh=sKFk5HCFiL2cUZ0WzU6cz58YE5jJpqYWml/Mal2p4y8=; b=ji99c1CxJxNVE5kRCAju5Ijmev
-	BEqiXp4AhbYzfK9hvxSqaCoaIERnJqiTqKeYw8x7ClfR247pjLrhoRZqf4vYNJrSWKWmDjj9NeOJC
-	50yL64Uy3tJATqX5vZLbvxpd9pg//+HpWZr9fysA+Ct2JAhY0taKCgRXtTjA9zEgo+kQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:References:In-Reply-To:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Unsubscribe-Post:List-Owner;
+	bh=Et0X8JE25fa5Krvj25T1ZI8dLYxQwWTV5pdkuuBXmgQ=; b=DT87lSriBd1PAuGs5qNmx3MDJv
+	atZPW6wGXXnZlt1XpRR4LgI5BfmPV86WySP4PUJMnrwobotNeBv9OdrK8Ejjxta8yoNPDHbPR5tpg
+	gJ63csCFX1KHnmIHEyCLpt3oEvp7dEUlgdgWvnBwTVBAqyUHpEQGhtVPYRmAjQ3mmJs4=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xVZZ6-0000000066P-3s28;
-	Mon, 23 Nov 2026 19:19:00 +0000
+	id 1xVwJu-000000002XH-2SQv;
+	Tue, 24 Nov 2026 19:36:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <zlang@kernel.org>) id 1xVZZ6-0000000066J-0cId
+ (envelope-from <krisman@suse.de>) id 1xVwJs-000000002XA-3BhX
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Nov 2026 19:19:00 +0000
+ Tue, 24 Nov 2026 19:36:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/GLZp1BMV/knfxh1EGIGcBPe8IPdbsKAYtyB5Pymdzw=; b=JDAekE8ZX1zWRZimq5QUbKxeQW
- uNpRSMaKVgnCGyZTDzNxH4YGy/fzRaOYm1OsYEB7jOFUOsLcaN+YZvh54326+9NIp+6HBQVBZ+Yzg
- aQfmIJxYhPfagazyiW/jZcZXW3kcI/DXmFAeb2ftF4l9u4v8YCOo6C5eW86qrzxmH3HI=;
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
+ References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=; b=d
+ Rju36jqI2DKs5ZQ5aOsJRTAzyf61yBQnW0yDwNLrJuBENp9col7c2EGcH8ilmaVUzsZQtW1VtUy0g
+ FBfBY+VoaV+YiYi+2umu4mcBXfpE57J/1sFa2XZ4aIoAeh0mG5r9RTe238JZHFqYmorp/NgwicMLj
+ mevKiSJsZcH4iiMc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
+ Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/GLZp1BMV/knfxh1EGIGcBPe8IPdbsKAYtyB5Pymdzw=; b=b6k9euVe62/nNvjew2yGxYDhQq
- 7nZETzJt8BF7jVFdWRFfaIFL7fzvx2CZiXSOBXTigFI7ov1PCeN9AAaJN2ZPqmTmtd5KvJ9DrKC9l
- dnaAR1wkzpLkXCKBULFALPSwr9rhz59zCllM9jb6Kv19l1EutgIpRu69oQHvJvSPAFpA=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xVZZ4-000000004hL-20A2
+ bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=; b=geFiXGvcExLOmvKlYqJZ/nh8Jm
+ u9i6kVJwcaG8AM3SSglVWp32qPEx0B4CZY7qtrWdAimjj3/05VrWJnvhLzFtY2wT8XE73ukyp4SlZ
+ zAUpmqe5aZy+Pca94QMjgJfh24DjONet4BvEaO7iSa+9ReTbnPikX9+3rtBJ6K0oOtRc=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.100.1)
+ id 1xVwJr-000000002yr-3TqE
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Nov 2026 19:19:00 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id CA2526246A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 23 Nov 2026 19:18:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 178051F000EE;
- Mon, 23 Nov 2026 19:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1795461532;
- bh=/GLZp1BMV/knfxh1EGIGcBPe8IPdbsKAYtyB5Pymdzw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=PEMxZX2lLAmo+0xpH03+7EwrZli3yKCNROivpy/DKjqvU2I8xNWpyDUV3TqDAWgpz
- ltZrbKxcY1uUsa++BPx7w/1Cio3WhGQRPZ3iao/GLTV0YzQydv4hZto/RPV6vhiYA2
- z4zSShRvWK4DAxYwSfe6o2HVw7m+MKqvZF9b03W17PlDugn/06uxSIlnO1mMim3xMY
- eX96HQnIRaV1dSYEcW5midq+ZWsr4zoi39lr2JAdEve9+KeUN+AYE2xssWiqr8RlOu
- bE7sriTUbficy6rw2nCIn+u9onK3qiCOK3A/KXnRZaA+ksELplTgsxZlezyXW4DIBk
- gYK44SF7EQOEQ==
-Date: Tue, 24 Nov 2026 03:18:43 +0800
-To: Anand Jain <asj@kernel.org>
-Message-ID: <awSPgGGZv7u6_SGM@zlang-mailbox>
-Mail-Followup-To: Anand Jain <asj@kernel.org>, linux-btrfs@vger.kernel.org, 
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, fstests@vger.kernel.org
-References: <cover.1791272793.git.asj@kernel.org>
- <768152d1-4215-4f27-a3ca-50252c5b5d9a@kernel.org>
+ Tue, 24 Nov 2026 19:36:48 +0000
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 478C6223AC;
+ Tue, 24 Nov 2026 19:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1795549001; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
+ b=wiT8Ya5/HG/DD7Q5wA50FeGnqRAYEFpM2ufxuc+W83Q6gRGxfoIYZsDrPVVbICmn2yN0jR
+ zFQD1oULjCblWWQrr4MdUF9IJU0wupvY9z9oPW49UQ8qXuHoODMBmcEwPuLzHxTUJJWuic
+ k7io5RDNUB4iTiKm0l2npXMZ9qLa0po=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1795549001;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
+ b=dk5YjynBJCrj49GitF84RZJ2dgPePHqam+YuV+QitmjE0rZOV8sppZVHzD3Btg3owvQ2To
+ 8SM1E9W+dG+2yLDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1795549000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
+ b=h2LQ/IDI9VLQ3E7Tws5WfCPIkt0HGGmYoA6Xu62TnhdKBtRQ2fD/djQW0dwzL5JR2J9j1j
+ pdDK/TBHwSkSZJ3/qN7t5zHtiihHkeJx8/b2AbVB0RzV7/090vvuDXmQMqGEA8QXYJQyqD
+ 9NdTAtzQceGIwZ8JCBlpSqI3QJlb49Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1795549000;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=rbfQPnb/bGQ2Gkjp6lt26EZDU8eKMGkAA4M/WWEU8/c=;
+ b=Sa6ZruAStbYSh68HiIXKLUc20jCF9BCiQzCoDpqGZbSNX4Y9yzhFNZQxtV9YnS6mNixIuB
+ 86j1GlyndVGeVaCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE3181339F;
+ Tue, 24 Nov 2026 19:36:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id VZNQJUfnBWs1aQAAD6G6ig
+ (envelope-from <krisman@suse.de>); Tue, 24 Nov 2026 19:36:39 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Sarthak Kukreti via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>, Theodore Ts'o <tytso@mit.edu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+In-Reply-To: <20261119214944.1480596-2-sarthakkukreti@google.com>
+Organization: SUSE
+References: <20261119214944.1480596-1-sarthakkukreti@google.com>
+ <20261119214944.1480596-2-sarthakkukreti@google.com>
+Date: Tue, 24 Nov 2026 14:36:38 -0500
+Message-ID: <87pkvuc989.fsf@cartola>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <768152d1-4215-4f27-a3ca-50252c5b5d9a@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-12.80 / 50.00]; SUSE_INTERNAL_BYPASS(-9.00)[];
+ BAYES_HAM(-3.00)[100.00%]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
+ MIME_GOOD(-0.10)[text/plain]; MISSING_XM_UA(0.00)[];
+ ARC_NA(0.00)[]; MIME_TRACE(0.00)[0:+]; HAS_ORG_HEADER(0.00)[];
+ RCPT_COUNT_TWELVE(0.00)[13]; RCVD_VIA_SMTP_AUTH(0.00)[];
+ RCVD_TLS_ALL(0.00)[];
+ DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ FROM_HAS_DN(0.00)[]; TO_DN_SOME(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
+ RCVD_COUNT_TWO(0.00)[2];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo, dirent.name:url,
+ decrypted_name.name:url]
+X-Spam-Score: -12.80
 X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xVZZ4-000000004hL-20A2
-Subject: Re: [f2fs-dev] [PATCH 0/21] fstests: tests for cloned filesystem
- validation and f_fsid
+X-Headers-End: 1xVwJr-000000002yr-3TqE
+Subject: Re: [f2fs-dev] [PATCH v2 1/3] libfs: reject casefolded names that
+ fold to ".", "..", or empty
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,177 +147,180 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Zorro Lang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Zorro Lang <zlang@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Sarthak Kukreti <sarthakkukreti@google.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Dmitry Torokhov <dtor@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_PASS,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, Nov 23, 2026 at 10:01:03AM +0800, Anand Jain wrote:
-> Zorro,
-> 
->  Could we merge the patches in stages? What's your plan?
+Sarthak Kukreti via Linux-f2fs-devel
+<linux-f2fs-devel@lists.sourceforge.net> writes:
 
-Hi Anand,
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 46e0205154e7..77997f88e475 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1828,13 +1828,21 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+>  	const struct inode *dir = READ_ONCE(dentry->d_inode);
+>  	struct super_block *sb = dentry->d_sb;
+>  	const struct unicode_map *um = sb->s_encoding;
+> +	unsigned char buf[3];
+>  	int ret;
+>  
+>  	if (!dir || !IS_CASEFOLDED(dir))
+>  		return 0;
+>  
+>  	ret = utf8_casefold_hash(um, dentry, str);
+> -	if (ret < 0 && sb_has_strict_encoding(sb))
+> +	if (ret < 0) {
+> +		if (sb_has_strict_encoding(sb))
+> +			return -EINVAL;
+> +		return 0;
+> +	}
+> +
+> +	ret = utf8_casefold(um, str, buf, sizeof(buf));
+> +	if (ret == 0 || (ret > 0 && name_is_dot_dotdot(buf, ret)))
+>  		return -EINVAL;
 
-Sorry for the long delay in reviewing v9 since the last round. The review
-queue has been getting quite heavy lately, so large patchsets with a lot
-of changes often end up getting pushed back. I just did a quick, high-level
-review of this series. If you agree to drop the two IMA-related patches from
-the next version (and send them separately later), that should help get the
-rest of this patchset merged much faster :)
+I really dislike the idea of doing utf8_casefold here. even on a
+small substring.  We are walking down the trie a second time just to do it
+again in ->d_compare.
 
-Thanks,
-Zorro
+Consider we don't have negative dentries for casefolded directories.  Is
+there a case where variants of '.' or '..' are ever cached if ->lookup
+rejects them?  I don't think so.  By rejecting the creation of
+'.<empty>' ..<empty> we can guarantee there aren't any variants either.
 
-> 
-> Regards, Anand
-> 
-> 
-> On 6/10/26 16:55, Anand Jain wrote:
-> > This series continues the work from the earlier "test coverage for cloned
-> > filesystem ids" series (last posted as v8 [1]) and has been tested against
-> > the major filesystems: Btrfs, XFS, ext4, and f2fs.
-> > 
-> > Although this version incorporates the review feedback received on v8, it
-> > expands substantially with additional infrastructure helpers, an extra test
-> > case to cover the recent regression report, and migration/cleanup of
-> > existing generic/744. Because the patch count grew from 13 to 21 patches,
-> > disrupting the previous patch numbering and scope, I have reset the
-> > versioning and updated the subject line to better reflect the broader
-> > validation coverage.
-> > 
-> > The core motivation remains identical: testing that mounting a block-level
-> > cloned filesystem concurrently with the original filesystem behaves
-> > correctly across filesystems and VFS subsystems (fanotify, statfs/f_fsid,
-> > libblkid resolution, IMA measurement, exportfs file handles, and
-> > metadata_uuid handling).
-> > 
-> > Summary of major changes since v8:
-> > - Added 1 new regression test case to verify statfs f_fsid derivation against FS UUID.
-> > - Dropped the test case verifying f_fsid persistence across mount cycles on
-> >   cloned filesystems, as this assumption is no longer valid following the Btrfs kernel
-> >   regression fix [2].
-> > - Introduced common helpers:
-> >   . _require_security_ima() and _require_metadata_uuid().
-> >   . _scratch_mkfs_uuid() and helpers for f_fsid verification.
-> > - Migrated generic/744 to utilize the new common clone helpers.
-> > - Worked on the review comments.
-> > 
-> > Details of changes:
-> > - _create_cloned_loop_devs():
-> >   . Renamed from _loop_image_create_clone() to _create_cloned_loop_devs().
-> >   . Relocated backing image files from "$TEST_DIR/${seq}.*" to a dedicated
-> >     directory "$TEST_DIR/${seq}/*".
-> >   . Added internal call to _require_clone_mount().
-> >   . Switched from _create_loop_device() to _create_loop_device_like_bdev()
-> >     to guarantee identical logical/physical sector sizes (512 vs 4096)
-> >     between the original and cloned loop devices.
-> >   . Used an intermediate local setup step to ensure consistent Direct I/O
-> >     attributes across both loop devices (preventing the first device from
-> >     enabling DIO while the cloned device fell back to buffered mode).
-> >   . Added device geometry and DIO attribute dump to $seqres.full for debugging.
-> >   . Renamed teardown helper _loop_image_destroy() to _destroy_cloned_loop_devs().
-> > - _clone_mount_options():
-> >   . Renamed from _clone_mount_option() to _clone_mount_options().
-> > - _require_metadata_uuid():
-> >   . Factored out prerequisite checks from _change_metadata_uuid() into a new
-> >     dedicated helper _require_metadata_uuid() and invoked it accordingly.
-> > - _require_clone_mount():
-> >   . Introduced new helper to check kernel support for concurrent clone mounts.
-> >   . Removed obsolete _require_duplicate_fsid() in favor of _require_clone_mount().
-> > - _require_security_ima():
-> >   . Introduced new helper to check securityfs and IMA policy availability.
-> > - _create_loop_device_like_bdev():
-> >   . Removed unused local variable 'dev'.
-> > 
-> > - Test Cases common update:
-> >   - Adjusted test groups: replaced 'clone' with 'tempfsid'.
-> >   - Standardized test exits: replaced open-coded "status=0; exit" with "_exit 0".
-> >   - Dropped stale "_require_block_device $TEST_DEV" checks left over from before
-> >     migrating tests to loop devices.
-> >   - Percolated helper renames across all tests:
-> >     . _loop_image_create_clone -> _create_cloned_loop_devs
-> >     . _loop_image_destroy      -> _destroy_cloned_loop_devs
-> >     . _clone_mount_option      -> _clone_mount_options
-> >   - Added cleanup of "$TEST_DIR/$seq" in test exit/cleanup handlers.
-> > 
-> > - Test Cases Individual Updates:
-> >   - generic/744:
-> >     . Replaced _require_duplicate_fsid with _require_clone_mount().
-> >     . Migrated to common _create_cloned_loop_devs() and _clone_mount_options().
-> >   - generic/902:
-> >     . New regression test case added to verify statfs f_fsid derivation against filesystem UUID.
-> >   - generic/903:
-> >     . Added --noheadings flag to findmnt queries for cleaner output parsing.
-> >   - generic/904:
-> >     . Dropped 'auto' and 'quick' from test groups due to runtime and policy requirements.
-> >     . Updated referenced kernel commit IDs.
-> > 
-> > [1] https://lore.kernel.org/fstests/cover.1784949154.git.asj@kernel.org
-> > [2] 72de4807ba84 ("btrfs: derive f_fsid with dev_t only when temp_fsid is active")
-> > 
-> > Anand Jain (21):
-> >   fstests: introduce _require_clone_mount() helper
-> >   fstests: introduce _create_cloned_loop_devs() helper
-> >   fstests: add _clone_mount_options() helper
-> >   fstests: add FSNOTIFYWAIT_PROG
-> >   fstests: add _require_fanotify_function
-> >   fstests: add _require_unique_f_fsid() helper
-> >   fstests: add SEMANAGE_PROG
-> >   fstests: verify fanotify isolation on cloned filesystems
-> >   fstests: introduce helper _scratch_mkfs_uuid()
-> >   fstests: add helpers to verify the expected f_fsid
-> >   fstests: verify statfs f_fsid is derived from the filesystem UUID
-> >   fstests: verify libblkid resolution of duplicate UUIDs
-> >   fstests: introduce _require_security_ima() helper
-> >   fstests: verify IMA isolation on cloned filesystems
-> >   fstests: verify exportfs file handles on cloned filesystems
-> >   fstests: introduce _require_metadata_uuid() helper
-> >   fstests: add _change_metadata_uuid helper
-> >   fstests: test UUID consistency for clones with metadata_uuid
-> >   fstests: generic/744: use new helper _require_clone_mount()
-> >   fstests: generic/744: migrate to _create_cloned_loop_devs()
-> >   fstests: _create_loop_device_like_bdev() remove unused variable
-> > 
-> >  common/config         |   2 +
-> >  common/rc             | 262 +++++++++++++++++++++++++++++++++++++++---
-> >  tests/generic/744     |  72 +++++-------
-> >  tests/generic/901     | 142 +++++++++++++++++++++++
-> >  tests/generic/901.out |   7 ++
-> >  tests/generic/902     |  38 ++++++
-> >  tests/generic/902.out |   2 +
-> >  tests/generic/903     |  71 ++++++++++++
-> >  tests/generic/903.out |   6 +
-> >  tests/generic/904     | 113 ++++++++++++++++++
-> >  tests/generic/904.out |  10 ++
-> >  tests/generic/905     |  79 +++++++++++++
-> >  tests/generic/905.out |   2 +
-> >  tests/generic/906     |  74 ++++++++++++
-> >  tests/generic/906.out |   6 +
-> >  15 files changed, 827 insertions(+), 59 deletions(-)
-> >  create mode 100644 tests/generic/901
-> >  create mode 100644 tests/generic/901.out
-> >  create mode 100644 tests/generic/902
-> >  create mode 100644 tests/generic/902.out
-> >  create mode 100644 tests/generic/903
-> >  create mode 100644 tests/generic/903.out
-> >  create mode 100644 tests/generic/904
-> >  create mode 100644 tests/generic/904.out
-> >  create mode 100644 tests/generic/905
-> >  create mode 100644 tests/generic/905.out
-> >  create mode 100644 tests/generic/906
-> >  create mode 100644 tests/generic/906.out
-> > 
-> 
+Assuming these don't exist in the dcache, why not let utf8_casefold_hash
+hash to a non-existing dentry?  d_compare will not find it, go to
+->lookup and only the filesystem needs special handling to reject
+invalid names.  The vast majority of real lookups will hit the dcache
+and never pay the cost of this check.
+
+If we *must* check the dcache for some reason I miss, can we do it
+*only* in d_compare?  There, we are doing some kind of utf8_casefold
+anyway.  We can modify utf8_strncasecmp to return the casefolded string,
+which we can byte compare for dotdot, avoiding multiple walks over the
+trie.
+
+>  	return 0;
+>  }
+> @@ -1907,10 +1915,28 @@ int generic_ci_match(const struct inode *parent,
+>  	    !memcmp(name->name, dirent.name, dirent.len))
+>  		goto out;
+>  
+> -	if (folded_name->name)
+> +	if (name_is_dot_dotdot(dirent.name, dirent.len) ||
+> +	    name_is_dot_dotdot(name->name, name->len) ||
+> +	    (folded_name->name &&
+> +	     (!folded_name->len ||
+> +	      name_is_dot_dotdot(folded_name->name, folded_name->len))))
+> {
+
+Most of these checks seems unnecessary.
+
+First, if name_is_dot_dotdot(dirent.name) is true, which I'm not sure
+can really happen, it only matters if name_is_dot_dotdot(name->name) or
+name_is_dot_dotdot(folded_name->name) is also true, because then we have
+a match.  Otherwise, there's no match.  Checking both seems redundant.
+
+But also, if name_is_dot_dotdot(name->name) is true, that means we are
+doing an exact search for '.' or '..', which, IIUC, the VFS will handle
+specially and not call this code?
+
+I think the only thing you need to check here is:
+
+name_is_dot_dotdot(folded_name->name, folded_name->len)
+
+if folded_name exists.  If it doesn't, that's because the cached name
+initialization failed and you might need to do the utf8_casefold +
+name_is_dot_dotdot() dance you do in the hunk below:
+
+
+> +
+> +	if (folded_name->name) {
+>  		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
+> -	else
+> +	} else {
+> +		unsigned char buf[3];
+> +		int cf_len = utf8_casefold(um, name, buf, sizeof(buf));
+> +
+> +		if (cf_len == 0 ||
+> +		    (cf_len > 0 && name_is_dot_dotdot(buf, cf_len))) {
+> +			res = 1;
+> +			goto out;
+> +		}
+>  		res = utf8_strncasecmp(um, name, &dirent);
+> +	}
+>  
+>  out:
+>  	kfree(decrypted_name.name);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 5b3a100aba77..22c411e046ce 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3368,28 +3368,26 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+>   * generic_ci_validate_strict_name - Check if a given name is suitable
+>   * for a directory
+>   *
+> - * This functions checks if the proposed filename is valid for the
+> - * parent directory. That means that only valid UTF-8 filenames will be
+> - * accepted for casefold directories from filesystems created with the
+> - * strict encoding flag.  That also means that any name will be
+> - * accepted for directories that doesn't have casefold enabled, or
+> - * aren't being strict with the encoding.
+> + * This function checks if the proposed filename is valid for the
+> + * parent directory. Names that casefold to "", ".", or ".." are
+> + * rejected for all casefolded directories. When the filesystem is
+> + * created with the strict encoding flag, only valid UTF-8 filenames
+> + * are accepted for casefolded directories.
+>   *
+>   * @dir: inode of the directory where the new file will be created
+>   * @name: name of the new file
+>   *
+>   * Return:
+> - * * True: if the filename is suitable for this directory. It can be
+> - *   true if a given name is not suitable for a strict encoding
+> - *   directory, but the directory being used isn't strict
+> - * * False if the filename isn't suitable for this directory. This only
+> - *   happens when a directory is casefolded and the filesystem is strict
+> - *   about its encoding.
+> + * * True: if the filename is suitable for this directory.
+> + * * False: if the filename isn't suitable for this directory.
+>   */
+>  static inline bool generic_ci_validate_strict_name(struct inode *dir,
+>  						   const struct qstr *name)
+>  {
+> -	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
+> +	unsigned char buf[3];
+> +	int len;
+> +
+> +	if (!IS_CASEFOLDED(dir))
+>  		return true;
+>  
+>  	/*
+> @@ -3399,6 +3397,13 @@ static inline bool generic_ci_validate_strict_name(struct inode *dir,
+>  	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
+>  		return true;
+>  
+> +	len = utf8_casefold(dir->i_sb->s_encoding, name, buf, sizeof(buf));
+> +	if (len == 0 || (len > 0 && name_is_dot_dotdot(buf, len)))
+> +		return false;
+> +
+
+With this in place we should not be creating new files that turn into '.'
+and '..'.  If we also reject to create them during a lookup, I think it
+is enough to drop the dcache callback changes.
+
+-- 
+Gabriel Krisman Bertazi
 
 
 _______________________________________________
