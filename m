@@ -1,13 +1,13 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05071606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BA2606A699
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Nov 2026 10:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=CukYGx4F;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=GEMyt8DI;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=Rb0C4xVL;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i6Wa8Ysr
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=Qlq1QbS7;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=hYpZBtCH;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=KysiwcwJ;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IHzHn/Ug
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
@@ -15,29 +15,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=zyTlFUsrsArL2e6iY0zA7seRSt4Mw49zMnr2ABTWkoE=; b=CukYGx4F3Ett6LetLTa/WWa+ng
-	tlJDZOLAG8H50/fIb4ERA6N8RlmRRCrdoQNwirADGJO1hvx0wts9d/a7iFWApDnS1+EjXrYYbFgLb
-	PRkGhacVQR56rQ5GUQIFveHc5LqwEOeGi8o4oBgMOQsMLi1z3q/z7kIiXcw00pGvXMKQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=lh0EtfhB4sayUjt7xPE7VxfU+WfnrjFqZTnlF2ty294=; b=Qlq1QbS7TDG8cAWVtVmwvGDfVO
+	/PrOK+ftcUnRSLoex0QO8LKXr5B4ohkMoqTfSCBunmNurjeqtjCNhyTTCq6TRiR3k9GK/0Cp+gMUk
+	cWUc4tEMyJNRM65Knb84dZQAJ21peLjpxzGEdfKykqfIqlTBRWgi/SljH0TgXyj3WV/s=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xWtcy-000000002oh-37sY;
-	Fri, 27 Nov 2026 10:56:28 +0000
+	id 1xWtcz-000000006Vg-1cHz;
+	Fri, 27 Nov 2026 10:56:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xWtcw-000000002ob-3k1N
+ (envelope-from <chao@kernel.org>) id 1xWtcy-000000006VW-1L8Z
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 27 Nov 2026 10:56:26 +0000
+ Fri, 27 Nov 2026 10:56:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PcIDSrMX4GfRswyhZ8Mr5fmEaIdp0nKGVydna+0B8qU=; b=GEMyt8DIe+3uRfztcdaHsXVtbT
- bH/YkJaz2U4FE14/a4dGcM4auRKXg+7t9qG4vXGnDMPP/G3qBiQYO5LpDA6DeGXR9KwBa86NlBY/q
- +1njjISyWRyxduY1q9NWgVNnT3gSh7k4MuKWeFkdHU9pwX9w6ASATKLjdSX5EQusO0y4=;
+ bh=QAh84q6dLbI/ZquU3Mza3G28fl4mzR7JeprffGBtWYo=; b=hYpZBtCHAfJUbLodXvtXxt4820
+ j5u/+fXOEtIFf+J0YBbg7OCAMr0YWNc/V6qwqDbQWjdgmaPNA99b2Ku6dJqwUHDnD7D1yooloj192
+ aOKVag/J2M2zq0ZEgeIF1ypRb6WMQoh86nmnfgWqQHOWKPYBc6epnZ1tZBoew2hMxQDc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -45,43 +45,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PcIDSrMX4GfRswyhZ8Mr5fmEaIdp0nKGVydna+0B8qU=; b=Rb0C4xVLI8D6K97Ck3KYHmir91
- YkFGCXAGQgkjvFVSRjSborC/2zGPs1w1bK0tQxMkOaoYIjTMAIKSQrXdQeyHZH6KBrnQtPC9bd4An
- hdGcU9HPZqJE/lSdNg3qHFOV3GizGp/4tIHEySPbz16+IysMo3/T4cWX9p6Xk+vQLOK4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=QAh84q6dLbI/ZquU3Mza3G28fl4mzR7JeprffGBtWYo=; b=KysiwcwJfEvUlE7rnsHv+NHIIt
+ US5QTmsq6HPXfJDt0o9Y4w6+MIvD11DWCzMWNuZ3417t+zpWwH2+e3TWNrymwMsFnYrKtnruFg8TT
+ wcjbD3fT5Dr7Asj0MZaIvdS1fp41N3LVCruJA5/zrlO8n91NzwuAB/m9LM8S3ejLNxsk=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xWtcs-000000006A9-2TfN
+ id 1xWtcv-000000001Be-1XNA
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 27 Nov 2026 10:56:26 +0000
+ Fri, 27 Nov 2026 10:56:28 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id E65696240F
+ by sea.source.kernel.org (Postfix) with ESMTP id 17493454F1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 27 Nov 2026 10:56:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64DC1F0089B;
- Fri, 27 Nov 2026 10:56:15 +0000 (UTC)
+ Fri, 27 Nov 2026 10:56:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01BC21F00926;
+ Fri, 27 Nov 2026 10:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1795776976;
- bh=PcIDSrMX4GfRswyhZ8Mr5fmEaIdp0nKGVydna+0B8qU=;
+ s=k20260515; t=1795776979;
+ bh=QAh84q6dLbI/ZquU3Mza3G28fl4mzR7JeprffGBtWYo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=i6Wa8YsrXOYlquO8VqjYTWal3vnNjX8cX+bD198l0isO1KAAP5XYTKyKsLYPA/Sqs
- ZEPkm9FoI1xUv40386Dg9hcjD+tADctA6ZbBDDm6Og2QH21VFoiBCPJ21AcNg5MxXK
- 7MSzBMtPK1ypOQdbQtvI31PnKnza3cyY6sz973Ujr/cJ3EQHLb4U2vweT7hQVe8SXp
- GTMtaRWcF7EaAYYmw0ZD9a6Xds7ztu4gK8NYn8uIvQFR/4Sr0XhByEtVcjMI/UpBqz
- OfIJaRU4h1FD1o5YpDUsT4EItzMJoyO7FrjFNSA6pQk2zA3ph6rBsynkCv5hnwbH4i
- FEFdTCNc8lzXw==
+ b=IHzHn/UgRN1GswdchlZznL5F3U6pEHEuSM0sjGOXNlX12egXX+zbmjSOTTUURNZC4
+ FR1qFVVmxVCMGpy77lUC3UAGiHS/+Z5AnacISl+bYe7zew4vccqxOwPvs2PxA2na5x
+ 8huf30WCu/wphxOfjgywezVXfWWYUGk7u/NwQpysXgEIMfRwMDQg31/amaWSF+laRr
+ wx+wlncehZeJRR1XKgQ4ghOic8yoSUba9iaR/9hm8ENH8qFzttgqYj8QwzXQuihbgA
+ N9rnepDV/MLj2xilr4j2TQ2sqxTkMiXQUp01rOPgCKOYud3jhjGV/pSLas0qg7XzaE
+ XJH77sG8heSqQ==
 To: jaegeuk@kernel.org
-Date: Fri, 27 Nov 2026 10:56:09 +0000
-Message-ID: <20261127105608.537148-9-chao@kernel.org>
+Date: Fri, 27 Nov 2026 10:56:11 +0000
+Message-ID: <20261127105608.537148-11-chao@kernel.org>
 X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
 In-Reply-To: <20261127105608.537148-8-chao@kernel.org>
 References: <20261127105608.537148-8-chao@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xWtcs-000000006A9-2TfN
-Subject: [f2fs-dev] [PATCH v2 2/7] f2fs: fix to return -EIO from
- f2fs_sync_fs() if cp_error is set
+X-Spam-Score: 0.8 (/)
+X-Headers-End: 1xWtcv-000000001Be-1XNA
+Subject: [f2fs-dev] [PATCH v2 4/7] f2fs: fix to truncate stale meta cache
+ entry on in-place update
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,143 +106,151 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Chao Yu <chao@kernel.org>
 
-f2fs_sync_fs() returns 0 w/o doing checkpoint once cp_error is set, so
-its callers can not tell whether checkpoint was done or not.
+GC migrates data blocks of the inode which requires meta inode GC via
+meta cache, and it trusts an uptodate entry w/o reading the block from
+disk again, in both ra_data_block() and move_data_block().
 
-For a file which needs a checkpoint to persist its fsynced data, e.g. a
-compressed file (CP_COMPRESSED), f2fs_do_sync_file() calls
-f2fs_sync_fs(). So if shutdown (e.g. F2FS_GOING_DOWN_NOSYNC) races w/
-fsync, after f2fs_sync_file() passed its cp_error check, fsync() returns
-0 while neither checkpoint nor fsync node blocks were written: after
-recovery, the fsynced data of the compressed file is rolled back to an
-old version or lost.
+However, in-place update paths only truncate the entry if the inode
+requires meta inode GC at the time of writing:
+- f2fs_inplace_write_data() checks fio->meta_gc
+- f2fs_wait_on_block_writeback_range() for DIO checks
+f2fs_meta_inode_gc_required()
 
-In addition, syncfs(2) and F2FS_IOC_WRITE_CHECKPOINT report false
-success on a stopped filesystem as well, whereas other filesystems
-return -EIO from ->sync_fs after shutdown.
+f2fs_meta_inode_gc_required() returns true for atomic and COW files,
+which is a temporary state, so an entry cached during atomic write, or
+cached before the block was donated by F2FS_IOC_MOVE_RANGE, can survive
+in-place update once the owner does not require meta inode GC, then GC
+will migrate stale data from the entry once the owner requires meta
+inode GC again, resulting in overwriting valid data.
 
-Note that f2fs_write_checkpoint() already returns -EIO if cp_error is
-set, so callers of f2fs_sync_fs() have to handle -EIO anyway.
+Case #1: atomic write
 
-So let's return -EIO from f2fs_sync_fs() if cp_error is set, and in
-f2fs_do_sync_file(), bail out w/o clearing FI_APPEND_WRITE and
-FI_UPDATE_WRITE if f2fs_sync_fs() fails, as the non-checkpoint path
-already does after f2fs_fsync_node_caches().
+- App (file F)				- GC
+- ioctl(F2FS_IOC_START_ATOMIC_WRITE)
+ : f2fs_meta_inode_gc_required(F) is true
+- write F[k], k != j
+					- gc_data_segment() phase 3
+					 - ra_data_block(F, j)
+					  : cache F[j] in META[P]
+- ioctl(F2FS_IOC_COMMIT_ATOMIC_WRITE)
+ - f2fs_commit_atomic_write()
+  - f2fs_down_write(i_gc_rwsem[WRITE])
+					- gc_data_segment() phase 4
+					 - f2fs_down_write_trylock(i_gc_rwsem[WRITE])
+					 : fail, skip F[j]
+  - __f2fs_commit_atomic_write()
+  : only F[k] is replaced, F[j] is still mapped to P
+  - f2fs_up_write(i_gc_rwsem[WRITE])
+ - f2fs_abort_atomic_write()
+  - clear_inode_flag(FI_ATOMIC_FILE)
+- write F[j] w/ new data, fdatasync()
+ - f2fs_inplace_write_data()
+ : fio->meta_gc is false, META[P] becomes stale
+- ioctl(F2FS_IOC_START_ATOMIC_WRITE)
+					- gc_data_segment() phase 3
+					 - ra_data_block(F, j)
+					 : META[P] is uptodate, skip reading
+					- gc_data_segment() phase 4
+					 - move_data_block(F, j)
+					 : META[P] is uptodate, skip reading
+					  - memcpy(tentry, sentry)
+					  - f2fs_update_data_blkaddr(newaddr)
+					 : F[j] was rolled back to old data
 
-For shutdown, F2FS_GOING_DOWN_METASYNC and F2FS_GOING_DOWN_NEED_FSCK
-have already converted -EIO from f2fs_sync_fs() to 0, however,
-F2FS_GOING_DOWN_FULLSYNC fails w/ -EIO once cp_error is set, e.g. when
-the filesystem is shutdown again, because:
+Case #2: F2FS_IOC_MOVE_RANGE
 
-- f2fs_do_shutdown
- - bdev_freeze
-  - fs_bdev_freeze
-   - freeze_super
-    - sync_filesystem
-     - f2fs_sync_fs_super
-      - f2fs_sync_fs
-      : return -EIO due to cp_error
-    - f2fs_freeze
-    : return -EIO due to cp_error as well
+- Thread A (src)			- GC			- Thread B (dst)
+- write src[i], P is not checkpointed
+- ioctl(F2FS_IOC_START_ATOMIC_WRITE)
+					- gc_data_segment() phase 3
+					 - ra_data_block(src, i)
+					 : cache src[i] in META[P]
+					- gc_data_segment() phase 4
+					 : fail to lock i_gc_rwsem, skip src[i]
+- ioctl(F2FS_IOC_ABORT_ATOMIC_WRITE)
+ - f2fs_abort_atomic_write()
+  - clear_inode_flag(FI_ATOMIC_FILE)
+- ioctl(F2FS_IOC_MOVE_RANGE, src[i] -> dst[j])
+ - f2fs_move_file_range()
+  - __exchange_data_block()
+   - __read_out_blkaddrs()
+   : P is not checkpointed, do not invalidate it
+   - __clone_blkaddrs()
+    - f2fs_replace_block(dst[j], P)
+									- write dst[j] w/ new data, fdatasync()
+									 - f2fs_inplace_write_data()
+									 : fio->meta_gc is false, META[P] becomes stale
+									- ioctl(F2FS_IOC_START_ATOMIC_WRITE)
+					- gc_data_segment()
+					 - ra_data_block(dst, j)
+					 - move_data_block(dst, j)
+					 : migrate stale data in META[P]
+					 : dst[j] was overwritten w/ src[i]'s old data
 
-whereas other filesystems return 0 in this case. So let's do the
-conversion for all shutdown modes at the end of f2fs_do_shutdown(), and
-only if cp_error is set, so that the error is still returned to the
-caller if the filesystem was not stopped, e.g. bdev_freeze() fails due
-to other reasons.
+DIO overwrite has the same issue, since f2fs_map_blocks() w/
+F2FS_GET_BLOCK_DIO calls f2fs_wait_on_block_writeback_range() for the
+block which will be overwritten in place.
+
+Before commit 570e2ccc7cb3 ("f2fs: avoid reading already updated pages
+during GC"), ra_data_block() always read the block from disk, then the
+stale entry would be updated before move_data_block() used it.
+
+Let's always truncate the meta cache entry in f2fs_inplace_write_data()
+and f2fs_wait_on_block_writeback_range() regardless of current state of
+the inode, and only wait for writeback of the cache entry when the inode
+requires meta inode GC.
 
 Cc: stable@vger.kernel.org
-Fixes: 1f227a3e215d ("f2fs: stop all the operations by cp_error flag")
+Fixes: b40a2b003709 ("f2fs: use meta inode for GC of atomic file")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
 v2:
-- f2fs_do_shutdown(): if filesystem has stopped already, i.e.
-  bdev_freeze() of F2FS_GOING_DOWN_FULLSYNC or f2fs_sync_fs() of
-  F2FS_GOING_DOWN_METASYNC fails w/ -EIO and cp_error is set, still call
-  f2fs_stop_checkpoint() and do the rest of shutdown, i.e. stop gc and
-  discard threads and drop discard commands, rather than jumping to out.
 - rebase to the latest dev-test branch.
 
- fs/f2fs/file.c  | 25 +++++++++++++++++--------
- fs/f2fs/super.c |  2 +-
- 2 files changed, 18 insertions(+), 9 deletions(-)
+ fs/f2fs/segment.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3caa6ceea554..f1fc0177df1a 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -468,6 +468,8 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 	if (cp_reason) {
- 		/* all the dirty node pages should be flushed for POR */
- 		ret = f2fs_sync_fs(inode->i_sb, 1);
-+		if (ret)
-+			goto out;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 73dc88aa6dde..1bfe1802f7dd 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4305,8 +4305,13 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 		goto drop_bio;
+ 	}
  
- 		/*
- 		 * We've secured consistency through sync_fs. Following pino
-@@ -2764,19 +2766,21 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 	switch (flag) {
- 	case F2FS_GOING_DOWN_FULLSYNC:
- 		ret = bdev_freeze(sb->s_bdev);
--		if (ret)
--			goto out;
-+		if (ret) {
-+			if (ret != -EIO || !f2fs_cp_error(sbi))
-+				goto out;
-+			/* fs has stopped already, shutdown it anyway */
-+			f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_SHUTDOWN);
-+			break;
-+		}
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_SHUTDOWN);
- 		bdev_thaw(sb->s_bdev);
- 		break;
- 	case F2FS_GOING_DOWN_METASYNC:
- 		/* do checkpoint only */
- 		ret = f2fs_sync_fs(sb, 1);
--		if (ret) {
--			if (ret == -EIO)
--				ret = 0;
-+		if (ret && (ret != -EIO || !f2fs_cp_error(sbi)))
- 			goto out;
--		}
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_SHUTDOWN);
- 		break;
- 	case F2FS_GOING_DOWN_NOSYNC:
-@@ -2792,8 +2796,6 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 		set_sbi_flag(sbi, SBI_IS_DIRTY);
- 		/* do checkpoint only */
- 		ret = f2fs_sync_fs(sb, 1);
--		if (ret == -EIO)
--			ret = 0;
- 		goto out;
- 	default:
- 		ret = -EINVAL;
-@@ -2821,6 +2823,13 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
+-	if (fio->meta_gc)
+-		f2fs_truncate_meta_caches(sbi, fio->new_blkaddr, 1);
 +	/*
-+	 * If filesystem has already stopped, e.g. it was shutdown before,
-+	 * bdev_freeze() or f2fs_sync_fs() will fail w/ -EIO, let's return
-+	 * 0 for such case, as other filesystems did.
++	 * GC may have cached this block in meta cache while its owner was in
++	 * atomic write or before it was donated by F2FS_IOC_MOVE_RANGE, so
++	 * truncate it regardless of fio->meta_gc to avoid that GC migrates
++	 * stale data from meta cache later.
 +	 */
-+	if (ret == -EIO && f2fs_cp_error(sbi))
-+		ret = 0;
++	f2fs_truncate_meta_caches(sbi, fio->new_blkaddr, 1);
  
- 	trace_f2fs_shutdown(sbi, flag, ret);
+ 	stat_inc_inplace_blocks(fio->sbi);
  
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b73fc6e75c7a..43ef7a4ac219 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2138,7 +2138,7 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
- 	int err = 0;
+@@ -4494,12 +4499,16 @@ void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	block_t i;
  
- 	if (unlikely(f2fs_cp_error(sbi)))
--		return 0;
-+		return -EIO;
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
- 		return 0;
+-	if (!f2fs_meta_inode_gc_required(inode))
+-		return;
+-
+-	for (i = 0; i < len; i++)
+-		f2fs_wait_on_block_writeback(inode, blkaddr + i);
++	if (f2fs_meta_inode_gc_required(inode)) {
++		for (i = 0; i < len; i++)
++			f2fs_wait_on_block_writeback(inode, blkaddr + i);
++	}
+ 
++	/*
++	 * GC may have cached these blocks in meta cache while their owner
++	 * required meta inode GC, truncate them regardless of current state
++	 * of the inode, since DIO may overwrite them in place.
++	 */
+ 	f2fs_truncate_meta_caches(sbi, blkaddr, len);
+ }
  
 -- 
 2.49.0
