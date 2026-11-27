@@ -1,85 +1,87 @@
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67872606A330
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Nov 2026 10:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DADD606A31F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Nov 2026 10:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=QT+qw7BD;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=RBwmPrNW;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=NzW8DySM;
-	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dV7E1/xo
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.a=rsa-sha256 header.s=beta header.b=mYu0vzUh;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.a=rsa-sha256 header.s=x header.b=Vym/vQqC;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.a=rsa-sha256 header.s=x header.b=R6TgyHAJ;
+	dkim=neutral header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZKFriKmM
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=sj8RLJracueyDpRcuFXdvQsnf0XZ8UZaakAqMLr/zFY=; b=QT+qw7BD8HcYgK3d8jQ7VppD/Z
-	vHN1D85kGL58Gn77x0KqwtvgqLMS6wt0F3imGbumHRmq2nY2pf886YPlVpPjpbNZxVn+Iww5PVWcA
-	cnJuZcCzwQBlcu/zJQN50U+4oQc7eruqk/DwBX2vOddcQEDbjAyeCZAv/4HuPvwHhsNs=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
+	bh=tIY0ca93gVIRCVAN5UajVbzBOq3km+Dhynm2a+Pmkhw=; b=mYu0vzUhC9WJMpQAGQGHuhRUcD
+	vTzkDtslzzwVhqSgIauu4i1dkg6j1HDme4FOxjIXKgPb0vAf79nIJ+2ajkQBBeQ/SNxuAjvYAbnJJ
+	WDLLKdAy+6nBW7mQMMuofedqYADKoMRZjaKgSAV1dO/UD1KXdQvRUJbX/zus9prlBKLk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.100.1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1xWtdM-000000002rt-0bhJ;
-	Fri, 27 Nov 2026 10:56:52 +0000
+	id 1xWtdN-000000006ch-3ZHn;
+	Fri, 27 Nov 2026 10:56:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.100.1)
- (envelope-from <chao@kernel.org>) id 1xWtdL-000000002rf-0kKz
+ (envelope-from <chao@kernel.org>) id 1xWtdL-000000006c2-2HLj
  for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 27 Nov 2026 10:56:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ixpJ8FVsaUtzbYGvKZMv3iePyio0tQ1UpoRhwVro58s=; b=RBwmPrNWYJ6qjez5u+RRL6ebbn
- stIvDsByNUI+ANW6U/s3PqcZ6nxh0h8jfmcJNgj2eHEivY1AjOGe9lS8zlPbW3r8zV5LsdRLjC9iP
- 2f9COvmwFnP8eX7CGFfYvlrc67gnsgrW3JV2vKUAH/5eItbiHLiVFh+nL4ls206pBJNc=;
+ bh=CHN6KXnTS23nYEHkKbB8iinceo2+xcsNFrggmAImSbM=; b=Vym/vQqCmgxs/zLiQHkvq+TrdZ
+ ttTrk/g/Pmin4nG8IeXEjxPfZKUoMZQ5HT09ZCQkxIoaBwpcnDE/MQDPvJSGYpm/prdM82115fbMU
+ 3WXZaf/3ZTLHwhziMWtS1CA4eh1HbGBtz2nIcsTb14cHFj/42V4vovEHDFgjfJqh3oDo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ixpJ8FVsaUtzbYGvKZMv3iePyio0tQ1UpoRhwVro58s=; b=NzW8DySM7weUDpNwBSMy33cUaV
- shVUebqoawZIbim7dP6o1KmxurNnhcbb8formopjheqCCRr7+0SYTQeLWUXwn6rjgckI6gf6s8kTr
- HjnQniq703fH48OnvOdyN+nzt9oLr4HJCSOWKj0ITufc7XCDkGtceHY/zxsPhsfdWTDw=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=CHN6KXnTS23nYEHkKbB8iinceo2+xcsNFrggmAImSbM=; b=R6TgyHAJttRanCBjf3yy9CuW9A
+ IrNY9BJNaXzCA4XlShx9quqg8yeEKEnhD+jjtPwdiad81z/TgZmD5vOrqV37dBPHeyG1m2MUuLrn5
+ ErkQRlAsdiL5svCuUUh27rJALVD1ebR4cHuSoQuTbFHe/bJiF5rN4LW+EOBNELQmracY=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.100.1)
- id 1xWtdJ-000000001Cm-37Mg
+ id 1xWtdK-000000001Co-1xe3
  for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 27 Nov 2026 10:56:51 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 2D3326271D
+ by sea.source.kernel.org (Postfix) with ESMTP id 31B444514F
  for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 27 Nov 2026 10:56:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A0C1F00919;
  Fri, 27 Nov 2026 10:56:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC6BB1F00898;
- Fri, 27 Nov 2026 10:56:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1795777003;
- bh=ixpJ8FVsaUtzbYGvKZMv3iePyio0tQ1UpoRhwVro58s=;
- h=From:To:Cc:Subject:Date;
- b=dV7E1/xohDKd6dZZp3jQtSYpClT4BgLczWrsqp2uTk90zW4T9rl7RjRRbdBWS3dbb
- foptU5l3/U2XrmTRXAM2VWlN8LLDFQGfBkRxzlZ1RthW2PGE8oWXXhtQaFJ8LeSBuq
- wiq89m6iKeoql26dWs8Kz+CxfWTCCGHMMf9tHfbsFp4/zhaVVTxAufKEE2x8po9MyJ
- AxhYnLOsZFDVFHCpnkLdMm+kg39NWhUGtA1/lsuZ4YFhvjSjHtcHEs+1nKQ2ptpRbN
- x6Y+uBqBpt/ux2Vvj9tGAWBhVT9xPG0wQBuj1PfCotveI2I/FY39Gt5cvYrCKSMzFL
- QzZlE60psmvAw==
+ s=k20260515; t=1795777004;
+ bh=CHN6KXnTS23nYEHkKbB8iinceo2+xcsNFrggmAImSbM=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=ZKFriKmM8BgGfH30pJsXD1m3ONDdXkKNs7+kX7bB9M90yEQSaBvUES1CXJLFVhg10
+ fM7TgFF/56eH9lTWn3Q6iKt9NWm0QybRLfu71ZrQLZkSnvBdiSL/Wri8zh97Hg57dC
+ E5hSb1d3z4IWWrV9gItlgx2pw6SY1fzq6yQFkobtwgUEWkjQaBcmXQFwipgM6e6Q50
+ b75Fghs1EoKk8RYKeg+Sk8VI2iSdAu52fQP29s1d4aQx+mRVLS1jvxJeASWtSuCte4
+ eI/qqs6BYL8iuUzTh9V6EqrgcySbjqnJz1tSBCiPFBaVw/e9OCKVsCaNufTJRGGuxy
+ UTrxEVJzAnUug==
 To: jaegeuk@kernel.org
-Date: Fri, 27 Nov 2026 10:56:41 +0000
-Message-ID: <20261127105640.537608-4-chao@kernel.org>
+Date: Fri, 27 Nov 2026 10:56:42 +0000
+Message-ID: <20261127105640.537608-5-chao@kernel.org>
 X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
+In-Reply-To: <20261127105640.537608-4-chao@kernel.org>
+References: <20261127105640.537608-4-chao@kernel.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Spam-Score: -0.2 (/)
-X-Headers-End: 1xWtdJ-000000001Cm-37Mg
-Subject: [f2fs-dev] [PATCH v2 1/3] f2fs: fix to account entry_cnt for all
- write bios
+X-Spam-Score: 0.8 (/)
+X-Headers-End: 1xWtdK-000000001Co-1xe3
+Subject: [f2fs-dev] [PATCH v2 2/3] f2fs: introduce max_write_bio_{folio,
+ entry}_cnt module parameters
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,8 +93,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -105,72 +106,190 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 From: Chao Yu <chao@kernel.org>
 
 Commit f32744a8b83d ("f2fs: introduce max_atc_write_bio_entry_cnt")
-tracks the number of entries queued to a write bio via entry_cnt, so
-that f2fs_write_end_io() can offload the completion of a write bio with
-too many entries to sbi->wq if it is called in atomic context.
+added a per-superblock sysfs entry, max_atc_write_bio_entry_cnt, to
+offload the completion of a write bio to sbi->wq if it contains too
+many entries and f2fs_write_end_io() is called in atomic context.
 
-However, entry_cnt is only increased in f2fs_submit_page_write() and
-f2fs_submit_cache_write(), it misses below write paths:
-- f2fs_submit_page_bio(): single folio write bio.
-- add_bio_entry(): the first folio of an IPU write bio.
-- add_ipu_page(): folios merged into an IPU write bio.
+However, it has two issues:
 
-So entry_cnt of these bios is less than the actual number of folios,
-and a merged IPU write bio, which may contain up to BIO_MAX_VECS folios,
-will never be offloaded to sbi->wq, then it may be completed in atomic
-context with high latency. Let's fix to account entry_cnt in all above
-paths.
+1. The limit is used to bound the CPU latency of f2fs_write_end_io() in
+   atomic context, which is a property of the platform (CPU and storage
+   completion path) rather than of each f2fs instance, so a global knob
+   set once at boot fits better than a per-superblock sysfs entry.
 
-Cc: stable@vger.kernel.org
-Fixes: f32744a8b83d ("f2fs: introduce max_atc_write_bio_entry_cnt")
+2. Pagecache folios and cached metadata blocks are completed in
+   different loops with different per-entry costs, i.e.
+   f2fs_write_end_bio() and f2fs_cache_write_end_bio(), so it's better
+   to tune them separately rather than sharing a single threshold.
+
+To address these issues, let's replace max_atc_write_bio_entry_cnt
+sysfs entry with two module parameters:
+
+- max_write_bio_folio_cnt: for write bios of pagecache folios, which
+  are completed in f2fs_write_end_bio().
+- max_write_bio_entry_cnt: for write bios of cached metadata blocks,
+  which are completed in f2fs_cache_write_end_bio().
+
+Both parameters are read-only at runtime, they can be set via
+f2fs.max_write_bio_{folio,entry}_cnt=<n> in the kernel command line, or
+via modprobe, and apply to all f2fs instances. The default value is
+UINT_MAX, which means this functionality is disabled by default.
+
+Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
 v2:
-- rebase to the latest dev-test branch, which supports subpage block,
-  no logic change.
+- add document for max_write_bio_{folio,entry}_cnt module parameters in
+  Documentation/filesystems/f2fs.rst.
+- rebase to the latest dev-test branch.
 
- fs/f2fs/data.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 11 -----------
+ Documentation/filesystems/f2fs.rst      | 18 ++++++++++++++++++
+ fs/f2fs/data.c                          | 18 +++++++++++++++++-
+ fs/f2fs/f2fs.h                          |  2 --
+ fs/f2fs/super.c                         |  1 -
+ fs/f2fs/sysfs.c                         |  2 --
+ 6 files changed, 35 insertions(+), 17 deletions(-)
 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index e7e968c6df92..65d45d8edc68 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -1014,17 +1014,6 @@ Description:	Every time a write operation completes f2fs_write_end_io() is
+ 		(atc) context. The default value for this attribute is UINT_MAX
+ 		which means that this functionality is disabled by default.
+ 
+-What:		/sys/fs/f2fs/<disk>/max_atc_write_bio_entry_cnt
+-Date:		October 2026
+-Contact:	Chao Yu <chao@kernel.org>
+-Description:	Every time a write operation completes f2fs_write_end_io() is
+-		called. This function may be called from an atomic context,
+-		e.g. from inside an interrupt handler. This attribute controls
+-		the maximum number of entries (folios or cached blocks) in a
+-		write bio that is completed in atomic (atc) context. The default
+-		value for this attribute is UINT_MAX which means that this
+-		functionality is disabled by default.
+-
+ What:		/sys/fs/f2fs/<disk>/pinned_area_max_secno
+ Date:		August 2026
+ Contact:	"Daeho Jeong" <daehojeong@google.com>
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 4d827c8a98d8..22677bf54a01 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -453,6 +453,24 @@ The files in each per-device directory are shown in table below.
+ Files in /sys/fs/f2fs/<devname>
+ (see also Documentation/ABI/testing/sysfs-fs-f2fs)
+ 
++Module Parameters
++=================
++
++Module parameters apply to all f2fs instances. They can be set via
++"f2fs.<parameter>=<value>" in the kernel command line, or via modprobe
++if f2fs is built as a module, and are read-only at runtime.
++
++======================== ============================================================
++max_write_bio_folio_cnt	 Maximum number of pagecache folios in a write bio whose
++			 completion is done in atomic context, a write bio w/ more
++			 folios will be completed in a workqueue instead, to bound
++			 the latency of f2fs_write_end_io() in atomic context.
++			 Default: UINT_MAX, i.e. disabled.
++max_write_bio_entry_cnt	 Same as max_write_bio_folio_cnt, but for write bios of
++			 cached metadata blocks.
++			 Default: UINT_MAX, i.e. disabled.
++======================== ============================================================
++
+ Usage
+ =====
+ 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index cdc9e6e8633c..6be0cadc511e 100644
+index 6be0cadc511e..dbc21e4f147e 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -959,6 +959,9 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 			fio_lblk, fio, GFP_NOIO);
- 	bio_add_folio_nofail(bio, data_folio, bio_len, bio_offset);
+@@ -35,6 +35,16 @@ static struct kmem_cache *bio_entry_slab;
+ static mempool_t *bio_post_read_ctx_pool;
+ static struct bio_set f2fs_bioset;
  
-+	if (!is_read_io(fio->op))
-+		F2FS_BIO(bio)->entry_cnt++;
++static unsigned int max_write_bio_folio_cnt = UINT_MAX;
++module_param(max_write_bio_folio_cnt, uint, 0444);
++MODULE_PARM_DESC(max_write_bio_folio_cnt,
++		"Maximum number of folios in a write bio completed in atomic context");
 +
- 	if (fio->io_wbc && !is_read_io(fio->op))
- 		wbc_account_cgroup_owner(fio->io_wbc, fio_folio, bio_len);
++static unsigned int max_write_bio_entry_cnt = UINT_MAX;
++module_param(max_write_bio_entry_cnt, uint, 0444);
++MODULE_PARM_DESC(max_write_bio_entry_cnt,
++		"Maximum number of cache entries in a write bio completed in atomic context");
++
+ #define	F2FS_BIO_POOL_SIZE	NR_CURSEG_TYPE
  
-@@ -1030,6 +1033,7 @@ static void add_bio_entry(struct f2fs_sb_info *sbi, struct bio *bio,
- 	bio_get(bio);
+ int __init f2fs_init_bioset(void)
+@@ -472,6 +482,12 @@ static void f2fs_write_end_io_work(struct work_struct *work)
+ 	f2fs_write_end_bio(bio);
+ }
  
- 	bio_add_folio_nofail(bio, folio, len, offset);
-+	F2FS_BIO(bio)->entry_cnt++;
++static unsigned int f2fs_max_write_bio_cnt(struct bio *bio)
++{
++	return f2fs_is_cache_bio(bio) ? max_write_bio_entry_cnt :
++					max_write_bio_folio_cnt;
++}
++
+ static void f2fs_write_end_io(struct bio *bio)
+ {
+ 	struct f2fs_sb_info *sbi;
+@@ -482,7 +498,7 @@ static void f2fs_write_end_io(struct bio *bio)
  
- 	f2fs_down_write(&io->bio_list_lock);
- 	list_add_tail(&be->list, &io->bio_list);
-@@ -1077,6 +1081,7 @@ static int add_ipu_page(struct f2fs_io_info *fio, struct bio **bio,
- 					fio_folio->mapping->host,
- 					fio_lblk, fio) &&
- 			    bio_add_folio(*bio, folio, bio_len, bio_offset)) {
-+				F2FS_BIO(*bio)->entry_cnt++;
- 				ret = 0;
- 				break;
- 			}
-
-base-commit: 9ad6c58bfbe5882b1aa0cbe2393dbfca89d2c199
-prerequisite-patch-id: 23bb28339e4f35a111279d46493ac1e04fc66d58
-prerequisite-patch-id: aaf2ca8ae4a7422c58daa02714ad9a5b4578bccc
-prerequisite-patch-id: 207a76a8bede95d1b0ec30dc2323963da5f6ff3f
-prerequisite-patch-id: baa9eb03ece0f1f0155a2226b99946327ceb3e33
-prerequisite-patch-id: 1eca125a4d02fba284eaad33e37de978ec89a7d0
-prerequisite-patch-id: b4566514d95142b9291270f2b64205f69c9b6edc
-prerequisite-patch-id: b8f7552919f622aedea1b119674eec9cc93d8671
+ 	if (bio_in_atomic() &&
+ 	    (bio->bi_iter.bi_size > sbi->max_atc_write_bio_size ||
+-	     F2FS_BIO(bio)->entry_cnt > sbi->max_atc_write_bio_entry_cnt)) {
++	     F2FS_BIO(bio)->entry_cnt > f2fs_max_write_bio_cnt(bio))) {
+ 		struct work_struct *w;
+ 
+ 		w = &container_of(bio, struct f2fs_bio, bio)->work;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d35149191625..7f6ca03baa8f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1835,8 +1835,6 @@ struct f2fs_sb_info {
+ 	/* for bio operations */
+ 	/* Largest write bio size completed in atomic context (atc). */
+ 	u32 max_atc_write_bio_size;
+-	/* Largest write bio entry count completed in atomic context (atc). */
+-	u32 max_atc_write_bio_entry_cnt;
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+ 	/* keep migration IO order for LFS mode */
+ 	struct f2fs_rwsem io_order_lock;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3fd8a18ac482..392d5a76d26e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -5355,7 +5355,6 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		goto free_sb_buf;
+ 	}
+ 	sbi->max_atc_write_bio_size = UINT_MAX;
+-	sbi->max_atc_write_bio_entry_cnt = UINT_MAX;
+ 
+ 	INIT_WORK(&sbi->s_error_work, f2fs_record_error_work);
+ 	memcpy(sbi->errors, raw_super->s_errors, MAX_F2FS_ERRORS);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 8ab9a5098f1c..81de27bebaaa 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1294,7 +1294,6 @@ F2FS_SBI_RW_ATTR(umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
+ F2FS_SBI_RW_ATTR(gc_pin_file_thresh, gc_pin_file_threshold);
+ F2FS_SBI_RW_ATTR(gc_reclaimed_segments, gc_reclaimed_segs);
+ F2FS_SBI_RW_ATTR(max_atc_write_bio_size, max_atc_write_bio_size);
+-F2FS_SBI_RW_ATTR(max_atc_write_bio_entry_cnt, max_atc_write_bio_entry_cnt);
+ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
+ F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
+ F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
+@@ -1547,7 +1546,6 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(gc_segment_mode),
+ 	ATTR_LIST(gc_reclaimed_segments),
+ 	ATTR_LIST(max_atc_write_bio_size),
+-	ATTR_LIST(max_atc_write_bio_entry_cnt),
+ 	ATTR_LIST(max_fragment_chunk),
+ 	ATTR_LIST(max_fragment_hole),
+ 	ATTR_LIST(current_atomic_write),
 -- 
 2.49.0
 
